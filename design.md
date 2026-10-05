@@ -1345,6 +1345,7 @@ Nada de esto está decidido. **No se debe inventar una solución: hay que pregun
 | **Derechos de uso de los escudos** de las hermandades | §9.4 · el sistema funciona sin ellos |
 | **Cómo ayudar al visitante** que no conoce el vocabulario cofrade | §16 |
 | **Si `vista` tiene valor simbólico** en estadísticas personales o ninguno | §6.4 |
+| **Qué hace «útil» al próximo punto relevante.** Apareció al construir el fixture de B-01: si el dato es viejo, Cofradar no puede ofrecer un punto que está ocurriendo en este instante, porque manda al usuario a un sitio por donde quizá ya pasó. El margen depende de la frescura del dato, y no está definido | §7.4, §9.4 |
 
 ### Pendientes de validar visualmente
 
