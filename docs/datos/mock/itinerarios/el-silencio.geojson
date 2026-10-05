@@ -1,0 +1,56 @@
+{
+ "type": "Feature",
+ "properties": {
+  "cofradia": "el-silencio",
+  "nombre_popular": "El Silencio",
+  "jornada": "madruga",
+  "sentido": "en el sentido de la marcha",
+  "fuente": "mock",
+  "revisado": "no"
+ },
+ "geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -5.9985,
+    37.3914
+   ],
+   [
+    -5.9975,
+    37.392
+   ],
+   [
+    -5.9967,
+    37.3934
+   ],
+   [
+    -5.996,
+    37.3928
+   ],
+   [
+    -5.9949,
+    37.3917
+   ],
+   [
+    -5.9955,
+    37.39
+   ],
+   [
+    -5.9947,
+    37.3885
+   ],
+   [
+    -5.9937,
+    37.387
+   ],
+   [
+    -5.9931,
+    37.3862
+   ],
+   [
+    -5.992,
+    37.3858
+   ]
+  ]
+ }
+}

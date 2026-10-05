@@ -1,0 +1,68 @@
+{
+ "type": "Feature",
+ "properties": {
+  "cofradia": "esperanza-de-triana",
+  "nombre_popular": "Esperanza de Triana",
+  "jornada": "madruga",
+  "sentido": "en el sentido de la marcha",
+  "fuente": "mock",
+  "revisado": "no"
+ },
+ "geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -6.0033,
+    37.3843
+   ],
+   [
+    -6.003,
+    37.3855
+   ],
+   [
+    -6.0028,
+    37.387
+   ],
+   [
+    -6.0022,
+    37.3879
+   ],
+   [
+    -6.0005,
+    37.3885
+   ],
+   [
+    -5.9985,
+    37.389
+   ],
+   [
+    -5.9975,
+    37.3908
+   ],
+   [
+    -5.9949,
+    37.3917
+   ],
+   [
+    -5.9955,
+    37.39
+   ],
+   [
+    -5.9947,
+    37.3885
+   ],
+   [
+    -5.9937,
+    37.387
+   ],
+   [
+    -5.9931,
+    37.3862
+   ],
+   [
+    -5.992,
+    37.3858
+   ]
+  ]
+ }
+}

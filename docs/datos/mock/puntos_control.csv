@@ -1,0 +1,16 @@
+slug,nombre,alias,lat,lon,osm_id,tipo,carrera_oficial,nota
+campana,La Campana,Campana,37.39170,-5.99490,,hito,si,Entrada a la carrera oficial
+sierpes,Sierpes,Calle Sierpes,37.39000,-5.99550,,hito,si,
+plaza-san-francisco,Plaza de San Francisco,,37.38850,-5.99470,,hito,si,
+avenida-constitucion,Avenida de la Constitución,,37.38700,-5.99370,,hito,si,
+catedral-palquillo,Catedral (Palquillo),Palquillo,37.38620,-5.99310,,hito,si,Salida de la carrera oficial
+plaza-virgen-reyes,Plaza Virgen de los Reyes,,37.38580,-5.99200,,hito,no,Punto de salida tras la Catedral
+plaza-duque,Plaza del Duque,,37.39340,-5.99670,,hito,no,
+san-lorenzo,San Lorenzo,Plaza de San Lorenzo,37.39590,-6.00130,,hito,no,
+puente-triana,Puente de Triana,Puente de Isabel II,37.38790,-6.00220,,hito,no,
+san-antonio-abad,San Antonio Abad,,37.39140,-5.99850,,templo,no,
+basilica-gran-poder,Basílica del Gran Poder,,37.39590,-6.00130,,templo,no,
+basilica-macarena,Basílica de la Macarena,,37.40190,-5.98870,,templo,no,
+la-magdalena,La Magdalena,,37.39050,-6.00030,,templo,no,
+capilla-marineros,Capilla de los Marineros,,37.38430,-6.00330,,templo,no,
+santuario-gitanos,Santuario de los Gitanos,,37.39780,-5.98650,,templo,no,

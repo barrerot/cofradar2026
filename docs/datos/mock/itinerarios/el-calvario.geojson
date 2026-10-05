@@ -1,0 +1,52 @@
+{
+ "type": "Feature",
+ "properties": {
+  "cofradia": "el-calvario",
+  "nombre_popular": "El Calvario",
+  "jornada": "madruga",
+  "sentido": "en el sentido de la marcha",
+  "fuente": "mock",
+  "revisado": "no"
+ },
+ "geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -6.0003,
+    37.3905
+   ],
+   [
+    -5.999,
+    37.39
+   ],
+   [
+    -5.9975,
+    37.391
+   ],
+   [
+    -5.9949,
+    37.3917
+   ],
+   [
+    -5.9955,
+    37.39
+   ],
+   [
+    -5.9947,
+    37.3885
+   ],
+   [
+    -5.9937,
+    37.387
+   ],
+   [
+    -5.9931,
+    37.3862
+   ],
+   [
+    -5.992,
+    37.3858
+   ]
+  ]
+ }
+}

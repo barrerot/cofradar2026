@@ -1,0 +1,60 @@
+{
+ "type": "Feature",
+ "properties": {
+  "cofradia": "los-gitanos",
+  "nombre_popular": "Los Gitanos",
+  "jornada": "madruga",
+  "sentido": "en el sentido de la marcha",
+  "fuente": "mock",
+  "revisado": "no"
+ },
+ "geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -5.9865,
+    37.3978
+   ],
+   [
+    -5.988,
+    37.3975
+   ],
+   [
+    -5.989,
+    37.396
+   ],
+   [
+    -5.991,
+    37.3945
+   ],
+   [
+    -5.9935,
+    37.3935
+   ],
+   [
+    -5.9949,
+    37.3917
+   ],
+   [
+    -5.9955,
+    37.39
+   ],
+   [
+    -5.9947,
+    37.3885
+   ],
+   [
+    -5.9937,
+    37.387
+   ],
+   [
+    -5.9931,
+    37.3862
+   ],
+   [
+    -5.992,
+    37.3858
+   ]
+  ]
+ }
+}

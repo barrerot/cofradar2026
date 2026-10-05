@@ -1,0 +1,130 @@
+{
+ "type": "FeatureCollection",
+ "properties": {
+  "jornada": "madruga",
+  "hora_referencia": "02:40",
+  "sin_segmento": {
+   "los-gitanos": "inminente: todavia no ocupa calle",
+   "el-calvario": "finalizada: ya no ocupa calle"
+  },
+  "fuente": "mock"
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "cofradia": "la-macarena",
+    "nombre_popular": "La Macarena",
+    "hora_referencia": "02:40",
+    "fase": "en_calle",
+    "confianza": "confirmado",
+    "nota": "Cabeza llegando a la Campana con +12 min de retraso",
+    "fuente": "mock"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -5.9943,
+      37.3952
+     ],
+     [
+      -5.9952,
+      37.394
+     ],
+     [
+      -5.9952,
+      37.3928
+     ],
+     [
+      -5.9949,
+      37.3917
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "cofradia": "el-gran-poder",
+    "nombre_popular": "El Gran Poder",
+    "hora_referencia": "02:40",
+    "fase": "en_calle",
+    "confianza": "estimado",
+    "nota": "Segmento deducido del horario: trazo discontinuo",
+    "fuente": "mock"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -5.9967,
+      37.3934
+     ],
+     [
+      -5.9949,
+      37.3917
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "cofradia": "el-silencio",
+    "nombre_popular": "El Silencio",
+    "hora_referencia": "02:40",
+    "fase": "en_calle",
+    "confianza": "desactualizado",
+    "nota": "Posición basada en una observacion de hace 23 min: trazo discontinuo y atenuado",
+    "fuente": "mock"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -5.9949,
+      37.3917
+     ],
+     [
+      -5.9955,
+      37.39
+     ],
+     [
+      -5.9947,
+      37.3885
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "cofradia": "esperanza-de-triana",
+    "nombre_popular": "Esperanza de Triana",
+    "hora_referencia": "02:40",
+    "fase": "en_calle",
+    "confianza": "confirmado",
+    "nota": "Detenida: interrumpida + cambio de recorrido",
+    "fuente": "mock"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -5.9975,
+      37.3908
+     ],
+     [
+      -5.9949,
+      37.3917
+     ],
+     [
+      -5.9955,
+      37.39
+     ]
+    ]
+   }
+  }
+ ]
+}

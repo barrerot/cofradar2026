@@ -1,0 +1,56 @@
+{
+ "type": "Feature",
+ "properties": {
+  "cofradia": "el-gran-poder",
+  "nombre_popular": "El Gran Poder",
+  "jornada": "madruga",
+  "sentido": "en el sentido de la marcha",
+  "fuente": "mock",
+  "revisado": "no"
+ },
+ "geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -6.0013,
+    37.3959
+   ],
+   [
+    -6.0005,
+    37.3952
+   ],
+   [
+    -5.999,
+    37.3934
+   ],
+   [
+    -5.9967,
+    37.3934
+   ],
+   [
+    -5.9949,
+    37.3917
+   ],
+   [
+    -5.9955,
+    37.39
+   ],
+   [
+    -5.9947,
+    37.3885
+   ],
+   [
+    -5.9937,
+    37.387
+   ],
+   [
+    -5.9931,
+    37.3862
+   ],
+   [
+    -5.992,
+    37.3858
+   ]
+  ]
+ }
+}
