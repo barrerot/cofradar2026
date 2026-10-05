@@ -183,7 +183,18 @@ Prefijo de todas las variables: `--cf-`.
 | `--cf-rojo-*` (incidencia / crítico) | `#FBE9E6` | `#F6CFC9` | `#F0776B` | `#D33A2C` | `#B3261E` | `#9B2016` | `#7A1810` |
 | `--cf-azul-*` (información neutra) | `#E4EFF6` | `#C4DCEB` | `#74B8E0` | `#2A7FB8` | `#1A6490` | `#14537A` | `#0F3F5C` |
 
-> **Regla de separación granate / rojo.** Son los dos colores que más fácil se confunden y tienen significados incompatibles. Se separan por **tono** (granate más hacia el vino, rojo más hacia el naranja) y por **luminosidad** (granate siempre más oscuro). **Nunca aparecen adyacentes en el mismo componente.** Si una pantalla necesita marca y alerta a la vez, la marca se retira a tinta.
+> **Regla de separación granate / rojo.** Son los dos colores que más fácil se confunden y tienen significados incompatibles. **Nunca aparecen adyacentes en el mismo componente.** Si una pantalla necesita marca y alerta a la vez, la marca se retira a tinta.
+>
+> **El mecanismo de separación es distinto en cada tema, y eso es deliberado.**
+>
+> | Tema | Canales de separación | Medido |
+> |---|---|---|
+> | **Claro** | Tono + luminosidad. El granate es siempre **más oscuro** | `granate-600` tono 346° / lum. 4,4 % · `rojo-600` tono 4° / lum. 8,1 % |
+> | **Oscuro** | Tono + **saturación**. El granate es siempre **menos saturado** | `granate-300` tono 351° / sat. 55 % · `rojo-300` tono 5° / sat. 82 % |
+>
+> **En oscuro la luminosidad no puede separarlos.** Hacer el granate más oscuro que el rojo sobre fondo casi negro lo deja ilegible: `granate-400` da 3,6:1 sobre `surface`, por debajo de AA. Por eso existe `granate-300` (§5) y por eso en oscuro la separación la cargan el tono y la saturación. La diferencia de luminancia relativa entre los dos es de solo 1,2 puntos: **en oscuro no se puede confiar en que se distingan por claridad.**
+>
+> Consecuencia de diseño: en oscuro, marca y alerta se apoyan además en el **canal de forma** —la marca de relación (§9.5) y el chip de alteración (§9.3) tienen anatomías distintas— y nunca solo en el color. Es la regla 1 aplicada aquí.
 
 ### 4.2 Color · semánticos
 
@@ -214,7 +225,27 @@ Estados operativos (idénticos en ambos registros):
 | `--cf-warn` / `-soft` / `-border` | `ambar-600` / `ambar-50` / `ambar-100` | `ambar-300` / `#3A2A08` / `ambar-700` | `retraso`, `adelanto`, `inminente`, atención |
 | `--cf-alert` / `-soft` / `-border` | `rojo-600` / `rojo-50` / `rojo-100` | `rojo-300` / `#3A1512` / `rojo-700` | `incidencia`, `cancelada`, crítico |
 | `--cf-info` / `-soft` / `-border` | `azul-600` / `azul-50` / `azul-100` | `azul-300` / `#0E2838` / `azul-700` | Información neutra, contexto de jornada |
-| `--cf-idle` / `-soft` | `neutral-600` / `neutral-100` | `#9A9287` / `#201C19` | `prevista`, `finalizada`, `no_procesiona` |
+| `--cf-idle` / `-soft` / `-border` | `neutral-600` / `neutral-100` / `neutral-200` | `#9A9287` / `#201C19` / `#332E29` | `prevista`, `finalizada`, `no_procesiona` |
+
+**Texto sobre superficie `-soft`.** Un chip de estado lleva **información crítica** (§14), así que su texto no usa el mismo valor que el icono o el trazo: usa un paso más oscuro en claro.
+
+| Token | Claro | Oscuro | Medido en claro |
+|---|---|---|---|
+| `--cf-live-text` | `verde-700` | `verde-300` | 8,84:1 sobre `verde-50` |
+| `--cf-warn-text` | `ambar-700` | `ambar-300` | 9,18:1 sobre `ambar-50` |
+| `--cf-alert-text` | `rojo-700` | `rojo-300` | 9,11:1 sobre `rojo-50` |
+| `--cf-info-text` | `azul-700` | `azul-300` | 9,53:1 sobre `azul-50` |
+| `--cf-idle-text` | `neutral-700` | `#C4BCB0` | 8,60:1 sobre `neutral-100` |
+
+Con el `-600` el mismo texto daba 5,2–6,9:1: cumple AA pero **se queda corto de AAA siendo información crítica**, y subir un paso no cuesta nada. `--cf-live`, `--cf-warn`, `--cf-alert` y `--cf-info` conservan su valor y siguen siendo los del **icono, el borde y el trazo**.
+
+**Borde que identifica un control.**
+
+| Token | Claro | Oscuro | Medido |
+|---|---|---|---|
+| `--cf-border-interactive` | `neutral-500` | `neutral-500` | 3,61:1 claro · 4,80:1 oscuro |
+
+`--cf-border` (1,28:1) y `--cf-border-strong` (1,55:1) son **separadores de contenido** y ese contraste es correcto para lo que hacen: delimitan tarjetas, filas y paneles que ya se distinguen por superficie y elevación. **No se tocan.** Pero cuando el borde es *lo único que identifica un control* —campos, chips de filtro, conmutadores— hace falta 3:1, y para eso está `--cf-border-interactive`. No cambia la paleta: usa un primitivo que ya existía.
 
 Vivos, solo para rellenos de marcador y trazos de mapa, donde el fondo es cartografía y no superficie:
 
@@ -257,6 +288,15 @@ Ambas libres, variables y **autoalojadas**, subconjunto latino, `font-display: s
 
 **Pesos.** Inter: 400 cuerpo · 500 énfasis · 600 datos, etiquetas de estado, botones · 700 cifras críticas y títulos funcionales. Newsreader: 400 cuerpo editorial · 600 títulos · cursiva disponible.
 
+```css
+--cf-weight-body:      400;
+--cf-weight-emphasis:  500;
+--cf-weight-data:      600;   /* datos, etiquetas de estado, botones */
+--cf-weight-critical:  700;   /* cifras críticas, títulos funcionales */
+```
+
+**Interlineado de la escala de datos.** Sigue el mismo ritmo que la escala de texto, para que una cifra y una línea de texto puedan convivir en la misma fila sin descuadrarla: `data-sm` 14/20 · `data-md` 18/24 · `data-lg` 24/30 · `data-xl` 32/38.
+
 **Reglas tipográficas**
 - **Nada por debajo de 12px**, en ningún componente, tema o breakpoint.
 - Toda la escala en `rem`. El zoom del navegador y el tamaño de letra del sistema deben funcionar sin romper el layout.
@@ -279,6 +319,10 @@ Base de 4px.
 | `--cf-space-10` | 40 | — |
 | `--cf-space-12` | 48 | Entre secciones · **altura táctil mínima** |
 | `--cf-space-16` | 64 | Aire en superficies editoriales |
+
+```css
+--cf-touch-min: var(--cf-space-12);   /* 48px · §14 */
+```
 
 **Regla.** Registro funcional: `space-1`–`space-4`. Registro editorial: `space-6`–`space-16`. El aire es, junto al calor, lo que distingue un registro del otro.
 
@@ -323,6 +367,12 @@ Las sombras se construyen con **tinta cálida con alfa**, nunca con negro puro: 
 | `elev-2` | Sombra media + borde | `surface-raised` + `border-strong` | Controles y chips **sobre el mapa**, popovers |
 | `elev-3` | Sombra marcada + borde | `surface-raised` + `border-strong` + línea superior luminosa | Bottom sheet, modales, celebración |
 
+La línea superior luminosa del `elev-3` oscuro es un realce interior de 1px, no un borde:
+
+```css
+--cf-elev-3-dark-edge: inset 0 1px 0 rgb(245 241 234 / .08);
+```
+
 **Reglas de elevación**
 - Ver regla 4: la sombra significa superposición real.
 - **En modo oscuro las sombras no se usan.** Una sombra es ausencia de luz y sobre un fondo casi negro no hay nada que oscurecer. La jerarquía se construye con escalón de superficie y borde visible. **La sombra nunca es necesaria para entender la jerarquía.**
@@ -355,6 +405,7 @@ Las sombras se construyen con **tinta cálida con alfa**, nunca con negro puro: 
 - En `icon-sm` se usa siempre peso `bold`: a 16px con luz solar el trazo `regular` desaparece.
 - Un icono que comunique un estado importante **va siempre acompañado de texto**.
 - `fill` indica activo, seleccionado o verificado. `regular`/contorno indica inactivo o no verificable.
+- **`en_calle` no se representa nunca con un pin ni con una chincheta.** Una cofradía **ocupa calle y avanza**: no es un punto (D10). Un pin dentro de un chip de estado contradice la doctrina del segmento antes de que el usuario llegue al mapa. Se usan iconos de recorrido o de marcha.
 - `duotone` no se usa en la capa funcional.
 
 **Set propio de iconos cofrades.** Es el único lugar donde vive el detalle gráfico propio de Cofradar (portador 4 de §2). Dibujado sobre **la misma rejilla de 24, el mismo trazo y las mismas proporciones que Phosphor**: geométrico, austero, contemporáneo, sin florituras.
@@ -377,6 +428,19 @@ Conceptos candidatos, a confirmar cuando los componentes los pidan de verdad: `c
 --cf-ease-out:    cubic-bezier(.2, .8, .25, 1);
 --cf-ease-in-out: cubic-bezier(.4, 0, .2, 1);
 ```
+
+**Con `prefers-reduced-motion: reduce`:**
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  --cf-dur-base:  0ms;
+  --cf-dur-sheet: 0ms;
+  --cf-dur-slow:  0ms;
+  /* --cf-dur-instant y --cf-dur-fast se conservan */
+}
+```
+
+`instant` y `fast` **se conservan**: son feedback de pulsación y de foco, no desplazamiento, y quitarlos degradaría la respuesta del producto sin beneficio para nadie. Lo que desaparece es el movimiento: `transform`, `scale` y los desplazamientos de panel se resuelven en su estado final. **Ninguna información se pierde** (§14).
 
 **Reglas.** El movimiento en la capa funcional es corto y utilitario: confirma una acción o explica un desplazamiento, nunca entretiene. La capa de gamificación tiene licencia plena (§11). `prefers-reduced-motion: reduce` se respeta **siempre**: ninguna información desaparece al desactivar la animación (§14).
 
@@ -436,6 +500,21 @@ Actúa **solo sobre legibilidad**, nunca sobre el layout:
 - Refuerza la diferenciación de estados.
 - Refuerza marcadores, recorridos, etiquetas e hitos del mapa.
 - Refuerza controles interactivos y el anillo de foco.
+
+**Los remapeos concretos**
+
+```css
+[data-contrast="max"] {
+  --cf-border-width: var(--cf-border-width-max);   /* 1px → 2px */
+  --cf-text-muted: var(--cf-text-secondary);       /* 5,5:1 → 9,2:1 */
+  --cf-weight-emphasis: 600;                       /* 500 → 600 */
+  --cf-weight-data: 700;                           /* 600 → 700 */
+  --cf-focus-ring-width: 3px;                      /* 2px → 3px */
+  --cf-border-interactive: var(--cf-border-strong-interactive);
+}
+```
+
+Más tres reglas que no son valores: los iconos suben de `regular` a `bold`, el texto de estado sube al paso **`-700`** de su familia en claro y al **`-100`** en oscuro, y `--cf-border-interactive` pasa a `neutral-600` en claro (5,33:1).
 
 **Puede aumentar ligeramente algún elemento crítico si mejora realmente su lectura, pero no cambia tamaños de forma general ni reorganiza componentes. La memoria espacial del usuario se conserva al activar y desactivar el contraste.**
 
@@ -603,6 +682,7 @@ Es la condición normal de Cofradar, no un caso límite: los datos salen de cuad
 ```
 
 **Reglas**
+- **La coletilla de confianza y frescura usa `--cf-text-secondary`, nunca `--cf-text-muted`.** `· según horario` y `· hace 23 min` son **información crítica** por §14 —son lo que permite saber si un dato es estimado o viejo—, y `text-muted` da 5,5:1: cumple AA pero no AAA. `text-secondary` da 9,2:1. `text-muted` se queda para metadatos que de verdad no son críticos.
 - La **atenuación solo refuerza, nunca informa sola.** Un dato estimado puede ir ligeramente menos pesado, pero **jamás por debajo del contraste mínimo accesible**. La información la cargan el trazo y la marca textual. Está prohibido comunicar incertidumbre bajando opacidad o contraste.
 - **Prohibido el difuminado** como recurso de incertidumbre.
 - **Pasado su umbral, Cofradar deja de afirmar.** No se muestra una estimación maquillada: se muestra el **último dato conocido** con su hora y se dice que no hay información reciente. Un «no lo sabemos» explícito construye más confianza que una estimación caducada en silencio.
@@ -1292,6 +1372,17 @@ Son críticos, entre otros:
 AAA es el objetivo de esos elementos **siempre que sea técnicamente posible sin romper otros requisitos de accesibilidad o semántica**.
 
 Motivo de fondo: a pleno sol un contraste de 4.5:1 medido en laboratorio se comporta como mucho menos, porque el reflejo de la pantalla añade luz a los negros y aplana la diferencia. Cumplir AA no garantiza que se lea en la calle a mediodía.
+
+### Excepción medida y documentada · AAA en modo oscuro
+
+**En oscuro, el texto de estado sobre su superficie `-soft` no alcanza AAA, y no se va a forzar.** Medido: `live` 6,95:1 · `warn` 7,31:1 · `alert` 5,83:1 · `info` 7,01:1 · `idle` 5,51:1. Todos cumplen AA.
+
+Llegar a AAA exigiría una de dos cosas, y **las dos rompen requisitos de semántica**, que es la salvedad que la propia regla de AAA contempla:
+
+- **Oscurecer la superficie `-soft`** hasta casi negro, con lo que pierde el tinte que comunica el estado.
+- **Aclarar el texto** hasta un pastel, con lo que se pierde la separación de tono que distingue la alerta de la marca personal (§4.1).
+
+Así que en oscuro la carga la llevan los **canales redundantes** —icono en `bold`, texto explícito, trazo— y el usuario que necesite más tiene `data-contrast="max"`, que sube el texto de estado al paso `-100` de su familia. **Esto queda escrito para que nadie lo «arregle» después lavando los colores.**
 
 ### Requisitos confirmados
 
