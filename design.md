@@ -344,6 +344,10 @@ Base de 4px.
 --cf-border-width: 1px;
 --cf-border-width-strong: 1.5px;   /* chips críticos, marcadores de mapa */
 --cf-border-width-max: 2px;        /* solo con [data-contrast="max"] */
+
+--cf-focus-ring-width:  2px;       /* §14 · nunca se elimina */
+--cf-focus-ring-offset: 2px;
+--cf-focus-ring-color:  var(--cf-text);
 ```
 
 Las sombras se construyen con **tinta cálida con alfa**, nunca con negro puro: un negro neutro sobre paleta cálida produce un gris sucio azulado que delata el sistema.
@@ -510,7 +514,7 @@ Actúa **solo sobre legibilidad**, nunca sobre el layout:
   --cf-weight-emphasis: 600;                       /* 500 → 600 */
   --cf-weight-data: 700;                           /* 600 → 700 */
   --cf-focus-ring-width: 3px;                      /* 2px → 3px */
-  --cf-border-interactive: var(--cf-border-strong-interactive);
+  --cf-border-interactive: var(--cf-neutral-600);  /* 3,61:1 → 5,33:1 */
 }
 ```
 
