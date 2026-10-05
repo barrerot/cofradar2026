@@ -1,7 +1,7 @@
 # Cofradar · Sistema de diseño
 
-**Versión** 1.1 · **Fecha** 5 de octubre de 2026 · **Alcance** Semana Santa de Sevilla, con el sistema preparado para otras ciudades
-**Estado** Decisiones D1–D25 cerradas y alineado con el PRD. Los valores numéricos son *tokens iniciales*: se validan sobre componentes reales y, si fallan, se corrige el token de forma sistémica, nunca con excepciones locales.
+**Versión** 1.2 · **Fecha** 5 de octubre de 2026 · **Alcance** Cofradar completo para la Semana Santa de Sevilla, con el sistema preparado para otras ciudades
+**Estado** Decisiones D1–D33 cerradas y alineado con el PRD. Cubre el **producto completo**: la distinción entre núcleo de lanzamiento y evolución rige el orden de desarrollo, no el alcance del diseño (§1). Las decisiones abiertas están registradas en el hito «Decisiones pendientes de producto» de Linear y referenciadas en §21. Los valores numéricos son *tokens iniciales*: se validan sobre componentes reales y, si fallan, se corrige el token de forma sistémica, nunca con excepciones locales.
 
 ---
 
@@ -30,6 +30,9 @@ Reglas de reconciliación: si una decisión de diseño cambia realmente una regl
 ---
 
 ## 1. El producto, en lo que afecta al diseño
+
+> **Este documento cubre Cofradar completo.** El PRD distingue núcleo de lanzamiento y evolución, y esa distinción rige **el orden de desarrollo**, no el alcance del diseño. Logros, retos, clasificaciones e identidad pública se diseñan igual que el resto: una pantalla no se deja sin definir porque su implementación vaya después.
+
 
 Cofradar es una web app responsive para seguir la Semana Santa en la calle, con una capa participativa —la acción **«Dar fe»**— que registra la experiencia del usuario y, a la vez, alimenta el cálculo de la posición de las cofradías.
 
@@ -532,11 +535,13 @@ Capa personal. **Se cuenta en granate** (regla 2) y **no entra nunca en la fila 
 
 | Relación | Significado | ¿Puntúa? | ¿Necesita ubicación? |
 |---|---|---|---|
-| `seguida` | **Intención**: quiero verla. Personaliza Ahora, favoritos, avisos, planificación | No | No |
-| `vista` | **Memoria personal**: la he visto. Marcable manualmente siempre, incluso a posteriori. Cuenta para estadísticas, colecciones y progreso propio. **Sin valor competitivo** | No, o valor simbólico | No |
+| `seguida` | **Intención**: quiero verla. Personaliza Ahora, avisos y planificación. **Funciona en local sin cuenta** | No | No |
+| `vista` | **Memoria personal**: la he visto. Marcable manualmente siempre, incluso a posteriori y de ediciones anteriores a Cofradar. **Funciona en local sin cuenta**. **Sin valor competitivo** | No. Estadística personal, nunca comparada | No |
 | `dar-fe` | **Presencia y participación**: estoy viendo esta cofradía ahora. Es la acción que puntúa y la única que puede alimentar el cálculo de la posición pública | Sí | Mejora, no requisito |
 
 > **La distinción que sostiene el modelo: «vista» es tu álbum personal y «Dar fe» es la participación.** Permite que alguien registre las cofradías que vio antes de usar Cofradar sin afectar a rankings, puntos ni logros.
+
+**De las tres relaciones, solo `dar-fe` necesita identidad.** `seguida` y `vista` no puntúan, no tienen valor competitivo y no tocan el cálculo público: existen **en local y sin cuenta** (§18). Eso es lo que permite que Mi tramo sea útil de verdad antes de que exista una cuenta.
 
 **«Dar fe» es una sola acción con dos consecuencias**, y el diseño tiene que dejar ver las dos sin convertirlas en dos pasos:
 
@@ -610,7 +615,7 @@ Es la condición normal de Cofradar, no un caso límite: los datos salen de cuad
 | Posición estimada en tiempo real | < 10 min | 10–30 min | > 30 min |
 | Horario previsto, hitos, información operativa | **Pendiente de definir por tipo** | | |
 
-*(Los valores de posición son candidatos a validar; el resto es pendiente de producto, §18.)*
+*(Los valores de posición son candidatos a validar; el resto es pendiente de producto, §21.)*
 
 ### 7.2 Verificación de «Dar fe» · canal de relleno
 
@@ -830,7 +835,7 @@ El **progreso del recorrido** es información secundaria: vive en la variante ex
 
 **Imagen.** **Las tarjetas funcionales son tipográficas.** El nombre en Newsreader hace el trabajo de identificación.
 - **Sin fotografía** en ningún caso en tarjetas funcionales: pesa con mala red, es caro en derechos y empuja la tarjeta hacia lo contemplativo cuando su trabajo es ayudar a decidir en tres segundos.
-- **El escudo** es identidad **opcional**, para ficha y variante expandida, cuando se disponga de él y esté resuelto su uso (**pendiente**, §18). **El sistema funciona perfectamente sin escudo**, y **la marca de relación del usuario no depende visualmente de él**: se ancla al bloque de identidad exista o no.
+- **El escudo** es identidad **opcional**, para ficha y variante expandida, cuando se disponga de él y esté resuelto su uso (**pendiente**, §21). **El sistema funciona perfectamente sin escudo**, y **la marca de relación del usuario no depende visualmente de él**: se ancla al bloque de identidad exista o no.
 
 **Estados.** `default` · `pressed` · `seleccionada` (en mapa: borde `border-strong` y superficie `surface-raised`; **nunca se señala la selección solo con color**) · `atenuada` (fase `finalizada` o fuera de foco en el mapa) · `con dato desactualizado` (§7.1).
 
@@ -1003,7 +1008,7 @@ El mapa no es un componente: es un subsistema. No existe un patrón previo para 
 
 ### 10.1 Cartografía base
 
-**Requisito:** cartografía **vectorial altamente personalizable**, con estilo propio en variantes clara y oscura. **Preferencia** por una solución tipo MapLibre o Mapbox. *No es todavía una decisión cerrada de diseño* (§18).
+**Requisito:** cartografía **vectorial altamente personalizable**, con estilo propio en variantes clara y oscura. **Preferencia** por una solución tipo MapLibre o Mapbox. *No es todavía una decisión cerrada de diseño* (§21).
 
 **Regla de prioridad.** El mapa debe integrarse visualmente con Cofradar, pero **la legibilidad cartográfica tiene prioridad absoluta sobre la identidad**. No se tiñe en exceso para hacerlo coincidir con la paleta.
 
@@ -1094,9 +1099,20 @@ No hace falta mostrarlos todos siempre. En vista general basta el segmento y el 
 
 **La geolocalización nunca es obligatoria** (regla 10). La ubicación depende de los permisos y de lo que entregue el navegador, y el diseño debe funcionar igual sin ella.
 
-- Sin permiso: el mapa funciona completo, centrado en la ciudad o en la actividad. **No se bloquea nada** y no se insiste de forma intrusiva.
-- Con permiso y precisión suficiente: punto de usuario + radio de precisión real, nunca menor que el que informa el navegador.
-- Con permiso y precisión insuficiente: se muestra el radio honesto y **no se usa para proponer proximidad** (§7.4).
+Ocho estados, y **«no solicitado» y «denegado» no son el mismo estado**: para pintar el mapa da igual, pero para lo que Cofradar puede ofrecer no — en uno aún puede pedir permiso, en el otro ya no.
+
+| Estado | Mapa | Proximidad |
+|---|---|---|
+| **No solicitado** | Completo, centrado en la ciudad o en la actividad | No se ofrece. Existe la posibilidad de pedir el permiso (§19) |
+| **Concedido, precisión suficiente** | Punto de usuario + radio de precisión real, **nunca menor que el que informa el navegador** | Sí, con lenguaje prudente (§7.4) |
+| **Concedido, precisión reducida** | Punto con radio honesto, grande | **No se usa para proponer proximidad**. La aportación sigue valiendo: es información distinta, no peor (§9.18) |
+| **Concedido, sin posición todavía** | Completo, sin punto de usuario | No. Es un «no lo sabemos» de los nuestros, **distinto de no tener permiso**: ocurre en calles estrechas, con aglomeración o con la red saturada |
+| **Denegado** | Completo | No. **No se vuelve a pedir** (§19) |
+| **Bloqueado por navegador o sistema** | Completo | No. Mensaje distinto, porque no hay nada que el usuario pueda hacer desde Cofradar (§19) |
+| **Posición lejos de la jornada** | Completo, sin forzar el encuadre | No se calcula ni se rellena. **No se le dice al usuario que está lejos como un reproche** (regla 17) |
+| **Revocado con Cofradar abierto** | Vuelve al estado sin permiso **sin recargar** | Desaparece la capa, no deja hueco |
+
+**La falta de ubicación nunca degrada la confianza de un dato.** Una cofradía `confirmado` lo sigue estando sin GPS: lo único que desaparece es la posición del usuario respecto a ella.
 
 ### 10.7 Contraste máximo en el mapa
 
@@ -1133,7 +1149,9 @@ Es la única capa con licencia para el lenguaje «social y de juego», y está *
 - **Todo el flujo se diseña para la calle**: de pie, entre gente, con una mano y mirando el paso y no la pantalla. Cada toque de más cuesta el triple que sentado.
 - El botón es **tinta, no granate**. Lo que hace especial a «Dar fe» no es su color: es que tiene vía rápida propia y que lo que viene después es lo único que celebra.
 - El granate aparece **después**, cuando esa aportación pasa a formar parte de la historia del usuario, sus puntos y su relación con esa hermandad.
-- Si el usuario no ha iniciado sesión, la cuenta se pide **en el momento de dar fe**, no antes: consultar Cofradar nunca exige registro.
+- Si el usuario no ha iniciado sesión, la cuenta se pide **en el momento de dar fe**, no antes: consultar Cofradar nunca exige registro (§18).
+- **La aportación en vuelo se conserva.** Si la autenticación interrumpe el flujo, lo que el usuario estaba a punto de enviar se guarda y se recupera **en el paso exacto donde estaba**. Sin eso, la interrupción es una pérdida de datos: nadie repite una aportación de algo que ya ha pasado.
+- **«Dar fe» no se bloquea nunca por falta de GPS.** La vía rápida tampoco. El GPS es una señal, no el juez.
 
 ### 11.3 Celebración · dos niveles
 
@@ -1158,14 +1176,27 @@ Si la aportación es `no-verificable`, la celebración **confirma el registro co
 | **Reputación** | **No tiene componente.** Es interna y **no se muestra como número**: es una entrada del motor de validación, no una moneda de juego |
 | **Historial de aportaciones** | Todas aparecen. Las consolidadas pueden llevar marca de *contribuyó a la posición*; las demás, **sin etiqueta** (regla 17) |
 | **Indicador de nivel** | Insignia `radius-full`, granate, con progreso al siguiente nivel (§9.15, trazo continuo) |
-| **Insignia de logro** *(evolución)* | `radius-full`, `--cf-brand-soft` con borde `--cf-brand-border`; icono del set cofrade o propio del logro. Estados: `bloqueado` (contorno, atenuado, con la condición visible), `desbloqueado` (relleno, granate) |
-| **Tarjeta de reto** *(evolución)* | Tarjeta de información en registro editorial, con progreso, condición y recompensa |
+| **Insignia de logro** | `radius-full`, `--cf-brand-soft` con borde `--cf-brand-border`; icono del set cofrade o propio del logro. Estados: `bloqueado` (contorno, atenuado, con la condición visible), `desbloqueado` (relleno, granate) |
+| **Tarjeta de reto** | Tarjeta de información en registro editorial, con progreso, condición y recompensa |
 | **Colección de vistas** | Rejilla de hermandades con marca `vista` (§9.5). Es el «álbum personal» y **no tiene valor competitivo** |
-| **Clasificación** *(evolución)* | Lista compacta. **Solo las aportaciones verificadas** entran en rankings competitivos (§18) |
+| **Clasificación** | Lista compacta, con la posición propia destacada y el periodo de la edición. **Solo las aportaciones consolidadas** entran. El ámbito y la magnitud que ordena están pendientes (§21) |
 
-**Logros, retos y clasificaciones no forman parte del núcleo de lanzamiento**: son evolución prevista. Su lenguaje visual queda definido aquí para que incorporarlos después no obligue a rehacer nada, pero no deben bloquear la primera versión. Lo que sí entra en el lanzamiento es **puntos, reputación, niveles, historial y colección**.
+Logros, retos y clasificaciones **van después en el orden de desarrollo** y **no quedan fuera del diseño** (§1).
 
-**La economía de puntos, niveles, logros, retos y clasificaciones es decisión de producto pendiente** (§18). Este documento define solo su lenguaje visual.
+### 11.5 Las seis reglas de la economía
+
+> **Cofradar no es un juego sobre la Semana Santa.** La gamificación reconoce participación, descubrimiento y aportaciones útiles, y **nunca compite con la calle ni premia cantidad por encima de calidad.**
+
+| # | Regla |
+|---|---|
+| **R1** | **Un solo marcador, tres reconocimientos.** Los puntos miden exclusivamente «Dar fe». El descubrimiento se reconoce en la colección y **no da puntos**; los logros son el único lugar donde se reconoce un hito que no es una aportación. `seguida` y `vista` nunca puntúan ni aparecen en una clasificación |
+| **R2** | **Progresión de por vida, competición por edición.** Puntos y nivel se acumulan siempre; las clasificaciones se cierran por edición, para que quien llega nuevo pueda competir desde su primer año |
+| **R3** | **Misma base, bonus según redundancia.** Todo «Dar fe» que supera la plausibilidad recibe **los mismos puntos base**, con independencia de su precisión. El bonus decrece **según la redundancia de la información, nunca por repetir cofradía**. El máximo sigue siendo detectar que una estimación se ha quedado obsoleta |
+| **R4** | **Los puntos no compran nada.** El nivel no desbloquea funciones, no da peso en el motor y no influye en la reputación. La recompensa de un reto solo puede ser reconocimiento |
+| **R5** | **Los retos reconocen lo que el usuario vive y hace; no dirigen sus movimientos.** Ni «ve ahora a», ni «te falta esta cofradía», ni «llega antes de». Viven en su sección y **nunca en Ahora ni en el mapa** |
+| **R6** | **Los puntos nunca bajan.** La reputación puede bajar ante patrones porque es una defensa del sistema; los puntos reconocen algo que ya ocurrió |
+
+**Las cifras concretas son calibración, no diseño** (§21): el componente es el mismo con seis niveles que con doce. Los **nombres de nivel y las condiciones de logro que aparezcan en cualquier maqueta son ejemplos provisionales** y van marcados como tales (§21).
 
 ---
 
@@ -1299,7 +1330,7 @@ Composición y breakpoints en §4.9 y §8.4. Reglas que rigen por encima de ello
 
 - **«Dar fe» es el nombre propio de la acción en Cofradar.** No se llama check-in, ni registrar, ni marcar. Es la expresión cofrade de dar testimonio de lo que uno ha visto, y es lo que hace que la mecánica se entienda sin explicarla.
 - **El área personal se llama «Mi tramo»**, no «Perfil».
-- **No se explican esos términos al usuario habitual.** Cómo ayudar al visitante que no los conoce es **decisión de producto pendiente** (§18).
+- **No se explican esos términos al usuario habitual.** La ayuda al visitante la resuelve el producto y no un glosario (D25): el selector de «Dar fe» pregunta en llano con el término cofrade debajo, los hitos son interactivos y el nombre popular es dato explícito. **Nada en la interfaz debe delatar que eres de fuera.**
 - Los nombres de hermandades se escriben como los escribe la hermandad, no normalizados. Cada una tiene **dos formas, ambas configuradas como dato**: el **nombre popular** —el que usa todo el mundo— para tarjetas, Ahora, Jornada y mapa, y la **denominación completa** para la ficha. **Cofradar no inventa abreviaciones.**
 - **La ayuda al visitante sale del propio producto, no de un modo visitante.** Cofradar debe ser comprensible para quien llega por primera vez **sin resultar infantil ni redundante** para quien lleva toda la vida viendo cofradías. Queda descartado detectar quién es visitante —por perfil, historial o preguntas de bienvenida—, tener interfaces distintas para él, y construir un glosario o una sección de ayuda específica. **Nada en la interfaz debe delatar que eres de fuera.**
 - El tono es **sobrio y respetuoso**, nunca solemne ni devocional. Cofradar informa; no predica ni celebra la fiesta por el usuario.
@@ -1330,22 +1361,201 @@ Sevilla es el alcance inicial. El sistema está construido para que otra ciudad 
 
 ---
 
-## 18. Pendientes
+## 18. Cuenta, identidad y acceso
 
-Nada de esto está decidido. **No se debe inventar una solución: hay que preguntar.**
+**Consultar Cofradar nunca exige nada.** La identidad se pide en el momento en que hace falta, y solo entonces.
+
+### 18.1 Acceso
+
+**Única vía: cuenta de Google.** No existe usuario y contraseña de Cofradar, ni código por correo, ni registro tradicional, **ni pantalla de recuperación** — sin contraseña no hay nada que recuperar.
+
+- **«Entrar con Google» sirve para crear la cuenta y para acceder a una existente.** Una sola puerta: al usuario no se le pregunta si ya tiene cuenta, porque en ese momento es ruido.
+- Cofradar mantiene su **cuenta interna** asociada a la identidad que autentica Google.
+- **Sesión persistente con renovación transparente.** Nada de reautenticaciones inesperadas durante el uso normal: una sesión que caduca a las tres de la madrugada del Viernes Santo es un fallo operativo.
+- **Cambiar la cuenta de Google asociada solo es posible desde una sesión viva.** Eso convierte la sesión persistente en la red de seguridad real del sistema. Si alguien pierde el acceso a su cuenta de Google, la recuperación es de Google: Cofradar no inventa un segundo sistema de autenticación.
+- **El registro no pide ni un campo.**
+
+### 18.2 Cuenta privada ≠ identidad pública
+
+Son dos capas distintas y se piden en momentos distintos.
+
+| | Cuándo se crea | Qué contiene |
+|---|---|---|
+| **Cuenta** | Al intentar una acción que necesita identidad: «Dar fe», reportar una incidencia | Nada que el usuario tenga que rellenar |
+| **Identidad pública** | **Solo cuando el usuario va a hacer algo en lo que otros puedan verlo** por primera vez | Nombre visible y avatar (§9.17) |
+
+**No se piden nombre ni avatar «por si algún día hacen falta».** Qué contiene el perfil que ven los demás está pendiente (§21).
+
+### 18.3 Interrupción y vuelta
+
+Pedir la cuenta en medio de una acción es lo correcto, y también lo más delicado del flujo.
+
+- La interrupción **explica por qué hace falta identidad aquí y solo aquí**.
+- Al terminar, el usuario vuelve **al paso exacto del flujo donde estaba, con sus datos intactos** (§11.2).
+- **Ninguna aportación en vuelo se pierde.**
+
+### 18.4 Datos locales y fusión
+
+**`seguida` y `vista` funcionan en local y sin cuenta** (§6.4), incluidas hermandades vistas en ediciones anteriores a Cofradar. Mi tramo **no es una pantalla de acceso con otro título**: funciona de verdad en todo lo que no necesita identidad, y lo que sí la necesita se muestra **nombrado y vacío de verdad**, nunca con cifras de ejemplo (regla: informar, no rellenar).
+
+> **Autenticarse nunca provoca pérdida de información local.**
+
+- Al crear cuenta, los datos locales **se incorporan** a ella.
+- Al iniciar sesión en una cuenta que ya tiene información, **fusión y nunca sustitución silenciosa**.
+- **Cerrar sesión no borra nada**, ni local ni remoto: se vuelve al estado sin cuenta con la colección intacta. Quitar los datos del dispositivo es una acción explícita y aparte.
+- Las reglas finas de conflicto y duplicado están pendientes (§21).
+
+**La invitación a crear cuenta es una afirmación sobre el dato, no una promesa de recompensa:** «esto está guardado solo en este teléfono». Nunca «desbloquea Mi tramo».
+
+### 18.5 Cuenta y Ajustes
+
+> **Cuenta es quién eres y cómo sales. Ajustes es cómo se comporta Cofradar.**
+
+**Cuenta:** la cuenta de Google asociada · identidad pública si existe · exportar mis datos · cerrar sesión · eliminar cuenta.
+**Ajustes:** apariencia · accesibilidad · permisos · privacidad · ayuda.
+
+### 18.6 Eliminar cuenta
+
+**Los datos personales del usuario y las observaciones que ya forman parte del conocimiento colectivo no tienen el mismo ciclo de vida.**
+
+| Se borra | Se conserva, sin vínculo con nadie |
+|---|---|
+| Identidad, vía de acceso, nombre público y avatar | El hecho observado: elemento, punto, hora, confianza |
+| Puntos, nivel, logros, retos | |
+| Reputación interna | |
+| Colección, vistas y seguidas | |
+| El historial **como historial suyo** | |
+| Su presencia en cualquier clasificación | |
+
+El historial muere y la observación no, y es coherente: el historial es la **proyección personal** de la aportación, y la observación es **el hecho**. Solo el primero es un dato personal.
+
+**Reglas de la pantalla**
+- Borrado **inmediato**, sin plazo de gracia, con **exportar mis datos** ofrecido en la misma pantalla: lo que el usuario más va a echar de menos es su colección, no sus puntos.
+- Lo dice **en llano y antes de confirmar**, nunca enterrado en un texto legal: *«Tus aportaciones dejan de estar asociadas a ti. La información que aportaron sobre esa jornada no se borra: es lo que explica por qué Cofradar dijo lo que dijo aquella noche.»*
+- Las clasificaciones **se recalculan**: no se deja el nombre de alguien que ya no existe.
+
+*La validación jurídica de esta política está pendiente (§21). Lo anterior es comportamiento de producto, no una afirmación legal cerrada.*
+
+---
+
+## 19. Permisos
+
+Dos permisos, un mismo patrón. **Cofradar es web y PWA: nada de asumir comportamiento de aplicación nativa.**
+
+### 19.1 Las cuatro reglas
+
+**Nunca un diálogo del navegador sin un paso propio delante.** La petición tiene que llegar explicada, porque puede no haber una segunda oportunidad.
+
+**Se explica al principio, se pide al usarlo.** La introducción cuenta que Cofradar **funciona sin ubicación** —que es un argumento de confianza, no una disculpa— y el permiso se solicita cuando el usuario toca algo que lo aprovecha: centrar el mapa, o «Dar fe». **Nunca durante el arranque.** Es el mismo criterio que la identidad: se pide cuando hace falta.
+
+**Regla agnóstica de plataforma.** Si navegador y sistema permiten solicitar el permiso, Cofradar puede hacerlo después de explicarlo. Si **ya no puede solicitarse desde la web**, Cofradar lo explica de forma contextual e indica que debe cambiarse en los permisos del navegador o del dispositivo. **Nunca instrucciones que Cofradar no pueda saber si son ciertas** en ese navegador: ningún «ve a Ajustes de la app» inventado.
+
+**El permiso no se pide dos veces.** Denegado es una respuesta, no un obstáculo. Se vuelve a ofrecer el camino solo cuando el usuario intenta algo que lo necesita.
+
+### 19.2 Una sola invitación, en un solo lugar
+
+El riesgo de diseño real es un producto que, sin ubicación, pone «activa la ubicación» en cada tarjeta.
+
+- La proximidad es una **capa adicional** de la tarjeta (D12). Sin ubicación **esa capa no está y no deja hueco**, ni aviso, ni promesa.
+- La invitación vive en **Ajustes · Permisos** y en el momento en que el usuario pide algo que la usa. En ningún otro sitio.
+
+Los ocho estados del permiso de ubicación y su efecto sobre el mapa están en §10.6.
+
+### 19.3 Permiso de avisos
+
+Mismo patrón, con una diferencia: **puede no estar disponible**. En algunos navegadores el push exige que Cofradar esté instalado en la pantalla de inicio.
+
+- Si no está disponible, **se dice sin convertirlo en una campaña de instalación**. La instalación de la PWA nunca es una barrera ni una insistencia.
+- **Seguir una cofradía no equivale a consentir avisos fuera de Cofradar** (§20).
+
+---
+
+## 20. Avisos y notificaciones
+
+> **Ninguna información importante depende del push.** Todo lo que se envía fuera está también dentro al volver.
+
+Es una regla estructural, no una preferencia: Cofradar es web y PWA, y el push no llega a todo el mundo.
+
+### 20.1 El criterio
+
+**¿Cambia lo que el usuario va a hacer en los próximos minutos?** Si no, espera dentro.
+
+Detrás está la regla 11 subida un nivel: dice que la celebración nunca debe hacer que te pierdas lo que estás celebrando. **Un aviso que te hace mirar el móvil mientras pasa el palio es el mismo error. Cofradar no compite con la calle.**
+
+### 20.2 Los tres canales
+
+| Acontecimiento | Al volver | Durante el uso | Push |
+|---|---|---|---|
+| Cofradía seguida: salida o inminencia relevante | Sí | Sí | **Sí** |
+| Cofradía seguida: retraso o adelanto relevante | Sí | Sí | **Sí** |
+| Cofradía seguida: cambio de recorrido | Sí | Sí | **Sí** |
+| Cofradía seguida: interrumpida | Sí | Sí | **Sí** |
+| Cofradía seguida: `cancelada` o `no_procesiona` | Sí | Sí | **Sí** |
+| Contexto de jornada, como la lluvia | Sí | Sí | **Sí**, una vez |
+| Cofradía seguida: ha entrado | Sí | Sí | No |
+| Progresión normal por la carrera oficial | No | Sí | No |
+| Bonus diferido de un «Dar fe» | Sí | Sí | No |
+| Logro, subida de nivel, reto completado | Sí | Sí | No |
+| Reto nuevo disponible | Sí | No | No |
+| Posición en una clasificación | Sí | No | No |
+
+Las seis primeras **son el producto**: evitar que alguien camine hacia un sitio por el que el cortejo ya pasó. `cancelada` es el aviso más valioso que Cofradar puede mandar.
+
+Lo demás es gamificación, y la gamificación está **contenida en sus momentos** (D1). Un push por un logro es gamificación escapándose de su sitio; un «te han superado» convertiría a Cofradar en lo que no es.
+
+La **progresión normal no se avisa ni al volver**: ya está en Ahora y en el mapa, y avisar de algo que no ha cambiado nada es ruido por definición.
+
+### 20.3 Reglas
+
+- **Seguir no es consentir.** `seguida` personaliza Cofradar dentro; el push se activa aparte y con su permiso (§19.3).
+- **Un control, no siete.** «Avisarme de las que sigo», y nada de gamificación. Un producto que necesita ajustes finos de notificaciones ha fallado antes, al no decidir qué merece la pena.
+- **Un aviso por cofradía y por tipo de acontecimiento.** Si el motor oscila entre 11 y 13 minutos de retraso, eso no son dos avisos.
+- **Sin horario de silencio.** El instinto es añadirlo y aquí sería un error: el momento de máximo valor de Cofradar son las tres de la madrugada.
+- Qué desviación es «relevante» está pendiente (§21).
+
+### 20.4 No hay centro de notificaciones
+
+Cada cosa aparece **donde le corresponde**, y nunca en una bandeja aparte.
+
+| Qué | Dónde aterriza |
+|---|---|
+| Lo que ha pasado con las cofradías seguidas | **Ahora**, que es la pantalla que contesta «qué merece mi atención» |
+| El bonus diferido | Celebración media al volver, y el **historial** |
+| Un logro nuevo | La **galería de logros**, marcado |
+| Una posición de clasificación | La **clasificación** |
+
+Un centro de notificaciones sería una lista que compite con Ahora contando lo mismo peor. Y la regla **informar, no rellenar** se aplica igual: una bandeja vacía es una pantalla que no debería existir.
+
+---
+
+## 21. Pendientes
+
+Nada de esto está decidido. **No se debe inventar una solución: o se pregunta, o se diseña con un valor provisional marcado como tal.**
 
 ### Decisiones de producto pendientes
 
-| Pendiente | Contexto |
-|---|---|
-| **Cómo se representan las cofradías sin cobertura**, o si se representan siempre. El concepto está decidido —el motor sabe dónde necesita información y lo usa para bonificar—, pero su forma visual no. Restricción: **Ahora y el mapa no pueden parecer un tablero de misiones** | §9.4, §10 |
-| **Economía de gamificación**: puntos, niveles, logros, retos, clasificaciones | §11.4 · este documento solo define su lenguaje visual |
-| **Umbrales de caducidad por tipo de dato**, salvo posición estimada | §7.1 |
-| **Ventana de `inminente`** (cuántos minutos antes de la salida) | §6.1 |
-| **Derechos de uso de los escudos** de las hermandades | §9.4 · el sistema funciona sin ellos |
-| **Cómo ayudar al visitante** que no conoce el vocabulario cofrade | §16 |
-| **Si `vista` tiene valor simbólico** en estadísticas personales o ninguno | §6.4 |
-| **Qué hace «útil» al próximo punto relevante.** Apareció al construir el fixture de B-01: si el dato es viejo, Cofradar no puede ofrecer un punto que está ocurriendo en este instante, porque manda al usuario a un sitio por donde quizá ya pasó. El margen depende de la frescura del dato, y no está definido | §7.4, §9.4 |
+**Catorce decisiones, todas registradas en el hito `Decisiones pendientes de producto` de Linear.** Cada issue explica qué está decidido, qué queda abierto, qué interfaces afecta y por qué no bloquea el diseño.
+
+**Regla de entrada al parking:** solo se para el diseño si la decisión impide describir correctamente la pantalla, o si sus alternativas producen interfaces sustancialmente diferentes. Si la estructura puede diseñarse con **contenido provisional claramente marcado**, el asunto se aparca y se sigue.
+
+| Pendiente | Issue | Contexto |
+|---|---|---|
+| **Magnitud que ordena las clasificaciones.** Si los puntos base son iguales y nunca bajan, la cantidad bruta infla el total | BUL-141 | §11.4, §11.5 |
+| **Ámbito de las clasificaciones**: por jornada, por hermandad o global | BUL-142 | §11.4 |
+| **Contenido del perfil público**: qué ven los demás de mí | BUL-143 | §18.2, §9.17 |
+| **Qué puede exigir la condición de un logro o un reto.** «Condición visible» y «no dirigir movimientos» chocan | BUL-144 | §11.4, §11.5 |
+| **Reglas finas de fusión** de datos locales al autenticarse | BUL-145 | §18.4 |
+| **Validación RGPD** de la política de eliminación de cuenta | BUL-146 | §18.6 |
+| **Qué desviación es «relevante»** para avisar de una cofradía seguida | BUL-147 | §20.3 |
+| **Qué hace «útil» al próximo punto relevante**, y cómo depende de la frescura del dato | BUL-148 | §7.4, §9.4 |
+| **Nomenclatura de niveles y catálogo** de logros y retos. Contenido cofrade que no se improvisa | BUL-149 | §11.4, §11.5 |
+| **Cifras de la economía de gamificación.** Las seis reglas están cerradas (§11.5); quedan los números | BUL-117 | §11.5 |
+| **Umbrales de caducidad por tipo de dato**, salvo posición estimada | BUL-82 | §7.1 |
+| **Ventana de `inminente`** (cuántos minutos antes de la salida) | BUL-83 | §6.1 |
+| **Derechos de uso de los escudos** de las hermandades | BUL-118 | §9.4 · el sistema funciona sin ellos |
+| **Cómo se representan las cofradías sin cobertura**, o si se representan. Restricción: **Ahora y el mapa no pueden parecer un tablero de misiones** | BUL-121 | §9.4, §10 |
+
+**Cerrados desde la última versión:** si `vista` tiene valor simbólico (R1: estadística personal, nunca comparada) y cómo ayudar al visitante (D25: lo resuelve el producto, no un glosario).
 
 ### Pendientes de validar visualmente
 
@@ -1374,7 +1584,7 @@ Nada de esto está decidido. **No se debe inventar una solución: hay que pregun
 
 ---
 
-## 19. Resumen de decisiones · D1–D25
+## 22. Resumen de decisiones · D1–D33
 
 | # | Decisión |
 |---|---|
@@ -1390,7 +1600,7 @@ Nada de esto está decidido. **No se debe inventar una solución: hay que pregun
 | **D10** | Mapa en **tres niveles de revelación**, con la cofradía representada como **segmento** y no como punto. El segmento es la mejor estimación de la zona ocupada. Sin difuminado. Los elementos —cruz de guía, paso de Cristo, palio, final— son núcleo desde el lanzamiento y el segmento se deriva de ellos |
 | **D11** | **Trazo continuo / discontinuo** como código de confianza del dato, con marca textual y frescura explícita. Cofradar puede decir «no lo sabemos». Umbrales **por tipo de dato**. Sincronización ≠ frescura |
 | **D12** | Tarjeta de cofradía de **doble ancla** (nombre y estado, por posición fija) en tres densidades. Dato protagonista: **próximo punto relevante + hora**; proximidad como capa adicional con lenguaje prudente |
-| **D13** | Tres relaciones: `seguida` (intención), `vista` (**álbum personal**, sin valor competitivo), `dar-fe` (presencia, juego y aportación colaborativa). Verificado puntúa; no verificable se registra siempre con puntuación por definir. **Granate para la capa personal.** Tarjeta tipográfica; escudo opcional; sin fotografía |
+| **D13** | Tres relaciones: `seguida` (intención), `vista` (**álbum personal**, sin valor competitivo), `dar-fe` (presencia, juego y aportación colaborativa). Verificado puntúa; **no verificable se registra siempre y recibe los puntos base** — lo único que queda condicionado es el bonus (corregido por D31). **Granate para la capa personal.** Tarjeta tipográfica; escudo opcional; sin fotografía |
 | **D14** | «Dar fe» con **dos entradas** (contextual + vía rápida global) y confirmación siempre del usuario. **Celebración media** por defecto, alta solo en hitos. Botón en **tinta**. Verificación por **canal de relleno**, no por trazo. Lenguaje no acusatorio |
 | **D15** | Navegación **estable de cuatro destinos** (Ahora · Mapa · Jornada · Mi tramo) con **acción contextual separada** por encima. Icono + etiqueta siempre. Sin hamburguesa. Mismo sistema con distinta intensidad, según el estado real de la jornada y no el calendario |
 | **D16** | Dos ejes independientes: **tema** (claro/oscuro) × **contraste** (normal/máximo). Elección manual persistente. El contraste máximo no cambia el layout. **Invariancia semántica** en todas las combinaciones. El oscuro también es cálido y la elevación cambia de mecanismo |
@@ -1403,10 +1613,18 @@ Nada de esto está decidido. **No se debe inventar una solución: hay que pregun
 | **D23** | **Integridad de «Dar fe».** Dos monedas: **puntos** generosos con suelo de plausibilidad, **reputación** interna, sin número visible, que solo baja ante patrones. Tres momentos: registro siempre, **puntos base inmediatos**, consolidación automática posterior con tres resultados internos. **La plausibilidad juzga la historia del usuario, nunca la posición que afirma**; **el modelo discrepa, solo otras observaciones contradicen**, y quien corrige una estimación equivocada hace la aportación más valiosa. Umbrales a calibrar. Fuera de v1: detección de coordinación, huella de dispositivo y modelos de aprendizaje |
 | **D24** | **Selector de elemento opcional.** Siempre existe «Estoy viendo la cofradía», y no es una versión degradada: cada nivel de precisión informa de algo distinto y el menos preciso **aporta evidencia de presencia y fase**. El selector pregunta en llano con el término cofrade debajo, y sus opciones salen de **los elementos configurados para esa cofradía**. **Nunca se preselecciona por probabilidad.** El bonus premia información útil, no el gesto: una precisión incorrecta no vale más que un genérico correcto |
 | **D25** | **Comprensible sin modo visitante.** Los **hitos son interactivos**: tocar el nombre abre el mapa en ese punto, haya o no ubicación, como propiedad general del dato. El **nombre popular** es dato explícito y configurable por hermandad, nunca una abreviación generada; la denominación completa vive en la ficha. **Descartados**: detectar visitantes, interfaces distintas para ellos, glosario y sección de ayuda. Descartada también por ahora la **zona junto al hito** —`San Lorenzo · San Lorenzo` no ayuda a quien no conoce la ciudad—, a revisar sobre componentes reales |
+| **D26** | **Acceso únicamente con cuenta de Google.** Sin usuario y contraseña, sin código por correo, sin registro tradicional y **sin pantalla de recuperación**: sin contraseña no hay nada que recuperar. Entrar y crear cuenta son **la misma puerta**. Sesión persistente con renovación transparente; cambiar la cuenta asociada solo es posible **desde una sesión viva**. El registro no pide ni un campo |
+| **D27** | **Cuenta privada ≠ identidad pública.** Crear cuenta no obliga a configurar nombre ni avatar: la identidad pública se pide **solo cuando el usuario va a hacer algo en lo que otros puedan verlo**, nunca por si acaso. La identidad se solicita al participar, y la interrupción **conserva la aportación en vuelo** y devuelve al paso exacto del flujo |
+| **D28** | **Mi tramo es útil sin cuenta.** `seguida` y `vista` funcionan **en local y sin cuenta**, incluidas ediciones anteriores a Cofradar, porque ninguna puntúa ni toca el cálculo público. Lo que necesita identidad se muestra nombrado y **vacío de verdad**, nunca con cifras de ejemplo. **Autenticarse nunca provoca pérdida de información local**: al crear cuenta se incorpora, al entrar en una cuenta con datos se **fusiona y nunca se sustituye en silencio**, y cerrar sesión no borra nada |
+| **D29** | **Cuenta es quién eres y cómo sales; Ajustes es cómo se comporta Cofradar.** Al eliminar la cuenta **se borra la persona y se conserva la observación anonimizada**, porque los datos personales y el conocimiento colectivo no tienen el mismo ciclo de vida. Borrado inmediato, con exportación en la misma pantalla y explicado en llano |
+| **D30** | **Ubicación opcional y pedida en contexto, nunca en el arranque.** Siempre con una explicación propia antes del diálogo del navegador, y **regla agnóstica de plataforma**: si el permiso ya no puede solicitarse desde la web, se explica sin dar instrucciones que Cofradar no pueda verificar. Ocho estados, con «no solicitado» y «denegado» **separados**. Sin ubicación desaparece solo la capa de proximidad; **nunca se degrada la confianza de un dato** y **«Dar fe» no se bloquea jamás por falta de GPS**. Una sola invitación, en un solo lugar |
+| **D31** | **Economía de gamificación: seis reglas** (§11.5). Un solo marcador con tres reconocimientos; progresión de por vida y competición por edición; **misma base para todo «Dar fe» válido** y bonus decreciente **según la redundancia de la información, nunca por repetir cofradía**; los puntos no compran nada; los retos reconocen y **no dirigen movimientos**; los puntos nunca bajan. Las cifras son calibración |
+| **D32** | **Avisos como canal complementario.** Ninguna información importante depende del push: todo lo que sale está también dentro al volver. Push solo para acontecimientos operativos que cambien el plan del usuario, **nunca para gamificación**. **Seguir no es consentir.** Un control, no siete. Un aviso por cofradía y tipo. Sin horario de silencio. **No hay centro de notificaciones**: cada cosa aterriza donde le corresponde |
+| **D33** | **El diseño cubre el producto completo.** La distinción entre núcleo de lanzamiento y evolución rige el **orden de desarrollo**, no el alcance del diseño. **Reportar una incidencia es un flujo de diseño propio**, distinto de consumir avisos, y sigue siendo **señal para el motor y nunca publicación** |
 
 ---
 
-## 20. Qué es específico de Cofradar y qué es reutilizable
+## 23. Qué es específico de Cofradar y qué es reutilizable
 
 ### Específico de Cofradar · no trasladable sin rediseño
 
@@ -1439,4 +1657,4 @@ Cambiar la identidad visual completa del sistema requiere tocar **solo la capa 1
 
 ---
 
-*Fin del documento. Toda modificación de una regla de §2 o de una decisión de §19 debe discutirse antes de implementarse: el sistema está construido sobre su coherencia mutua, no sobre valores aislados.*
+*Fin del documento. Toda modificación de una regla de §2 o de una decisión de §22 debe discutirse antes de implementarse: el sistema está construido sobre su coherencia mutua, no sobre valores aislados.*
