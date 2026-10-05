@@ -192,7 +192,7 @@ Prefijo de todas las variables: `--cf-`.
 > | **Claro** | Tono + luminosidad. El granate es siempre **más oscuro** | `granate-600` tono 346° / lum. 4,4 % · `rojo-600` tono 4° / lum. 8,1 % |
 > | **Oscuro** | Tono + **saturación**. El granate es siempre **menos saturado** | `granate-300` tono 351° / sat. 55 % · `rojo-300` tono 5° / sat. 82 % |
 >
-> **En oscuro la luminosidad no puede separarlos.** Hacer el granate más oscuro que el rojo sobre fondo casi negro lo deja ilegible: `granate-400` da 3,6:1 sobre `surface`, por debajo de AA. Por eso existe `granate-300` (§5) y por eso en oscuro la separación la cargan el tono y la saturación. La diferencia de luminancia relativa entre los dos es de solo 1,2 puntos: **en oscuro no se puede confiar en que se distingan por claridad.**
+> **En oscuro la luminosidad no puede separarlos.** `granate-300` sí es más oscuro que `rojo-300` —31,5 % frente a 32,8 % de luminancia relativa—, pero el **ratio entre los dos es 1,03:1**: la diferencia existe y es imperceptible. Y no se puede ampliar: hacer el granate perceptiblemente más oscuro sobre fondo casi negro lo deja ilegible, porque `granate-400` da 3,6:1 sobre `surface`, por debajo de AA. Por eso existe `granate-300` (§5) y por eso **en oscuro no se puede confiar en que se distingan por claridad**: la separación la cargan el tono y la saturación.
 >
 > Consecuencia de diseño: en oscuro, marca y alerta se apoyan además en el **canal de forma** —la marca de relación (§9.5) y el chip de alteración (§9.3) tienen anatomías distintas— y nunca solo en el color. Es la regla 1 aplicada aquí.
 
@@ -241,9 +241,20 @@ Con el `-600` el mismo texto daba 5,2–6,9:1: cumple AA pero **se queda corto d
 
 **Borde que identifica un control.**
 
-| Token | Claro | Oscuro | Medido |
-|---|---|---|---|
-| `--cf-border-interactive` | `neutral-500` | `neutral-500` | 3,61:1 claro · 4,80:1 oscuro |
+| Token | Claro | Oscuro |
+|---|---|---|
+| `--cf-border-interactive` | `neutral-600` | `neutral-500` |
+
+**Se remapea por tema, y la dirección del refuerzo se invierte.** Es el mismo principio que ya rige la elevación (§4.6) y el granate (§5): en claro se oscurece, en oscuro se aclara. Medido contra **el peor fondo de cada registro y tema**, que es el que decide:
+
+| | Claro funcional | Claro editorial | Oscuro funcional | Oscuro editorial |
+|---|---|---|---|---|
+| Peor fondo | `sunken` `#F4F2ED` | `sunken` `#EFE6D5` | `raised` `#262220` | `raised` `#2E251C` |
+| `neutral-500` | 3,23:1 | **2,91:1 ✗** | 4,37:1 | 4,16:1 |
+| `neutral-600` | 5,17:1 | 4,67:1 | **2,72:1 ✗** | **2,60:1 ✗** |
+| **Elegido** | `neutral-600` | `neutral-600` | `neutral-500` | `neutral-500` |
+
+`neutral-500` fallaba en un caso real: un campo o un chip de filtro sobre `surface-sunken` del registro editorial daba **2,91:1**. Y `neutral-600` no sirve en oscuro, donde empeora el borde en lugar de mejorarlo.
 
 `--cf-border` (1,28:1) y `--cf-border-strong` (1,55:1) son **separadores de contenido** y ese contraste es correcto para lo que hacen: delimitan tarjetas, filas y paneles que ya se distinguen por superficie y elevación. **No se tocan.** Pero cuando el borde es *lo único que identifica un control* —campos, chips de filtro, conmutadores— hace falta 3:1, y para eso está `--cf-border-interactive`. No cambia la paleta: usa un primitivo que ya existía.
 
@@ -295,7 +306,16 @@ Ambas libres, variables y **autoalojadas**, subconjunto latino, `font-display: s
 --cf-weight-critical:  700;   /* cifras críticas, títulos funcionales */
 ```
 
-**Interlineado de la escala de datos.** Sigue el mismo ritmo que la escala de texto, para que una cifra y una línea de texto puedan convivir en la misma fila sin descuadrarla: `data-sm` 14/20 · `data-md` 18/24 · `data-lg` 24/30 · `data-xl` 32/38.
+**Interlineado de la escala de datos.** Sigue el mismo ritmo que la escala de texto, para que una cifra y una línea de texto puedan convivir en la misma fila sin descuadrarla.
+
+```css
+--cf-leading-data-sm: 20px;   /* con --cf-data-sm 14 */
+--cf-leading-data-md: 24px;   /* con --cf-data-md 18 */
+--cf-leading-data-lg: 30px;   /* con --cf-data-lg 24 */
+--cf-leading-data-xl: 38px;   /* con --cf-data-xl 32 */
+```
+
+**Solo la escala de datos tokeniza su interlineado.** Es la que tiene que cuadrar en columnas y fijar el ritmo de fila; la de texto conserva su interlineado en la tabla de arriba porque un bloque de texto lo hereda del elemento y no necesita un valor nombrado.
 
 **Reglas tipográficas**
 - **Nada por debajo de 12px**, en ningún componente, tema o breakpoint.
@@ -444,6 +464,8 @@ Conceptos candidatos, a confirmar cuando los componentes los pidan de verdad: `c
 }
 ```
 
+**Asignación de curvas.** `--cf-ease-out` es la curva por defecto de todo el sistema: empieza rápido y frena, que es lo que se percibe como «llega». `--cf-ease-in-out` se reserva a las transiciones que **van y vuelven por el mismo camino**: conmutadores, chips que alternan entre dos estados equivalentes y fundidos cruzados. El bottom sheet entre alturas usa `ease-out` con imanes (§13).
+
 `instant` y `fast` **se conservan**: son feedback de pulsación y de foco, no desplazamiento, y quitarlos degradaría la respuesta del producto sin beneficio para nadie. Lo que desaparece es el movimiento: `transform`, `scale` y los desplazamientos de panel se resuelven en su estado final. **Ninguna información se pierde** (§14).
 
 **Reglas.** El movimiento en la capa funcional es corto y utilitario: confirma una acción o explica un desplazamiento, nunca entretiene. La capa de gamificación tiene licencia plena (§11). `prefers-reduced-motion: reduce` se respeta **siempre**: ninguna información desaparece al desactivar la animación (§14).
@@ -514,11 +536,15 @@ Actúa **solo sobre legibilidad**, nunca sobre el layout:
   --cf-weight-emphasis: 600;                       /* 500 → 600 */
   --cf-weight-data: 700;                           /* 600 → 700 */
   --cf-focus-ring-width: 3px;                      /* 2px → 3px */
-  --cf-border-interactive: var(--cf-neutral-600);  /* 3,61:1 → 5,33:1 */
+  /* --cf-border-interactive se refuerza POR TEMA, ver debajo */
 }
 ```
 
-Más tres reglas que no son valores: los iconos suben de `regular` a `bold`, el texto de estado sube al paso **`-700`** de su familia en claro y al **`-100`** en oscuro, y `--cf-border-interactive` pasa a `neutral-600` en claro (5,33:1).
+Más tres reglas:
+
+- Los **iconos** suben de `regular` a `bold`.
+- **El texto de estado solo cambia en oscuro**, donde sube al paso `-100` de su familia. En claro no cambia: `--cf-*-text` ya usa el `-700` y ya está en AAA (8,6–9,5:1), así que no hay nada que reforzar.
+- **`--cf-border-interactive` se refuerza en direcciones opuestas:** `neutral-700` en claro, `neutral-400` en oscuro. Subir a `neutral-600` en oscuro lo empeoraría, de 4,37:1 a 2,72:1.
 
 **Puede aumentar ligeramente algún elemento crítico si mejora realmente su lectura, pero no cambia tamaños de forma general ni reorganiza componentes. La memoria espacial del usuario se conserva al activar y desactivar el contraste.**
 
@@ -1379,14 +1405,22 @@ Motivo de fondo: a pleno sol un contraste de 4.5:1 medido en laboratorio se comp
 
 ### Excepción medida y documentada · AAA en modo oscuro
 
-**En oscuro, el texto de estado sobre su superficie `-soft` no alcanza AAA, y no se va a forzar.** Medido: `live` 6,95:1 · `warn` 7,31:1 · `alert` 5,83:1 · `info` 7,01:1 · `idle` 5,51:1. Todos cumplen AA.
+**En oscuro, dos de los cinco estados no alcanzan AAA sobre su superficie `-soft`, y no se van a forzar.**
+
+| Estado | Medido en oscuro | |
+|---|---|---|
+| `warn` | 7,31:1 | AAA |
+| `info` | 7,01:1 | AAA, **por un margen mínimo**: si algún valor de esa familia se mueve, hay que volver a medirlo |
+| `idle` | 8,99:1 | AAA, con `--cf-idle-text` `#C4BCB0` |
+| `live` | 6,95:1 | AA · **excepción** |
+| `alert` | 5,83:1 | AA · **excepción** |
 
 Llegar a AAA exigiría una de dos cosas, y **las dos rompen requisitos de semántica**, que es la salvedad que la propia regla de AAA contempla:
 
 - **Oscurecer la superficie `-soft`** hasta casi negro, con lo que pierde el tinte que comunica el estado.
 - **Aclarar el texto** hasta un pastel, con lo que se pierde la separación de tono que distingue la alerta de la marca personal (§4.1).
 
-Así que en oscuro la carga la llevan los **canales redundantes** —icono en `bold`, texto explícito, trazo— y el usuario que necesite más tiene `data-contrast="max"`, que sube el texto de estado al paso `-100` de su familia. **Esto queda escrito para que nadie lo «arregle» después lavando los colores.**
+Así que para `live` y `alert` en oscuro la carga la llevan los **canales redundantes** —icono en `bold`, texto explícito, trazo— y el usuario que necesite más tiene `data-contrast="max"`, que sube el texto de estado al paso `-100` de su familia. **Esto queda escrito para que nadie lo «arregle» después lavando los colores.**
 
 ### Requisitos confirmados
 
