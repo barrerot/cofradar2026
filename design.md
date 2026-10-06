@@ -222,7 +222,7 @@ Estados operativos (idénticos en ambos registros):
 | Token semántico | Claro | Oscuro | Uso |
 |---|---|---|---|
 | `--cf-live` / `-soft` / `-border` | `verde-600` / `verde-50` / `verde-100` | `verde-300` / `#13301F` / `verde-700` | `en_calle`, confirmaciones |
-| `--cf-warn` / `-soft` / `-border` | `ambar-600` / `ambar-50` / `ambar-100` | `ambar-300` / `#3A2A08` / `ambar-700` | `retraso`, `adelanto`, `inminente`, atención |
+| `--cf-warn` / `-soft` / `-border` | `ambar-600` / `ambar-50` / `ambar-100` | `ambar-300` / `#3A2A08` / `ambar-700` | `retraso`, `adelanto`, `inminente`, `proxima_entrada`, atención |
 | `--cf-alert` / `-soft` / `-border` | `rojo-600` / `rojo-50` / `rojo-100` | `rojo-300` / `#3A1512` / `rojo-700` | `incidencia`, `cancelada`, crítico |
 | `--cf-info` / `-soft` / `-border` | `azul-600` / `azul-50` / `azul-100` | `azul-300` / `#0E2838` / `azul-700` | Información neutra, contexto de jornada |
 | `--cf-idle` / `-soft` / `-border` | `neutral-600` / `neutral-100` / `neutral-200` | `#9A9287` / `#201C19` / `#332E29` | `prevista`, `finalizada`, `no_procesiona` |
@@ -738,6 +738,10 @@ Conceptualmente emparentado con la confianza del dato, pero **no es lo mismo** y
 
 Una aportación verificada es una marca **rellena**; una no verificable es **la misma marca en contorno**. Los dos canales son independientes, basados en forma, legibles al sol y en oscuro, y no se pisan.
 
+**El canal de relleno significa verificación solo dentro de la anatomía de «Dar fe».** `seguida` y `vista` también se dibujan una en contorno y otra en relleno (§9.5), y eso **no las convierte en verificadas ni en no verificables**: son glifos distintos y es el glifo el que las identifica. El relleno ahí es una propiedad de la forma, no una señal.
+
+Dicho al revés, que es como hay que comprobarlo: **el usuario nunca tiene que deducir verificación de un relleno si no está mirando una marca de «Dar fe»**. Por eso las tres relaciones tienen forma propia y no solo tratamiento distinto.
+
 **El usuario no debe tener que aprender el código.** Donde la diferencia sea relevante, aparece también explicación textual: `Verificado` / `No se pudo verificar`.
 
 ### 7.3 Sincronización ≠ frescura
@@ -860,7 +864,20 @@ Plantilla de especificación: propósito · cuándo · cuándo no · anatomía �
 
 **Tamaños.** `sm` 36px de alto (solo en escritorio y dentro de tarjetas densas) · `md` 44px (por defecto) · `lg` 52px (acción principal a pantalla completa, celebración). **En interacción táctil, el área de toque nunca baja de 48px aunque el botón mida menos.**
 
-**Estados.** `default` · `hover` (solo `hover: hover`) · `focus-visible` (anillo de 2px en `--cf-text` con separación de 2px, **nunca se elimina**) · `active` (desplazamiento de 1px y oscurecido) · `disabled` (`--cf-neutral-400`, con explicación de por qué) · `loading` (indicador en el propio botón, texto conservado, **ancho estable**).
+**Estados.** `default` · `hover` (solo `hover: hover`) · `focus-visible` (anillo de `--cf-focus-ring-width` en `--cf-focus-ring-color` con `--cf-focus-ring-offset` de separación, **nunca se elimina**) · `active` (desplazamiento de 1px + el paso siguiente de la rampa) · `disabled` (`--cf-neutral-400`, con explicación de por qué) · `loading` (indicador en el propio botón, texto conservado, **ancho estable**).
+
+**Hover y active se resuelven con la rampa de primitivos, nunca con un filtro.** Un `filter: brightness()` desatiende el calor deliberado de la paleta y rompe los contrastes medidos en §14.
+
+| Variante | `hover` | `active` |
+|---|---|---|
+| `primario` | `neutral-800` | `neutral-950` |
+| `secundario` | `--cf-surface-sunken` | `--cf-surface-sunken` + borde `--cf-border-interactive` |
+| `terciario` | `--cf-surface-sunken` | igual, con el desplazamiento de 1px |
+| `peligro` | `rojo-700` | `rojo-700` + desplazamiento |
+
+Es el patrón que `granate-700` ya documentaba como «estado presionado» en §4.1, aplicado al resto.
+
+**Sobre el `loading`:** lo que la regla exige es **texto conservado y ancho estable**. La forma del indicador —anillo, línea, barra— es decisión del componente, siempre que no mueva el ancho ni sustituya al texto.
 
 **Responsive.** `md` por defecto en móvil; en escritorio el ancho se ajusta al contenido en lugar de ocupar el 100%.
 
@@ -966,7 +983,11 @@ El **progreso del recorrido** es información secundaria: vive en la variante ex
 | `dar-fe` verificada | Marca de «Dar fe» | **Relleno** |
 | `dar-fe` no verificable | **La misma marca** | **Contorno** + etiqueta textual cuando sea necesario |
 
-Ver §7.2: el canal de relleno es exclusivo de la verificación y no se mezcla con el canal de trazo.
+**Las tres relaciones se identifican por su glifo, no por su relleno.** El contorno de `seguida` y el relleno de `vista` refuerzan su significado —intención frente a hecho— pero **no son el canal de verificación**: ese solo opera entre las dos filas de `dar-fe`, donde la forma es la misma y lo único que cambia es el relleno (§7.2).
+
+**Posición canónica: la marca abre el bloque de identidad**, delante del nombre, como en el diagrama de §9.4. No va detrás del nombre: un nombre de hermandad puede ocupar **dos líneas** (§4.3), y una marca que lo siga acabaría suelta al final de la segunda línea, rompiendo la columna de identidad que la tarjeta existe para mantener alineada.
+
+Ver §7.2: el canal de relleno no se mezcla con el canal de trazo.
 
 ### 9.6 Banda de contexto de jornada
 
@@ -974,7 +995,7 @@ Ver §7.2: el canal de relleno es exclusivo de la verificación y no se mezcla c
 **Cuándo.** Cuando existe contexto activo. Al principio de Ahora y de Jornada, y como capa de aviso en el mapa.
 **Cuándo no.** Para alteraciones de una cofradía concreta.
 
-**Anatomía.** Banda a ancho completo, `--cf-info-soft`, borde izquierdo de 3px en `--cf-info`, `radius-sm`, icono `icon-md` + texto `text-sm`. Descartable solo si no es crítica; el contexto crítico persiste.
+**Anatomía.** Banda a ancho completo, `--cf-info-soft`, barra de acento izquierda de `--cf-accent-bar` en `--cf-info`, `radius-sm`, icono `icon-md` + texto `text-sm`. Descartable solo si no es crítica; el contexto crítico persiste.
 
 ### 9.7 Tarjeta de información
 
@@ -990,7 +1011,13 @@ Superficie `--cf-surface`, borde 1px, `radius-md`, interior `space-4`. Hereda el
 **Cuándo no.** Para contexto no accionable (§9.6) ni para confirmaciones (toast, §9.14).
 
 **Variantes.** `atencion` (`--cf-warn`) · `critico` (`--cf-alert`) · `informativo` (`--cf-info`).
-**Anatomía.** Icono `icon-md` **bold** + título `text-base`/600 + cuerpo `text-sm` + acción opcional. Borde izquierdo de 3px en el color del estado, superficie `-soft`.
+**Anatomía.** Icono `icon-md` **bold** + título `text-base`/600 + cuerpo `text-sm` + acción opcional. Barra de acento izquierda de `--cf-accent-bar` en el color del estado, superficie `-soft`.
+
+```css
+--cf-accent-bar: 3px;   /* barra que marca estado · §9.6 y §9.8 */
+```
+
+Es el **único token de capa de componente** que el sistema necesita hoy: lo comparten la banda de contexto y el aviso con el mismo significado. El resto de medidas de componente —altura de chip, tirador del sheet, altura de navegación, ancho del rail— **son locales y no se tokenizan**, porque no hay reutilización semántica que lo justifique (§4.10).
 **Reglas.** El crítico **no es descartable** mientras siga activo. El texto dice **qué ha pasado y qué significa para el usuario**, no solo que hay una incidencia. Jamás se comunica gravedad solo con color: el icono y el título la llevan.
 
 **Procedencia visible.** Un aviso debe dejar ver si lo **publica Cofradar** —porque el motor lo ha inferido— o si es **información aportada por usuarios y sin confirmar**. Son dos cosas distintas y no pueden leerse igual: una posición equivocada hace que alguien ande de más; una suspensión falsa manda a la gente a casa.
@@ -1017,6 +1044,8 @@ Es la regla 16 aplicada: cuando algo no se puede confirmar automáticamente, el 
 **Cuándo no.** Para mostrar información, confirmar algo trivial o celebrar (§11.3). **Nunca para «Dar fe».**
 
 `radius-xl`, `elev-3`, ancho máximo 28rem, foco atrapado, cierre con Escape y por fuera, acción primaria a la derecha en escritorio y abajo en móvil.
+
+**El fondo detrás del modal es una capa de atenuación sólida en tinta con alfa** —`rgb(var(--cf-shadow-tint) / .55)`—, **sin desenfoque**. No contradice la prohibición de §4.6: lo que ahí se prohíbe es la **translucidez en superficies que portan contenido sobre cartografía**, porque vuelve ilegible lo que llevan encima. Una capa de atenuación hace lo contrario —suprime el fondo para que el modal se lea mejor— y no porta contenido. El desenfoque sigue prohibido, por coste en móviles medios y por lo que le hace al contraste al sol.
 
 ### 9.11 Navegación principal
 
