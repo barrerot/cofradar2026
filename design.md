@@ -484,9 +484,20 @@ Los nombres describen **espacio disponible**, no dispositivos. Valores candidato
 **El ancho y el tipo de interacción son ejes independientes.** El sistema consulta además `pointer`, `hover` y teclado. Una tablet horizontal entra en composición de paneles y **sigue necesitando objetivos táctiles de 48px**.
 
 ```css
-@media (pointer: coarse) { /* objetivos ≥ 48px, sin estados hover */ }
+@media (any-pointer: coarse) { /* objetivos ≥ 48px */ }
 @media (hover: hover) and (pointer: fine) { /* estados hover, atajos */ }
 ```
+
+**Las dos consultas son distintas a propósito, y el criterio es el coste de equivocarse.**
+
+| | Consulta | Por qué |
+|---|---|---|
+| **Objetivos táctiles** | `any-pointer` · **lo disponible** | Equivocarse por exceso cuesta algo de densidad. Equivocarse por defecto cuesta **toques fallidos**, que es un fallo funcional y de accesibilidad. Si el toque es posible, los 48px hacen falta |
+| **Estados de hover** | `pointer` · **lo primario** | Aquí la asimetría se invierte: dar estados de hover a un dispositivo cuyo primario es el dedo produce **trampas de hover**, menús que aparecen sin querer y afordancias que no se pueden cumplir |
+
+**La regla general: donde la capacidad es aditiva e inofensiva, se consulta lo disponible; donde puede engañar, se consulta lo primario.**
+
+> **Corrección transversal, descubierta al materializar B-04.** Esta regla decía `@media (pointer: coarse)` y miraba el **dispositivo primario**. Eso dejaba un hueco real: un portátil táctil declara `pointer: fine` y `any-pointer: coarse`, así que con §9.12 corregida **tendría la franja de «Dar fe» disponible y, aplicando la regla antigua al pie de la letra, sin objetivos de 48px**. Un botón que está ahí porque se puede tocar, y que no se puede tocar bien. **No es una decisión de B-04:** es una incoherencia que B-04 destapó entre dos reglas cerradas, y se corrige donde estaba el error.
 
 ### 4.10 Convención de nombres
 
@@ -1523,7 +1534,7 @@ Así que para `live` y `alert` en oscuro la carga la llevan los **canales redund
 | **Movimiento** | `prefers-reduced-motion: reduce` respetado. **Las celebraciones mantienen toda su información aunque desaparezca la animación** |
 | **Color** | **Ningún significado depende exclusivamente del color** (regla 1) |
 | **Zoom y tamaño de texto** | El zoom del navegador y el tamaño de texto del sistema no deben romper la interfaz. Todo en `rem` |
-| **Objetivos táctiles** | **Mínimo 48px cuando la interacción sea táctil**, detectado por `pointer`, no por ancho |
+| **Objetivos táctiles** | **Mínimo 48px siempre que el toque esté disponible** (`any-pointer: coarse`), no solo cuando sea el modo primario, y nunca detectado por ancho (§4.9) |
 | **Texto** | Nada por debajo de 12px; 16px mínimo para contenido que haya que leer |
 | **Lectores de pantalla** | Fase, alteraciones, confianza y frescura se exponen como texto, no solo como color o forma. Las actualizaciones en vivo usan regiones `aria-live` con cortesía adecuada: `polite` para refrescos, `assertive` solo para incidencias críticas |
 | **Orientación** | Funciona en vertical y horizontal. Nada se bloquea a una orientación |
