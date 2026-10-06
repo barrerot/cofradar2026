@@ -1796,6 +1796,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 |---|---|
 | **Librería de mapas concreta.** Requisito: cartografía vectorial altamente personalizable. Preferencia: MapLibre o Mapbox. **No cerrado** | §10.1 |
 | **Estrategia de persistencia local** del último estado conocido | §12.1 |
+| **Si los estados de `hover` deben consultar `any-hover` en lugar de `hover`.** Es la misma pregunta que ya resolvimos para la franja en §9.12: `hover` informa del dispositivo **primario**, así que una tablet con ratón acoplado declara `hover: none` y se queda sin estados de hover teniendo ratón. **La regla vigente sigue siendo la de §4.9** y no se cambia por la puerta de atrás. La diferencia con el caso de la franja es el coste: allí se perdía el alcance de la acción primaria, aquí solo se pierde un refinamiento visual y el usuario conserva objetivos de 48px, que con un ratón no estorban | §4.9 |
 
 ### Decisión aplazada por acuerdo
 
