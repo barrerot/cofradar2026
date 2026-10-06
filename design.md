@@ -1118,8 +1118,12 @@ Es **un solo flujo**, no una acción de presencia seguida de otra de aportación
 
 | | Franja | Por qué |
 |---|---|---|
-| **Puntero grueso**, cualquier ancho | **Se conserva** | La zona del pulgar sigue existiendo, y es la razón por la que la franja existe. Una tablet en horizontal entra en composición de paneles y **sigue siendo un dispositivo que se sostiene en la calle** |
-| **Puntero fino** | No aparece | No hay zona de pulgar que proteger |
+| **El toque está disponible como modo de interacción** (`any-pointer: coarse`), a cualquier ancho | **Se conserva** | La franja existe para poner la acción primaria **al alcance de una interacción táctil a una mano**. Si el toque es posible, eso sigue haciendo falta |
+| **El toque no está disponible** | No aparece | No hay nada que resolver: la acción vive en el contexto de cada cofradía |
+
+**Lo que se consulta es `any-pointer`, no `pointer`.** `pointer` informa del dispositivo **primario**, y eso deja mal definidos los híbridos: un portátil con pantalla táctil o una tablet con teclado acoplado declaran `pointer: fine` y **siguen pudiendo cogerse con la mano**. Si el toque está entre los modos disponibles, la franja se conserva.
+
+**Los dos ejes se componen y no se estorban.** Un híbrido tiene estados de `hover`, atajos de teclado, objetivos táctiles de 48px **y** franja, todo a la vez. Nada de esto describe dónde está el usuario ni qué está haciendo: describe **qué modos de interacción admite el dispositivo**, que es lo único que el sistema puede saber.
 
 En los dos casos **«Dar fe» sigue disponible** como acción primaria del contexto de cada cofradía: **pierde protagonismo, no capacidades** (regla 14).
 
