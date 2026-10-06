@@ -793,6 +793,10 @@ Las tres usan **los mismos datos y los mismos componentes**, y son coherentes en
 └─────────────────────────────────────────┘
 ```
 
+**La cabecera es una zona del marco, no un componente.** El marco define **dónde cae** —pegada arriba, con su área segura y su `z-sticky`— y **qué lleva siempre**: el indicador de **última sincronización** (§7.3), que es global y visible en las tres vistas.
+
+**Todo lo demás lo compone cada ruta**, porque cada una necesita cosas distintas: Ahora y Jornada llevan el selector de ciudad y jornada, Jornada además el selector de día, el mapa sus filtros. **No existe un componente «cabecera» único y no debe diseñarse como si lo fuera.**
+
 **Reglas de la navegación**
 - **Icono + etiqueta de texto siempre visibles.** Hay visitantes que abren la app por primera vez de noche en una calle llena; y al sol un icono pequeño sin etiqueta es un jeroglífico.
 - **Nada de menú lateral ni hamburguesa.** Cuatro destinos caben en una barra.
