@@ -962,6 +962,8 @@ El componente central del sistema. Aparece en Ahora, Jornada, bottom sheet del m
 
 - `[rel]` = marca de relación con el usuario (§9.5), anclada al bloque de identidad, **en granate**, fuera de la fila del chip de estado.
 - Nombre de hermandad en **Newsreader** (`text-xl` en estándar, `text-lg` en compacta).
+
+> **Dos líneas de nombre es comportamiento normal, no un defecto.** A 390px el nombre comparte los ~358px útiles con la marca de relación y el chip de estado, así que `El Gran Poder` o `El Silencio` pueden ocupar dos líneas incluso con la etiqueta de fase abreviada. Está permitido por §4.3 y **no rompe la doble ancla**: el chip conserva su posición y el anclaje superior, de modo que nombre y estado siguen empezando a la misma altura. **No se comprime más la tarjeta para evitarlo** — ni cuerpo menor, ni truncado, ni mover el chip.
 - Todo lo demás en **Inter**.
 
 **La línea de decisión.** El dato protagonista es **el próximo punto útil donde encontrar esa cofradía**, con su hora: `Campana ≈ 21:40`. Funciona siempre, con o sin ubicación.
@@ -1076,7 +1078,16 @@ Es la regla 16 aplicada: cuando algo no se puede confirmar automáticamente, el 
 --cf-overlay: rgb(14 12 10 / .60);   /* oscuro */
 ```
 
-**En oscuro la atenuación casi no separa, y eso es aceptable.** Medido: en claro el modal queda a **4,04:1** del fondo atenuado; en oscuro, a **1,14:1** con tinta y a **1,22:1** con `neutral-1000`. No hay nada que oscurecer sobre un fondo que ya es casi negro. Pero no hace falta: en oscuro la jerarquía la construyen **`surface-raised` + `border-strong` + la línea luminosa**, que es exactamente lo que §4.6 prescribe para ese tema. La atenuación se conserva en los dos por otra razón —señalar que el resto está inerte y recoger el clic de fuera—, no por contraste. No contradice la prohibición de §4.6: lo que ahí se prohíbe es la **translucidez en superficies que portan contenido sobre cartografía**, porque vuelve ilegible lo que llevan encima. Una capa de atenuación hace lo contrario —suprime el fondo para que el modal se lea mejor— y no porta contenido. El desenfoque sigue prohibido, por coste en móviles medios y por lo que le hace al contraste al sol.
+**En oscuro la atenuación casi no separa, y eso es aceptable.**
+
+Medido con la **referencia explícita**, porque sin ella la cifra no significa nada: superficie del modal —`--cf-surface` en claro, `--cf-surface-raised` en oscuro— **contra `--cf-bg` ya atenuado**.
+
+| | Fondo atenuado | Modal vs fondo |
+|---|---|---|
+| **Claro** | `#817E7A` | **4,04:1** |
+| **Oscuro** | `#110E0C` | **1,22:1** |
+
+No hay nada que oscurecer sobre un fondo que ya es casi negro. Pero no hace falta: en oscuro la jerarquía la construyen **`surface-raised` + `border-strong` + la línea luminosa**, que es exactamente lo que §4.6 prescribe para ese tema. La atenuación se conserva en los dos por otra razón —señalar que el resto está inerte y recoger el clic de fuera—, no por contraste. No contradice la prohibición de §4.6: lo que ahí se prohíbe es la **translucidez en superficies que portan contenido sobre cartografía**, porque vuelve ilegible lo que llevan encima. Una capa de atenuación hace lo contrario —suprime el fondo para que el modal se lea mejor— y no porta contenido. El desenfoque sigue prohibido, por coste en móviles medios y por lo que le hace al contraste al sol.
 
 ### 9.11 Navegación principal
 
