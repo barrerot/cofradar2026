@@ -797,6 +797,10 @@ Las tres usan **los mismos datos y los mismos componentes**, y son coherentes en
 
 **El acceso a la jornada completa lo satisface la propia barra de navegación**, que está siempre visible. Un acceso adicional dentro del contenido es una decisión de composición, no un requisito.
 
+**Los cuatro bloques son QUÉ contiene Ahora, no en qué orden.** El orden lo fija **cuánto puede cambiar cada cosa lo que el usuario va a hacer en los próximos minutos**, que es el mismo criterio con el que se decide qué interrumpe por push (§20.1). Consecuencia dura: **un aviso crítico nunca queda por debajo de contenido que no lo es.** Enterrar una incidencia que puede mandar a alguien a otro sitio contradice el propósito del componente (§9.8) y la clasificación de información crítica (§14).
+
+**Y Ahora elige la densidad de tarjeta que le conviene en cada bloque.** Las tres densidades están en §9.4 y la acción viaja con la **estándar**; la **compacta** no la lleva por definición. Eso **no priva de nada**: la acción contextual de «Dar fe» vive dentro de cada cofradía (§9.12) y la vía rápida está en la franja. Una lista de ocho tarjetas estándar que obliga a hacer scroll para ver la tercera **falla la pregunta de la pantalla**, y contestar en segundo y medio pesa más que tener un botón en cada fila.
+
 ### 8.2 Navegación principal
 
 **Cuatro destinos estables, con acción contextual separada por encima.** La navegación es estable y la acción es contextual: son cosas distintas y se comportan distinto.
