@@ -1114,7 +1114,16 @@ No hay nada que oscurecer sobre un fondo que ya es casi negro. Pero no hace falt
 Es **un solo flujo**, no una acción de presencia seguida de otra de aportación. Y tiene que resolverse en muy pocos pasos: el usuario está de pie, entre gente y con una mano. Si no ha iniciado sesión, la cuenta se pide **aquí, en el momento en que hace falta**, y no antes.
 
 **La vía rápida es un atajo, no un sustituto:** la acción contextual de «Dar fe» sigue existiendo dentro de cada cofradía.
-**Responsive.** En `lg`+ la franja no aparece: **pierde protagonismo, no capacidades** (regla 14). «Dar fe» vive en la ficha como acción primaria de su contexto y sigue disponible siempre que el contexto lo permita.
+**Responsive.** La franja depende del **tipo de interacción y del contexto operativo, nunca del ancho por sí solo** (§4.9).
+
+| | Franja | Por qué |
+|---|---|---|
+| **Puntero grueso**, cualquier ancho | **Se conserva** | La zona del pulgar sigue existiendo, y es la razón por la que la franja existe. Una tablet en horizontal entra en composición de paneles y **sigue siendo un dispositivo que se sostiene en la calle** |
+| **Puntero fino** | No aparece | No hay zona de pulgar que proteger |
+
+En los dos casos **«Dar fe» sigue disponible** como acción primaria del contexto de cada cofradía: **pierde protagonismo, no capacidades** (regla 14).
+
+> **Corregido.** Esta regla decía antes «en `lg`+ la franja no aparece», y eso **deducía el contexto físico del viewport**: daba por hecho que una pantalla ancha significa alguien sentado. Contradice §4.9, que ya establece que ancho y tipo de interacción son **ejes independientes** y que una tablet horizontal sigue necesitando objetivos táctiles de 48px. Lo que gobierna es el puntero, no los píxeles.
 
 ### 9.13 Campos y formularios
 
