@@ -866,16 +866,33 @@ Plantilla de especificación: propósito · cuándo · cuándo no · anatomía �
 
 **Estados.** `default` · `hover` (solo `hover: hover`) · `focus-visible` (anillo de `--cf-focus-ring-width` en `--cf-focus-ring-color` con `--cf-focus-ring-offset` de separación, **nunca se elimina**) · `active` (desplazamiento de 1px + el paso siguiente de la rampa) · `disabled` (`--cf-neutral-400`, con explicación de por qué) · `loading` (indicador en el propio botón, texto conservado, **ancho estable**).
 
-**Hover y active se resuelven con la rampa de primitivos, nunca con un filtro.** Un `filter: brightness()` desatiende el calor deliberado de la paleta y rompe los contrastes medidos en §14.
+**Hover y active son tokens semánticos, nunca un filtro y nunca un primitivo consumido directamente.** Un `filter: brightness()` desatiende el calor deliberado de la paleta y rompe los contrastes medidos; y un componente que consume la capa 1 se salta la arquitectura de §4.
 
-| Variante | `hover` | `active` |
+| Token | Claro | Oscuro |
 |---|---|---|
-| `primario` | `neutral-800` | `neutral-950` |
-| `secundario` | `--cf-surface-sunken` | `--cf-surface-sunken` + borde `--cf-border-interactive` |
-| `terciario` | `--cf-surface-sunken` | igual, con el desplazamiento de 1px |
-| `peligro` | `rojo-700` | `rojo-700` + desplazamiento |
+| `--cf-primary-bg` | `neutral-900` | `#F5F1EA` |
+| `--cf-primary-bg-hover` | `neutral-800` | `neutral-200` |
+| `--cf-primary-bg-active` | `neutral-950` | `neutral-300` |
+| `--cf-danger-bg` | `rojo-600` | `rojo-300` |
+| `--cf-danger-bg-hover` | `rojo-700` | `rojo-100` |
+| `--cf-danger-bg-active` | `rojo-700` | `rojo-100` |
+| `--cf-surface-hover` | `--cf-surface-sunken` | `--cf-surface-raised` |
 
-Es el patrón que `granate-700` ya documentaba como «estado presionado» en §4.1, aplicado al resto.
+**La dirección del refuerzo se invierte con el tema**, y esto ya no es una excepción: es el **tercer** sitio del sistema donde pasa, después de la elevación (§4.6) y de `--cf-border-interactive` (§4.2). **En claro se oscurece, en oscuro se aclara**, porque en oscuro el botón primario *es* la superficie clara. Mis valores de claro no servían en oscuro: `neutral-800` sobre `surface` oscura da **1,17:1** y `neutral-950` da **1,08:1**.
+
+Medido, texto sobre fondo del botón · fondo del botón sobre `surface`:
+
+| | Claro | Oscuro |
+|---|---|---|
+| `primario` default | 16,48 · 17,33 | 16,58 · 15,40 |
+| `primario` hover | 14,10 · 14,83 | 14,56 · 13,52 |
+| `primario` active | 17,75 · 18,66 | 12,03 · 11,18 |
+| `peligro` default | 7,65 · 8,04 | 6,71 · 6,24 |
+| `peligro` hover | 10,16 · 10,68 | 13,05 · 12,12 |
+
+En oscuro el `peligro` **sube a `rojo-100`** en lugar de bajar: oscurecerlo lo rompe —`rojo-400` deja el texto en **3,92:1**, por debajo de AA—. El salto de claridad es grande y aquí conviene: es un botón destructivo y que se note que estás encima no es un defecto.
+
+El `active` lleva además el desplazamiento de 1px en todas las variantes, y el `secundario` suma borde `--cf-border-interactive`. Es el patrón que `granate-700` ya documentaba como «estado presionado» en §4.1, convertido en capa 2.
 
 **Sobre el `loading`:** lo que la regla exige es **texto conservado y ancho estable**. La forma del indicador —anillo, línea, barra— es decisión del componente, siempre que no mueva el ancho ni sustituya al texto.
 
@@ -896,7 +913,14 @@ Es el patrón que `granate-700` ya documentaba como «estado presionado» en §4
 **Posición fija.** El chip aparece **siempre en el mismo punto** de la tarjeta, para que el ojo pueda leer la columna de estados en vertical ignorando el resto (§9.4).
 
 **Variantes.** Una por fase, con los valores de §6.1. **No son siete por tres.** La confianza aplica a `inminente`, `en_calle`, `proxima_entrada` y `finalizada`; `cancelada` y `no_procesiona` son **siempre confirmadas por construcción** —solo existen por la excepción administrativa— y `prevista` lo es mientras no pase su hora (D22). Así que la matriz real es **15 chips**: cuatro fases × tres confianzas, más tres fases con una sola. Un chip `cancelada · según horario` **no puede existir**, y dibujarlo contradiría D21.
-**Tamaños.** `sm` (altura 24px, listas densas) · `md` (altura 28px, por defecto).
+**Tamaños.** `sm` (altura **base** 24px, listas densas) · `md` (altura **base** 28px, por defecto).
+
+**Las alturas son base, no rígidas**, y el orden de prioridad cuando el contenido no cabe es este, de arriba abajo:
+
+1. **La coletilla de confianza y frescura no se abrevia ni se suprime jamás.** Es información crítica (§14): es lo que permite saber si el dato vale.
+2. **Se abrevia la etiqueta de la fase**, que es lo que esta misma sección ya prescribe: `En la calle · hace 23 min` → `En calle · hace 23 min`.
+3. **Si aún no cabe, el chip crece a dos líneas** y deja de medir 28px. Preferible a truncar a media palabra.
+4. **El chip no se sale de su posición fija.** La doble ancla de §9.4 se resuelve por posición, y un chip más alto no la rompe: el nombre también puede ocupar dos líneas (§4.3). Lo que no puede pasar es que el chip se mueva de sitio o que el nombre y el estado dejen de empezar a la misma altura.
 **Estados.** Estático. No es interactivo. Si una pantalla necesita filtrar por estado, es un **chip de filtro** y es otro componente.
 **Responsive.** Idéntico. En espacio insuficiente el texto no se abrevia: se abrevia la etiqueta de la fase, nunca se suprime.
 
@@ -1045,7 +1069,14 @@ Es la regla 16 aplicada: cuando algo no se puede confirmar automáticamente, el 
 
 `radius-xl`, `elev-3`, ancho máximo 28rem, foco atrapado, cierre con Escape y por fuera, acción primaria a la derecha en escritorio y abajo en móvil.
 
-**El fondo detrás del modal es una capa de atenuación sólida en tinta con alfa** —`rgb(var(--cf-shadow-tint) / .55)`—, **sin desenfoque**. No contradice la prohibición de §4.6: lo que ahí se prohíbe es la **translucidez en superficies que portan contenido sobre cartografía**, porque vuelve ilegible lo que llevan encima. Una capa de atenuación hace lo contrario —suprime el fondo para que el modal se lea mejor— y no porta contenido. El desenfoque sigue prohibido, por coste en móviles medios y por lo que le hace al contraste al sol.
+**El fondo detrás del modal es una capa de atenuación sólida, sin desenfoque**, y es un token semántico:
+
+```css
+--cf-overlay: rgb(29 26 22 / .55);   /* claro */
+--cf-overlay: rgb(14 12 10 / .60);   /* oscuro */
+```
+
+**En oscuro la atenuación casi no separa, y eso es aceptable.** Medido: en claro el modal queda a **4,04:1** del fondo atenuado; en oscuro, a **1,14:1** con tinta y a **1,22:1** con `neutral-1000`. No hay nada que oscurecer sobre un fondo que ya es casi negro. Pero no hace falta: en oscuro la jerarquía la construyen **`surface-raised` + `border-strong` + la línea luminosa**, que es exactamente lo que §4.6 prescribe para ese tema. La atenuación se conserva en los dos por otra razón —señalar que el resto está inerte y recoger el clic de fuera—, no por contraste. No contradice la prohibición de §4.6: lo que ahí se prohíbe es la **translucidez en superficies que portan contenido sobre cartografía**, porque vuelve ilegible lo que llevan encima. Una capa de atenuación hace lo contrario —suprime el fondo para que el modal se lea mejor— y no porta contenido. El desenfoque sigue prohibido, por coste en móviles medios y por lo que le hace al contraste al sol.
 
 ### 9.11 Navegación principal
 
@@ -1098,6 +1129,10 @@ Altura 6px, `radius-full`, fondo `--cf-surface-sunken`. Siempre acompañada de s
 ### 9.16 Selector de día y filtros
 
 **Chips de filtro**, distintos de los chips de estado: interactivos, `radius-sm`, estado seleccionado con fondo `--cf-text` y texto inverso (**no solo color: también peso**). El selector de día es una fila desplazable horizontalmente con el día actual centrado al abrir; cada día indica si tiene información disponible.
+
+**En el selector de día el peso está reservado a la disponibilidad de información**, así que la selección **no lo usa**: se expresa con fondo `--cf-text` y texto inverso, más `aria-current`. Es la diferencia con el chip de filtro, donde el peso sí es un canal libre.
+
+No hace falta una señal más. **La regla 1 gobierna el significado del producto** —fase, confianza, alteración, relación—, no el estado de selección de un control: una forma rellena entre formas en contorno no es ambigua. Y los dos canales se componen sin estorbarse, incluido el caso de un día que es el actual y además no tiene información.
 
 ### 9.17 Avatar y escudo
 

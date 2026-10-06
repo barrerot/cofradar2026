@@ -58,6 +58,14 @@ alteración que las explique**.
 Los Gitanos están `inminente`: todavía no ocupan calle. El Calvario está `finalizada`:
 ya no la ocupa. Un mapa que les dibuje una línea está mal.
 
+## Un dato que se deriva, no se almacena
+
+**El progreso espacial del recorrido sale de `segmentos.geojson` + `itinerarios/`**, proyectando la cabeza del segmento sobre la línea y dividiendo por su longitud total. Para La Macarena a las 02:40 son **1.396 m de 2.172 m, el 64 %**.
+
+**No se calcula con el tiempo transcurrido.** Entre su salida (00:05) y su entrada (13:25) han pasado 155 de 800 minutos, un 19 %, y ese número **no dice nada del recorrido**: una cofradía con retraso avanza menos de lo que el reloj sugiere, y el regreso no ocupa el mismo espacio que la ida. Presentar una interpolación temporal como progreso espacial es afirmar algo que el dato no sostiene.
+
+Salvedad del mock: el itinerario de esta carpeta es **de ida**, de la basílica a la Catedral, así que el 64 % es de ese trazado y no del recorrido completo de vuelta.
+
 ## Verificar
 
 ```sh
