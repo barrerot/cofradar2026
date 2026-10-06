@@ -878,7 +878,7 @@ Plantilla de especificación: propósito · cuándo · cuándo no · anatomía �
 
 **Posición fija.** El chip aparece **siempre en el mismo punto** de la tarjeta, para que el ojo pueda leer la columna de estados en vertical ignorando el resto (§9.4).
 
-**Variantes.** Una por fase, con los valores de §6.1.
+**Variantes.** Una por fase, con los valores de §6.1. **No son siete por tres.** La confianza aplica a `inminente`, `en_calle`, `proxima_entrada` y `finalizada`; `cancelada` y `no_procesiona` son **siempre confirmadas por construcción** —solo existen por la excepción administrativa— y `prevista` lo es mientras no pase su hora (D22). Así que la matriz real es **15 chips**: cuatro fases × tres confianzas, más tres fases con una sola. Un chip `cancelada · según horario` **no puede existir**, y dibujarlo contradiría D21.
 **Tamaños.** `sm` (altura 24px, listas densas) · `md` (altura 28px, por defecto).
 **Estados.** Estático. No es interactivo. Si una pantalla necesita filtrar por estado, es un **chip de filtro** y es otro componente.
 **Responsive.** Idéntico. En espacio insuficiente el texto no se abrevia: se abrevia la etiqueta de la fase, nunca se suprime.
