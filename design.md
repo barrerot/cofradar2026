@@ -789,6 +789,14 @@ Las tres usan **los mismos datos y los mismos componentes**, y son coherentes en
 | **Mapa** | «¿Dónde están y hacia dónde van?» | Vista completa. Selección de cofradía y consulta de información mediante bottom sheet **sin perder el contexto del mapa** |
 | **Jornada** | «¿Qué hay programado?» | Todo lo programado, **sin priorización**, para consultar, comparar horarios y planificar. Cambio de día |
 
+**Qué entra en Ahora y qué no.** Los cuatro bloques describen **lo que está ocurriendo**, así que de ahí salen tres reglas:
+
+- **Una cofradía aparece una sola vez.** Sus alteraciones viajan con ella, en los chips de su tarjeta; **no la duplican en el bloque de incidencias**. Ese bloque lleva **avisos** (§9.8), que pueden referirse a una cofradía pero no son su tarjeta. Una pantalla que se lee en segundo y medio no puede contar dos veces la misma hermandad.
+- **`finalizada` no aparece en Ahora.** Ya no se puede ver, así que no contesta a «¿qué puedo ver ahora?». **No se oculta:** vive en Jornada, que es todo lo del día sin priorizar y está a un toque. Es exactamente lo que significa «prioriza pero no oculta».
+- **«Lo que ha pasado mientras no estabas» no es un quinto bloque.** Es un elemento **transitorio** de regreso, donde aterriza lo asíncrono porque no hay centro de notificaciones (D32). Convive con los cuatro sin formar parte de ellos y **desaparece cuando no hay novedades**: no tiene estado vacío.
+
+**El acceso a la jornada completa lo satisface la propia barra de navegación**, que está siempre visible. Un acceso adicional dentro del contenido es una decisión de composición, no un requisito.
+
 ### 8.2 Navegación principal
 
 **Cuatro destinos estables, con acción contextual separada por encima.** La navegación es estable y la acción es contextual: son cosas distintas y se comportan distinto.
