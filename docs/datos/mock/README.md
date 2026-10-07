@@ -15,7 +15,7 @@ templos ni puntos. Si algo cambia aquí, hay que propagarlo a los issues que lo 
 | | |
 |---|---|
 | **Real** | Las seis hermandades de la Madrugá, sus denominaciones, sus nombres populares y sus templos. Los nueve hitos del centro y sus coordenadas. |
-| **Real, por verificar** | La séptima fila, **La Soledad de San Lorenzo**: Sábado Santo, **un solo paso**. Está aquí solo para que la configuración por hermandad no sea uniforme. `revisado: no`. |
+| **Real** | La séptima fila, **La Soledad de San Lorenzo**: Sábado Santo, **un solo paso de palio**, parroquia de San Lorenzo Mártir. Verificado contra la web de la hermandad y Wikipedia. `revisado: si`. |
 | **Aproximado** | Los recorridos: siguen calles reales y van en el sentido de la marcha, pero no son el itinerario oficial. |
 | **Inventado a propósito** | Todas las horas y todo el estado de las 02:40. |
 
@@ -63,6 +63,13 @@ Por eso `cofradias.csv` trae a **La Soledad de San Lorenzo**, de Sábado Santo, 
 con su configuración**: sin horas, sin itinerario y sin estado. Existe para que
 `cofradia_elementos.csv` tenga que variar de verdad, y el verificador falla si todas
 las hermandades acaban teniendo el mismo número de elementos localizables.
+
+Su dato está **verificado como los otros seis**: Hermandad Sacramental de la Soledad,
+parroquia de **San Lorenzo Mártir**, **Sábado Santo** desde 1956 —cierra el día— y **un
+solo paso**, el palio de Nuestra Señora de la Soledad, que en 1614 fue el primero de
+Sevilla en salir bajo palio. Fuentes: la web de la propia hermandad
+(`hermandaddelasoledad.org`) y su artículo en Wikipedia. La coordenada de su templo es
+la de la **Plaza de San Lorenzo**, que comparte con la Basílica del Gran Poder.
 
 **4 · El final del cortejo está configurado y NO es localizable.**
 `localizable: no` en las siete. Cofradar **no lo sitúa** en el mapa —no está en el
