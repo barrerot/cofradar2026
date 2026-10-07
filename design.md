@@ -1304,6 +1304,8 @@ Los marcadores **tienen sistema propio**. No se usa un icono de Phosphor puesto 
 
 No hace falta mostrarlos todos siempre. En vista general basta el segmento y el marcador de cabeza; los elementos se revelan al seleccionar la cofradía y en su ficha, donde cada uno lleva su propia posición, su hora y su nivel de confianza, porque **un elemento puede estar confirmado y otro estimado en la misma cofradía**. El caso canónico: el paso de Cristo, que los cuadrantes no recogen, se interpola entre la cruz de guía y el palio y queda marcado como estimado hasta que alguien da fe de él.
 
+**De dónde sale la confianza de cada elemento.** No hace falta ninguna regla nueva: es §7.1 aplicado al elemento, y el mecanismo ya está en el PRD. La posición estimada de un elemento a una hora dada **sale por interpolación entre los dos anclajes más cercanos del horario transcrito**, así que **todo elemento cuya posición venga solo del cuadrante es `estimado`**. Lo que la confirma es una aportación que **nombre ese elemento** (§9.18): ancla ese y solo ese. Y una aportación genérica —«Estoy viendo la cofradía»— **aporta evidencia de presencia y de fase, no un anclaje de posición**, así que puede acabar confirmando la fase sin confirmar la posición de ningún elemento. Son dos cosas distintas y el mapa tiene que poder mostrarlas a la vez: **una cofradía con la fase confirmada y los cuatro elementos estimados es un estado normal**, no una contradicción.
+
 ### 10.5 Recorrido e hitos
 
 **Modelo de recorrido basado en hitos configurables por ciudad**, cada uno con hora prevista y, cuando sea posible, hora real o estimada.
