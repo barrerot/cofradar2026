@@ -429,7 +429,7 @@ La línea superior luminosa del `elev-3` oscuro es un realce interior de 1px, no
 - En `icon-sm` se usa siempre peso `bold`: a 16px con luz solar el trazo `regular` desaparece.
 - Un icono que comunique un estado importante **va siempre acompañado de texto**.
 - `fill` indica activo, seleccionado o verificado. `regular`/contorno indica inactivo o no verificable.
-- **`en_calle` no se representa nunca con un pin ni con una chincheta.** Una cofradía **ocupa calle y avanza**: no es un punto (D10). Un pin dentro de un chip de estado contradice la doctrina del segmento antes de que el usuario llegue al mapa. Se usan iconos de recorrido o de marcha.
+- **`en_calle` no se representa nunca con un pin ni con una chincheta.** Una cofradía **ocupa calle y avanza**: no está en un sitio (D10, D34). Un pin afirma lo contrario antes de que el usuario llegue al mapa, donde se va a encontrar la cruz de guía y los pasos de esa misma hermandad **en sitios distintos**. Se usan iconos de recorrido o de marcha.
 - `duotone` no se usa en la capa funcional.
 
 **Set propio de iconos cofrades.** Es el único lugar donde vive el detalle gráfico propio de Cofradar (portador 4 de §2). Dibujado sobre **la misma rejilla de 24, el mismo trazo y las mismas proporciones que Phosphor**: geométrico, austero, contemporáneo, sin florituras.
@@ -786,7 +786,7 @@ Las tres usan **los mismos datos y los mismos componentes**, y son coherentes en
 | Vista | Pregunta | Comportamiento |
 |---|---|---|
 | **Ahora** | «¿Qué puedo ver ahora?» | Bloques priorizados y compactos: qué está en la calle, qué tengo cerca, qué está a punto de ocurrir, si hay incidencias importantes. **Prioriza pero no oculta**: el acceso a la jornada completa está siempre a un toque. No es un feed opinado |
-| **Mapa** | «¿Dónde están y hacia dónde van?» | Vista completa. Selección de cofradía y consulta de información mediante bottom sheet **sin perder el contexto del mapa** |
+| **Mapa** | «¿Dónde está la cruz de guía y dónde están los pasos?» | Localiza sobre cartografía real los elementos de cada hermandad en calle, más la ubicación opcional del usuario. Selección y consulta mediante bottom sheet **sin perder el contexto del mapa** |
 | **Jornada** | «¿Qué hay programado?» | Todo lo programado, **sin priorización**, para consultar, comparar horarios y planificar. Cambio de día |
 
 **Qué entra en Ahora y qué no.** Los cuatro bloques describen **lo que está ocurriendo**, así que de ahí salen tres reglas:
@@ -1229,11 +1229,40 @@ Objetivo táctil de 56px, por encima del mínimo: se pulsa de pie, con una mano 
 
 ## 10. El mapa
 
-El mapa no es un componente: es un subsistema. No existe un patrón previo para lo que Cofradar necesita, porque **una cofradía no es un punto**: una hermandad con dos pasos y mil nazarenos ocupa entre doscientos y seiscientos metros de calle. La cruz de guía puede estar entrando en la Campana mientras el palio no ha salido aún de la calle anterior. Representarla con un pin dice algo falso y esconde la información más útil que existe en la calle: que a una cofradía se la puede alcanzar por la cola cuando ya no se llega a la cabeza.
+El mapa no es un componente: es un subsistema. No existe un patrón previo para lo que Cofradar necesita.
+
+**Para qué sirve el mapa.** Para **localizar sobre cartografía real la cruz de guía y los pasos configurados de cada hermandad que está en la calle**, más la **ubicación opcional** del propio usuario. Eso es todo, y no es poco.
+
+**Una cofradía no es un punto.** Una hermandad con dos pasos y mil nazarenos ocupa entre doscientos y seiscientos metros de calle, y la cruz de guía puede estar entrando en la Campana mientras el palio no ha salido aún de la calle anterior. Representarla con un pin dice algo falso.
+
+**Pero el remedio no es dibujar la línea entera como si fuera la entidad.** El remedio es **dibujar los elementos**, que son lo que la gente busca. Lo más útil que existe en la calle es que **se puede llegar al palio cuando ya no se llega a la cruz de guía**, y eso solo puede decirse si cada uno lleva su propia posición y su propia confianza.
+
+> **La prueba del subsistema.** Alguien abre Cofradar preguntándose «¿dónde está ahora mismo el palio de La Macarena?». El mapa tiene que contestarle **por el camino más corto**. Si para contestar hay que deducirlo de una forma, el mapa está mal diseñado.
+
+> **Regla de alcance.** Lo que está cerrado es **la información que el usuario debe poder obtener**. Cómo se comunique la ocupación, cómo se lea que tres marcas son de la misma hermandad y cómo se resuelva la densidad en vista general son **soluciones gráficas a validar** (§21), **no reglas de producto**. No se cierran en este documento antes de haberlas visto dibujadas.
 
 ### 10.1 Cartografía base
 
-**Requisito:** cartografía **vectorial altamente personalizable**, con estilo propio en variantes clara y oscura. **Preferencia** por una solución tipo MapLibre o Mapbox. *No es todavía una decisión cerrada de diseño* (§21).
+**Cartografía real, nunca un callejero inventado.** Cofradar no dibuja calles: dibuja encima de calles que existen.
+
+**Requisitos que cualquier solución debe cumplir.** Son independientes del proveedor y algunos descartan candidatos por sí solos.
+
+| | Requisito |
+|---|---|
+| **Base** | Vectorial y **restilable a los tres modos de §5**: claro, oscuro **y contraste máximo**. No bastan claro y oscuro |
+| **Capas propias** | Marcas de elemento, hitos, línea de recorrido, tramo ocupado, agrupaciones y ubicación del usuario, todas por encima de la base y con estilo de Cofradar |
+| **Marcadores** | Sistema propio, no iconos de la librería del proveedor. Interactivos |
+| **Objetivo táctil** | ≥ 48px aunque el glifo mida 24–32. **El umbral de agrupación lo decide el momento en que dos objetivos se pisan**, no la estética |
+| **Escala** | Sevilla capital. Hasta ~10–12 hermandades en calle a la vez × 2–3 elementos, más hitos y agrupaciones: **100–150 marcas interactivas simultáneas** sin perder interacción |
+| **Ubicación** | Geolocalización del navegador, radio de precisión real **nunca menor que el informado**. El mapa funciona completo sin permiso |
+| **Privacidad** | **La posición del usuario no se envía al proveedor de cartografía** |
+| **Accesibilidad** | Teclado, foco visible sobre cartografía, nombre accesible en cada marca. **El mapa no es nunca la única vía a un dato**: todo lo que vive en él tiene equivalente en lista |
+| **Rendimiento** | Móvil de gama media, de noche, con red saturada. Teselas en caché. **El mapa no bloquea** la lectura del último dato conocido (§12) |
+| **Plataforma** | Web y PWA. Sin SDK nativo. Sin translucidez ni desenfoque sobre la base |
+| **Generalización** | El callejero no puede llevar Sevilla dentro (§17) |
+| **Coste** | Semana Santa concentra casi todo el tráfico del año en **siete noches**. Un precio por carga de mapa tiene ahí su peor perfil posible |
+
+**Proveedor: no decidido.** Las dos alternativas en pie son **Google Maps Platform** y **OpenStreetMap con MapLibre**. La comparación tendrá que pesar coste, licencias y condiciones de uso, capacidad de personalización, rendimiento, dependencia del proveedor y capacidades necesarias. **El diseño es agnóstico**: lo que se diseña son las capas de Cofradar sobre una base. La sub-pregunta que puede forzar la elección es si la base se deja restilar **hasta contraste máximo**.
 
 **Regla de prioridad.** El mapa debe integrarse visualmente con Cofradar, pero **la legibilidad cartográfica tiene prioridad absoluta sobre la identidad**. No se tiñe en exceso para hacerlo coincidir con la paleta.
 
@@ -1244,27 +1273,45 @@ Estilo: reducción de ruido (menos POIs, menos etiquetas comerciales), calles y 
 El mapa **revela progresivamente**. En vista general contesta rápido a «qué hay ahora y dónde»; la complejidad del recorrido aparece solo al seleccionar.
 
 **Nivel 1 · Vista general**
+- **Los elementos localizables** de cada cofradía `en_calle`: **la cruz de guía y los pasos configurados para esa hermandad**, cada uno con su posición y su confianza propias.
 - **Ninguna línea de recorrido completa.** Diez itinerarios completos en el casco antiguo producen un plato de espaguetis ilegible.
-- Cofradías `en_calle`: **segmento** sobre su recorrido, mostrando que ocupan calle y no son un punto.
-- **Dirección de avance integrada en el marcador de cabeza**, no como flecha pegada al lado.
-- `prevista` e `inminente`: marcador en su punto de salida, **sin segmento** (todavía no ocupan calle).
-- `finalizada`: fuera del foco o muy atenuada.
+- **Dirección de avance** legible, por la forma de la marca y por el orden de los elementos sobre el recorrido.
+- El **tramo ocupado**, si se dibuja, va atenuado y en segundo plano (§10.4).
+- `prevista` e `inminente`: **marca de la hermandad en su templo**, que no es una marca de elemento (§10.3) — todavía no hay nada en la calle.
+- `finalizada`: fuera del foco o muy atenuada. **No desaparecida**: el filtro tiene que poder traerla.
 
 **Nivel 2 · Cofradía seleccionada**
+- **Sus elementos destacados**, cada uno con su hora y su confianza.
 - **Recorrido completo** de esa cofradía.
 - **Diferenciación entre recorrido realizado y pendiente** (trazo continuo / discontinuo, §7.1).
-- **Segmento** que representa dónde se encuentra actualmente.
 - **Hitos relevantes** con hora prevista y hora real o estimada cuando existan.
 - **Bottom sheet** con la información detallada (§9.9).
-- **Las demás cofradías permanecen visibles en segundo plano**: el usuario está decidiendo entre varias.
+- **Las demás cofradías permanecen visibles en segundo plano**: el usuario está decidiendo entre varias, y borrarlas le quita la comparación que ha venido a hacer.
 
 **Nivel 3 · Zoom bajo o aglomeración**
-- Agrupación por proximidad para evitar saturación.
+- Agrupación para evitar saturación.
 - **El grupo debe comunicar si contiene alguna cofradía con incidencia importante**, no limitarse a mostrar un número. Un grupo que oculte una suspensión es un grupo que miente.
 
-### 10.3 Anatomía del marcador
+### Los dos problemas abiertos del mapa
 
-Los marcadores **tienen sistema propio**. No se usa un icono de Phosphor puesto encima del mapa.
+Localizar los elementos por separado resuelve lo que importa y **crea dos problemas que el diseño tiene que resolver y este documento no cierra**.
+
+**1 · Atribución.** Con dos o tres marcas por hermandad y varias hermandades entrelazadas en la carrera oficial, la pregunta difícil deja de ser «cuántas marcas caben» y pasa a ser **«¿de quién es ese palio?»**. Y es difícil porque **el color no puede ayudar**: por las reglas 1 y 2 el color es semántico y cuenta el estado, nunca la identidad de la hermandad.
+
+**2 · Densidad.** Los elementos de una misma hermandad están a 100–400 m entre sí, así que se intercalan con los de las otras.
+
+**Ninguno se resuelve escondiendo la información que es la utilidad principal del mapa.** Mecanismos candidatos, todos **a validar visualmente** (§21) y ninguno adoptado todavía: el tramo ocupado como vínculo visible entre los elementos de una hermandad · agrupación por hermandad en lugar de por proximidad · prioridad por cercanía cuando hay ubicación y por estado cuando no la hay · etiquetas solo al seleccionar y en zoom alto · filtrado por hermandad · la búsqueda como vía directa.
+
+### 10.3 Anatomía de las marcas
+
+Hay **dos clases de marca**, y no son la misma cosa:
+
+| Clase | Qué representa | Cuándo |
+|---|---|---|
+| **Marca de elemento** | **Un elemento concreto** —cruz de guía o un paso— con su posición y su confianza | Cofradías `en_calle` |
+| **Marca de hermandad** | **La hermandad en su templo**, no una posición en la calle | `prevista`, `inminente`, `finalizada` |
+
+Confundirlas haría que una hermandad que aún no ha salido pareciera estar en algún sitio. Las dos **tienen sistema propio**: no se usa un icono de Phosphor puesto encima del mapa.
 
 ```
         ┌─────────┐
@@ -1278,17 +1325,37 @@ Los marcadores **tienen sistema propio**. No se usa un icono de Phosphor puesto 
 | Superficie | **Opaca siempre**, `--cf-surface` |
 | Borde | `--cf-border-width-strong` en el color del estado |
 | Relleno de estado | `--cf-<estado>-vivid` (los vivos son para fondo de cartografía) |
-| Icono | Set cofrade o icono de fase, `icon-sm`, peso `bold` |
+| Icono | **El del elemento** —cruz de guía, paso, palio— del set cofrade, `icon-sm`, peso `bold`. Es lo que permite distinguir una marca de otra de la misma hermandad |
 | Dirección | **Integrada en la forma del marcador** |
 | Estado | Por **forma y relleno**, no solo por color |
-| Confianza de la fase | Por **trazo del borde**: continuo si `confirmado`, discontinuo si `estimado` o `desactualizado` (§6.1). Mismo código que el chip y que el segmento |
+| Confianza | Por **trazo del borde**: continuo si `confirmado`, discontinuo si `estimado` o `desactualizado`. Mismo código que el chip. **En una marca de elemento la confianza es la de ese elemento**, no la de la cofradía: la cruz de guía puede ir confirmada y el palio estimado en la misma hermandad (§10.4) |
 | Relación del usuario | Marca en granate, misma posición relativa que en la tarjeta (§9.5) |
-| Etiqueta con nombre | **No viaja siempre con el marcador** (se solaparían todas en el casco antiguo). Aparece al seleccionar y en zoom alto |
+| Etiqueta con nombre | **No viaja siempre con la marca** (se solaparían todas en el casco antiguo). Aparece al seleccionar y en zoom alto. **Cómo se resuelve entonces la atribución es un problema abierto**, no un hueco que se tape poniendo etiquetas que no caben |
 | Elevación | `elev-2` en claro; escalón de superficie + borde en oscuro |
 
 **Tamaños.** `md` 32px (por defecto) · `lg` 40px (seleccionado) · `cluster` 40px con contador y marca de incidencia si la hay.
 
-### 10.4 El segmento
+**Objetivo táctil de 48px aunque el glifo mida 32.** Con dos o tres elementos de la misma hermandad a pocos metros en zoom amplio, **las áreas táctiles se solapan antes que los dibujos**, y eso —no la estética— es lo que fija cuándo hay que agrupar.
+
+### 10.4 Los elementos y el tramo ocupado
+
+**Los elementos son la unidad espacial del mapa.** El tramo ocupado existe, pero es **derivado y secundario**: se calcula a partir de ellos y no al revés.
+
+#### Qué elementos se localizan
+
+**La cruz de guía y los pasos configurados para esa hermandad**, que serán **uno o dos**. No es una lista universal: la taxonomía es configurable por hermandad y por ciudad, y hay hermandades de un solo paso.
+
+**Por qué esos y no más. La fuente tiene dos columnas.** Los cuadrantes publicados traen **cruz de guía y Virgen/paso**, así que solo esos dos extremos están anclados en el dato. Un segundo paso intermedio —el de Cristo o misterio, cuando lo hay— **se interpola entre ellos y queda estimado** hasta que alguien dé fe de él.
+
+**El final del cortejo no se localiza.** No está en el cuadrante, no se interpola entre dos anclajes y situarlo exigiría **suponer una longitud de cortejo**: sería una suposición sobre una interpolación, dibujada con el mismo peso que un dato. Es exactamente lo que prohíbe la regla 8.
+
+> **Pero el final no desaparece del producto.** Sigue en la taxonomía, en el selector de «Dar fe» (§9.18) y en el histórico. Quien está viendo pasar la cola es un observador legítimo y **su aportación es la única forma de anclar ese extremo alguna vez**. Dicho corto: **el final deja de ser un elemento que Cofradar sitúa y sigue siendo un elemento del que Cofradar acepta que le den fe.**
+
+**Cada elemento lleva su propia posición, su hora y su nivel de confianza**, porque **un elemento puede estar confirmado y otro estimado en la misma cofradía**. El caso canónico: el paso de Cristo, que los cuadrantes no recogen, se interpola entre la cruz de guía y el palio y queda marcado como estimado hasta que alguien da fe de él.
+
+**De dónde sale la confianza de cada elemento.** No hace falta ninguna regla nueva: es §7.1 aplicado al elemento, y el mecanismo ya está en el PRD. La posición estimada de un elemento a una hora dada **sale por interpolación entre los dos anclajes más cercanos del horario transcrito**, así que **todo elemento cuya posición venga solo del cuadrante es `estimado`**. Lo que la confirma es una aportación que **nombre ese elemento** (§9.18): ancla ese y solo ese. Y una aportación genérica —«Estoy viendo la cofradía»— **aporta evidencia de presencia y de fase, no un anclaje de posición**, así que puede acabar confirmando la fase sin confirmar la posición de ningún elemento. Son dos cosas distintas y el mapa tiene que poder mostrarlas a la vez: **una cofradía con la fase confirmada y todos sus elementos estimados es un estado normal**, no una contradicción.
+
+#### El tramo ocupado
 
 **Qué es.** La **mejor estimación de la zona de calle ocupada** por la cofradía. **El diseño no puede asumir que conocemos con precisión la cabeza y la cola.** Su precisión depende de los datos disponibles y la representación debe funcionar también con datos estimados.
 
@@ -1300,11 +1367,9 @@ Los marcadores **tienen sistema propio**. No se usa un icono de Phosphor puesto 
 
 **Prohibido el difuminado** de los extremos: dificulta la lectura sobre cartografía. La incertidumbre se comunica con **trazo, marca textual y frescura del dato**, nunca con pérdida de contraste.
 
-**Los elementos son núcleo, no evolución futura.** Una cofradía tiene varios puntos relevantes dentro del segmento —**cruz de guía, paso de Cristo o misterio, palio y final**— y están en el producto desde el lanzamiento: son la taxonomía sobre la que se dan las aportaciones y de la que **se deriva el propio segmento**, que va del primer elemento conocido al último. Por eso el segmento es siempre una estimación: **no es una línea indivisible, es el contenedor de esos puntos**.
+**De dónde a dónde va.** De la **cruz de guía** al **último paso localizado**. **El cortejo continúa más allá** —detrás del último paso van nazarenos y, a veces, una banda— y el tramo **no afirma lo contrario**. Antes iba «hasta el final del cortejo», y eso situaba un extremo que el dato no sostiene.
 
-No hace falta mostrarlos todos siempre. En vista general basta el segmento y el marcador de cabeza; los elementos se revelan al seleccionar la cofradía y en su ficha, donde cada uno lleva su propia posición, su hora y su nivel de confianza, porque **un elemento puede estar confirmado y otro estimado en la misma cofradía**. El caso canónico: el paso de Cristo, que los cuadrantes no recogen, se interpola entre la cruz de guía y el palio y queda marcado como estimado hasta que alguien da fe de él.
-
-**De dónde sale la confianza de cada elemento.** No hace falta ninguna regla nueva: es §7.1 aplicado al elemento, y el mecanismo ya está en el PRD. La posición estimada de un elemento a una hora dada **sale por interpolación entre los dos anclajes más cercanos del horario transcrito**, así que **todo elemento cuya posición venga solo del cuadrante es `estimado`**. Lo que la confirma es una aportación que **nombre ese elemento** (§9.18): ancla ese y solo ese. Y una aportación genérica —«Estoy viendo la cofradía»— **aporta evidencia de presencia y de fase, no un anclaje de posición**, así que puede acabar confirmando la fase sin confirmar la posición de ningún elemento. Son dos cosas distintas y el mapa tiene que poder mostrarlas a la vez: **una cofradía con la fase confirmada y los cuatro elementos estimados es un estado normal**, no una contradicción.
+**Qué papel conserva.** Dar **contexto de ocupación** —esta calle está llena—, hacer legible la **relación entre los elementos** de una misma hermandad y apoyar la **dirección de avance**. Son tres trabajos útiles, pero **que el tramo sea la mejor forma gráfica de hacerlos está por validar** (§21): podría serlo otra. Lo que no vuelve a ser es la entidad principal, y **no es lo que se toca**.
 
 ### 10.5 Recorrido e hitos
 
@@ -1447,7 +1512,7 @@ Perder cobertura dos minutos al meterse en una calle estrecha y volver con la pa
 
 **Regla 7: persistir no es dar por vigente.** La caché permite mostrar información; **no convierte información antigua en información vigente**. Cada dato conserva su propia frescura y puede pasar de actual a desactualizado y finalmente a «último dato conocido» (§7.1).
 
-### 12.2 Los cinco estados, más el refresco
+### 12.2 Los seis estados, más el refresco
 
 Son **componentes distintos**, no un «vacío» genérico.
 
@@ -1457,6 +1522,7 @@ Son **componentes distintos**, no un «vacío» genérico.
 | `sin-datos` | Cofradar **no dispone de información suficiente** sobre esa jornada, hermandad o elemento | Lo explica de forma directa. **Sin inventar ni rellenar.** Nunca sugiere que el usuario ha hecho algo mal |
 | `sin-conexion-con-datos` | Hay datos locales y no se pueden actualizar | **Se muestra el último estado conocido con su frescura claramente visible** + aviso de que Cofradar no puede actualizarlo + reintento **sin bloquear la interfaz** |
 | `sin-conexion-sin-datos` | Primera vez que se abre esa información, sin conexión y sin nada almacenado | Dice claramente que **necesita conexión** para obtenerla. **No se confunde con «no hay nada en la calle» ni con «no tenemos datos de esa hermandad»** |
+| `sin-cartografia` | **Los datos están y la base del mapa no.** Las teselas no bajan, o bajan a medias | **Es un fallo del fondo, no de la información.** Las posiciones, horas y confianzas **siguen siendo legibles** —en lista si hace falta— y Cofradar dice que no puede dibujar el mapa, no que no sabe dónde están. Nunca se dibuja un callejero sustituto ni se deja un lienzo vacío con marcas flotando sin referencia |
 | `error` | Fallo inesperado | Mensaje sencillo, reintento, **sin jerga técnica** y sin culpar a nadie |
 | `refrescando` | **No es un problema.** Cofradar está intentando obtener información nueva | Indicador discreto; **todo el contenido anterior sigue utilizable**. Se diferencia claramente de `sin-conexion` |
 
@@ -1466,11 +1532,14 @@ Son **componentes distintos**, no un «vacío» genérico.
 
 **Resumen operativo**
 
+**`sin-cartografia` es el estado que más fácil es olvidar**, y ocurre justo donde más duele: en la carrera oficial, de madrugada, con miles de móviles en la misma celda. Es la aplicación del requisito de §10.1 —*el mapa no bloquea la lectura del último dato conocido*— al único caso en que la base falla y los datos no.
+
 ```
 Dato anterior disponible  → se conserva y se contextualiza
 Dato antiguo              → se muestra como antiguo, nunca como actual
 No hay datos              → Cofradar lo reconoce
 No hay nada ocurriendo    → Cofradar lo explica, no lo trata como error
+No baja la cartografía    → falla el fondo, no el dato: la información sigue
 Actualizar                → nunca bloquea innecesariamente lo que ya puedo consultar
 ```
 
@@ -1599,7 +1668,7 @@ Sevilla es el alcance inicial. El sistema está construido para que otra ciudad 
 | Qué punto es «relevante para verla» | Las tres vistas y la navegación |
 | Ventanas de `inminente` y umbrales de caducidad | Los componentes y sus variantes |
 | Vocabulario local, si difiere | Las reglas de §2 |
-| Estilo de cartografía local | La anatomía de marcador, segmento y recorrido |
+| Estilo de cartografía local | La anatomía de las marcas, el tramo ocupado y el recorrido |
 
 **Dos precauciones ya aplicadas:** la carrera oficial es un hito y no una fase (§10.5); y «próximo punto» es el siguiente punto relevante para verla, no un hito institucional concreto (§9.4).
 
@@ -1811,6 +1880,9 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 | **Escalas de tipografía, espaciado, radios y elevación** · especialmente sobre el mapa y en móvil | §4.3–§4.6 |
 | **Breakpoints** `640 / 1024 / 1440` | §4.9 |
 | **Solución gráfica definitiva de la incertidumbre en el mapa** · el trazo discontinuo es la decisión; su grosor, patrón y comportamiento en zoom hay que afinarlos | §10.4 |
+| **La atribución** · cómo se lee que dos o tres marcas son de la misma hermandad, sabiendo que el color no puede usarse porque es semántico. **Candidato, no decidido:** el tramo ocupado como vínculo visible | §10.2, §10.3 |
+| **La densidad en vista general** · cómo conviven los elementos de varias hermandades entrelazadas sin esconder lo que es la utilidad principal del mapa. **Candidatos, ninguno adoptado:** agrupación por hermandad, prioridad por cercanía o estado, etiquetas al seleccionar, filtrado, búsqueda | §10.2 |
+| **Si el tramo ocupado es la mejor forma** de comunicar ocupación, relación y dirección, o si hay otra mejor | §10.4 |
 | **Representación visual de la fase estimada** · conceptualmente discontinuo = provisional ya está decidido, pero hay que comprobar sobre componentes reales si una pantalla con muchos chips discontinuos se lee con claridad o parece rota. **Si no funciona, se cambia la representación, no el modelo** | §6.1, §9.2 |
 | **Qué iconos cofrades se dibujan realmente**, decidido por necesidad de la interfaz | §4.7 |
 | **Alturas exactas del bottom sheet** | §9.9 |
@@ -1819,7 +1891,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 
 | Pendiente | Contexto |
 |---|---|
-| **Librería de mapas concreta.** Requisito: cartografía vectorial altamente personalizable. Preferencia: MapLibre o Mapbox. **No cerrado** | §10.1 |
+| **Proveedor de cartografía.** Dos alternativas en pie: **Google Maps Platform** y **OpenStreetMap + MapLibre**. Los requisitos que cualquiera debe cumplir ya están fijados y son agnósticos (§10.1); lo que queda abierto es la elección, con su propio issue | §10.1 |
 | **Estrategia de persistencia local** del último estado conocido | §12.1 |
 | **Si los estados de `hover` deben consultar `any-hover` en lugar de `hover`.** Es la misma pregunta que ya resolvimos para la franja en §9.12: `hover` informa del dispositivo **primario**, así que una tablet con ratón acoplado declara `hover: none` y se queda sin estados de hover teniendo ratón. **La regla vigente sigue siendo la de §4.9** y no se cambia por la puerta de atrás. La diferencia con el caso de la franja es el coste: allí se perdía el alcance de la acción primaria, aquí solo se pierde un refinamiento visual y el usuario conserva objetivos de 48px, que con un ratón no estorban | §4.9 |
 
@@ -1844,7 +1916,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 | **D7** | **Inter** en todo lo funcional con cifras tabulares obligatorias; **Newsreader** en nombres de hermandades, cabeceras y momentos editoriales. Newsreader no se usa para decorar |
 | **D8** | Separación **mixta por contexto**: borde dentro del contenido, elevación real cuando algo flota. Sombras teñidas de tinta. Superficies opacas sobre el mapa. Radios contenidos en lo funcional; pill solo en gamificación o cuando esté justificado |
 | **D9** | **Phosphor** como familia base, por sus pesos y `fill` como canales redundantes al color. Set propio **pequeño y funcional** de iconos cofrades como único detalle gráfico. Los marcadores de mapa tienen sistema propio |
-| **D10** | Mapa en **tres niveles de revelación**, con la cofradía representada como **segmento** y no como punto. El segmento es la mejor estimación de la zona ocupada. Sin difuminado. Los elementos —cruz de guía, paso de Cristo, palio, final— son núcleo desde el lanzamiento y el segmento se deriva de ellos |
+| **D10** | Mapa en **tres niveles de revelación**, con la cofradía representada **por las posiciones de sus elementos** y no como un punto. Sin difuminado. Los elementos son núcleo desde el lanzamiento y el tramo ocupado **se deriva de ellos**. *Corregida por D34, que invierte la jerarquía visual que esta decisión había dejado al revés.* |
 | **D11** | **Trazo continuo / discontinuo** como código de confianza del dato, con marca textual y frescura explícita. Cofradar puede decir «no lo sabemos». Umbrales **por tipo de dato**. Sincronización ≠ frescura |
 | **D12** | Tarjeta de cofradía de **doble ancla** (nombre y estado, por posición fija) en tres densidades. Dato protagonista: **próximo punto relevante + hora**; proximidad como capa adicional con lenguaje prudente |
 | **D13** | Tres relaciones: `seguida` (intención), `vista` (**álbum personal**, sin valor competitivo), `dar-fe` (presencia, juego y aportación colaborativa). Verificado puntúa; **no verificable se registra siempre y recibe los puntos base** — lo único que queda condicionado es el bonus (corregido por D31). **Granate para la capa personal.** Tarjeta tipográfica; escudo opcional; sin fotografía |
@@ -1854,7 +1926,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 | **D17** | Escritorio como **fusión en paneles** y mejora progresiva del mismo sistema. Bottom sheet ⇄ panel lateral; barra inferior ⇄ rail lateral. Ancho máximo de lectura. El responsive cambia presentación y prioridad, **no capacidades** |
 | **D18** | **Último dato conocido** + persistencia local; skeleton solo en primera carga; nunca spinner bloqueante. **Cinco estados distintos** más `refrescando`. Persistir no es dar por vigente. Informar, no rellenar |
 | **D19** | Espaciado base 4; escala tipográfica con mínimo de 12px y 16px para lectura; escala propia de datos; todo en `rem`. **AA general + AAA en información crítica**, definida por función y no por componente. Los tokens son iniciales: se corrigen de forma sistémica, nunca con excepciones locales |
-| **D20** | Reconciliación con el PRD. **«Dar fe» es el nombre y el concepto único**: una sola acción con consecuencia personal y colaborativa, que sustituye al «check-in» del diseño. Los **elementos del cortejo son núcleo** desde el lanzamiento y el segmento se deriva de ellos. Se separa **«el usuario ha dado fe»** de **«Cofradar ha podido usar la aportación»**. El cuarto destino es **Mi tramo**. Tres niveles de confianza visibles sobre un motor más granular. **Logros, retos y clasificaciones pasan a evolución** y no bloquean el lanzamiento |
+| **D20** | Reconciliación con el PRD. **«Dar fe» es el nombre y el concepto único**: una sola acción con consecuencia personal y colaborativa, que sustituye al «check-in» del diseño. Los **elementos del cortejo son núcleo** desde el lanzamiento y el tramo ocupado se deriva de ellos. Se separa **«el usuario ha dado fe»** de **«Cofradar ha podido usar la aportación»**. El cuarto destino es **Mi tramo**. Tres niveles de confianza visibles sobre un motor más granular. **Logros, retos y clasificaciones pasan a evolución** y no bloquean el lanzamiento |
 | **D21** | **Publicación de alteraciones.** Planificación prevista por defecto + inferencia automática mediante «Dar fe» + corrección administrativa excepcional. Las fases las conduce la planificación; las aportaciones refinan posición y alteraciones. Las seis alteraciones las **publica el motor**; `no_procesiona` y `cancelada` **nunca se infieren** de la ausencia de datos y solo se activan desde administración. Un reporte de usuario es **señal, no publicación**. Descartada la matriz de fuentes oficiales y el ciclo reporte → validación → publicada |
 | **D22** | **La fase lleva nivel de confianza**, como cualquier otro dato derivado. El horario permite **estimar** una fase, no convertirla en hecho: una fase que sale solo de la planificación es `estimado` y se rotula `según horario`. Aplica a `inminente`, `en_calle`, `proxima_entrada` y `finalizada`. `cancelada` y `no_procesiona` son siempre confirmadas por construcción, y `prevista` lo es mientras no pase su hora. **No se crea ninguna fase nueva ni ningún canal nuevo**: es el sistema de confianza de D11 aplicado donde se había quedado implícito |
 | **D23** | **Integridad de «Dar fe».** Dos monedas: **puntos** generosos con suelo de plausibilidad, **reputación** interna, sin número visible, que solo baja ante patrones. Tres momentos: registro siempre, **puntos base inmediatos**, consolidación automática posterior con tres resultados internos. **La plausibilidad juzga la historia del usuario, nunca la posición que afirma**; **el modelo discrepa, solo otras observaciones contradicen**, y quien corrige una estimación equivocada hace la aportación más valiosa. Umbrales a calibrar. Fuera de v1: detección de coordinación, huella de dispositivo y modelos de aprendizaje |
@@ -1868,6 +1940,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 | **D31** | **Economía de gamificación: seis reglas** (§11.5). Un solo marcador con tres reconocimientos; progresión de por vida y competición por edición; **misma base para todo «Dar fe» válido** y bonus decreciente **según la redundancia de la información, nunca por repetir cofradía**; los puntos no compran nada; los retos reconocen y **no dirigen movimientos**; los puntos nunca bajan. Las cifras son calibración |
 | **D32** | **Avisos como canal complementario.** Ninguna información importante depende del push: todo lo que sale está también dentro al volver. Push solo para acontecimientos operativos que cambien el plan del usuario, **nunca para gamificación**. **Seguir no es consentir.** Un control, no siete. Un aviso por cofradía y tipo. Sin horario de silencio. **No hay centro de notificaciones**: cada cosa aterriza donde le corresponde |
 | **D33** | **El diseño cubre el producto completo.** La distinción entre núcleo de lanzamiento y evolución rige el **orden de desarrollo**, no el alcance del diseño. **Reportar una incidencia es un flujo de diseño propio**, distinto de consumir avisos, y sigue siendo **señal para el motor y nunca publicación** |
+| **D34** | **Los elementos son la unidad espacial del mapa.** Mapa sirve para **localizar sobre cartografía real la cruz de guía y los pasos configurados de cada hermandad en calle** —uno o dos, nunca una lista universal—, más la **ubicación opcional** del usuario, y **cada elemento lleva posición y confianza propias**. El **tramo ocupado** pasa a representación **derivada y secundaria**, de la cruz de guía al último paso localizado. El **final del cortejo deja de localizarse** —no tiene anclaje en la fuente, que trae dos columnas— pero **sigue en la taxonomía, en «Dar fe» y en el histórico**: Cofradar no lo sitúa y sí acepta que le den fe de él. **Cartografía real, nunca inventada**, con requisitos fijados y proveedor sin decidir. Y una frontera: lo cerrado es **la información que el usuario debe poder obtener**; la atribución, la densidad y la forma del tramo son **soluciones gráficas a validar** |
 
 ---
 
@@ -1876,7 +1949,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 ### Específico de Cofradar · no trasladable sin rediseño
 
 - **El modelo de estados de cuatro capas** (§6) y sus valores concretos.
-- **El subsistema de mapa**: la cofradía como segmento, los tres niveles de revelación, la anatomía del marcador, el recorrido con hitos (§10).
+- **El subsistema de mapa**: los elementos del cortejo como unidad espacial, el tramo ocupado como derivado, los tres niveles de revelación, las dos clases de marca, el recorrido con hitos (§10).
 - **El sistema de confianza y frescura** tal como está calibrado (§7). El *concepto* es muy reutilizable; los umbrales y el lenguaje son de aquí.
 - **La tarjeta de cofradía de doble ancla** (§9.4) y su línea de decisión.
 - **Las tres relaciones del usuario** y la separación entre colección personal y participación (§6.4, §11).
