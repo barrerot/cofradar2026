@@ -781,6 +781,8 @@ Si en el futuro existe información suficiente para calcular una ruta peatonal r
 
 ### 8.1 Las tres vistas
 
+> **En revisión desde el 8 de octubre de 2026.** El PRD fija una arquitectura **mobile-first de cinco áreas** —**Inicio · Mapa · Cofradías · Agenda · Mi Cofradar**— con **«Dar fe» como acción transversal que no es un destino**. «Ahora» se integra en **Inicio** y deja de ser nombre de navegación; «Jornada» pasa a llamarse **Agenda** y el **listado de cofradías** sale de ella para ser área propia; «Mi tramo» pasa a llamarse **Mi Cofradar**. Lo que sigue en §8.1 y §8.2 describe el marco anterior de cuatro destinos: **sus reglas duras siguen vigentes** —cabecera como zona del marco, franja de acción contextual separada, icono + etiqueta, sin hamburguesa, 48px, la barra no se oculta— y **la navegación concreta se rehace en B-05 · Armazón global móvil**. Esta sección se reescribe con el resultado de B-05.
+
 Las tres usan **los mismos datos y los mismos componentes**, y son coherentes entre sí. Cada una contesta a una pregunta distinta.
 
 | Vista | Pregunta | Comportamiento |
@@ -1921,7 +1923,7 @@ Nada de esto está decidido. **No se debe inventar una solución: o se pregunta,
 | **D12** | Tarjeta de cofradía de **doble ancla** (nombre y estado, por posición fija) en tres densidades. Dato protagonista: **próximo punto relevante + hora**; proximidad como capa adicional con lenguaje prudente |
 | **D13** | Tres relaciones: `seguida` (intención), `vista` (**álbum personal**, sin valor competitivo), `dar-fe` (presencia, juego y aportación colaborativa). Verificado puntúa; **no verificable se registra siempre y recibe los puntos base** — lo único que queda condicionado es el bonus (corregido por D31). **Granate para la capa personal.** Tarjeta tipográfica; escudo opcional; sin fotografía |
 | **D14** | «Dar fe» con **dos entradas** (contextual + vía rápida global) y confirmación siempre del usuario. **Celebración media** por defecto, alta solo en hitos. Botón en **tinta**. Verificación por **canal de relleno**, no por trazo. Lenguaje no acusatorio |
-| **D15** | Navegación **estable de cuatro destinos** (Ahora · Mapa · Jornada · Mi tramo) con **acción contextual separada** por encima. Icono + etiqueta siempre. Sin hamburguesa. Mismo sistema con distinta intensidad, según el estado real de la jornada y no el calendario |
+| **D15** | *En revisión por la arquitectura de cinco áreas del PRD · se rehace en B-05.* Navegación **estable de cuatro destinos** (Ahora · Mapa · Jornada · Mi tramo) con **acción contextual separada** por encima. Icono + etiqueta siempre. Sin hamburguesa. Mismo sistema con distinta intensidad, según el estado real de la jornada y no el calendario |
 | **D16** | Dos ejes independientes: **tema** (claro/oscuro) × **contraste** (normal/máximo). Elección manual persistente. El contraste máximo no cambia el layout. **Invariancia semántica** en todas las combinaciones. El oscuro también es cálido y la elevación cambia de mecanismo |
 | **D17** | Escritorio como **fusión en paneles** y mejora progresiva del mismo sistema. Bottom sheet ⇄ panel lateral; barra inferior ⇄ rail lateral. Ancho máximo de lectura. El responsive cambia presentación y prioridad, **no capacidades** |
 | **D18** | **Último dato conocido** + persistencia local; skeleton solo en primera carga; nunca spinner bloqueante. **Cinco estados distintos** más `refrescando`. Persistir no es dar por vigente. Informar, no rellenar |
