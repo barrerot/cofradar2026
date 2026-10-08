@@ -4,3 +4,12 @@ dist/
 .env
 .env.*
 *.log
+
+# Playwright MCP (capturas de verificacion)
+.playwright-mcp/
+
+# Sincronizado desde docs/design/pantallas/0-sistema por `npm run sync:diseno`.
+# Generado: no se edita ni se commitea. Lo nuestro es base.css y marco.css.
+frontend/src/estilos/bundle.css
+frontend/src/estilos/tokens.json
+frontend/src/estilos/fuentes/

@@ -1,0 +1,355 @@
+/* ==========================================================================
+   COFRADAR · MARCO
+   --------------------------------------------------------------------------
+   Las zonas del armazon. NO estan en bundle.css: en el export viven inline en
+   cada .html como andamiaje de la captura (.fr, .fr-head, .fr-content,
+   .fr-bottom, .fr-navz, .fr-safe). Aqui se reescriben para produccion.
+
+   Que cambia respecto al export, y por que:
+     .fr          390x844 con borde y radio = simulador de movil.
+                  En produccion: el viewport, sin borde ni radio.
+     .fr-safe     47px / 34px fijos = el notch de un modelo concreto.
+                  En produccion: env(safe-area-inset-*).
+     .fr-content  overflow:hidden porque la captura es estatica.
+                  En produccion: scroll vertical.
+   Lo demas se conserva tal cual, tokens incluidos.
+
+   Reglas duras que esto implementa (design.md §8.2, vigentes aunque §8.1/8.2
+   esten en revision por la arquitectura de cinco areas):
+     · La cabecera es una ZONA del marco, no un componente. El marco fija
+       donde cae y que lleva siempre (la sincronizacion); el resto lo compone
+       cada ruta.
+     · Objetivos tactiles de 48px y respeto de las areas seguras.
+     · La barra de navegacion NO se oculta al hacer scroll: queda fuera del
+       contenedor que scrollea, asi que no puede ocultarse por construccion.
+     · Franja de accion contextual separada por encima de la navegacion.
+
+   Namespace: cf-marco*. El design system ocupa .cf-*; estas son nuestras y
+   quedan agrupadas bajo un nombre que dice de que son.
+   ========================================================================== */
+
+/* Breakpoints. design.md §4.9 los da como VALORES CANDIDATOS (640/1024/1440),
+   no como decision cerrada, asi que viven en un solo sitio: aqui.
+
+     md  40rem   640px   una columna mas comoda, barra inferior
+     lg  64rem  1024px   rail lateral, paneles, ficha en panel
+     xl  90rem  1440px   mas area de mapa e informacion simultanea
+
+   Sin @custom-media: no hay soporte nativo y no vamos a meter un plugin de
+   PostCSS para tres valores. Si cambian, se cambian en las @media de abajo. */
+
+/* ── El marco ──────────────────────────────────────────────────────────────
+   .cf-marco es la caja exterior y el ancla de posicion del sheet.
+   .cf-marco-columna es la pila vertical: areas seguras, cabecera, contenido y
+   zona inferior. A partir de lg entra el rail como hermano de la columna.
+   -------------------------------------------------------------------------- */
+.cf-marco {
+  position: relative;
+  display: flex;
+  /* ALTURA, no min-height. Con min-height el contenedor flex no tiene altura
+     definida: .cf-marco-contenido crece hasta su contenido en vez de
+     scrollear, el documento entero scrollea y la barra inferior se va fuera
+     de pantalla. Con height el contenido tiene un alto contra el que
+     desbordar, y la regla de §8.2 —la barra no se oculta al hacer scroll—
+     se sostiene por construccion. */
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-marco-columna {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Areas seguras del dispositivo ─────────────────────────────────────── */
+.cf-marco-safe {
+  flex: none;
+  background: var(--cf-surface);
+}
+
+.cf-marco-safe[data-borde="superior"] {
+  height: env(safe-area-inset-top, 0px);
+}
+
+.cf-marco-safe[data-borde="inferior"] {
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Cabecera: zona, no componente ─────────────────────────────────────── */
+.cf-marco-cabecera {
+  position: sticky;
+  top: 0;
+  z-index: var(--cf-z-sticky);
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-2);
+  row-gap: var(--cf-space-2);
+  min-height: var(--cf-touch-min);
+  padding: var(--cf-space-2) var(--cf-space-2) var(--cf-space-2) var(--cf-space-4);
+  background: var(--cf-surface);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  box-shadow: var(--cf-elev-1);
+}
+
+/* Lo que compone cada ruta a la izquierda. Se come el espacio libre. */
+.cf-marco-cabecera-slot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+.cf-marco-cabecera-slot .cf-btn {
+  max-width: 100%;
+}
+
+/* El selector de ciudad y jornada se come el ancho libre y recorta por
+   elipsis: «Domingo de Ramos» no cabe donde cabe «Madrugá». Es `.sel` del
+   export, que alli se marcaba con una clase y aqui se reconoce por
+   `aria-haspopup`: en la cabecera, el unico boton que abre un dialogo es ese
+   selector, asi que el atributo que ya lleva por accesibilidad basta y no
+   hace falta una clase nuestra. */
+.cf-marco-cabecera-slot > .cf-btn[aria-haspopup] {
+  flex: 1;
+  min-width: 0;
+  justify-content: space-between;
+}
+
+.cf-marco-cabecera-slot > .cf-btn[aria-haspopup] > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Segunda fila de la cabecera: ocupa el ancho completo. */
+.cf-marco-cabecera-fila {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  min-width: 0;
+}
+
+/* Titulo de pantalla secundaria. Serif, como en el export. */
+.cf-marco-titulo {
+  flex-basis: 100%;
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: var(--cf-weight-600);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+/* Indicador de ultima sincronizacion: lo unico fijo de la cabecera (§7.3). */
+.cf-marco-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  font-size: var(--cf-text-xs);
+  line-height: var(--cf-leading-xs);
+  color: var(--cf-text-secondary);
+  font-feature-settings: var(--cf-font-features-data);
+}
+
+/* ── Contenido ─────────────────────────────────────────────────────────── */
+.cf-marco-contenido {
+  position: relative;
+  z-index: var(--cf-z-base);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--cf-space-4);
+}
+
+/* El mapa aprovecha todo el espacio: sin padding ni ancho maximo (§8.4). */
+.cf-marco-contenido[data-sangrado="completo"] {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Ancho maximo de lectura. No se estira porque haya espacio (§8.4). */
+.cf-marco-medida {
+  max-width: var(--cf-measure-max);
+  margin-inline: auto;
+}
+
+/* ── Zona inferior: franja de accion + navegacion ──────────────────────── */
+.cf-marco-inferior {
+  flex: none;
+  position: relative;
+}
+
+.cf-marco-inferior .cf-actionbar {
+  position: relative;
+  z-index: var(--cf-z-action);
+}
+
+.cf-marco-navz {
+  position: relative;
+  z-index: var(--cf-z-nav);
+}
+
+/* El padding inferior de la barra lo pone el area segura, no el componente. */
+.cf-marco-navz .cf-nav {
+  padding-bottom: 0;
+}
+
+/* ── Bottom sheet acoplado sobre la navegacion ─────────────────────────── */
+/* El export fija bottom:90px a mano. Aqui la altura de la zona inferior se
+   mide en vivo y se publica en --cf-marco-alto-inferior (ver useAltoZona). */
+.cf-marco-scrim {
+  position: absolute;
+  inset: 0 0 var(--cf-marco-alto-inferior, 0px) 0;
+  z-index: calc(var(--cf-z-sheet) - 1);
+  /* El fondo lo pone .cf-scrim, que bundle.css ya define (var(--cf-overlay),
+     sin desenfoque). Aqui solo se coloca. */
+  border: 0;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  animation: cf-marco-aparecer var(--cf-dur-base) var(--cf-ease-out);
+}
+
+.cf-marco-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--cf-marco-alto-inferior, 0px);
+  z-index: var(--cf-z-sheet);
+}
+
+.cf-marco-dock .cf-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* La altura viva la pone el componente en la variable; los imanes de §9.9
+     son 20 / 55 / 90 dvh. */
+  height: var(--cf-marco-alto-sheet, 20dvh);
+}
+
+/* Durante el arrastre no hay transicion: el sheet sigue al dedo. */
+.cf-marco-dock[data-arrastre="si"] .cf-sheet {
+  transition: none;
+}
+
+/* El tirador es un boton de verdad, para que las alturas existan tambien con
+   teclado. bundle.css ya le da forma y color; aqui solo se le quita el
+   cromado de boton. */
+.cf-marco-dock .cf-handle {
+  flex: none;
+  border: 0;
+  padding: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.cf-marco-dock .cf-handle:active {
+  cursor: grabbing;
+}
+
+/* El cuerpo scrollea; la cabecera del sheet y el tirador no se mueven. */
+.cf-marco-sheet-cuerpo {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cf-marco-dock[data-entrada="si"] .cf-sheet {
+  animation: cf-marco-subir var(--cf-dur-sheet) var(--cf-ease-out);
+}
+
+/* Cabecera del sheet: titulo + cierre. */
+.cf-marco-sheet-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-2);
+  margin-bottom: var(--cf-space-3);
+}
+
+.cf-marco-sheet-cabecera h2 {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-critical);
+}
+
+@keyframes cf-marco-aparecer {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cf-marco-subir {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Composicion a partir de lg: rail lateral ──────────────────────────────
+   §8.4: barra inferior (movil) ⇄ rail lateral (escritorio). Mismo
+   componente, distinto anclaje; no se crean componentes de escritorio.
+
+   AVISO: el export de 1-marco solo trae pantallas de 390x844, asi que esta
+   composicion no tiene captura contra la que comprobarse. Es la lectura
+   literal de §8.4, pendiente de validar con un export de escritorio.
+   -------------------------------------------------------------------------- */
+@media (min-width: 64rem) {
+  /* El rail es hermano de la columna, no vive dentro de ella, y llega de
+     arriba abajo: es el equivalente de la barra, que ocupa todo el ancho. */
+  .cf-marco-rail {
+    flex: none;
+    display: flex;
+    z-index: var(--cf-z-nav);
+  }
+
+  .cf-marco-rail .cf-rail {
+    flex: 1;
+  }
+
+  .cf-marco-contenido {
+    padding: var(--cf-space-6);
+  }
+
+  /* Ancho maximo de lectura (§8.4): «no se estiran porque exista espacio: una
+     tarjeta de 1.400px de ancho es ilegible». El mapa es la excepcion
+     declarada —aprovecha el espacio sobrante— y por eso se exceptua por el
+     mismo atributo que ya le quita el padding. */
+  .cf-marco-contenido:not([data-sangrado="completo"]) > * {
+    max-width: var(--cf-measure-max);
+    margin-inline: auto;
+  }
+
+  /* La franja de accion se alinea con el contenido, no con el borde de la
+     pantalla: si no, el boton queda a 1800px de lo que acciona. */
+  .cf-marco-inferior .cf-actionbar {
+    max-width: var(--cf-measure-max);
+    margin-inline: auto;
+  }
+
+  /* El selector deja de comerse el ancho libre. Que se estire existe para
+     resolver la presion de espacio del movil; aqui no la hay, y un boton de
+     960px para la palabra «Madrugá» es absurdo. Se ajusta al contenido y
+     conserva la elipsis por si la jornada es larga. */
+  .cf-marco-cabecera-slot > .cf-btn[aria-haspopup] {
+    flex: 0 1 auto;
+  }
+}
+
+/* Objetivos tactiles: se consulta lo DISPONIBLE, no lo primario (§4.9). Una
+   tablet horizontal entra en composicion de paneles y sigue necesitando 48px. */
+@media (any-pointer: coarse) {
+  .cf-marco-cabecera .cf-btn,
+  .cf-marco-navz .cf-nav a,
+  .cf-marco-rail .cf-rail a {
+    min-height: var(--cf-touch-min);
+  }
+}

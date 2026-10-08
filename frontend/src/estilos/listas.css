@@ -1,0 +1,61 @@
+/* ==========================================================================
+   COFRADAR · LISTAS DE COFRADIAS
+   --------------------------------------------------------------------------
+   El patron de lista que comparten Inicio (2-inicio) y Cofradias
+   (4-cofradias). En los dos exports vive inline como `.lst`, con las MISMAS
+   reglas, y por eso vive aqui una sola vez: son la misma lista en dos
+   pantallas, y duplicarla es pedir que diverjan.
+
+   Que resuelve: LAS FILAS NO SON CAJAS. bundle.css da a `.cf-card` borde,
+   radio, fondo y padding, que es lo correcto para una tarjeta suelta; en una
+   lista larga eso produce una pila de cajas que compiten entre si. Aqui se
+   les quita todo eso y se separan por un filete.
+
+   Es la jerarquia por sustraccion: se baja el ruido de lo accesorio antes
+   que subir el de lo importante. En Inicio deja que destaque el sujeto —que
+   conserva la caja, ver inicio.css—; en Cofradias, donde NINGUNA fila
+   destaca, evita que setenta hermandades se lean como setenta tarjetas.
+
+   Namespace: cf-lista. El design system ocupa .cf-*; esta es nuestra.
+   ========================================================================== */
+
+.cf-lista {
+  display: grid;
+}
+
+.cf-lista .cf-card {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+  /* La fila es tocable entera: lleva a la ficha. */
+  min-height: var(--cf-touch-min);
+}
+
+/* El filete SEPARA, no corona: la primera fila no lo lleva. Hacen falta los
+   dos selectores porque la fila puede ser la tarjeta misma o venir envuelta
+   —en un enlace a la ficha, o en `.cf-ahora-sujeto`—. */
+.cf-lista > .cf-card:first-child,
+.cf-lista > :first-child .cf-card {
+  border-top: 0;
+}
+
+/* Fila que lleva a la ficha. El enlace no pinta nada: la fila ya es la
+   superficie tocable y el color de enlace competiria con el chip de estado. */
+.cf-lista .cf-lista-enlace {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* La coincidencia de busqueda se marca SUBRAYADA, no con fondo de color: el
+   fondo seria un cuarto color en una fila que ya tiene chip de fase y marca
+   de relacion, y ningun significado puede depender solo del color (regla 1). */
+.cf-lista mark {
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}

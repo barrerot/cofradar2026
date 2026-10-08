@@ -1,0 +1,51 @@
+import { Route, Routes, useLocation } from "react-router-dom";
+import { leerEstadoJornada } from "./fixture";
+import { Agenda } from "./rutas/Agenda";
+import { Cofradias } from "./rutas/Cofradias";
+import { FichaCofradia } from "./rutas/FichaCofradia";
+import { Inicio } from "./rutas/Inicio";
+import { Mapa } from "./rutas/Mapa";
+import { MiCofradar } from "./rutas/MiCofradar";
+
+/**
+ * Las cinco areas, en el orden en que viven en la barra.
+ *
+ * El estado de jornada baja por props desde aqui porque el marco entero
+ * depende de el: decide si aparece la franja de accion (§8.3). Cuando haya
+ * motor, esto sale del backend; hoy es fixture.
+ */
+export function App() {
+  const { search } = useLocation();
+  const estado = leerEstadoJornada(queryEfectiva(search));
+
+  return (
+    <Routes>
+      <Route path="/" element={<Inicio estado={estado} />} />
+      <Route path="/mapa" element={<Mapa estado={estado} />} />
+      <Route path="/cofradias" element={<Cofradias estado={estado} />} />
+      <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
+      <Route path="/agenda" element={<Agenda estado={estado} />} />
+      <Route path="/mi-cofradar" element={<MiCofradar estado={estado} />} />
+    </Routes>
+  );
+}
+
+/**
+ * La query de la que salen los interruptores del fixture.
+ *
+ * `useLocation().search` es relativo al ROUTER, y con enrutado de hash eso
+ * significa lo que haya detras del «#». Pero `?tema=` lo lee tema.ts de
+ * `window.location.search`, que es lo de delante. Sin esto, en la demo
+ * compilada con hash habria que saber de memoria a que lado del «#» va cada
+ * parametro, y la mitad de los enlaces no harian nada.
+ *
+ * Se unen los dos lados y gana el del router, que es el que el usuario
+ * cambia navegando.
+ */
+function queryEfectiva(deRouter: string): string {
+  const parametros = new URLSearchParams(window.location.search);
+  for (const [clave, valor] of new URLSearchParams(deRouter)) {
+    parametros.set(clave, valor);
+  }
+  return parametros.toString();
+}

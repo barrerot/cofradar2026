@@ -1,0 +1,65 @@
+# Cofradar · pantallas para desarrollo
+
+Una pantalla = tres archivos con el mismo nombre:
+
+- `.png` — captura a 1170 × 2532 (390 × 844 a 3×).
+- `.html` — la pantalla autónoma (tokens, componentes y fuentes incrustados). Ábrela en el navegador o inspecciona su marcado y clases `cf-*`.
+- `.md` — las notas de diseño de esa pantalla.
+
+`0-sistema/` trae `tokens.css`, `bundle.css` (tokens + componentes), `tokens.json`, las fuentes y el README del design system con todas las reglas.
+
+Fuente de verdad: el artifact del design system. Lo rotulado como relleno, fixture, supuesto, propuesta o NO DEFINIDO no es decisión cerrada ni dato de producto.
+
+## 1-marco
+
+- `01-jornada-activa-madruga-02-40` — JORNADA ACTIVA · MADRUGÁ, 02:40
+- `02-sin-actividad-jueves-santo-17-15` — SIN ACTIVIDAD · JUEVES SANTO, 17:15
+- `03-raiz-cofradias` — RAÍZ · COFRADÍAS
+- `04-secundaria-ficha-de-la-macarena` — SECUNDARIA · FICHA DE LA MACARENA
+- `05-sheet-abierto-jornada-activa` — SHEET ABIERTO · JORNADA ACTIVA
+- `06-inicio-activo` — INICIO ACTIVO
+- `07-mapa-activo` — MAPA ACTIVO
+- `08-cofradias-activo` — COFRADÍAS ACTIVO
+- `09-agenda-activo` — AGENDA ACTIVO
+- `10-mi-cofradar-activo` — MI COFRADAR ACTIVO
+- `11-visitante-sin-cuenta-sin-ubicacion` — VISITANTE · SIN CUENTA, SIN UBICACIÓN
+- `12-autenticado-con-ubicacion` — AUTENTICADO · CON UBICACIÓN
+
+## 2-inicio
+
+- `01-1-inicio-jornada-activa-madruga-02-40-con-ubicacion` — 1 · INICIO · JORNADA ACTIVA · MADRUGÁ, 02:40 · CON UBICACIÓN
+- `02-1-contenido-completo-scroll` — 1 · CONTENIDO COMPLETO (SCROLL)
+- `03-1-con-ubicacion` — 1 · CON UBICACIÓN
+- `04-4-sin-ubicacion-tres-bloques` — 4 · SIN UBICACIÓN · TRES BLOQUES
+- `05-4-contenido-completo` — 4 · CONTENIDO COMPLETO
+- `06-2-sin-actividad-jueves-santo-17-15` — 2 · SIN ACTIVIDAD · JUEVES SANTO, 17:15
+- `07-3-fuera-de-temporada-hoy-8-de-octubre-de-2026-fecha-de-ejemp` — 3 · FUERA DE TEMPORADA · HOY: 8 DE OCTUBRE DE 2026 (FECHA DE EJEMPLO)
+- `08-selector-de-ciudad-y-jornada-desde-la-cabecera` — SELECTOR DE CIUDAD Y JORNADA · DESDE LA CABECERA
+
+## 3-mapa
+
+- `01-1-vista-general-nivel-1-madruga-02-40` — 1 · VISTA GENERAL · NIVEL 1 · MADRUGÁ, 02:40
+- `02-2-vista-rapida-sheet-asomado-sobre-la-macarena` — 2 · VISTA RÁPIDA · SHEET ASOMADO SOBRE LA MACARENA
+- `03-b-ubicacion-concedida-precision-suficiente` — B · UBICACIÓN CONCEDIDA, PRECISIÓN SUFICIENTE
+- `04-c-comprobacion-de-la-cartografia-en-oscuro` — C · COMPROBACIÓN DE LA CARTOGRAFÍA EN OSCURO
+- `05-3-nivel-2-la-macarena-sheet-asomado` — 3 · NIVEL 2 · LA MACARENA · SHEET ASOMADO
+- `06-3-nivel-2-sheet-a-altura-media` — 3 · NIVEL 2 · SHEET A ALTURA MEDIA
+- `07-4-agrupacion-nivel-3` — 4 · AGRUPACIÓN · NIVEL 3
+- `08-4-deshacer-el-grupo` — 4 · DESHACER EL GRUPO
+- `09-5-filtros-en-la-cabecera` — 5 · FILTROS · EN LA CABECERA
+- `10-5-finalizadas-trae-a-el-calvario` — 5 · «FINALIZADAS» TRAE A EL CALVARIO
+- `11-6-detalle-de-elemento-paso-de-cristo` — 6 · DETALLE DE ELEMENTO · PASO DE CRISTO
+- `12-6-el-cortejo-en-su-orden` — 6 · EL CORTEJO, EN SU ORDEN
+- `13-7-centrado-en-un-hito-llegada-desde-la-ficha` — 7 · CENTRADO EN UN HITO · LLEGADA DESDE LA FICHA
+- `14-8-fuera-de-temporada` — 8 · FUERA DE TEMPORADA
+
+## 4-cofradias
+
+- `01-1-listado-jornada-activa-madruga-02-40` — 1 · LISTADO · JORNADA ACTIVA · MADRUGÁ, 02:40
+- `02-1-listado-completo-scroll` — 1 · LISTADO COMPLETO (SCROLL)
+- `03-2-buscando-g-con-mis-seguidas` — 2 · BUSCANDO «G» CON «MIS SEGUIDAS»
+- `04-3-sin-resultados-con-filtro` — 3 · SIN RESULTADOS · CON FILTRO
+- `05-3-sin-resultados-sin-filtro` — 3 · SIN RESULTADOS · SIN FILTRO
+- `06-4-fuera-de-temporada` — 4 · FUERA DE TEMPORADA
+- `07-4-desplazado-hasta-la-madruga` — 4 · DESPLAZADO HASTA LA MADRUGÁ
+- `08-4-listado-completo-scroll` — 4 · LISTADO COMPLETO (SCROLL)

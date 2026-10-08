@@ -1,0 +1,151 @@
+/* ==========================================================================
+   COFRADAR · BASE
+   --------------------------------------------------------------------------
+   Lo que el design system no trae y la app necesita: @font-face, reset minimo
+   y el fondo del documento. bundle.css NO lleva reset (comprobado: ni *, ni
+   html, ni body), asi que este archivo cubre ese hueco y nada mas.
+
+   Orden de carga: base.css ANTES de bundle.css, para que las reglas de
+   componente ganen siempre sobre la base. Ver main.tsx.
+
+   Todo valor sale de un token. Aqui no hay hex.
+   ========================================================================== */
+
+/* ── Fuentes ───────────────────────────────────────────────────────────────
+   tokens.css deja la ruta de publicacion marcada NO DEFINIDA. Aqui se
+   resuelve por build: Vite reescribe estas URL relativas y les pone hash, asi
+   que no hay ninguna ruta fijada a mano. Autoalojadas, subconjunto latino.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./fuentes/InterVariable-latin.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("./fuentes/newsreader-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("./fuentes/newsreader-latin-wght-italic.woff2") format("woff2-variations");
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────────
+   Corto a proposito. No es normalize: solo lo que estorba.
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Sin ajuste automatico de tamano al girar el movil: la tipografia la fija
+     el sistema de tokens, no iOS. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+  font-family: var(--cf-font-sans);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Los datos con cifras usan las features tipograficas del sistema: cifras de
+   ancho fijo, para que una hora no baile al actualizarse. */
+time,
+output,
+[data-cifra] {
+  font-feature-settings: var(--cf-font-features-data);
+}
+
+/* ── Accesibilidad ─────────────────────────────────────────────────────────
+   prefers-reduced-motion ya lo resuelve tokens.css poniendo las duraciones a
+   cero, asi que aqui no se repite.
+   -------------------------------------------------------------------------- */
+
+/* Salto al contenido: visible solo con teclado. */
+.cf-salto {
+  position: absolute;
+  left: var(--cf-space-2);
+  top: var(--cf-space-2);
+  z-index: var(--cf-z-toast);
+  padding: var(--cf-space-2) var(--cf-space-3);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-primary-bg);
+  color: var(--cf-text-inverse);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-data);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--cf-space-4)));
+  transition: transform var(--cf-dur-fast) var(--cf-ease-out);
+}
+
+.cf-salto:focus-visible {
+  transform: translateY(0);
+}
+
+/* Solo para lectores de pantalla. */
+.cf-oculto-visual {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

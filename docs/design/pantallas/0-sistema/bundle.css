@@ -1,0 +1,902 @@
+/* ==========================================================================
+   COFRADAR · CAPA DE TOKENS · forma canónica (variables CSS nativas)
+   --------------------------------------------------------------------------
+   Tres capas:
+     1. PRIMITIVOS  --cf-neutral-200 …  valores crudos. NUNCA en un componente.
+     2. SEMÁNTICOS  --cf-surface, --cf-live …  rol. Se remapean por atributo.
+                    LOS COMPONENTES CONSUMEN EXCLUSIVAMENTE ESTA CAPA.
+     3. COMPONENTE  solo valor propio irreducible. Se evitan (ninguno aquí).
+
+   :root                        → primitivos + semánticos · claro · funcional
+   [data-register="editorial"]  → remapea superficies, bordes y espaciado
+   [data-theme="dark"]          → remapea todos los semánticos
+   [data-contrast="max"]        → remapea solo contraste, bordes y pesos
+
+   Estados como atributos de datos, nunca como clases:
+   data-fase="en_calle" · data-confianza="estimado" · data-relacion="dar-fe" ·
+   data-verificacion="no-verificable"
+
+   Lo marcado NO DEFINIDO no tiene valor en el documento de sistema. No se
+   rellena: se deja comentado.
+   ========================================================================== */
+
+/* @font-face: ver fonts/ (Inter variable, Newsreader variable + cursiva;
+   autoalojadas, subconjunto latino, font-display: swap). La ruta de
+   publicación de las fuentes en producción: NO DEFINIDA. */
+
+:root,
+[data-theme="light"] {
+  /* ── 1 · PRIMITIVOS ──────────────────────────────────────────────────── */
+
+  /* Neutro cálido, croma baja — columna vertebral del registro funcional */
+  --cf-neutral-0:    #FFFFFF;
+  --cf-neutral-50:   #FBF9F5;
+  --cf-neutral-100:  #F4F2ED;
+  --cf-neutral-200:  #E6E3DC;
+  --cf-neutral-300:  #D4CFC6;
+  --cf-neutral-400:  #B3ADA3;
+  --cf-neutral-500:  #8C867C;
+  --cf-neutral-600:  #6A655C;
+  --cf-neutral-700:  #4A443C;
+  --cf-neutral-800:  #2B2722;
+  --cf-neutral-900:  #1D1A16; /* TINTA */
+  --cf-neutral-950:  #15120F;
+  --cf-neutral-1000: #0E0C0A;
+
+  /* Cera, croma media — exclusiva del registro editorial */
+  --cf-cera-50:  #FDF9F1;
+  --cf-cera-100: #F7F1E6;
+  --cf-cera-200: #EFE6D5;
+  --cf-cera-300: #DFD3BE;
+  --cf-cera-400: #C9B896;
+  --cf-cera-900: #251E17;
+  --cf-cera-950: #1C1712;
+
+  /* Granate — identidad */
+  --cf-granate-50:  #F9EBE9;
+  --cf-granate-100: #F1D6D4;
+  --cf-granate-200: #E9AFB7;
+  --cf-granate-300: #D97E8B; /* marca en OSCURO */
+  --cf-granate-400: #B85566;
+  --cf-granate-500: #8A2A3C;
+  --cf-granate-600: #6E1C2F; /* marca en CLARO */
+  --cf-granate-700: #58121F;
+  --cf-granate-900: #3A1A20;
+
+  /* Semánticos de estado · -600/-700 únicos válidos para TEXTO en claro (AAA)
+     · -300/-400 texto en OSCURO y rellenos vivos de mapa */
+  --cf-verde-50:  #E3F1E7; --cf-verde-100: #C7E3D0; --cf-verde-300: #5FC98B;
+  --cf-verde-400: #2E9E60; --cf-verde-500: #1F7A4D; --cf-verde-600: #15603B;
+  --cf-verde-700: #0E4A2D;
+
+  --cf-ambar-50:  #FBF0D8; --cf-ambar-100: #F6E0AE; --cf-ambar-300: #E8B44D;
+  --cf-ambar-400: #C78A0E; --cf-ambar-500: #9C5F00; --cf-ambar-600: #7A4800;
+  --cf-ambar-700: #5E3700;
+
+  --cf-rojo-50:  #FBE9E6; --cf-rojo-100: #F6CFC9; --cf-rojo-300: #F0776B;
+  --cf-rojo-400: #D33A2C; --cf-rojo-500: #B3261E; --cf-rojo-600: #9B2016;
+  --cf-rojo-700: #7A1810;
+
+  --cf-azul-50:  #E4EFF6; --cf-azul-100: #C4DCEB; --cf-azul-300: #74B8E0;
+  --cf-azul-400: #2A7FB8; --cf-azul-500: #1A6490; --cf-azul-600: #14537A;
+  --cf-azul-700: #0F3F5C;
+
+  /* ── 2 · SEMÁNTICOS · claro · funcional ──────────────────────────────── */
+  --cf-bg:             var(--cf-neutral-50);
+  --cf-surface:        var(--cf-neutral-0);
+  --cf-surface-sunken: var(--cf-neutral-100);
+  --cf-surface-raised: var(--cf-neutral-0);
+  --cf-border:         var(--cf-neutral-200);
+  --cf-border-strong:  var(--cf-neutral-300);
+  /* Borde de control: SOLO cuando el borde es lo único que identifica el
+     control (campos de formulario, chips de filtro, conmutadores). 3:1.
+     border y border-strong son separadores de contenido: no se les exige 3:1.
+     Se remapea por tema (capa 2): claro neutral-600, oscuro neutral-500.
+     Peor fondo: claro func 5,17 · claro edit 4,67 · oscuro func 4,37 · oscuro edit 4,16. */
+  --cf-border-interactive: var(--cf-neutral-600);
+  --cf-text:           var(--cf-neutral-900);
+  --cf-text-secondary: var(--cf-neutral-700);
+  --cf-text-muted:     var(--cf-neutral-600);
+  --cf-text-inverse:   var(--cf-neutral-50);
+  --cf-brand:          var(--cf-granate-600);
+  --cf-brand-strong:   var(--cf-granate-700);
+  --cf-brand-soft:     var(--cf-granate-50);
+  --cf-brand-border:   var(--cf-granate-100);
+
+  /* Estados operativos (idénticos en ambos registros)
+     --cf-<estado>        ICONO, BORDE y TRAZO del estado
+     --cf-<estado>-text   TEXTO del estado (información crítica, AAA en claro)
+     --cf-<estado>-soft   fondo tenue · --cf-<estado>-border  borde */
+  --cf-live:        var(--cf-verde-600);  /* en_calle, confirmaciones */
+  --cf-live-soft:   var(--cf-verde-50);
+  --cf-live-border: var(--cf-verde-100);
+  --cf-warn:        var(--cf-ambar-600);  /* retraso, adelanto, inminente, atención */
+  --cf-warn-soft:   var(--cf-ambar-50);
+  --cf-warn-border: var(--cf-ambar-100);
+  --cf-alert:        var(--cf-rojo-600);  /* incidencia, cancelada, crítico */
+  --cf-alert-soft:   var(--cf-rojo-50);
+  --cf-alert-border: var(--cf-rojo-100);
+  --cf-info:        var(--cf-azul-600);   /* información neutra, contexto de jornada */
+  --cf-info-soft:   var(--cf-azul-50);
+  --cf-info-border: var(--cf-azul-100);
+  --cf-idle:        var(--cf-neutral-600); /* prevista, finalizada, no_procesiona */
+  --cf-idle-soft:   var(--cf-neutral-100);
+  --cf-idle-border: var(--cf-neutral-200);
+
+  --cf-live-text:  var(--cf-verde-700);
+  --cf-warn-text:  var(--cf-ambar-700);
+  --cf-alert-text: var(--cf-rojo-700);
+  --cf-info-text:  var(--cf-azul-700);
+  --cf-idle-text:  var(--cf-neutral-700);
+
+  /* Acciones · fondos de botón y superficie interactiva. La dirección del
+     refuerzo se INVIERTE con el tema (tercer sitio del sistema, tras la
+     elevación y --cf-border-interactive): en claro se oscurece, en oscuro se
+     aclara, porque en oscuro el primario ES la superficie clara. */
+  --cf-primary-bg:        var(--cf-neutral-900);
+  --cf-primary-bg-hover:  var(--cf-neutral-800);
+  --cf-primary-bg-active: var(--cf-neutral-950);
+  --cf-danger-bg:         var(--cf-rojo-600);
+  --cf-danger-bg-hover:   var(--cf-rojo-700);
+  --cf-danger-bg-active:  var(--cf-rojo-700);
+  --cf-surface-hover:     var(--cf-surface-sunken);
+  /* Capa de atenuación tras un modal: no porta contenido, sin desenfoque */
+  --cf-overlay:           rgb(29 26 22 / .55);
+
+  /* Vivos: solo rellenos de marcador y trazos de mapa (fondo = cartografía) */
+  --cf-live-vivid:  var(--cf-verde-400);
+  --cf-warn-vivid:  var(--cf-ambar-400);
+  --cf-alert-vivid: var(--cf-rojo-400);
+  --cf-info-vivid:  var(--cf-azul-400);
+
+  /* ── 4 · TIPOGRAFÍA ──────────────────────────────────────────────────── */
+  --cf-font-sans: "Inter", "Inter var", system-ui, -apple-system, "Segoe UI",
+                  Roboto, sans-serif;
+  --cf-font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --cf-font-features-data: "tnum" 1, "cv05" 1;
+
+  /* Escala de texto (móvil, rem sobre raíz 16px) · tamaño / interlineado */
+  --cf-text-xs:    0.75rem;   --cf-leading-xs:  1rem;      /* 12/16 USO RESTRINGIDO */
+  --cf-text-sm:    0.875rem;  --cf-leading-sm:  1.25rem;   /* 14/20 */
+  --cf-text-base:  1rem;      --cf-leading-base: 1.5rem;   /* 16/24 mínimo de lectura */
+  --cf-text-lg:    1.125rem;  --cf-leading-lg:  1.625rem;  /* 18/26 */
+  --cf-text-xl:    1.25rem;   --cf-leading-xl:  1.75rem;   /* 20/28 */
+  --cf-text-2xl:   1.5rem;    --cf-leading-2xl: 2rem;      /* 24/32 */
+  --cf-text-3xl:   1.875rem;  --cf-leading-3xl: 2.375rem;  /* 30/38 Newsreader */
+  --cf-text-4xl:   2.25rem;   --cf-leading-4xl: 2.75rem;   /* 36/44 Newsreader */
+
+  /* Escala de datos · cifras tabulares, peso 600/700 · tamaño / interlineado.
+     Solo la escala de datos tokeniza su interlineado: es la que cuadra en
+     columnas y fija el ritmo de fila. */
+  --cf-data-sm: 0.875rem;  --cf-leading-data-sm: 1.25rem;   /* 14/20 horas en listas densas */
+  --cf-data-md: 1.125rem;  --cf-leading-data-md: 1.5rem;    /* 18/24 hora protagonista */
+  --cf-data-lg: 1.5rem;    --cf-leading-data-lg: 1.875rem;  /* 24/30 dato principal del bottom sheet */
+  --cf-data-xl: 2rem;      --cf-leading-data-xl: 2.375rem;  /* 32/38 puntos, cifras de celebración */
+
+  /* Pesos (primitivos) */
+  --cf-weight-400: 400; --cf-weight-500: 500;
+  --cf-weight-600: 600; --cf-weight-700: 700;
+  /* Pesos (semánticos; [data-contrast="max"]: emphasis 500 → 600, data 600 → 700) */
+  --cf-weight-body:     var(--cf-weight-400); /* cuerpo */
+  --cf-weight-emphasis: var(--cf-weight-500); /* énfasis */
+  --cf-weight-data:     var(--cf-weight-600); /* datos, etiquetas de estado, botones */
+  --cf-weight-critical: var(--cf-weight-700); /* cifras críticas, títulos funcionales */
+  --cf-tracking-caps: 0.04em; /* mayúsculas sostenidas, 1–2 palabras */
+
+  /* ── 5 · ESPACIADO · base 4 ──────────────────────────────────────────── */
+  --cf-space-1:  0.25rem; /*  4 icono↔texto */
+  --cf-space-2:  0.5rem;  /*  8 interior de chips */
+  --cf-space-3:  0.75rem; /* 12 entre líneas de tarjeta */
+  --cf-space-4:  1rem;    /* 16 interior de tarjeta, margen lateral móvil */
+  --cf-space-5:  1.25rem; /* 20 */
+  --cf-space-6:  1.5rem;  /* 24 entre tarjetas, interior de paneles */
+  --cf-space-8:  2rem;    /* 32 entre bloques */
+  --cf-space-10: 2.5rem;  /* 40 */
+  --cf-space-12: 3rem;    /* 48 entre secciones · ALTURA TÁCTIL MÍNIMA */
+  --cf-space-16: 4rem;    /* 64 aire editorial */
+  /* Regla de USO sobre la misma escala, no tokens: funcional space-1…space-4,
+     editorial space-6…space-16. No existen ni deben existir tokens de
+     espaciado por registro. */
+  --cf-touch-min: var(--cf-space-12);
+
+  /* ── 6 · RADIOS ──────────────────────────────────────────────────────── */
+  --cf-radius-sm:   6px;   /* botones, campos, CHIPS DE ESTADO, badges funcionales */
+  --cf-radius-md:   10px;  /* tarjetas de cofradía y de información */
+  --cf-radius-lg:   14px;  /* contenedores grandes, paneles */
+  --cf-radius-xl:   20px;  /* bottom sheet (esq. superiores), modales */
+  --cf-radius-full: 999px; /* avatares, insignias, pill: solo gamificación */
+
+  /* ── 7 · BORDES Y ELEVACIÓN ──────────────────────────────────────────── */
+  --cf-border-width:        1px;
+  --cf-border-width-strong: 1.5px; /* chips críticos, marcadores de mapa */
+  --cf-border-width-max:    2px;   /* solo con [data-contrast="max"] */
+  --cf-accent-bar:          3px;   /* barra de acento izquierda: «este bloque lleva
+                                     un estado» (banda de contexto y aviso) */
+
+  --cf-shadow-tint: 29 26 22;      /* neutral-900 en RGB, para / alfa */
+  --cf-elev-0: none;
+  --cf-elev-1: 0 1px 2px rgb(var(--cf-shadow-tint) / .06),
+               0 1px 1px rgb(var(--cf-shadow-tint) / .04);
+  --cf-elev-2: 0 2px 8px rgb(var(--cf-shadow-tint) / .10),
+               0 1px 2px rgb(var(--cf-shadow-tint) / .06);
+  --cf-elev-3: 0 8px 24px rgb(var(--cf-shadow-tint) / .16),
+               0 2px 6px rgb(var(--cf-shadow-tint) / .08);
+  /* Realce interior de elev-3 en oscuro (no es un borde ni una sombra) */
+  --cf-elev-3-dark-edge: inset 0 1px 0 rgb(245 241 234 / .08);
+
+  /* Escala Z */
+  --cf-z-base: 0; --cf-z-sticky: 10; --cf-z-action: 20; --cf-z-nav: 30;
+  --cf-z-sheet: 40; --cf-z-modal: 50; --cf-z-toast: 60;
+
+  /* ── 8 · ICONOGRAFÍA (Phosphor, rejilla 24) ──────────────────────────── */
+  --cf-icon-sm: 1rem;    /* 16 chips, etiquetas, en línea · SIEMPRE bold */
+  --cf-icon-md: 1.25rem; /* 20 tarjetas y listas */
+  --cf-icon-lg: 1.5rem;  /* 24 navegación, acciones principales */
+  --cf-icon-xl: 2rem;    /* 32 estados vacíos, celebración, cabeceras */
+
+  /* ── 9 · MOVIMIENTO ──────────────────────────────────────────────────── */
+  --cf-dur-instant: 80ms;  /* feedback de pulsación */
+  --cf-dur-fast:    140ms; /* chips, hover, foco */
+  --cf-dur-base:    200ms; /* transiciones generales */
+  --cf-dur-sheet:   280ms; /* bottom sheet entre alturas */
+  --cf-dur-slow:    320ms; /* celebración media */
+  --cf-ease-out:    cubic-bezier(.2, .8, .25, 1); /* POR DEFECTO de todo el sistema:
+                                                     empieza rápido y frena («llega»).
+                                                     Bottom sheet entre alturas: ease-out con imanes. */
+  --cf-ease-in-out: cubic-bezier(.4, 0, .2, 1);   /* SOLO transiciones que van y vuelven por
+                                                     el mismo camino: conmutadores, chips que
+                                                     alternan entre dos estados equivalentes,
+                                                     fundidos cruzados. */
+
+  /* ── 10 · BREAKPOINTS · VALORES CANDIDATOS ───────────────────────────────
+     Las custom properties no funcionan dentro de @media: se documentan aquí
+     y se escriben literales en las consultas.
+       base  < 640    espacio insuficiente
+       md    640–1023 espacio intermedio
+       lg    1024–1439 espacio suficiente
+       xl    ≥ 1440   espacio amplio
+     Ejes independientes del ancho:
+       @media (pointer: coarse)               → objetivos ≥ 48px, sin hover
+       @media (hover: hover) and (pointer: fine) → hover, atajos
+     Anchos máximos: */
+  --cf-measure-max: 42rem;  /* texto */
+  --cf-panel-max:   28rem;  /* panel de lista */
+
+  /* ── 11 · CONFIANZA DEL DATO · canal de TRAZO ────────────────────────── */
+  --cf-dash-pattern:     6 4;   /* discontinuo estándar */
+  --cf-dash-pattern-map: 10 6;  /* discontinuo en cartografía */
+  /* Grosor de trazo: NO DEFINIDO. PROVISIONAL: 2px en componentes,
+     4–6px en el segmento de mapa. Sin token hasta que se decida. */
+  /* Umbrales posición en tiempo real (CANDIDATOS a calibrar):
+     vigente < 10 min · desactualizado 10–30 min · deja de afirmarse > 30 min.
+     Umbrales de horario previsto, hitos e info operativa: NO DEFINIDOS. */
+
+  /* ── 15 · ACCESIBILIDAD ──────────────────────────────────────────────── */
+  --cf-focus-ring-width:  2px;
+  --cf-focus-ring-offset: 2px;
+  --cf-focus-ring-color:  var(--cf-text);
+}
+
+/* ==========================================================================
+   [data-theme="dark"] → remapea TODOS los semánticos. El oscuro es CÁLIDO:
+   todo deriva de la tinta cálida. Sin sombras: elevación por escalón de
+   superficie + borde.
+   ========================================================================== */
+[data-theme="dark"] {
+  --cf-bg:             var(--cf-neutral-950);
+  --cf-surface:        var(--cf-neutral-900);
+  --cf-surface-sunken: var(--cf-neutral-1000);
+  --cf-surface-raised: #262220;
+  --cf-border:         #332E29;
+  --cf-border-strong:  #4A443D;
+  --cf-text:           #F5F1EA;
+  --cf-text-secondary: #C4BCB0;
+  --cf-text-muted:     #9A9287;
+  --cf-text-inverse:   var(--cf-neutral-950);
+  --cf-brand:          var(--cf-granate-300);
+  --cf-brand-strong:   var(--cf-granate-200);
+  --cf-brand-soft:     var(--cf-granate-900);
+  --cf-brand-border:   var(--cf-granate-500);
+
+  --cf-live:   var(--cf-verde-300); --cf-live-soft:  #13301F; --cf-live-border:  var(--cf-verde-700);
+  --cf-warn:   var(--cf-ambar-300); --cf-warn-soft:  #3A2A08; --cf-warn-border:  var(--cf-ambar-700);
+  --cf-alert:  var(--cf-rojo-300);  --cf-alert-soft: #3A1512; --cf-alert-border: var(--cf-rojo-700);
+  --cf-info:   var(--cf-azul-300);  --cf-info-soft:  #0E2838; --cf-info-border:  var(--cf-azul-700);
+  --cf-idle:   #9A9287;             --cf-idle-soft:  #201C19;          --cf-idle-border:  #332E29;
+
+  --cf-live-text:  var(--cf-verde-300);
+  --cf-warn-text:  var(--cf-ambar-300);
+  --cf-alert-text: var(--cf-rojo-300);
+  --cf-info-text:  var(--cf-azul-300);
+  --cf-idle-text:  #C4BCB0;
+
+  --cf-border-interactive: var(--cf-neutral-500);
+
+  --cf-primary-bg:        #F5F1EA;
+  --cf-primary-bg-hover:  var(--cf-neutral-200);
+  --cf-primary-bg-active: var(--cf-neutral-300);
+  --cf-danger-bg:         var(--cf-rojo-300);
+  --cf-danger-bg-hover:   var(--cf-rojo-100); /* sube: rojo-400 dejaría el texto en 3,92:1 */
+  --cf-danger-bg-active:  var(--cf-rojo-100);
+  --cf-surface-hover:     var(--cf-surface-raised);
+  --cf-overlay:           rgb(14 12 10 / .60); /* separa poco (≈1,2:1): limitación aceptada */
+
+  --cf-elev-1: none;  /* → surface-raised + border */
+  --cf-elev-2: none;  /* → surface-raised + border-strong */
+  --cf-elev-3: var(--cf-elev-3-dark-edge); /* → surface-raised + border-strong
+                         + realce interior luminoso (sin sombra) */
+}
+
+/* ==========================================================================
+   [data-register="editorial"] → superficies, bordes (y espaciado).
+   Se declara en el CONTENEDOR (pantalla o sección). Los componentes heredan.
+   ========================================================================== */
+[data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-100);
+  --cf-surface:        var(--cf-cera-50);
+  --cf-surface-sunken: var(--cf-cera-200);
+  --cf-surface-raised: var(--cf-cera-50);
+  --cf-border:         var(--cf-cera-300);
+  --cf-border-strong:  var(--cf-cera-400);
+}
+
+/* Oscuro · editorial: sube hacia un marrón-tinta más cálido */
+[data-theme="dark"][data-register="editorial"],
+[data-theme="dark"] [data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-950);
+  --cf-surface:        var(--cf-cera-900);
+  --cf-surface-sunken: #15100B;
+  --cf-surface-raised: #2E251C;
+  --cf-border:         #3A2F24;
+  --cf-border-strong:  #55473A;
+  --cf-text:           #F7F0E4;
+  --cf-text-secondary: #C9BFAE;
+  --cf-text-muted:     #9E9385;
+}
+
+/* Anidamiento explícito: un contenedor claro dentro de un ancestro oscuro */
+[data-theme="light"][data-register="editorial"],
+[data-theme="dark"] [data-theme="light"] [data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-100);
+  --cf-surface:        var(--cf-cera-50);
+  --cf-surface-sunken: var(--cf-cera-200);
+  --cf-surface-raised: var(--cf-cera-50);
+  --cf-border:         var(--cf-cera-300);
+  --cf-border-strong:  var(--cf-cera-400);
+  --cf-text:           var(--cf-neutral-900);
+  --cf-text-secondary: var(--cf-neutral-700);
+  --cf-text-muted:     var(--cf-neutral-600);
+}
+
+/* ==========================================================================
+   [data-contrast="max"] → SOLO legibilidad. Nunca layout ni tamaños.
+   Elección manual persistente; no se infiere. Combinable con ambos temas.
+   ========================================================================== */
+[data-contrast="max"],
+[data-contrast="max"][data-theme],
+[data-contrast="max"][data-register],
+[data-contrast="max"] [data-theme],
+[data-contrast="max"] [data-register] {
+  --cf-text-muted:          var(--cf-text-secondary);   /* atenuados → secundario */
+  --cf-border-width:        var(--cf-border-width-max); /* 1px → 2px */
+  --cf-weight-emphasis:     var(--cf-weight-600);       /* 500 → 600 */
+  --cf-weight-data:         var(--cf-weight-700);       /* 600 → 700 */
+  --cf-focus-ring-width:    3px;                        /* 2px → 3px */
+  --cf-border-interactive:  var(--cf-neutral-700);      /* claro: se oscurece */
+  /* Texto de estado en claro: NO cambia (ya AAA, 8,6–9,5:1); el refuerzo lo
+     dan grosor de borde, peso e icono.
+     Iconos regular → bold: se aplica al elegir el peso del SVG, no es CSS. */
+}
+
+/* Máximo contraste · oscuro: texto de estado al -100 de su familia y
+   --cf-border-interactive se ACLARA a neutral-400. Mismo principio que la
+   elevación y el granate: en claro se oscurece, en oscuro se aclara. */
+[data-theme="dark"][data-contrast="max"],
+[data-contrast="max"] [data-theme="dark"],
+[data-theme="dark"] [data-contrast="max"] {
+  --cf-live-text:  var(--cf-verde-100);
+  --cf-warn-text:  var(--cf-ambar-100);
+  --cf-alert-text: var(--cf-rojo-100);
+  --cf-info-text:  var(--cf-azul-100);
+  --cf-idle-text:  var(--cf-neutral-100);
+  --cf-border-interactive: var(--cf-neutral-400);
+}
+
+/* Foco visible SIEMPRE */
+:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
+/* prefers-reduced-motion: reduce se respeta SIEMPRE y ninguna información
+   desaparece. instant y fast SE CONSERVAN (feedback de pulsación y de foco).
+   Desaparecen transform, scale y desplazamientos de panel: se resuelven en su
+   estado final. */
+@media (prefers-reduced-motion: reduce) {
+  :root, [data-theme] {
+    --cf-dur-base:  0ms;
+    --cf-dur-sheet: 0ms;
+    --cf-dur-slow:  0ms;
+  }
+}
+
+/* ==========================================================================
+   B-03 · BIBLIOTECA DE COMPONENTES
+   --------------------------------------------------------------------------
+   Consume EXCLUSIVAMENTE la capa semántica de arriba. No define tokens.
+   Las medidas propias de cada pieza (altura de chip 24/28, botón 36/44/52,
+   barra 56, rail 80/240, progreso 6, avatar 24–64, tirador 32×4, opción 56,
+   acento lateral 3px) vienen fijadas en el encargo de B-03 y se escriben
+   como valor de componente, no como token.
+   Estados por atributo de datos, nunca por clase.
+   ========================================================================== */
+
+.cf-ph { flex: none; display: inline-block; vertical-align: middle; }
+
+/* ── Contorno con canal de TRAZO (continuo ↔ discontinuo) ───────────────── */
+.cf-outline { position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none; }
+.cf-outline rect { x: .75px; y: .75px; width: calc(100% - 1.5px);
+  height: calc(100% - 1.5px); rx: var(--cf-radius-sm); fill: none;
+  stroke: var(--line, var(--cf-border-strong));
+  stroke-width: var(--cf-border-width-strong); }
+[data-confianza="estimado"] > .cf-outline rect,
+[data-confianza="desactualizado"] > .cf-outline rect,
+[data-procedencia="usuarios"] > .cf-outline rect {
+  stroke-dasharray: var(--cf-dash-pattern); }
+
+/* ── Mapa fase/alteración → familia de estado ───────────────────────────── */
+[data-fase="en_calle"]                          { --soft: var(--cf-live-soft);  --line: var(--cf-live);  --txt: var(--cf-live-text); }
+[data-fase="inminente"]                         { --soft: var(--cf-warn-soft);  --line: var(--cf-warn);  --txt: var(--cf-warn-text); }
+[data-fase="prevista"], [data-fase="finalizada"],
+[data-fase="no_procesiona"]                     { --soft: var(--cf-idle-soft);  --line: var(--cf-idle);  --txt: var(--cf-idle-text); }
+[data-fase="cancelada"]                         { --soft: var(--cf-alert-soft); --line: var(--cf-alert); --txt: var(--cf-alert-text); }
+/* proxima_entrada → warn, igual que inminente: los dos umbrales del recorrido */
+[data-fase="proxima_entrada"]                   { --soft: var(--cf-warn-soft);  --line: var(--cf-warn);  --txt: var(--cf-warn-text); }
+
+[data-alteracion="retraso"], [data-alteracion="adelanto"], [data-alteracion="cambio_recorrido"]
+                                                { --soft: var(--cf-warn-soft);  --line: var(--cf-warn);  --txt: var(--cf-warn-text); }
+[data-alteracion="incidencia"], [data-alteracion="interrumpida"],
+[data-alteracion="regreso_anticipado"]          { --soft: var(--cf-alert-soft); --line: var(--cf-alert); --txt: var(--cf-alert-text); }
+
+/* ── 1 · Chip de estado (fase) · estático ───────────────────────────────── */
+.cf-chip { position: relative; display: inline-flex; align-items: center;
+  gap: var(--cf-space-1); height: 1.75rem; padding: 0 var(--cf-space-2);
+  border-radius: var(--cf-radius-sm); background: var(--soft);
+  color: var(--txt); font-family: var(--cf-font-sans);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-data); white-space: nowrap; }
+.cf-chip[data-size="24"] { height: 1.5rem; padding: 0 var(--cf-space-1) 0 var(--cf-space-1); }
+.cf-chip > .cf-ph { color: var(--line); }
+.cf-chip .lab-short { display: none; }
+.cf-chip[data-abrev="si"] .lab-full { position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; } /* la etiqueta completa sigue para lectores de pantalla */
+.cf-chip[data-abrev="si"] .lab-short { display: inline; }
+.cf-chip .cf-tail { color: var(--cf-text-secondary); font-weight: var(--cf-weight-emphasis);
+  display: inline-flex; align-items: center; gap: var(--cf-space-1); }
+.cf-chip .cf-tail .cf-ph { color: var(--cf-text-secondary); }
+.cf-chip .cf-num, .cf-num { font-feature-settings: var(--cf-font-features-data); }
+
+/* ── 2 · Chip de alteración ─────────────────────────────────────────────── */
+.cf-alt { position: relative; display: inline-flex; align-items: center;
+  gap: var(--cf-space-1); height: 1.75rem; padding: 0 var(--cf-space-2);
+  border-radius: var(--cf-radius-sm); background: var(--soft); color: var(--txt);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-data); white-space: nowrap; }
+.cf-alt > .cf-ph { color: var(--line); }
+.cf-alt .cf-more { font-feature-settings: var(--cf-font-features-data);
+  font-weight: var(--cf-weight-critical); }
+.cf-alts { display: flex; flex-wrap: wrap; gap: var(--cf-space-2); }
+
+/* ── 4 · Marca de relación (granate, identidad) ─────────────────────────── */
+.cf-rel { display: inline-flex; align-items: center; justify-content: center;
+  color: var(--cf-brand); width: 1.5rem; height: 1.5rem; flex: none; }
+
+/* ── 3 · Tarjeta de cofradía ────────────────────────────────────────────── */
+.cf-card { background: var(--cf-surface); color: var(--cf-text);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md); padding: var(--cf-space-4);
+  display: grid; gap: var(--cf-space-3); font-family: var(--cf-font-sans); }
+.cf-card__head { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--cf-space-3); align-items: start; }
+.cf-ident { display: flex; align-items: flex-start; gap: var(--cf-space-1); min-width: 0; }
+/* Ranura de marca: ABRE el bloque de identidad, delante del nombre. Se reserva
+   aunque no haya relación, para que la columna de nombres no se desplace. */
+.cf-slot { flex: none; width: 1.5rem; height: var(--cf-leading-xl); display: inline-flex; align-items: center; justify-content: center; }
+.cf-card[data-densidad="compacta"] .cf-slot { height: var(--cf-leading-lg); }
+.cf-name { font-family: var(--cf-font-serif); font-weight: 600;
+  font-size: var(--cf-text-xl); line-height: var(--cf-leading-xl); margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; overflow-wrap: normal; word-break: normal; hyphens: none; }
+.cf-card[data-densidad="compacta"] { gap: var(--cf-space-2); padding: var(--cf-space-3) var(--cf-space-4); }
+.cf-card[data-densidad="compacta"] .cf-name { font-size: var(--cf-text-lg); line-height: var(--cf-leading-lg); }
+.cf-decision { display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--cf-space-3); }
+.cf-decision .pt { font-size: var(--cf-text-base); line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary); }
+.cf-decision .hr { font-size: var(--cf-data-md); line-height: var(--cf-leading-data-md);
+  font-weight: var(--cf-weight-critical); font-feature-settings: var(--cf-font-features-data); }
+.cf-prox { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary); }
+/* En tarjeta, si la coletilla no cabe, el chip parte en dos líneas por la
+   coletilla (nunca a media palabra) en lugar de partir el nombre. */
+.cf-card__head { grid-template-columns: minmax(min-content, 1fr) minmax(0, auto); }
+.cf-card__head > .cf-chip { max-width: 100%; flex-wrap: wrap; height: auto; min-height: 1.75rem;
+  white-space: normal; padding-top: 2px; padding-bottom: 2px; row-gap: 0; }
+.cf-card__head > .cf-chip[data-size="24"] { min-height: 1.5rem; }
+.cf-card__head > .cf-chip > span:not(.cf-tail) { white-space: nowrap; }
+.cf-card__head > .cf-chip .cf-tail { white-space: nowrap; }
+.cf-card__actions { display: flex; justify-content: flex-end; gap: var(--cf-space-2); }
+.cf-hitos { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--cf-space-2); }
+.cf-hitos li { display: flex; justify-content: space-between; gap: var(--cf-space-3);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+.cf-escudo { width: 2.5rem; height: 2.5rem; border-radius: var(--cf-radius-sm);
+  border: var(--cf-border-width) solid var(--cf-border-strong); background: var(--cf-surface-sunken);
+  position: relative; flex: none; }
+.cf-escudo .cf-rel { position: absolute; left: -0.5rem; top: -0.5rem;
+  background: var(--cf-surface); border-radius: var(--cf-radius-full); }
+
+/* ── 6 · Botón ──────────────────────────────────────────────────────────── */
+.cf-btn { position: relative; display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--cf-space-2); height: 2.75rem; padding: 0 var(--cf-space-4);
+  border-radius: var(--cf-radius-sm); border: var(--cf-border-width) solid transparent;
+  font: inherit; font-family: var(--cf-font-sans); font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base); font-weight: var(--cf-weight-data);
+  cursor: pointer; white-space: nowrap;
+  transition: transform var(--cf-dur-instant) var(--cf-ease-out); }
+.cf-btn::before { content: ""; position: absolute; left: 0; right: 0; top: 50%;
+  min-height: var(--cf-touch-min); height: 100%; transform: translateY(-50%); }
+.cf-btn[data-size="36"] { height: 2.25rem; padding: 0 var(--cf-space-3); font-size: var(--cf-text-sm); }
+.cf-btn[data-size="52"] { height: 3.25rem; padding: 0 var(--cf-space-6); }
+.cf-btn { background: var(--bg); border-color: var(--bd); }
+/* Hover y active consumen tokens SEMÁNTICOS remapeados por tema. */
+.cf-btn[data-variant="primario"]   { --bg: var(--cf-primary-bg); --bd: var(--cf-primary-bg); color: var(--cf-text-inverse);
+  --bg-h: var(--cf-primary-bg-hover); --bg-a: var(--cf-primary-bg-active); --bd-a: var(--bg-a); }
+.cf-btn[data-variant="secundario"] { --bg: var(--cf-surface); --bd: var(--cf-border-interactive); color: var(--cf-text);
+  --bg-h: var(--cf-surface-hover); --bg-a: var(--cf-surface-hover); --bd-a: var(--cf-border-interactive); }
+.cf-btn[data-variant="terciario"]  { --bg: transparent; --bd: transparent; color: var(--cf-text);
+  text-decoration: underline; text-underline-offset: 3px;
+  --bg-h: var(--cf-surface-hover); --bg-a: var(--cf-surface-hover); --bd-a: transparent; }
+.cf-btn[data-variant="peligro"]    { --bg: var(--cf-danger-bg); --bd: var(--cf-danger-bg); color: var(--cf-text-inverse);
+  --bg-h: var(--cf-danger-bg-hover); --bg-a: var(--cf-danger-bg-active); --bd-a: var(--bg-a); }
+@media (hover: hover) and (pointer: fine) {
+  .cf-btn:not(:disabled):hover { background: var(--bg-h); border-color: var(--bd-a, var(--bd)); }
+}
+.cf-btn[data-state="hover"] { background: var(--bg-h); border-color: var(--bd-a); }
+.cf-btn:not(:disabled):active, .cf-btn[data-state="active"] { transform: translateY(1px);
+  background: var(--bg-a); border-color: var(--bd-a); }
+.cf-btn:focus-visible, .cf-btn[data-state="focus"] {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset); }
+.cf-btn:disabled, .cf-btn[data-state="disabled"] { background: var(--cf-surface-sunken);
+  color: var(--cf-text-secondary); border-color: var(--cf-border-strong); cursor: not-allowed; filter: none; }
+.cf-btn[data-state="loading"] { cursor: progress; overflow: hidden; }
+/* Indicador dentro del propio botón que no altera el ancho: línea inferior
+   indeterminada. Con movimiento reducido queda fija (sigue visible). */
+.cf-btn[data-state="loading"]::after { content: ""; position: absolute; left: 0;
+  right: 0; bottom: 0; height: 3px;
+  background: currentColor; transform-origin: left center;
+  animation: cf-load 900ms var(--cf-ease-in-out) infinite alternate; }
+@keyframes cf-load { from { transform: scaleX(.15); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .cf-btn[data-state="loading"]::after { animation: none; transform: scaleX(.5); } }
+.cf-btn-help { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary); margin-top: var(--cf-space-1); }
+
+/* ── 7 · Banda de contexto de jornada ───────────────────────────────────── */
+.cf-band { display: flex; align-items: center; gap: var(--cf-space-2);
+  background: var(--cf-info-soft); color: var(--cf-text);
+  border-left: var(--cf-accent-bar) solid var(--cf-info); border-radius: var(--cf-radius-sm);
+  padding: var(--cf-space-2) var(--cf-space-2) var(--cf-space-2) var(--cf-space-3);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); min-height: var(--cf-touch-min); }
+.cf-band > .cf-ph { color: var(--cf-info); }
+.cf-band .txt { flex: 1; }
+.cf-x { width: var(--cf-touch-min); height: var(--cf-touch-min); flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: transparent; color: var(--cf-text); border-radius: var(--cf-radius-sm); cursor: pointer; }
+
+/* ── 8 · Aviso e incidencia ─────────────────────────────────────────────── */
+.cf-notice { position: relative; display: grid; grid-template-columns: auto 1fr auto;
+  gap: var(--cf-space-1) var(--cf-space-2); padding: var(--cf-space-3) var(--cf-space-2) var(--cf-space-3) var(--cf-space-3);
+  border-left: var(--cf-accent-bar) solid var(--line); border-radius: var(--cf-radius-sm);
+  background: var(--soft); color: var(--cf-text); }
+.cf-notice[data-tipo="atencion"]    { --soft: var(--cf-warn-soft);  --line: var(--cf-warn);  --txt: var(--cf-warn-text); }
+.cf-notice[data-tipo="critico"]     { --soft: var(--cf-alert-soft); --line: var(--cf-alert); --txt: var(--cf-alert-text); }
+.cf-notice[data-tipo="informativo"] { --soft: var(--cf-info-soft);  --line: var(--cf-info);  --txt: var(--cf-info-text); }
+.cf-notice > .cf-ph { color: var(--line); margin-top: 2px; }
+.cf-notice .tt { font-size: var(--cf-text-base); line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-data); color: var(--txt); }
+.cf-notice .bd { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+.cf-notice .src { display: inline-flex; align-items: center; gap: var(--cf-space-1);
+  position: relative; margin-top: var(--cf-space-2); padding: 2px var(--cf-space-2); min-height: 1.5rem;
+  font-size: var(--cf-text-xs); line-height: var(--cf-leading-xs); font-weight: var(--cf-weight-data);
+  color: var(--cf-text-secondary); background: var(--cf-surface); border-radius: var(--cf-radius-sm); --line: var(--cf-border-interactive); }
+.cf-notice .acts { grid-column: 2; margin-top: var(--cf-space-2); }
+
+/* ── 9 · Tarjeta de información ─────────────────────────────────────────── */
+.cf-info { background: var(--cf-surface); color: var(--cf-text);
+  border: var(--cf-border-width) solid var(--cf-border); border-radius: var(--cf-radius-md);
+  padding: var(--cf-space-4); display: grid; gap: var(--cf-space-2); }
+.cf-info .ey { font-size: var(--cf-text-xs); line-height: var(--cf-leading-xs);
+  font-weight: var(--cf-weight-data); text-transform: uppercase;
+  letter-spacing: var(--cf-tracking-caps); color: var(--cf-text-secondary); }
+.cf-info .tt { font-size: var(--cf-text-lg); line-height: var(--cf-leading-lg); font-weight: var(--cf-weight-critical); }
+[data-register="editorial"] .cf-info { padding: var(--cf-space-6); gap: var(--cf-space-3); }
+[data-register="editorial"] .cf-info .tt { font-family: var(--cf-font-serif); font-weight: 600;
+  font-size: var(--cf-text-2xl); line-height: var(--cf-leading-2xl); }
+
+/* ── 10 · Bottom sheet / panel de ficha ─────────────────────────────────── */
+.cf-sheet { background: var(--cf-surface-raised); color: var(--cf-text);
+  border-radius: var(--cf-radius-xl) var(--cf-radius-xl) 0 0;
+  border: var(--cf-border-width) solid var(--cf-border); border-bottom: 0;
+  box-shadow: var(--cf-elev-3); padding: var(--cf-space-2) var(--cf-space-4) var(--cf-space-4); }
+[data-theme="dark"] .cf-sheet, [data-theme="dark"].cf-sheet { border-color: var(--cf-border-strong); }
+.cf-handle { width: 2rem; height: 4px; border-radius: var(--cf-radius-full);
+  background: var(--cf-border-strong); margin: 0 auto var(--cf-space-3); }
+.cf-panel { background: var(--cf-surface-raised); color: var(--cf-text);
+  border-left: var(--cf-border-width) solid var(--cf-border-strong);
+  padding: var(--cf-space-6); max-width: var(--cf-panel-max); }
+
+/* ── 11 · Modal ─────────────────────────────────────────────────────────── */
+.cf-scrim { background: var(--cf-overlay); }  /* sin desenfoque: no porta contenido */
+.cf-modal { background: var(--cf-surface-raised); color: var(--cf-text);
+  border-radius: var(--cf-radius-xl); border: var(--cf-border-width) solid var(--cf-border);
+  box-shadow: var(--cf-elev-3); padding: var(--cf-space-6); max-width: var(--cf-panel-max);
+  display: grid; gap: var(--cf-space-3); }
+[data-theme="dark"] .cf-modal { border-color: var(--cf-border-strong); }
+.cf-modal h3 { margin: 0; font-size: var(--cf-text-xl); line-height: var(--cf-leading-xl); font-weight: var(--cf-weight-critical); }
+.cf-modal p { margin: 0; font-size: var(--cf-text-base); line-height: var(--cf-leading-base); color: var(--cf-text-secondary); }
+.cf-modal .acts { display: flex; justify-content: flex-end; gap: var(--cf-space-2); flex-wrap: wrap; margin-top: var(--cf-space-2); }
+
+/* ── 12 · Navegación · barra inferior y rail ────────────────────────────── */
+.cf-nav { display: grid; grid-template-columns: repeat(5, 1fr); height: 3.5rem;
+  background: var(--cf-surface); border-top: var(--cf-border-width) solid var(--cf-border);
+  box-shadow: var(--cf-elev-1); padding-bottom: env(safe-area-inset-bottom); }
+.cf-nav a, .cf-rail a { position: relative; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px; text-decoration: none; color: var(--cf-text-muted);
+  font-size: var(--cf-text-xs); line-height: var(--cf-leading-xs); font-weight: var(--cf-weight-data);
+  min-height: var(--cf-touch-min); }
+.cf-nav a[aria-current="page"], .cf-rail a[aria-current="page"] { color: var(--cf-text); }
+.cf-nav a[aria-current="page"]::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%;
+  height: 2px; background: var(--cf-text); }
+.cf-rail { display: flex; flex-direction: column; gap: var(--cf-space-2); width: 5rem;
+  background: var(--cf-surface); border-right: var(--cf-border-width) solid var(--cf-border);
+  box-shadow: var(--cf-elev-1); padding: var(--cf-space-3) 0; }
+.cf-rail a { padding: var(--cf-space-2) 0; }
+.cf-rail a[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 2px; background: var(--cf-text); }
+.cf-rail[data-ancho="240"] { width: 15rem; }
+.cf-rail[data-ancho="240"] a { flex-direction: row; justify-content: flex-start; gap: var(--cf-space-3);
+  padding: var(--cf-space-2) var(--cf-space-4); font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+
+/* ── 13 · Franja de acción contextual ───────────────────────────────────── */
+.cf-actionbar { display: flex; align-items: center; justify-content: flex-end; gap: var(--cf-space-3);
+  padding: var(--cf-space-1) var(--cf-space-2) var(--cf-space-1) var(--cf-space-4);
+  background: var(--cf-surface-raised); border-top: var(--cf-border-width) solid var(--cf-border-strong);
+  box-shadow: var(--cf-elev-1); }
+.cf-actionbar .ctx { flex: 1; min-width: 0; font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+.cf-actionbar .ctx b { font-family: var(--cf-font-serif); font-weight: 600; }
+
+/* ── 14 · Campo de formulario ───────────────────────────────────────────── */
+.cf-field { display: grid; gap: var(--cf-space-1); }
+.cf-field label { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); font-weight: var(--cf-weight-emphasis); }
+.cf-field input { height: var(--cf-touch-min); border-radius: var(--cf-radius-sm);
+  border: var(--cf-border-width) solid var(--cf-border-interactive); background: var(--cf-surface);
+  color: var(--cf-text); font: inherit; font-size: var(--cf-text-base); padding: 0 var(--cf-space-3); }
+.cf-field input:focus-visible, .cf-field[data-state="focus"] input {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color); outline-offset: var(--cf-focus-ring-offset); }
+.cf-field[data-state="error"] input { border-color: var(--cf-alert); border-width: var(--cf-border-width-strong); }
+.cf-field .msg { display: flex; gap: var(--cf-space-1); align-items: flex-start;
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); color: var(--cf-alert-text); font-weight: var(--cf-weight-emphasis); }
+.cf-field .msg .cf-ph { color: var(--cf-alert); margin-top: 2px; }
+.cf-field .hint { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); color: var(--cf-text-secondary); }
+.cf-field[data-state="disabled"] input { background: var(--cf-surface-sunken); border-color: var(--cf-border-strong);
+  color: var(--cf-text-secondary); cursor: not-allowed; }
+
+/* ── 15 · Chip de filtro y selector de día ──────────────────────────────── */
+.cf-filter { display: inline-flex; align-items: center; gap: var(--cf-space-1); position: relative;
+  height: 2.25rem; padding: 0 var(--cf-space-3); border-radius: var(--cf-radius-sm);
+  border: var(--cf-border-width) solid var(--cf-border-interactive); background: var(--cf-surface);
+  color: var(--cf-text); font: inherit; font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-body); cursor: pointer; }
+.cf-filter::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: var(--cf-touch-min); transform: translateY(-50%); }
+.cf-filter[aria-pressed="true"] { background: var(--cf-text); color: var(--cf-text-inverse);
+  border-color: var(--cf-text); font-weight: var(--cf-weight-critical); }
+.cf-filter:focus-visible, .cf-filter[data-state="focus"] { outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color); outline-offset: var(--cf-focus-ring-offset); }
+.cf-days { display: flex; gap: var(--cf-space-2); overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: var(--cf-space-1) var(--cf-space-4); scrollbar-width: none; }
+.cf-day { flex: none; scroll-snap-align: center; display: grid; justify-items: center; gap: 2px;
+  min-width: 5.5rem; min-height: var(--cf-touch-min); padding: var(--cf-space-2) var(--cf-space-3);
+  border-radius: var(--cf-radius-sm); border: var(--cf-border-width) solid var(--cf-border-interactive);
+  background: var(--cf-surface); color: var(--cf-text); font: inherit; cursor: pointer; }
+.cf-day .d { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); font-weight: var(--cf-weight-body); white-space: nowrap; }
+/* Disponibilidad: MARCA (punto) + peso, nunca texto ni solo color */
+.cf-day .mk { width: .5rem; height: .5rem; border-radius: var(--cf-radius-full); }
+.cf-day[data-info="si"] .mk { background: currentColor; }
+.cf-day[data-info="si"] .d { font-weight: var(--cf-weight-critical); }
+.cf-day[aria-current="date"] { background: var(--cf-text); color: var(--cf-text-inverse); border-color: var(--cf-text); }
+
+/* ── 16 · Toast ─────────────────────────────────────────────────────────── */
+.cf-toast { display: flex; align-items: center; gap: var(--cf-space-2);
+  background: var(--cf-text); color: var(--cf-text-inverse); border-radius: var(--cf-radius-sm);
+  padding: 0 0 0 var(--cf-space-4); min-height: var(--cf-touch-min); box-shadow: var(--cf-elev-2);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+.cf-toast .txt { flex: 1; padding: var(--cf-space-2) 0; }
+.cf-toast button { color: var(--cf-text-inverse); }
+.cf-toast .undo { background: transparent; border: 0; font: inherit; font-weight: var(--cf-weight-critical);
+  text-decoration: underline; text-underline-offset: 3px; min-height: var(--cf-touch-min); padding: 0 var(--cf-space-2); cursor: pointer; }
+
+/* ── 17 · Barra de progreso ─────────────────────────────────────────────── */
+.cf-progress { display: grid; gap: var(--cf-space-1); }
+.cf-progress .lbl { display: flex; justify-content: space-between; gap: var(--cf-space-2);
+  font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); }
+.cf-progress .val { font-feature-settings: var(--cf-font-features-data); font-weight: var(--cf-weight-data); }
+.cf-bar { position: relative; height: 6px; border-radius: var(--cf-radius-full);
+  background: var(--cf-surface-sunken); overflow: hidden; }
+.cf-bar .done { position: absolute; left: 0; top: 0; bottom: 0; border-radius: var(--cf-radius-full); }
+.cf-bar[data-tipo="recorrido"] .done { background: var(--cf-live); }
+.cf-bar[data-tipo="nivel"] .done { background: var(--cf-brand); }
+.cf-bar .todo { position: absolute; top: 0; bottom: 0; right: 0; }
+.cf-bar .todo line { stroke: var(--cf-border-strong); stroke-width: 2; stroke-dasharray: var(--cf-dash-pattern); }
+
+/* ── 18 · Avatar ────────────────────────────────────────────────────────── */
+.cf-avatar { display: inline-flex; align-items: center; justify-content: center; flex: none;
+  border-radius: var(--cf-radius-full); background: var(--cf-brand-soft); color: var(--cf-brand);
+  border: var(--cf-border-width) solid var(--cf-brand-border);
+  font-family: var(--cf-font-serif); font-weight: 600; width: 3rem; height: 3rem; font-size: var(--cf-text-lg); }
+.cf-avatar[data-size="24"] { width: 1.5rem; height: 1.5rem; font-size: var(--cf-text-xs); }
+.cf-avatar[data-size="32"] { width: 2rem; height: 2rem; font-size: var(--cf-text-sm); }
+.cf-avatar[data-size="64"] { width: 4rem; height: 4rem; font-size: var(--cf-text-2xl); }
+
+/* ── 19 · Selector de elemento ──────────────────────────────────────────── */
+.cf-pick { display: grid; gap: var(--cf-space-2); margin: 0; padding: 0; border: 0; }
+.cf-pick label { display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+  gap: var(--cf-space-3); min-height: 3.5rem; padding: var(--cf-space-1) var(--cf-space-4);
+  background: var(--cf-surface); color: var(--cf-text);
+  border: var(--cf-border-width) solid var(--cf-border-interactive); border-radius: var(--cf-radius-sm); cursor: pointer; }
+.cf-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cf-pick .p { font-size: var(--cf-text-base); line-height: var(--cf-leading-base); font-weight: var(--cf-weight-data); }
+.cf-pick .s { display: block; font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); color: var(--cf-text-secondary); font-weight: var(--cf-weight-body); }
+.cf-pick .r { width: 1.25rem; height: 1.25rem; border-radius: var(--cf-radius-full); border: 2px solid var(--cf-border-interactive); }
+.cf-pick input:checked + label { border-color: var(--cf-text); border-width: var(--cf-border-width-max); }
+.cf-pick input:checked + label .r { border: 6px solid var(--cf-text); }
+.cf-pick input:focus-visible + label, .cf-pick label[data-state="focus"] {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color); outline-offset: var(--cf-focus-ring-offset); }
+
+/* ── 20/21/22 · Gamificación (granate = lo que has hecho tú) ────────────── */
+.cf-points { font-size: var(--cf-data-md); line-height: var(--cf-leading-data-md);
+  font-weight: var(--cf-weight-critical); font-feature-settings: var(--cf-font-features-data); color: var(--cf-brand); }
+.cf-level { display: inline-flex; align-items: center; gap: var(--cf-space-1); height: 1.75rem;
+  padding: 0 var(--cf-space-3); border-radius: var(--cf-radius-full); background: var(--cf-brand);
+  color: var(--cf-text-inverse); font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-data); max-width: 100%; }
+.cf-level span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.cf-badge { display: grid; justify-items: center; gap: var(--cf-space-1); text-align: center; width: 7.5rem; }
+.cf-badge .disc { width: 4rem; height: 4rem; border-radius: var(--cf-radius-full);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cf-brand-soft); border: var(--cf-border-width) solid var(--cf-brand-border); color: var(--cf-brand); }
+.cf-badge[data-estado="bloqueado"] .disc { background: var(--cf-surface); border: var(--cf-border-width-strong) solid var(--cf-border-interactive); color: var(--cf-text-secondary); }
+.cf-badge .n { font-size: var(--cf-text-sm); line-height: var(--cf-leading-sm); font-weight: var(--cf-weight-data); }
+.cf-badge .c { font-size: var(--cf-text-xs); line-height: var(--cf-leading-xs); color: var(--cf-text-secondary); }
+
+/* ── 24 · Fila de clasificación ─────────────────────────────────────────── */
+.cf-rank { display: grid; grid-template-columns: 2rem auto 1fr auto; align-items: center;
+  gap: var(--cf-space-3); min-height: var(--cf-touch-min); padding: var(--cf-space-1) var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border); }
+.cf-rank .pos { font-feature-settings: var(--cf-font-features-data); font-weight: var(--cf-weight-data); text-align: right; color: var(--cf-text-secondary); }
+.cf-rank .nm { font-size: var(--cf-text-base); line-height: var(--cf-leading-base); }
+.cf-rank .pts { font-feature-settings: var(--cf-font-features-data); font-weight: var(--cf-weight-data); }
+.cf-rank[data-propia="true"] { background: var(--cf-brand-soft); border: var(--cf-border-width) solid var(--cf-brand-border); border-radius: var(--cf-radius-sm); }
+.cf-rank[data-propia="true"] .nm { font-weight: var(--cf-weight-critical); }
+.cf-rank[data-propia="true"] .pts { color: var(--cf-brand); font-weight: var(--cf-weight-critical); }
+
+/* ── R-02 · Subsistema de mapa ──────────────────────────────────────────────
+   Lo único que R-02 inventa. Tokens de COMPONENTE del mapa (capa 3): consumen
+   primitivos y semánticos, no crean color nuevo. Grosores, tamaños y patrón
+   por zoom: PROPUESTA A VALIDAR (pendiente de escribir en design.md).
+   Cartografía: la legibilidad manda sobre la identidad (no se tiñe). */
+:root, [data-theme="light"] {
+  --cf-map-land:          var(--cf-neutral-200);  /* manzanas */
+  --cf-map-street:        var(--cf-neutral-0);    /* calles */
+  --cf-map-plaza:         var(--cf-neutral-50);
+  --cf-map-water:         var(--cf-azul-100);
+  --cf-map-water-label:   var(--cf-azul-700);
+  --cf-map-label:         var(--cf-neutral-700);  /* etiquetas de calle y plaza */
+  --cf-map-halo:          var(--cf-neutral-0);    /* halo de etiqueta */
+  --cf-map-poi:           var(--cf-neutral-600);  /* templos */
+  --cf-map-casing:        var(--cf-neutral-0);    /* separa trazos de la cartografía */
+  --cf-map-route-pending: var(--cf-neutral-600);  /* recorrido pendiente: neutro, discontinuo */
+  --cf-map-marker-ink:    var(--cf-neutral-900);  /* icono sobre relleno -vivid, ambos temas */
+  --cf-map-marker-shadow: drop-shadow(0 2px 4px rgb(var(--cf-shadow-tint) / .22)); /* elev-2 trasladada a forma */
+  /* Geometría · PROPUESTA A VALIDAR */
+  --cf-map-stroke-route:        3px;   /* recorrido realizado y pendiente */
+  --cf-map-stroke-segment:      8px;   /* segmento: borde de estado */
+  --cf-map-stroke-segment-core: 4px;   /* segmento: alma -vivid */
+  --cf-map-stroke-segment-dim:  4px;   /* segmento de una cofradía no seleccionada en nivel 2 */
+  --cf-map-casing-width:        2px;   /* por lado */
+  --cf-map-marker:              32px;
+  --cf-map-marker-selected:     40px;
+  --cf-map-cluster:             40px;
+  --cf-map-marker-border:       2px;   /* 1,5px no deja leer el discontinuo a 32px */
+  --cf-map-sheet-peek:          64px;  /* tirador + una línea */
+}
+[data-theme="dark"] {
+  --cf-map-land:          var(--cf-neutral-950);
+  --cf-map-street:        var(--cf-neutral-800);
+  --cf-map-plaza:         var(--cf-neutral-900);
+  --cf-map-water:         var(--cf-azul-700);
+  --cf-map-water-label:   var(--cf-azul-100);
+  --cf-map-label:         var(--cf-neutral-300);
+  --cf-map-halo:          var(--cf-neutral-1000);
+  --cf-map-poi:           var(--cf-neutral-400);
+  --cf-map-casing:        var(--cf-neutral-1000);
+  --cf-map-route-pending: var(--cf-neutral-400);
+  --cf-map-marker-shadow: none;
+}
+.cf-map { display: block; background: var(--cf-map-land); }
+.cf-map .st { fill: none; stroke: var(--cf-map-street); stroke-linecap: round; stroke-linejoin: round; }
+.cf-map .pz { fill: var(--cf-map-plaza); }
+.cf-map .wt { fill: var(--cf-map-water); }
+.cf-map .lb { font-family: var(--cf-font-sans); font-size: 11px; font-weight: 500; fill: var(--cf-map-label);
+  paint-order: stroke; stroke: var(--cf-map-halo); stroke-width: 3px; stroke-linejoin: round; letter-spacing: .01em; }
+.cf-map .lb.st-l { font-weight: 600; }
+.cf-map .lb.wt-l { fill: var(--cf-map-water-label); font-style: italic; }
+.cf-map .poi rect { fill: var(--cf-surface); stroke: var(--cf-map-poi); stroke-width: 1px; }
+.cf-map .poi svg { color: var(--cf-map-poi); }
+/* Recorrido (nivel 2) */
+.cf-map .rt-done { fill: none; stroke: var(--cf-live); stroke-width: var(--cf-map-stroke-route); stroke-linecap: round; stroke-linejoin: round; }
+.cf-map .rt-todo { fill: none; stroke: var(--cf-map-route-pending); stroke-width: var(--cf-map-stroke-route); stroke-dasharray: var(--cf-dash-pattern-map); stroke-linejoin: round; }
+.cf-map .rt-case { fill: none; stroke: var(--cf-map-casing); stroke-width: calc(var(--cf-map-stroke-route) + 2 * var(--cf-map-casing-width)); stroke-linecap: round; stroke-linejoin: round; }
+/* Segmento: contenedor del cortejo, de la cruz de guía al final */
+.cf-map .sg { --sl: var(--cf-live); --sf: var(--cf-live-vivid); }
+.cf-map .sg path { fill: none; stroke-linejoin: round; }
+.cf-map .sg .c { stroke: var(--cf-map-casing); stroke-width: calc(var(--cf-map-stroke-segment) + 2 * var(--cf-map-casing-width)); stroke-linecap: round; }
+.cf-map .sg .o { stroke: var(--sl); stroke-width: var(--cf-map-stroke-segment); stroke-linecap: round; }
+.cf-map .sg .i { stroke: var(--sf); stroke-width: var(--cf-map-stroke-segment-core); stroke-linecap: round; }
+.cf-map .sg:is([data-confianza="estimado"], [data-confianza="desactualizado"]) :is(.o, .i) { stroke-dasharray: var(--cf-dash-pattern-map); stroke-linecap: butt; }
+.cf-map .sg[data-foco="fuera"] .c { stroke-width: calc(var(--cf-map-stroke-segment-dim) + 2 * var(--cf-map-casing-width)); }
+.cf-map .sg[data-foco="fuera"] .o { stroke-width: var(--cf-map-stroke-segment-dim); }
+.cf-map .sg[data-foco="fuera"] .i { display: none; }
+/* Marcador: dirección en la forma, superficie opaca, borde = confianza */
+.cf-map .mk { filter: var(--cf-map-marker-shadow); }
+.cf-map .mk[data-fase="en_calle"]   { --mf: var(--cf-live-vivid); --ml: var(--cf-live); --mi: var(--cf-map-marker-ink); }
+.cf-map .mk[data-fase="inminente"]  { --mf: var(--cf-warn-vivid); --ml: var(--cf-warn); --mi: var(--cf-map-marker-ink); }
+.cf-map .mk[data-fase="finalizada"] { --mf: var(--cf-surface);    --ml: var(--cf-idle); --mi: var(--cf-idle-text); }
+.cf-map .mk .h { fill: none; stroke: var(--cf-map-casing); stroke-width: 6px; stroke-linejoin: round; }
+.cf-map .mk .b { fill: var(--mf); stroke: var(--ml); stroke-width: var(--cf-map-marker-border); stroke-linejoin: round; }
+.cf-map .mk:is([data-confianza="estimado"], [data-confianza="desactualizado"]) .b { stroke-dasharray: var(--cf-dash-pattern); }
+.cf-map .mk .ico { color: var(--mi); }
+.cf-map .mk[data-foco="fuera"] { filter: none; }
+.cf-map .bd-rel circle { fill: var(--cf-surface); stroke: var(--cf-brand); stroke-width: 1px; }
+.cf-map .bd-rel svg { color: var(--cf-brand); }
+.cf-map .bd-alt circle { stroke: var(--cf-map-casing); stroke-width: 1.5px; }
+.cf-map .bd-alt[data-nivel="alerta"] circle { fill: var(--cf-alert); }
+.cf-map .bd-alt[data-nivel="aviso"] circle  { fill: var(--cf-warn); }
+.cf-map .bd-alt svg { color: var(--cf-text-inverse); }
+.cf-map .tag rect, .cf-map .nm rect { fill: var(--cf-surface); stroke: var(--cf-border-strong); stroke-width: 1px; }
+.cf-map .tag text { font-family: var(--cf-font-sans); font-size: 12px; font-weight: 600; fill: var(--cf-text-secondary); font-feature-settings: var(--cf-font-features-data); }
+.cf-map .tag svg { color: var(--cf-text-secondary); }
+.cf-map .nm text { font-family: var(--cf-font-serif); font-size: 14px; font-weight: 600; fill: var(--cf-text); }
+.cf-map .nm text .t { font-family: var(--cf-font-sans); font-weight: 600; font-size: 12px; font-feature-settings: var(--cf-font-features-data); }
+/* Agrupación: cuántas + la alteración más grave. Sin canal de confianza propio */
+.cf-map .gr .b { fill: var(--cf-surface); stroke: var(--cf-text); stroke-width: 2px; }
+.cf-map .gr text { font-family: var(--cf-font-sans); font-size: 16px; font-weight: 700; fill: var(--cf-text); font-feature-settings: var(--cf-font-features-data); }
+/* Hitos sobre el recorrido */
+.cf-map .ht circle { stroke: var(--cf-text); stroke-width: 2px; }
+.cf-map .ht[data-hora="confirmada"] circle { fill: var(--cf-text); }
+.cf-map .ht[data-hora="estimada"] circle   { fill: var(--cf-surface); }
+.cf-map .ht[data-hora="sin"] circle { fill: var(--cf-map-poi); stroke: var(--cf-map-casing); stroke-width: 1.5px; }
+.cf-map .ht[data-hora="pasado"] circle     { fill: var(--cf-idle); stroke: var(--cf-map-casing); stroke-width: 1.5px; }
+.cf-map .ht[data-sel] circle { stroke-width: 3px; }
+/* Elementos del cortejo dentro del segmento: orden = información */
+.cf-map .el circle { fill: var(--cf-surface); stroke: var(--cf-text); stroke-width: 1.5px; }
+.cf-map .el[data-confianza="estimado"] circle { stroke-dasharray: 4 3; }
+.cf-map .el[data-sel] circle { stroke-width: 2.5px; }
+.cf-map .el text { font-family: var(--cf-font-sans); font-size: 12px; font-weight: 700; fill: var(--cf-text); font-feature-settings: var(--cf-font-features-data); }
+/* Ubicación concedida: punto + radio de precisión (sin relleno translúcido) */
+.cf-map .me .r { fill: none; stroke: var(--cf-text); stroke-width: 1.5px; stroke-dasharray: var(--cf-dash-pattern-map); }
+.cf-map .me .d { fill: var(--cf-text); stroke: var(--cf-map-casing); stroke-width: 3px; }
+/* Controles y capas que flotan sobre el mapa: opacos, con borde y sombra */
+.cf-locate { position: absolute; width: var(--cf-touch-min); height: var(--cf-touch-min);
+  display: inline-flex; align-items: center; justify-content: center; border-radius: var(--cf-radius-full);
+  background: var(--cf-surface-raised); color: var(--cf-text); border: var(--cf-border-width) solid var(--cf-border-strong);
+  box-shadow: var(--cf-elev-2); cursor: pointer; }

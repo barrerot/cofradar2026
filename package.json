@@ -1,0 +1,22 @@
+{
+  "name": "cofradar",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Seguir la Semana Santa de Sevilla desde el movil",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "sync:diseno": "node scripts/sync-diseno.mjs",
+    "postinstall": "npm run sync:diseno",
+    "dev": "npm run dev --workspace=backend & npm run dev --workspace=frontend",
+    "dev:front": "npm run dev --workspace=frontend",
+    "dev:back": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "typecheck": "npm run typecheck --workspace=backend && npm run typecheck --workspace=frontend"
+  }
+}

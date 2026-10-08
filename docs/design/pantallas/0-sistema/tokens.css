@@ -1,0 +1,421 @@
+/* ==========================================================================
+   COFRADAR · CAPA DE TOKENS · forma canónica (variables CSS nativas)
+   --------------------------------------------------------------------------
+   Tres capas:
+     1. PRIMITIVOS  --cf-neutral-200 …  valores crudos. NUNCA en un componente.
+     2. SEMÁNTICOS  --cf-surface, --cf-live …  rol. Se remapean por atributo.
+                    LOS COMPONENTES CONSUMEN EXCLUSIVAMENTE ESTA CAPA.
+     3. COMPONENTE  solo valor propio irreducible. Se evitan (ninguno aquí).
+
+   :root                        → primitivos + semánticos · claro · funcional
+   [data-register="editorial"]  → remapea superficies, bordes y espaciado
+   [data-theme="dark"]          → remapea todos los semánticos
+   [data-contrast="max"]        → remapea solo contraste, bordes y pesos
+
+   Estados como atributos de datos, nunca como clases:
+   data-fase="en_calle" · data-confianza="estimado" · data-relacion="dar-fe" ·
+   data-verificacion="no-verificable"
+
+   Lo marcado NO DEFINIDO no tiene valor en el documento de sistema. No se
+   rellena: se deja comentado.
+   ========================================================================== */
+
+/* @font-face: ver fonts/ (Inter variable, Newsreader variable + cursiva;
+   autoalojadas, subconjunto latino, font-display: swap). La ruta de
+   publicación de las fuentes en producción: NO DEFINIDA. */
+
+:root,
+[data-theme="light"] {
+  /* ── 1 · PRIMITIVOS ──────────────────────────────────────────────────── */
+
+  /* Neutro cálido, croma baja — columna vertebral del registro funcional */
+  --cf-neutral-0:    #FFFFFF;
+  --cf-neutral-50:   #FBF9F5;
+  --cf-neutral-100:  #F4F2ED;
+  --cf-neutral-200:  #E6E3DC;
+  --cf-neutral-300:  #D4CFC6;
+  --cf-neutral-400:  #B3ADA3;
+  --cf-neutral-500:  #8C867C;
+  --cf-neutral-600:  #6A655C;
+  --cf-neutral-700:  #4A443C;
+  --cf-neutral-800:  #2B2722;
+  --cf-neutral-900:  #1D1A16; /* TINTA */
+  --cf-neutral-950:  #15120F;
+  --cf-neutral-1000: #0E0C0A;
+
+  /* Cera, croma media — exclusiva del registro editorial */
+  --cf-cera-50:  #FDF9F1;
+  --cf-cera-100: #F7F1E6;
+  --cf-cera-200: #EFE6D5;
+  --cf-cera-300: #DFD3BE;
+  --cf-cera-400: #C9B896;
+  --cf-cera-900: #251E17;
+  --cf-cera-950: #1C1712;
+
+  /* Granate — identidad */
+  --cf-granate-50:  #F9EBE9;
+  --cf-granate-100: #F1D6D4;
+  --cf-granate-200: #E9AFB7;
+  --cf-granate-300: #D97E8B; /* marca en OSCURO */
+  --cf-granate-400: #B85566;
+  --cf-granate-500: #8A2A3C;
+  --cf-granate-600: #6E1C2F; /* marca en CLARO */
+  --cf-granate-700: #58121F;
+  --cf-granate-900: #3A1A20;
+
+  /* Semánticos de estado · -600/-700 únicos válidos para TEXTO en claro (AAA)
+     · -300/-400 texto en OSCURO y rellenos vivos de mapa */
+  --cf-verde-50:  #E3F1E7; --cf-verde-100: #C7E3D0; --cf-verde-300: #5FC98B;
+  --cf-verde-400: #2E9E60; --cf-verde-500: #1F7A4D; --cf-verde-600: #15603B;
+  --cf-verde-700: #0E4A2D;
+
+  --cf-ambar-50:  #FBF0D8; --cf-ambar-100: #F6E0AE; --cf-ambar-300: #E8B44D;
+  --cf-ambar-400: #C78A0E; --cf-ambar-500: #9C5F00; --cf-ambar-600: #7A4800;
+  --cf-ambar-700: #5E3700;
+
+  --cf-rojo-50:  #FBE9E6; --cf-rojo-100: #F6CFC9; --cf-rojo-300: #F0776B;
+  --cf-rojo-400: #D33A2C; --cf-rojo-500: #B3261E; --cf-rojo-600: #9B2016;
+  --cf-rojo-700: #7A1810;
+
+  --cf-azul-50:  #E4EFF6; --cf-azul-100: #C4DCEB; --cf-azul-300: #74B8E0;
+  --cf-azul-400: #2A7FB8; --cf-azul-500: #1A6490; --cf-azul-600: #14537A;
+  --cf-azul-700: #0F3F5C;
+
+  /* ── 2 · SEMÁNTICOS · claro · funcional ──────────────────────────────── */
+  --cf-bg:             var(--cf-neutral-50);
+  --cf-surface:        var(--cf-neutral-0);
+  --cf-surface-sunken: var(--cf-neutral-100);
+  --cf-surface-raised: var(--cf-neutral-0);
+  --cf-border:         var(--cf-neutral-200);
+  --cf-border-strong:  var(--cf-neutral-300);
+  /* Borde de control: SOLO cuando el borde es lo único que identifica el
+     control (campos de formulario, chips de filtro, conmutadores). 3:1.
+     border y border-strong son separadores de contenido: no se les exige 3:1.
+     Se remapea por tema (capa 2): claro neutral-600, oscuro neutral-500.
+     Peor fondo: claro func 5,17 · claro edit 4,67 · oscuro func 4,37 · oscuro edit 4,16. */
+  --cf-border-interactive: var(--cf-neutral-600);
+  --cf-text:           var(--cf-neutral-900);
+  --cf-text-secondary: var(--cf-neutral-700);
+  --cf-text-muted:     var(--cf-neutral-600);
+  --cf-text-inverse:   var(--cf-neutral-50);
+  --cf-brand:          var(--cf-granate-600);
+  --cf-brand-strong:   var(--cf-granate-700);
+  --cf-brand-soft:     var(--cf-granate-50);
+  --cf-brand-border:   var(--cf-granate-100);
+
+  /* Estados operativos (idénticos en ambos registros)
+     --cf-<estado>        ICONO, BORDE y TRAZO del estado
+     --cf-<estado>-text   TEXTO del estado (información crítica, AAA en claro)
+     --cf-<estado>-soft   fondo tenue · --cf-<estado>-border  borde */
+  --cf-live:        var(--cf-verde-600);  /* en_calle, confirmaciones */
+  --cf-live-soft:   var(--cf-verde-50);
+  --cf-live-border: var(--cf-verde-100);
+  --cf-warn:        var(--cf-ambar-600);  /* retraso, adelanto, inminente, atención */
+  --cf-warn-soft:   var(--cf-ambar-50);
+  --cf-warn-border: var(--cf-ambar-100);
+  --cf-alert:        var(--cf-rojo-600);  /* incidencia, cancelada, crítico */
+  --cf-alert-soft:   var(--cf-rojo-50);
+  --cf-alert-border: var(--cf-rojo-100);
+  --cf-info:        var(--cf-azul-600);   /* información neutra, contexto de jornada */
+  --cf-info-soft:   var(--cf-azul-50);
+  --cf-info-border: var(--cf-azul-100);
+  --cf-idle:        var(--cf-neutral-600); /* prevista, finalizada, no_procesiona */
+  --cf-idle-soft:   var(--cf-neutral-100);
+  --cf-idle-border: var(--cf-neutral-200);
+
+  --cf-live-text:  var(--cf-verde-700);
+  --cf-warn-text:  var(--cf-ambar-700);
+  --cf-alert-text: var(--cf-rojo-700);
+  --cf-info-text:  var(--cf-azul-700);
+  --cf-idle-text:  var(--cf-neutral-700);
+
+  /* Acciones · fondos de botón y superficie interactiva. La dirección del
+     refuerzo se INVIERTE con el tema (tercer sitio del sistema, tras la
+     elevación y --cf-border-interactive): en claro se oscurece, en oscuro se
+     aclara, porque en oscuro el primario ES la superficie clara. */
+  --cf-primary-bg:        var(--cf-neutral-900);
+  --cf-primary-bg-hover:  var(--cf-neutral-800);
+  --cf-primary-bg-active: var(--cf-neutral-950);
+  --cf-danger-bg:         var(--cf-rojo-600);
+  --cf-danger-bg-hover:   var(--cf-rojo-700);
+  --cf-danger-bg-active:  var(--cf-rojo-700);
+  --cf-surface-hover:     var(--cf-surface-sunken);
+  /* Capa de atenuación tras un modal: no porta contenido, sin desenfoque */
+  --cf-overlay:           rgb(29 26 22 / .55);
+
+  /* Vivos: solo rellenos de marcador y trazos de mapa (fondo = cartografía) */
+  --cf-live-vivid:  var(--cf-verde-400);
+  --cf-warn-vivid:  var(--cf-ambar-400);
+  --cf-alert-vivid: var(--cf-rojo-400);
+  --cf-info-vivid:  var(--cf-azul-400);
+
+  /* ── 4 · TIPOGRAFÍA ──────────────────────────────────────────────────── */
+  --cf-font-sans: "Inter", "Inter var", system-ui, -apple-system, "Segoe UI",
+                  Roboto, sans-serif;
+  --cf-font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --cf-font-features-data: "tnum" 1, "cv05" 1;
+
+  /* Escala de texto (móvil, rem sobre raíz 16px) · tamaño / interlineado */
+  --cf-text-xs:    0.75rem;   --cf-leading-xs:  1rem;      /* 12/16 USO RESTRINGIDO */
+  --cf-text-sm:    0.875rem;  --cf-leading-sm:  1.25rem;   /* 14/20 */
+  --cf-text-base:  1rem;      --cf-leading-base: 1.5rem;   /* 16/24 mínimo de lectura */
+  --cf-text-lg:    1.125rem;  --cf-leading-lg:  1.625rem;  /* 18/26 */
+  --cf-text-xl:    1.25rem;   --cf-leading-xl:  1.75rem;   /* 20/28 */
+  --cf-text-2xl:   1.5rem;    --cf-leading-2xl: 2rem;      /* 24/32 */
+  --cf-text-3xl:   1.875rem;  --cf-leading-3xl: 2.375rem;  /* 30/38 Newsreader */
+  --cf-text-4xl:   2.25rem;   --cf-leading-4xl: 2.75rem;   /* 36/44 Newsreader */
+
+  /* Escala de datos · cifras tabulares, peso 600/700 · tamaño / interlineado.
+     Solo la escala de datos tokeniza su interlineado: es la que cuadra en
+     columnas y fija el ritmo de fila. */
+  --cf-data-sm: 0.875rem;  --cf-leading-data-sm: 1.25rem;   /* 14/20 horas en listas densas */
+  --cf-data-md: 1.125rem;  --cf-leading-data-md: 1.5rem;    /* 18/24 hora protagonista */
+  --cf-data-lg: 1.5rem;    --cf-leading-data-lg: 1.875rem;  /* 24/30 dato principal del bottom sheet */
+  --cf-data-xl: 2rem;      --cf-leading-data-xl: 2.375rem;  /* 32/38 puntos, cifras de celebración */
+
+  /* Pesos (primitivos) */
+  --cf-weight-400: 400; --cf-weight-500: 500;
+  --cf-weight-600: 600; --cf-weight-700: 700;
+  /* Pesos (semánticos; [data-contrast="max"]: emphasis 500 → 600, data 600 → 700) */
+  --cf-weight-body:     var(--cf-weight-400); /* cuerpo */
+  --cf-weight-emphasis: var(--cf-weight-500); /* énfasis */
+  --cf-weight-data:     var(--cf-weight-600); /* datos, etiquetas de estado, botones */
+  --cf-weight-critical: var(--cf-weight-700); /* cifras críticas, títulos funcionales */
+  --cf-tracking-caps: 0.04em; /* mayúsculas sostenidas, 1–2 palabras */
+
+  /* ── 5 · ESPACIADO · base 4 ──────────────────────────────────────────── */
+  --cf-space-1:  0.25rem; /*  4 icono↔texto */
+  --cf-space-2:  0.5rem;  /*  8 interior de chips */
+  --cf-space-3:  0.75rem; /* 12 entre líneas de tarjeta */
+  --cf-space-4:  1rem;    /* 16 interior de tarjeta, margen lateral móvil */
+  --cf-space-5:  1.25rem; /* 20 */
+  --cf-space-6:  1.5rem;  /* 24 entre tarjetas, interior de paneles */
+  --cf-space-8:  2rem;    /* 32 entre bloques */
+  --cf-space-10: 2.5rem;  /* 40 */
+  --cf-space-12: 3rem;    /* 48 entre secciones · ALTURA TÁCTIL MÍNIMA */
+  --cf-space-16: 4rem;    /* 64 aire editorial */
+  /* Regla de USO sobre la misma escala, no tokens: funcional space-1…space-4,
+     editorial space-6…space-16. No existen ni deben existir tokens de
+     espaciado por registro. */
+  --cf-touch-min: var(--cf-space-12);
+
+  /* ── 6 · RADIOS ──────────────────────────────────────────────────────── */
+  --cf-radius-sm:   6px;   /* botones, campos, CHIPS DE ESTADO, badges funcionales */
+  --cf-radius-md:   10px;  /* tarjetas de cofradía y de información */
+  --cf-radius-lg:   14px;  /* contenedores grandes, paneles */
+  --cf-radius-xl:   20px;  /* bottom sheet (esq. superiores), modales */
+  --cf-radius-full: 999px; /* avatares, insignias, pill: solo gamificación */
+
+  /* ── 7 · BORDES Y ELEVACIÓN ──────────────────────────────────────────── */
+  --cf-border-width:        1px;
+  --cf-border-width-strong: 1.5px; /* chips críticos, marcadores de mapa */
+  --cf-border-width-max:    2px;   /* solo con [data-contrast="max"] */
+  --cf-accent-bar:          3px;   /* barra de acento izquierda: «este bloque lleva
+                                     un estado» (banda de contexto y aviso) */
+
+  --cf-shadow-tint: 29 26 22;      /* neutral-900 en RGB, para / alfa */
+  --cf-elev-0: none;
+  --cf-elev-1: 0 1px 2px rgb(var(--cf-shadow-tint) / .06),
+               0 1px 1px rgb(var(--cf-shadow-tint) / .04);
+  --cf-elev-2: 0 2px 8px rgb(var(--cf-shadow-tint) / .10),
+               0 1px 2px rgb(var(--cf-shadow-tint) / .06);
+  --cf-elev-3: 0 8px 24px rgb(var(--cf-shadow-tint) / .16),
+               0 2px 6px rgb(var(--cf-shadow-tint) / .08);
+  /* Realce interior de elev-3 en oscuro (no es un borde ni una sombra) */
+  --cf-elev-3-dark-edge: inset 0 1px 0 rgb(245 241 234 / .08);
+
+  /* Escala Z */
+  --cf-z-base: 0; --cf-z-sticky: 10; --cf-z-action: 20; --cf-z-nav: 30;
+  --cf-z-sheet: 40; --cf-z-modal: 50; --cf-z-toast: 60;
+
+  /* ── 8 · ICONOGRAFÍA (Phosphor, rejilla 24) ──────────────────────────── */
+  --cf-icon-sm: 1rem;    /* 16 chips, etiquetas, en línea · SIEMPRE bold */
+  --cf-icon-md: 1.25rem; /* 20 tarjetas y listas */
+  --cf-icon-lg: 1.5rem;  /* 24 navegación, acciones principales */
+  --cf-icon-xl: 2rem;    /* 32 estados vacíos, celebración, cabeceras */
+
+  /* ── 9 · MOVIMIENTO ──────────────────────────────────────────────────── */
+  --cf-dur-instant: 80ms;  /* feedback de pulsación */
+  --cf-dur-fast:    140ms; /* chips, hover, foco */
+  --cf-dur-base:    200ms; /* transiciones generales */
+  --cf-dur-sheet:   280ms; /* bottom sheet entre alturas */
+  --cf-dur-slow:    320ms; /* celebración media */
+  --cf-ease-out:    cubic-bezier(.2, .8, .25, 1); /* POR DEFECTO de todo el sistema:
+                                                     empieza rápido y frena («llega»).
+                                                     Bottom sheet entre alturas: ease-out con imanes. */
+  --cf-ease-in-out: cubic-bezier(.4, 0, .2, 1);   /* SOLO transiciones que van y vuelven por
+                                                     el mismo camino: conmutadores, chips que
+                                                     alternan entre dos estados equivalentes,
+                                                     fundidos cruzados. */
+
+  /* ── 10 · BREAKPOINTS · VALORES CANDIDATOS ───────────────────────────────
+     Las custom properties no funcionan dentro de @media: se documentan aquí
+     y se escriben literales en las consultas.
+       base  < 640    espacio insuficiente
+       md    640–1023 espacio intermedio
+       lg    1024–1439 espacio suficiente
+       xl    ≥ 1440   espacio amplio
+     Ejes independientes del ancho:
+       @media (pointer: coarse)               → objetivos ≥ 48px, sin hover
+       @media (hover: hover) and (pointer: fine) → hover, atajos
+     Anchos máximos: */
+  --cf-measure-max: 42rem;  /* texto */
+  --cf-panel-max:   28rem;  /* panel de lista */
+
+  /* ── 11 · CONFIANZA DEL DATO · canal de TRAZO ────────────────────────── */
+  --cf-dash-pattern:     6 4;   /* discontinuo estándar */
+  --cf-dash-pattern-map: 10 6;  /* discontinuo en cartografía */
+  /* Grosor de trazo: NO DEFINIDO. PROVISIONAL: 2px en componentes,
+     4–6px en el segmento de mapa. Sin token hasta que se decida. */
+  /* Umbrales posición en tiempo real (CANDIDATOS a calibrar):
+     vigente < 10 min · desactualizado 10–30 min · deja de afirmarse > 30 min.
+     Umbrales de horario previsto, hitos e info operativa: NO DEFINIDOS. */
+
+  /* ── 15 · ACCESIBILIDAD ──────────────────────────────────────────────── */
+  --cf-focus-ring-width:  2px;
+  --cf-focus-ring-offset: 2px;
+  --cf-focus-ring-color:  var(--cf-text);
+}
+
+/* ==========================================================================
+   [data-theme="dark"] → remapea TODOS los semánticos. El oscuro es CÁLIDO:
+   todo deriva de la tinta cálida. Sin sombras: elevación por escalón de
+   superficie + borde.
+   ========================================================================== */
+[data-theme="dark"] {
+  --cf-bg:             var(--cf-neutral-950);
+  --cf-surface:        var(--cf-neutral-900);
+  --cf-surface-sunken: var(--cf-neutral-1000);
+  --cf-surface-raised: #262220;
+  --cf-border:         #332E29;
+  --cf-border-strong:  #4A443D;
+  --cf-text:           #F5F1EA;
+  --cf-text-secondary: #C4BCB0;
+  --cf-text-muted:     #9A9287;
+  --cf-text-inverse:   var(--cf-neutral-950);
+  --cf-brand:          var(--cf-granate-300);
+  --cf-brand-strong:   var(--cf-granate-200);
+  --cf-brand-soft:     var(--cf-granate-900);
+  --cf-brand-border:   var(--cf-granate-500);
+
+  --cf-live:   var(--cf-verde-300); --cf-live-soft:  #13301F; --cf-live-border:  var(--cf-verde-700);
+  --cf-warn:   var(--cf-ambar-300); --cf-warn-soft:  #3A2A08; --cf-warn-border:  var(--cf-ambar-700);
+  --cf-alert:  var(--cf-rojo-300);  --cf-alert-soft: #3A1512; --cf-alert-border: var(--cf-rojo-700);
+  --cf-info:   var(--cf-azul-300);  --cf-info-soft:  #0E2838; --cf-info-border:  var(--cf-azul-700);
+  --cf-idle:   #9A9287;             --cf-idle-soft:  #201C19;          --cf-idle-border:  #332E29;
+
+  --cf-live-text:  var(--cf-verde-300);
+  --cf-warn-text:  var(--cf-ambar-300);
+  --cf-alert-text: var(--cf-rojo-300);
+  --cf-info-text:  var(--cf-azul-300);
+  --cf-idle-text:  #C4BCB0;
+
+  --cf-border-interactive: var(--cf-neutral-500);
+
+  --cf-primary-bg:        #F5F1EA;
+  --cf-primary-bg-hover:  var(--cf-neutral-200);
+  --cf-primary-bg-active: var(--cf-neutral-300);
+  --cf-danger-bg:         var(--cf-rojo-300);
+  --cf-danger-bg-hover:   var(--cf-rojo-100); /* sube: rojo-400 dejaría el texto en 3,92:1 */
+  --cf-danger-bg-active:  var(--cf-rojo-100);
+  --cf-surface-hover:     var(--cf-surface-raised);
+  --cf-overlay:           rgb(14 12 10 / .60); /* separa poco (≈1,2:1): limitación aceptada */
+
+  --cf-elev-1: none;  /* → surface-raised + border */
+  --cf-elev-2: none;  /* → surface-raised + border-strong */
+  --cf-elev-3: var(--cf-elev-3-dark-edge); /* → surface-raised + border-strong
+                         + realce interior luminoso (sin sombra) */
+}
+
+/* ==========================================================================
+   [data-register="editorial"] → superficies, bordes (y espaciado).
+   Se declara en el CONTENEDOR (pantalla o sección). Los componentes heredan.
+   ========================================================================== */
+[data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-100);
+  --cf-surface:        var(--cf-cera-50);
+  --cf-surface-sunken: var(--cf-cera-200);
+  --cf-surface-raised: var(--cf-cera-50);
+  --cf-border:         var(--cf-cera-300);
+  --cf-border-strong:  var(--cf-cera-400);
+}
+
+/* Oscuro · editorial: sube hacia un marrón-tinta más cálido */
+[data-theme="dark"][data-register="editorial"],
+[data-theme="dark"] [data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-950);
+  --cf-surface:        var(--cf-cera-900);
+  --cf-surface-sunken: #15100B;
+  --cf-surface-raised: #2E251C;
+  --cf-border:         #3A2F24;
+  --cf-border-strong:  #55473A;
+  --cf-text:           #F7F0E4;
+  --cf-text-secondary: #C9BFAE;
+  --cf-text-muted:     #9E9385;
+}
+
+/* Anidamiento explícito: un contenedor claro dentro de un ancestro oscuro */
+[data-theme="light"][data-register="editorial"],
+[data-theme="dark"] [data-theme="light"] [data-register="editorial"] {
+  --cf-bg:             var(--cf-cera-100);
+  --cf-surface:        var(--cf-cera-50);
+  --cf-surface-sunken: var(--cf-cera-200);
+  --cf-surface-raised: var(--cf-cera-50);
+  --cf-border:         var(--cf-cera-300);
+  --cf-border-strong:  var(--cf-cera-400);
+  --cf-text:           var(--cf-neutral-900);
+  --cf-text-secondary: var(--cf-neutral-700);
+  --cf-text-muted:     var(--cf-neutral-600);
+}
+
+/* ==========================================================================
+   [data-contrast="max"] → SOLO legibilidad. Nunca layout ni tamaños.
+   Elección manual persistente; no se infiere. Combinable con ambos temas.
+   ========================================================================== */
+[data-contrast="max"],
+[data-contrast="max"][data-theme],
+[data-contrast="max"][data-register],
+[data-contrast="max"] [data-theme],
+[data-contrast="max"] [data-register] {
+  --cf-text-muted:          var(--cf-text-secondary);   /* atenuados → secundario */
+  --cf-border-width:        var(--cf-border-width-max); /* 1px → 2px */
+  --cf-weight-emphasis:     var(--cf-weight-600);       /* 500 → 600 */
+  --cf-weight-data:         var(--cf-weight-700);       /* 600 → 700 */
+  --cf-focus-ring-width:    3px;                        /* 2px → 3px */
+  --cf-border-interactive:  var(--cf-neutral-700);      /* claro: se oscurece */
+  /* Texto de estado en claro: NO cambia (ya AAA, 8,6–9,5:1); el refuerzo lo
+     dan grosor de borde, peso e icono.
+     Iconos regular → bold: se aplica al elegir el peso del SVG, no es CSS. */
+}
+
+/* Máximo contraste · oscuro: texto de estado al -100 de su familia y
+   --cf-border-interactive se ACLARA a neutral-400. Mismo principio que la
+   elevación y el granate: en claro se oscurece, en oscuro se aclara. */
+[data-theme="dark"][data-contrast="max"],
+[data-contrast="max"] [data-theme="dark"],
+[data-theme="dark"] [data-contrast="max"] {
+  --cf-live-text:  var(--cf-verde-100);
+  --cf-warn-text:  var(--cf-ambar-100);
+  --cf-alert-text: var(--cf-rojo-100);
+  --cf-info-text:  var(--cf-azul-100);
+  --cf-idle-text:  var(--cf-neutral-100);
+  --cf-border-interactive: var(--cf-neutral-400);
+}
+
+/* Foco visible SIEMPRE */
+:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
+/* prefers-reduced-motion: reduce se respeta SIEMPRE y ninguna información
+   desaparece. instant y fast SE CONSERVAN (feedback de pulsación y de foco).
+   Desaparecen transform, scale y desplazamientos de panel: se resuelven en su
+   estado final. */
+@media (prefers-reduced-motion: reduce) {
+  :root, [data-theme] {
+    --cf-dur-base:  0ms;
+    --cf-dur-sheet: 0ms;
+    --cf-dur-slow:  0ms;
+  }
+}

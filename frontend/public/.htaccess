@@ -1,0 +1,39 @@
+# Cofradar · servir el build estatico desde Apache.
+#
+# Vite copia este archivo a dist/ en cada build, asi que viaja con el deploy y
+# no hay que acordarse de ponerlo en el servidor.
+#
+# POR QUE HACE FALTA: Cofradar es una SPA y sus rutas —/cofradias, /mapa,
+# /agenda— las resuelve el router en el navegador. En el disco solo existe
+# index.html, asi que sin esto Apache busca un directorio /cofradias, no lo
+# encuentra y devuelve 404. La portada funcionaria y cualquier recarga o
+# enlace directo, no.
+#
+# Requiere `a2enmod rewrite` y AllowOverride All en el vhost.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Lo que existe de verdad —el JS, el CSS, las fuentes— se sirve tal cual.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Todo lo demas lo resuelve el router de la app.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Los assets llevan hash en el nombre: cambian de nombre al cambiar de
+# contenido, asi que se pueden cachear para siempre sin miedo.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # index.html NO se cachea: es el que apunta a los assets nuevos. Si se
+  # cachea, el navegador sigue pidiendo el build anterior.
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

@@ -1,0 +1,139 @@
+/* ==========================================================================
+   COFRADAR · COFRADIAS
+   --------------------------------------------------------------------------
+   Lo poco que el area 4-cofradias necesita y bundle.css no trae. En el export
+   vive inline en cada .html (.dir, .grp, .rl-row, .empty, .ttl1).
+
+   El patron de fila NO esta aqui: es `.cf-lista`, compartido con Inicio, en
+   listas.css. Y el campo de busqueda y los chips de filtro son `.cf-field` y
+   `.cf-filter` del design system, sin una regla nuestra.
+
+   Que cambia respecto al export, y por que:
+     .dir    → el padding lo pone .cf-marco-contenido, asi que no se copia;
+               queda `data-area="cofradias"` para lo que si es del area.
+     .ttl1   → .cf-cofradias-titulo   mismo valor.
+     .grp    → .cf-cofradias-grupo    mismo valor.
+     .rl-row → .cf-cofradias-relleno  mismo valor.
+     .empty  → .cf-cofradias-vacio    mismo valor.
+
+   Namespace: cf-cofradias*.
+   ========================================================================== */
+
+/* ── El titulo del area ────────────────────────────────────────────────────
+   NO es `.cf-marco-titulo`: ese es el serif de las pantallas secundarias
+   (§8.2) y esto es una raiz. Aqui el titulo es un rotulo funcional en Inter,
+   y Newsreader se reserva para los nombres de hermandad, que en esta
+   pantalla son los protagonistas (regla 13).
+   -------------------------------------------------------------------------- */
+.cf-cofradias-titulo {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-critical);
+}
+
+/* El campo de busqueda ocupa su fila entera. */
+.cf-cofradias-busqueda {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Los filtros no se parten en dos lineas: caben los tres. */
+.cf-cofradias-filtros {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--cf-space-2);
+  align-items: center;
+  min-width: 0;
+}
+
+/* ── Un grupo de jornada ───────────────────────────────────────────────────
+   El rotulo se queda pegado arriba al desplazarse: con setenta hermandades
+   agrupadas, saber en que jornada estas no puede depender de recordar por
+   donde ibas.
+   -------------------------------------------------------------------------- */
+.cf-cofradias-grupo {
+  display: grid;
+}
+
+.cf-cofradias-grupo > h2 {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: var(--cf-space-4) 0 var(--cf-space-1);
+  /* Opaco: debajo pasan las filas. */
+  background: var(--cf-bg);
+  font-size: var(--cf-text-xs);
+  line-height: var(--cf-leading-xs);
+  font-weight: var(--cf-weight-critical);
+  letter-spacing: var(--cf-tracking-caps);
+  text-transform: uppercase;
+  color: var(--cf-text-secondary);
+  border-bottom: var(--cf-border-width) solid var(--cf-border-strong);
+}
+
+/* El contador de la jornada: cifras tabulares y sin el peso del rotulo. */
+.cf-cofradias-grupo > h2 .n {
+  font-feature-settings: var(--cf-font-features-data);
+  font-weight: var(--cf-weight-body);
+}
+
+/* ── Relleno rotulado ──────────────────────────────────────────────────────
+   Ocupa el sitio de las hermandades de otras jornadas. El fixture solo trae
+   las seis de la Madruga y NO se inventan nombres: son instituciones reales
+   y un nombre falso es un error de producto, no un dato de relleno.
+   -------------------------------------------------------------------------- */
+.cf-cofradias-relleno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+  min-height: 3.25rem;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-cofradias-relleno:first-child {
+  border-top: 0;
+}
+
+.cf-cofradias-relleno .bar {
+  height: 0.875rem;
+  border-radius: 2px;
+  background: var(--cf-border);
+}
+
+.cf-cofradias-relleno .lab {
+  font-size: var(--cf-text-xs);
+  line-height: var(--cf-leading-xs);
+  font-weight: 700;
+  letter-spacing: var(--cf-tracking-caps);
+  text-transform: uppercase;
+  color: var(--cf-text-secondary);
+}
+
+/* ── Sin resultados ────────────────────────────────────────────────────────
+   En llano y con UNA salida. Sin ilustracion, sin cara triste, sin disculpa
+   y sin sugerir a quien ir a ver: esto es un directorio, no un tablero.
+   -------------------------------------------------------------------------- */
+.cf-cofradias-vacio {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding-top: var(--cf-space-8);
+  justify-items: start;
+}
+
+.cf-cofradias-vacio .q {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-cofradias-vacio .n {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
