@@ -18,7 +18,7 @@
     "hora_referencia": "02:40",
     "fase": "en_calle",
     "confianza": "confirmado",
-    "nota": "Cabeza llegando a la Campana con +12 min de retraso",
+    "nota": "Cabeza en la Campana con +12 min de retraso",
     "fuente": "mock"
    },
    "geometry": {

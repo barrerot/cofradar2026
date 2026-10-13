@@ -2,7 +2,7 @@
 """Comprueba que el estado de las 02:40 es coherente con los horarios programados.
 
 El fixture es inventado, pero no puede ser contradictorio: si una pantalla
-muestra «Campana 03:05» y el horario dice 02:53, el +12 de retraso tiene que
+muestra «Sierpes 02:51» y el horario dice 02:39, el +12 de retraso tiene que
 cuadrar. Esto lo verifica.
 """
 import csv, json, os, sys

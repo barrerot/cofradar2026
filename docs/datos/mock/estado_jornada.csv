@@ -1,5 +1,5 @@
 cofradia,fase,confianza_fase,ultima_observacion,elemento_observado,coletilla,alteraciones,proximo_punto,proximo_punto_hora,proximo_punto_confianza,relacion_usuario,nota
-la-macarena,en_calle,confirmado,02:36,cruz-guia,,retraso,campana,03:05,estimado,vista,Retraso de +12 min sobre la hora programada (02:53). La observacion nombro la cruz de guia: eso es lo que ancla la posicion
+la-macarena,en_calle,confirmado,02:36,cruz-guia,,retraso,sierpes,02:51,estimado,vista,Cruz de guia vista en la Campana a las 02:36 con la hora programada a las 02:24: +12 min. Se arrastra a Sierpes (02:39 programada). La observacion nombro la cruz de guia: eso es lo que ancla la posicion
 el-gran-poder,en_calle,estimado,,,según horario,,sierpes,02:55,estimado,seguida,Nadie ha dado fe todavia; la fase y los dos elementos salen del horario
 el-silencio,en_calle,desactualizado,02:17,palio,hace 23 min,,catedral-palquillo,03:10,estimado,,Ultima observacion hace 23 min y fue del palio: el elemento anclado no es la cruz de guia
 los-gitanos,inminente,confirmado,02:38,,,,santuario-gitanos,03:00,confirmado,seguida,Aportacion generica sin elemento: evidencia de presencia y fase pero ningun anclaje de posicion. Sin segmento
