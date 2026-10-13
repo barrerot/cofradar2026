@@ -1,0 +1,59 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de ejemplo de abajo. No inventes hermandades, horas ni cifras. Puntos y nombre de nivel aún no están decididos: van rotulados «ejemplo».
+
+ARMAZÓN: usa el de los lienzos «Cofradar · Armazón», «Inicio», «Cofradías» y «Agenda» tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda (abre «Elegir jornada») y sincronización a la derecha: flechas circulares + «hace 1 min». Sin búsqueda global ni selector de ciudad.
+- Pantallas secundarias: el enlace de vuelta («← Mi Cofradar») sustituye a la jornada; la sincronización sigue a la derecha.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar.
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en una franja encima de la barra, solo cuando hay cofradías en la calle (en la Madrugá de los datos, sí).
+- Sin conexión: aviso azul bajo la cabecera con nube tachada: «Sin conexión · último dato hace 12 min».
+
+ESTILO
+- Herramienta de campo con personalidad editorial sobria. No debe parecer app de transporte ni web de hermandad. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Tipografía: Inter para todo dato (cifras tabulares); Newsreader solo para nombres de hermandades y títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, texto tinta #1D1A16, texto secundario #4A443C, bordes #E6E3DC.
+- Estados, siempre color + texto + icono: en la calle y confirmado verde #15603B (texto #0E4A2D, fondo #E3F1E7); retraso, adelanto, cambio de recorrido e inminente ámbar #7A4800 (texto #5E3700, fondo #FBF0D8); incidencia, interrumpida, regreso anticipado y cancelada rojo #9B2016 (texto #7A1810, fondo #FBE9E6); información y lluvia azul #14537A (texto #0F3F5C, fondo #E4EFF6); prevista y finalizada gris #6A655C (fondo #F4F2ED).
+- Granate #6E1C2F solo para «lo tuyo»: seguidas, vistas, tus aportaciones, puntos y nivel. La marca va delante del nombre. Nunca en estados, avisos ni botones de acción. Si la marca comparte fila con un chip rojo, va en tinta. Granate y rojo nunca juntos.
+- «Diste fe» con contorno: el dato no dice que se verificara.
+- Botón primario en tinta (#1D1A16, texto claro), nunca granate. Botón de peligro rojo solo para borrar la cuenta.
+- Confianza del dato: confirmado con trazo continuo; estimado «· según horario» con trazo discontinuo; desactualizado «· hace 23 min» discontinuo + icono de reloj hacia atrás. La coletilla nunca en gris tenue. Prohibido expresar incertidumbre con transparencia o difuminado.
+- Solo lleva sombra lo que está realmente encima de otra cosa. Radios: botones y chips 6 px, tarjetas 10, paneles 14, hoja inferior 20.
+- Iconos Phosphor: relleno = activo o verificado; contorno = inactivo. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Dos registros: editorial (más aire, tono cera #F7F1E6, Newsreader en títulos) en la portada, Mi colección y Mis aportaciones; funcional (denso, casi blanco, solo Inter) en Seguidas, Cuenta, Ajustes y Ayuda.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA; granate pasa a #D97E8B.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40
+Siete hermandades en los datos: El Calvario, La Macarena, El Silencio, El Gran Poder, Esperanza de Triana, Los Gitanos (Madrugá) y La Soledad de San Lorenzo (Sábado Santo).
+- Seguidas (2): El Gran Poder (En la calle · según horario) y Los Gitanos (Inminente).
+- Vistas este año (2): La Macarena y El Calvario.
+- Aportaciones (3):
+  · Esperanza de Triana · Paso de Cristo · 02:39 · «Contribuyó a la posición».
+  · El Calvario · Paso de palio · 02:30 · sin etiqueta.
+  · La Macarena · Cruz de guía · 02:40 · «Pendiente de enviar».
+- Con cuenta: «nombre@ejemplo.com». Puntos y nivel: «120 puntos · Nivel 2» rotulados «ejemplo».
+
+ÁREA: Mi Cofradar, el área personal. Área Mi Cofradar activa en la barra. Aquí el granate es protagonista porque todo es «lo tuyo». No hay reputación visible, ni clasificaciones, ni logros, ni retos.
+
+1. PORTADA, CON CUENTA. Cabecera del armazón; en la segunda fila, «Mi Cofradar» en Newsreader. Bloque de progreso: «120 puntos» en cifra grande granate, «Nivel 2» y barra de avance al siguiente, todo rotulado «ejemplo». Debajo, tres accesos con su cifra: «Seguidas · 2», «Mi colección · 2 de 7», «Mis aportaciones · 3». Al final, filas funcionales: Cuenta, Ajustes, Ayuda y fuentes. Claro y oscuro.
+
+2. PORTADA, SIN CUENTA. Mismos accesos con lo guardado en el teléfono: «Seguidas · 2», «Mi colección · 2 de 7». Línea tranquila «Esto está guardado solo en este teléfono» y «Entrar con Google» como botón secundario, no como barrera. En lugar de puntos: «Empiezas a sumar puntos cuando das fe». Sin «Mis aportaciones» con cifra inventada: «Tus aportaciones aparecerán aquí cuando des fe».
+
+3. SEGUIDAS. Secundaria. Lista agrupada por jornada («Madrugá · hoy») con marca granate y el chip de fase de hoy. Acción para dejar de seguir en cada fila. Muestra también el estado vacío en un segundo tablero: «Aún no sigues ninguna. Puedes seguirlas desde su ficha.»
+
+4. MI COLECCIÓN. Secundaria, editorial. «2 de 7 hermandades» con una barra granate. Lista por jornada: vistas con marca rellena granate y el año («2027»), no vistas con contorno neutro. Botón secundario «Añadir una que vi» para marcarla a posteriori con el año. Sin comparar con nadie.
+
+5. MIS APORTACIONES. Secundaria, editorial. Historial de la Madrugá con las tres aportaciones de los datos, en orden de hora. «Contribuyó a la posición» con icono relleno y texto; la de El Calvario sin ninguna etiqueta; la de La Macarena «Pendiente de enviar» con icono de reloj. Al final, bloque «¿Cómo se usan mis aportaciones?»: «Cofradar usa una aportación para situar una cofradía cuando otras personas, por su cuenta, ven lo mismo. Si una no se usa, no significa que estuviera mal.» Nunca «rechazada» ni «no verificada».
+
+6. CUENTA. Secundaria, funcional. «Cuenta de Google · nombre@ejemplo.com» y «Cambiar de cuenta de Google». «Descargar mis datos». «Cerrar sesión» con la nota «No se borra nada de tu teléfono». Separado abajo, «Eliminar cuenta» en texto rojo.
+
+7. ELIMINAR CUENTA. Secundaria («← Cuenta»). En llano, dos bloques: «Se borra»: tu cuenta, puntos, nivel, colección, seguidas e historial. «Se conserva, sin tu nombre»: que alguien vio un paso en un sitio a una hora, porque sostiene lo que Cofradar publicó esa noche. Antes, botón secundario «Descargar mis datos». Casilla «Entiendo que es inmediato y no se puede deshacer» y botón de peligro rojo «Eliminar mi cuenta», desactivado hasta marcar la casilla.
+
+8. AJUSTES. Secundaria, funcional. Apariencia: control segmentado Sistema / Claro / Oscuro. «Máximo contraste» con conmutador y una frase de para qué sirve. Permisos: «Ubicación · No permitida» con «Permitir» y por qué la pedimos; en un segundo tablero, «Ubicación · Bloqueada en el navegador» con «Puedes cambiarlo en los permisos de tu navegador». Privacidad.
+
+9. AYUDA Y FUENTES. Secundaria, funcional. «Cómo leer Cofradar»: muestras de «02:36» confirmado (trazo continuo), «02:50 · según horario» (discontinuo) y «02:17 · hace 23 min» (discontinuo + reloj), y los cinco colores de estado con su texto. «De dónde salen los datos»: «Horarios e itinerarios del Consejo General de Hermandades y Cofradías de Sevilla, y lo que la gente ve en la calle con "Dar fe"». «Mapa: © OpenStreetMap». Enlaces a privacidad y aviso legal. Sin glosario cofrade ni guía para visitantes.
+
+Claro en todas; la portada con cuenta, también en oscuro.
