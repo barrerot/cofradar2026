@@ -10,6 +10,20 @@ Una pantalla = tres archivos con el mismo nombre:
 
 Fuente de verdad: el artifact del design system. Lo rotulado como relleno, fixture, supuesto, propuesta o NO DEFINIDO no es decisión cerrada ni dato de producto.
 
+## Superado por el PRD revisado (13 de octubre de 2026)
+
+Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como referencia** hasta que se rehagan en las issues de diseño de Linear (BUL-191 a BUL-200). Ver D35 en `design.md`.
+
+- **Todo `1-marco/`**: la cabecera lleva búsqueda global y selector de ciudad, que ya no existen. Se revisa en BUL-191.
+- **Todo `2-inicio-ahora/`**: sustituido por `2-inicio/`.
+- `2-inicio/07-3-fuera-de-temporada…`: fuera de temporada pasa a ser cuenta atrás + acceso a consultar las cofradías. Se revisa en BUL-192.
+- `2-inicio/08-selector-de-ciudad-y-jornada…`: ya no hay selector de ciudad, solo de jornada. Se revisa en BUL-192.
+- `3-mapa/07-4-agrupacion-nivel-3` y `08-4-deshacer-el-grupo`: sin agrupación de marcas.
+- `3-mapa/09-5-filtros-en-la-cabecera` y `10-5-finalizadas-trae-a-el-calvario`: el mapa no tiene filtros.
+- `3-mapa/13-7-centrado-en-un-hito…`: los hitos ya no son tocables.
+- **El resto de `3-mapa/`**: la marca con flecha de dirección y el «final» del cortejo ya no existen. Se revisa en BUL-197.
+- **`4-cofradias/`**: vale como base, pero sin búsqueda global en la cabecera. Se revisa en BUL-193.
+
 ## 1-marco
 
 - `01-jornada-activa-madruga-02-40` — JORNADA ACTIVA · MADRUGÁ, 02:40
