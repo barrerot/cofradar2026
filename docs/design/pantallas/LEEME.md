@@ -21,7 +21,7 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `3-mapa/09-5-filtros-en-la-cabecera` y `10-5-finalizadas-trae-a-el-calvario`: el mapa no tiene filtros.
 - `3-mapa/13-7-centrado-en-un-hito…`: los hitos ya no son tocables.
 - **El resto de `3-mapa/`**: la marca con flecha de dirección y el «final» del cortejo ya no existen. Se revisa en BUL-197.
-- **`4-cofradias/`**: vale como base, pero sin búsqueda global en la cabecera. Se revisa en BUL-193.
+- **Las fichas numeradas de `4-cofradias/` (01 a 08)**: llevan búsqueda global en la cabecera. Las sustituyen las `cofradias-*`, `ficha-*` y `recorrido-*` (BUL-193).
 
 ## 1-marco
 
@@ -88,6 +88,24 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `14-8-fuera-de-temporada` — 8 · FUERA DE TEMPORADA
 
 ## 4-cofradias
+
+**Vigentes** · lienzo «Cofradar · Cofradías» (https://claude.ai/artifact/FHSoReZHR4djgfGoDJ7Apa), aprobado el 13 de octubre de 2026 en BUL-193. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Todos los datos salen del fixture (`docs/datos/mock/`); lo que no está, «dato pendiente».
+
+- `cofradias-1A-todas-{claro,oscuro}` — LISTADO · MADRUGÁ 02:40 · TODAS. Agrupado por jornada y por hora de salida. Marca granate en tinta cuando la fila lleva un chip rojo.
+- `cofradias-1B-busqueda-g-seguidas-claro` — BUSCANDO «G» CON «MIS SEGUIDAS».
+- `cofradias-1C-sin-resultados-claro` — SIN RESULTADOS PARA «XZ».
+- `cofradias-1D-fuera-de-temporada-claro` — FUERA DE TEMPORADA. Filas sin chip ni alteraciones.
+- `ficha-2A-la-macarena-{claro,oscuro}` — FICHA · EN LA CALLE. Cada elemento con su posición, hora y confianza; «Dar fe» solo en la franja. Sin título en la segunda fila.
+- `ficha-2B-esperanza-de-triana-claro` — FICHA · VARIAS ALTERACIONES. «Diste fe» con contorno (no afirma verificación).
+- `ficha-2C-los-gitanos-claro` — FICHA · INMINENTE. Sin franja.
+- `ficha-2D-el-calvario-claro` — FICHA · FINALIZADA. Sin franja.
+- `ficha-2E-cancelada-claro` — FICHA · CANCELADA (hermandad de ejemplo). Solo «Recorrido y horarios» y «Seguir».
+- `ficha-2F-la-soledad-claro` — FICHA · FUERA DE TEMPORADA, UN SOLO PASO.
+- `recorrido-3-la-macarena-{claro,oscuro}` — RECORRIDO Y HORARIOS. Prevista arriba, real o estimada debajo; sin horas reales donde nadie dio fe.
+
+Escudo de reserva: iniciales del nombre popular sin artículo (M, GP, ET…).
+
+**Superadas**, se conservan como histórico:
 
 - `01-1-listado-jornada-activa-madruga-02-40` — 1 · LISTADO · JORNADA ACTIVA · MADRUGÁ, 02:40
 - `02-1-listado-completo-scroll` — 1 · LISTADO COMPLETO (SCROLL)
