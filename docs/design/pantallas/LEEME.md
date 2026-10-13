@@ -14,7 +14,7 @@ Fuente de verdad: el artifact del design system. Lo rotulado como relleno, fixtu
 
 Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como referencia** hasta que se rehagan en las issues de diseño de Linear (BUL-191 a BUL-200). Ver D35 en `design.md`.
 
-- **Todo `1-marco/`**: la cabecera lleva búsqueda global y selector de ciudad, que ya no existen. Se revisa en BUL-191.
+- **Las fichas numeradas de `1-marco/` (01 a 12)**: la cabecera lleva búsqueda global y selector de ciudad, que ya no existen. Las sustituyen las `armazon-*` (BUL-191).
 - **Todo `2-inicio-ahora/`**: sustituido por `2-inicio/`.
 - `2-inicio/07-3-fuera-de-temporada…`: fuera de temporada pasa a ser cuenta atrás + acceso a consultar las cofradías. Se revisa en BUL-192.
 - `2-inicio/08-selector-de-ciudad-y-jornada…`: ya no hay selector de ciudad, solo de jornada. Se revisa en BUL-192.
@@ -25,6 +25,16 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - **`4-cofradias/`**: vale como base, pero sin búsqueda global en la cabecera. Se revisa en BUL-193.
 
 ## 1-marco
+
+**Vigentes** · lienzo «Cofradar · Armazón» (https://claude.ai/artifact/GjRRWCSgTTvC6xLFSBjELs), aprobado el 13 de octubre de 2026 en BUL-191. Solo PNG, a 780 × 1688 (390 × 844 a 2×); el marcado de referencia es el del lienzo. Las decisiones que fija están en el README del sistema, sección «Marco · armazón global».
+
+- `armazon-1-jornada-activa-{claro,oscuro}` — 1 · JORNADA ACTIVA · MADRUGÁ, 02:40
+- `armazon-2-sin-actividad-{claro,oscuro}` — 2 · SIN ACTIVIDAD · JUEVES SANTO, 11:00 (sin franja)
+- `armazon-3-ficha-la-macarena-{claro,oscuro}` — 3 · SECUNDARIA · FICHA DE LA MACARENA
+- `armazon-4-hoja-inferior-{claro,oscuro}` — 4 · HOJA INFERIOR A MEDIA ALTURA
+- `armazon-5-sin-conexion-{claro,oscuro}` — 5 · SIN CONEXIÓN · ÚLTIMO DATO HACE 12 MIN
+
+**Superadas**, se conservan como histórico:
 
 - `01-jornada-activa-madruga-02-40` — JORNADA ACTIVA · MADRUGÁ, 02:40
 - `02-sin-actividad-jueves-santo-17-15` — SIN ACTIVIDAD · JUEVES SANTO, 17:15
