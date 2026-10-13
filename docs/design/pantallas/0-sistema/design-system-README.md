@@ -211,17 +211,19 @@ Reglas que gobiernan todos: ningún significado solo por color; trazo = confianz
 
 ## Marco de la aplicación · armazón global (sustituye a B-04)
 
-Fichas en «Marco · armazón global». El contenido es siempre relleno gris: el encargo es el chasis.
+Fichas en «Marco · armazón global»: **SUPERADAS**, las sustituye el lienzo «Cofradar · Armazón» (cinco variantes en claro y oscuro). Se conservan como histórico; donde una ficha antigua contradiga esta sección (por ejemplo, búsqueda en la cabecera), manda esta sección. El contenido es siempre relleno gris: el encargo es el chasis.
 
 - **Cinco destinos**, en este orden y todo el año: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar. Icono + etiqueta siempre visibles; columnas de 78 px a 390; «Mi Cofradar» cabe sin abreviar. Activo: icono relleno + texto principal + barra de 2 px. Sin hamburguesa ni menú lateral; la barra no se oculta.
 - **«Dar fe» no es destino.** Vía rápida: la franja de acción, encima de la barra, botón en tinta abajo a la derecha (zona del pulgar). Solo aparece si el estado real de la jornada da algo de lo que dar fe (y el toque está disponible); sin ella no queda hueco. Descartados: botón flotante y botón central en la barra.
-- **Cabecera**: zona del marco. Siempre sincronización (formato e icono NO DEFINIDOS) y búsqueda global con texto, a la derecha. Cada pantalla compone la izquierda y una segunda fila opcional (día, filtros, título).
-- **Secundarias**: la barra se queda con el destino de origen activo; vuelta arriba a la izquierda con flecha + nombre de la pantalla anterior (además del atrás del sistema y el toque en el destino activo); título en segunda fila; sobreviven sincronización y búsqueda.
+- **Cabecera**: zona del marco. A la izquierda, la **jornada consultada** («Madrugá ▾»), que abre «Elegir jornada»; a la derecha, la **sincronización**. **Sin búsqueda global ni selector de ciudad**: en 2027 solo se busca por nombre, dentro de Cofradías. Cada pantalla puede añadir una segunda fila opcional (filtros, título).
+- **Secundarias**: la barra se queda con el destino de origen activo; vuelta arriba a la izquierda con flecha + nombre de la pantalla anterior (además del atrás del sistema y el toque en el destino activo), en el sitio de la jornada; título en segunda fila; sobrevive la sincronización.
 - **Sheet**: se apoya sobre la barra, tapa la franja, nunca la navegación. Modal con `--cf-overlay` bajo el sheet; no modal (mapa) sin capa. Se cierra con «Cerrar», arrastre, toque en la capa o atrás.
+- **Sincronización** (decidido): con conexión, flechas circulares + «hace 1 min»; sin conexión, nube tachada + «hace 12 min». El aviso bajo la cabecera dice «Sin conexión · último dato hace 12 min»; los datos siguen visibles y congelados, sin spinner.
+- **Un solo icono para «sin conexión»** (decidido): la nube tachada, igual en la cabecera y en el aviso. Nunca dos dibujos para lo mismo.
+- **«Dar fe» en una ficha de hermandad** (decidido): el botón de la franja es el «Dar fe» de esa cofradía; se salta «¿Qué cofradía?» y el contenido de la ficha no añade otro botón. Nunca dos «Dar fe» a la vez.
+- **Icono de «Dar fe»** (decidido, provisional como todos los iconos): ojo, «estoy viendo».
 - Capas: cabecera `--cf-z-sticky`, contenido `--cf-z-base`, franja `--cf-z-action`, barra `--cf-z-nav`, sheet `--cf-z-sheet`. Áreas seguras `env(safe-area-inset-*)`; 47/34 px son fixture.
 - Nada del chasis depende de ubicación ni de cuenta. En anchos grandes, rail con los mismos cinco destinos (composición en paneles: T-04).
-
-**Pendiente de arrastre:** la cabecera del Mapa (R-02) todavía no lleva el selector de jornada de la composición 5c.
 
 ## Ruta Inicio (R-12 · BUL-161, integra Ahora)
 
@@ -232,17 +234,17 @@ Fichas en «Ruta · Inicio». Sustituyen a las de Ahora (BUL-125): se conserva t
 - **Un solo «Dar fe»**: con la franja presente, la tarjeta sujeto no lleva acción.
 - Una cofradía, una vez; `finalizada` no aparece (Agenda). Sin rejilla de accesos: el contenido lleva a su sitio. Sin destacados, retos, logros ni llamadas a contribuir. Sin invitación a la ubicación.
 - Sin actividad: una línea y lo siguiente que ocurre, sin franja. Fuera de temporada (fecha de ejemplo 8/10/2026): 164 días al Domingo de Ramos, acceso a la programación y lo tuyo.
-- NO DEFINIDO: formato e icono de sincronización; «Dar fe» en `inminente`; representación sin cobertura; margen útil del próximo punto; cifras de puntos.
+- NO DEFINIDO: «Dar fe» en `inminente`; representación sin cobertura; margen útil del próximo punto; cifras de puntos.
 
 ## Ruta Mapa (R-02)
 
-Fichas en «Ruta · Mapa». Siete estados de una misma pantalla (más fuera de temporada) y tres ampliaciones. Tema claro, registro funcional. El subsistema de mapa es lo único que R-02 crea: tokens de componente `--cf-map-*` en `bundle.css`.
+Fichas en «Ruta · Mapa»: **SUPERADAS**, se rehacen enteras más adelante; no usarlas como referencia visual. Describían siete estados de una misma pantalla (más fuera de temporada) y tres ampliaciones. Tema claro, registro funcional. El subsistema de mapa es lo único que R-02 crea: tokens de componente `--cf-map-*` en `bundle.css`.
 
 - Una cofradía en la calle es un **segmento**: el tramo que ocupa el cortejo, contenedor de cruz de guía → paso de Cristo → palio → final. Siempre estimación. Se la puede alcanzar por la cola.
 - **Marcador** propio: flecha con muesca (la dirección es la forma), centrado en la cabeza; 32 / 40 seleccionado / 40 agrupación; superficie opaca, halo, borde en color de estado 2px; continuo = confirmado, discontinuo = estimado o desactualizado (mismo código que chip y segmento). Desactualizado lleva su edad siempre. Relación granate arriba a la izquierda; alteración más grave arriba a la derecha. Sale pronto y finalizada: círculo, sin segmento.
 - **Recorrido** (nivel 2): realizado continuo `--cf-live` 3px · pendiente discontinuo neutro 3px · segmento 8px (alma `-vivid` 4px, casing 2px). Las demás cofradías siguen visibles fuera de foco.
 - **Agrupación**: cuántas + la alteración más grave. Cabezas en el mismo punto se agrupan a cualquier zoom.
-- **Cabecera** de la ruta: filtros, sincronización y búsqueda. Único control flotante: centrar en mi ubicación.
+- **Cabecera** de la ruta: la del armazón (jornada consultada a la izquierda, sincronización a la derecha). Sin filtros ni búsqueda. Único control flotante: centrar en mi ubicación.
 - **Franja y sheet**: la acción contextual del sheet medio ocupa el sitio exacto del botón de la franja; nunca dos «Dar fe» a la vez.
 - Sin desenfoque, translucidez ni degradados en el mapa; la incertidumbre va en el trazo, la marca textual y la frescura.
 - PROPUESTA A VALIDAR: grosores, patrón fijo en px de pantalla a cualquier zoom, umbral de agrupación (40px), sheet asomado 64 / 168px, color del pendiente (`neutral-600` en lugar de `--cf-border-strong`).
@@ -252,9 +254,9 @@ Fichas en «Ruta · Mapa». Siete estados de una misma pantalla (más fuera de t
 
 Fichas en «Ruta · Cofradías». El directorio de hermandades, todo el año; no depende de la jornada y no pide ubicación ni cuenta.
 
-- Cabecera: título «Cofradías» + sincronización + búsqueda global (armazón); segunda fila, **campo de búsqueda siempre presente** (nombre popular, por el comienzo de cualquier palabra); tercera fila, filtros «Todas» · «En la calle» · «Mis seguidas».
+- Cabecera: la del armazón, como en todas las áreas (jornada consultada a la izquierda, sincronización a la derecha); Cofradías no es excepción. Segunda fila, el título «Cofradías»; debajo, el **campo de búsqueda siempre presente**, la única búsqueda de la app en 2027 (nombre popular, por el comienzo de cualquier palabra), y los filtros «Todas» · «En la calle» · «Mis seguidas».
 - Agrupación por jornada (DECISIÓN A VALIDAR): con jornada activa, la del día primero («Madrugá · hoy»); si no, orden de la semana. Rótulos iguales a los de Inicio, pegados al hacer scroll. Orden interno alfabético sin artículo (DECISIÓN A VALIDAR).
 - Fila sin caja, separada por filete: marca de relación + nombre popular en Newsreader + chip a la derecha a la altura del nombre (§9.4); alteración debajo si existe. Sin punto/hora, sin proximidad, sin acción. Todas las filas pesan igual.
 - Sin resultados: frase en llano + un botón de salida (buscar en todas / borrar búsqueda).
 - Fuera de temporada: misma fila sin chip y sin franja.
-- Relleno gris rotulado donde el fixture no trae hermandades. Choque abierto: conviven la búsqueda global del armazón y el campo del directorio.
+- Relleno gris rotulado donde el fixture no trae hermandades.
