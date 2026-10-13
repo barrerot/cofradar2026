@@ -828,7 +828,7 @@ Si en el futuro existe información suficiente para calcular una ruta peatonal r
 
 **La cabecera es una zona del marco, no un componente.** El marco define **dónde cae** —pegada arriba, con su área segura y su `z-sticky`— y **qué lleva siempre**: la **jornada consultada**, que al tocarla abre la hoja «Elegir jornada», y el indicador de **última sincronización** (§7.3), que es global. **No lleva selector de ciudad** —en 2027 hay una sola y la ciudad sigue siendo un dato del modelo— **ni búsqueda global**. Cuando no hay conexión, bajo la cabecera aparece el aviso «Sin conexión · último dato hace…» (§12).
 
-**Todo lo demás lo compone cada ruta**, porque cada una necesita cosas distintas: la Agenda lleva el selector de día; Cofradías, su campo de búsqueda y sus filtros. **No existe un componente «cabecera» único y no debe diseñarse como si lo fuera.**
+**Todo lo demás lo compone cada ruta, en una segunda fila bajo la jornada**, porque cada una necesita cosas distintas: la Agenda lleva el selector de día; Cofradías, su título, su campo de búsqueda y sus filtros. **Ningún área es excepción**: Cofradías también lleva la jornada arriba, porque decide qué hermandades van primero y qué fase muestran. En las pantallas secundarias, la vuelta ocupa el sitio de la jornada y solo se mantiene la sincronización. **No existe un componente «cabecera» único y no debe diseñarse como si lo fuera.**
 
 **Pantallas secundarias** (una ficha, un recorrido, Cuenta): vuelta arriba a la izquierda con flecha + nombre de la pantalla anterior, además del atrás del sistema; la barra se queda marcando el área de origen.
 
