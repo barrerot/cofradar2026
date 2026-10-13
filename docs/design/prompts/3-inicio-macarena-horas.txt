@@ -1,0 +1,5 @@
+Corrección de horas de La Macarena (había una incoherencia en los datos: iba adelantada y llevaba retraso). Aplícalo en A, B y E (y A oscuro):
+- Cruz de guía · en La Campana · 02:36 (continuo). Sigue con «Retraso 12 min».
+- Palio · camino de La Campana · 02:50 · según horario (discontinuo), en lugar de «camino de la Plaza del Duque · 02:56».
+- En E, la cruz sigue como «02:26 · hace 14 min».
+Nada más cambia.

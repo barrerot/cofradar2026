@@ -1,0 +1,55 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de ejemplo de abajo. No inventes hermandades, horas, calles ni cifras: lo que falte, «dato pendiente».
+
+ARMAZÓN: usa el de los lienzos «Cofradar · Armazón», «Inicio» y «Cofradías» tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda (abre «Elegir jornada») y sincronización a la derecha: flechas circulares + «hace 1 min». Sin búsqueda global ni selector de ciudad.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar.
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en una franja encima de la barra, solo cuando hay cofradías en la calle.
+- Sin conexión: aviso azul bajo la cabecera con nube tachada: «Sin conexión · último dato hace 12 min».
+
+ESTILO
+- Herramienta de campo con personalidad editorial sobria. No debe parecer app de transporte ni web de hermandad. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Tipografía: Inter para todo dato (cifras tabulares); Newsreader solo para nombres de hermandades y títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, texto tinta #1D1A16, texto secundario #4A443C, bordes #E6E3DC.
+- Estados, siempre color + texto + icono: en la calle y confirmado verde #15603B (texto #0E4A2D, fondo #E3F1E7); retraso, adelanto, cambio de recorrido e inminente ámbar #7A4800 (texto #5E3700, fondo #FBF0D8); incidencia, interrumpida, regreso anticipado y cancelada rojo #9B2016 (texto #7A1810, fondo #FBE9E6); información y lluvia azul #14537A (texto #0F3F5C, fondo #E4EFF6); prevista y finalizada gris #6A655C (fondo #F4F2ED).
+- Varias alteraciones a la vez: se ordenan por gravedad, rojas antes que ámbar.
+- Granate #6E1C2F solo para «lo tuyo»: seguidas, vistas, tus aportaciones. La marca va delante del nombre. Nunca en estados, avisos ni botones. Si la marca comparte fila con un chip rojo, va en tinta.
+- «Diste fe» con contorno: el dato no dice que se verificara.
+- Botón primario en tinta (#1D1A16, texto claro), nunca granate.
+- Confianza del dato: confirmado con trazo continuo; estimado «· según horario» con trazo discontinuo; desactualizado «· hace 23 min» discontinuo + icono de reloj hacia atrás. La coletilla nunca en gris tenue. Prohibido expresar incertidumbre con transparencia o difuminado.
+- Cada cofradía aparece una sola vez en cada lista.
+- Solo lleva sombra lo que está realmente encima de otra cosa. Radios: botones y chips 6 px, tarjetas 10, paneles 14, hoja inferior 20.
+- Iconos Phosphor: relleno = activo o verificado; contorno = inactivo. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Registro funcional: denso, casi blanco, solo Inter salvo los nombres de hermandad.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA; granate pasa a #D97E8B.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40, con lluvia como contexto
+Horas previstas del horario: salida · paso por La Campana · entrada.
+- El Calvario · La Magdalena · 23:40 · 00:35 · 04:10 · Finalizada: entró a las 02:30 · Regreso anticipado (rojo) · la has visto.
+- La Macarena · Basílica de la Macarena · 00:05 · 02:24 · 13:25 · En la calle · Retraso 12 min (ámbar) · la has visto.
+- El Silencio · San Antonio Abad · 01:00 · 02:10 · 05:50 · En la calle · hace 23 min (desactualizado).
+- El Gran Poder · Basílica del Gran Poder · 01:15 · 02:42 · 06:10 · En la calle · según horario (nadie ha dado fe) · la sigues.
+- Esperanza de Triana · Capilla de los Marineros · 01:30 · 02:28 · 07:40 · En la calle · Interrumpida (rojo) y Cambio de recorrido (ámbar) · diste fe.
+- Los Gitanos · Santuario de los Gitanos · 03:00 · 04:20 · 08:30 · Inminente · la sigues.
+Sábado Santo, 27 de marzo de 2027: La Soledad de San Lorenzo · Parroquia de San Lorenzo Mártir · horas: dato pendiente.
+
+PANTALLA · AGENDA, LA JORNADA COMPLETA. Área Agenda activa. Registro funcional, densidad alta.
+Cabecera del armazón: «Madrugá ▾» a la izquierda y sincronización a la derecha. En la segunda fila, el título «Agenda». Debajo, selector de día horizontal desplazable con las 11 jornadas y su fecha: Vie Dolores 19 · Sáb Pasión 20 · Ramos 21 · Lunes 22 · Martes 23 · Miércoles 24 · Jueves 25 · Madrugá 26 · Viernes 26 · Sábado 27 · Resurrección 28. Fondo = día seleccionado; peso + marca = día con información. El selector y la jornada de la cabecera son lo mismo: si cambia uno, cambia el otro.
+Debajo, todas las cofradías del día ordenadas por hora de salida, sin priorizar. Cada fila, sin caja y separada por filete:
+- a la izquierda, la hora de salida en cifra grande tabular;
+- marca granate si la sigues o la has visto, nombre popular en Newsreader y el templo debajo;
+- una línea «Campana 02:24 · Entrada 13:25»: son horas previstas, sin trazo de confianza;
+- a la derecha, a la altura del nombre, el chip de fase con su confianza; debajo del nombre, las alteraciones en chips.
+Las finalizadas se quedan en su sitio con chip gris «Finalizada» y «Entró a las 02:30», sin transparencia.
+Tocar una fila lleva a la ficha de la cofradía. Sin botón «Dar fe» en las filas. Franja «Dar fe» del armazón visible solo si hay cofradías en la calle.
+No incluyas «eventos» que no sean cofradías, bloques destacados como en Inicio ni selector de ciudad.
+
+Variantes:
+A. Madrugá 02:40 en curso (las seis de los datos). Claro y oscuro.
+B. Sábado Santo consultado durante la Madrugá: La Soledad de San Lorenzo con chip «Prevista» y horas «dato pendiente». Cabecera «Sábado Santo ▾». La franja «Dar fe» sigue visible: en la calle, ahora, sigue habiendo cofradías de la Madrugá.
+C. Una cancelada: como B, con una segunda fila rotulada «Hermandad de ejemplo» con chip rojo «Cancelada» y horas «dato pendiente». La fila no desaparece.
+D. Fuera de temporada, hoy 13 de octubre de 2026: la Madrugá con las horas previstas, rotulada «Horario previsto 2027», sin chips de fase, sin alteraciones, sin marcas de estado y sin franja «Dar fe». Las marcas granate de seguida sí se mantienen. Cabecera «Madrugá ▾».

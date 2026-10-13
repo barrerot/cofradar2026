@@ -1,0 +1,87 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de ejemplo de abajo. No inventes hermandades, horas, calles ni cifras: lo que falte, «dato pendiente».
+
+ARMAZÓN: usa el de los lienzos «Cofradar · Armazón» e «Inicio» tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda (abre «Elegir jornada») y sincronización a la derecha: flechas circulares + «hace 1 min». Sin búsqueda global ni selector de ciudad.
+- Pantallas secundarias: el enlace de vuelta («← Cofradías») sustituye a la jornada; la sincronización sigue a la derecha.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar.
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en una franja encima de la barra, solo cuando hay cofradías en la calle. Dentro de la ficha de una cofradía en la calle, ese mismo botón es el «Dar fe» de esa cofradía; nunca un segundo botón en el contenido. Sin franja en la ficha de una que no está en la calle.
+- Sin conexión: aviso azul bajo la cabecera con nube tachada: «Sin conexión · último dato hace 12 min».
+
+ESTILO
+- Herramienta de campo con personalidad editorial sobria. No debe parecer app de transporte ni web de hermandad. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Tipografía: Inter para todo dato (cifras tabulares); Newsreader solo para nombres de hermandades y títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, texto tinta #1D1A16, texto secundario #4A443C, bordes #E6E3DC.
+- Estados, siempre color + texto + icono: en la calle y confirmado verde #15603B (texto #0E4A2D, fondo #E3F1E7); retraso, adelanto, cambio de recorrido e inminente ámbar #7A4800 (texto #5E3700, fondo #FBF0D8); incidencia, interrumpida, regreso anticipado y cancelada rojo #9B2016 (texto #7A1810, fondo #FBE9E6); información y lluvia azul #14537A (texto #0F3F5C, fondo #E4EFF6); prevista y finalizada gris #6A655C (fondo #F4F2ED).
+- Varias alteraciones a la vez: se ordenan por gravedad, rojas antes que ámbar.
+- Granate #6E1C2F solo para «lo tuyo»: seguidas, vistas, tus aportaciones. La marca va delante del nombre. Nunca en estados, avisos ni botones. Granate y rojo nunca juntos.
+- Botón primario en tinta (#1D1A16, texto claro), nunca granate.
+- Confianza del dato: confirmado «02:36» con trazo continuo; estimado «02:56 · según horario» con trazo discontinuo; desactualizado «02:17 · hace 23 min» discontinuo + icono de reloj hacia atrás. La coletilla nunca en gris tenue. Prohibido expresar incertidumbre con transparencia o difuminado.
+- Cada cofradía aparece una sola vez en cada lista.
+- Solo lleva sombra lo que está realmente encima de otra cosa. Radios: botones y chips 6 px, tarjetas 10, paneles 14, hoja inferior 20.
+- Iconos Phosphor: relleno = activo o verificado; contorno = inactivo. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Dos registros: funcional (denso, casi blanco, solo Inter) para listas y estados; editorial (más aire, tono cera #F7F1E6, Newsreader en títulos) para la ficha de hermandad.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA; granate pasa a #D97E8B.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40, con lluvia como contexto
+En orden de salida:
+- El Calvario · sale 23:40 de La Magdalena · Finalizada: entró a las 02:30 · Regreso anticipado (rojo) · la has visto.
+- La Macarena · sale 00:05 de la Basílica de la Macarena, entra 13:25 · En la calle, confirmado: cruz de guía vista a las 02:36 llegando a La Campana · Retraso 12 min · la has visto.
+- El Silencio · sale 01:00 de San Antonio Abad · En la calle, desactualizado: el palio se vio a las 02:17, hace 23 min.
+- El Gran Poder · sale 01:15 de la Basílica del Gran Poder · En la calle · según horario (nadie ha dado fe) · la sigues.
+- Esperanza de Triana · sale 01:30 de la Capilla de los Marineros · En la calle, confirmado: paso de Cristo visto a las 02:39 · Interrumpida (rojo) y Cambio de recorrido (ámbar) · tú diste fe.
+- Los Gitanos · sale 03:00 del Santuario de los Gitanos · Inminente · la sigues.
+Sábado Santo: La Soledad de San Lorenzo · Parroquia de San Lorenzo Mártir · un solo paso, el palio de Nuestra Señora de la Soledad.
+Las de la Madrugá llevan cruz de guía, paso de Cristo y paso de palio.
+
+PANTALLA 1 · COFRADÍAS, LISTADO Y BÚSQUEDA. Área Cofradías activa. Registro funcional.
+Cabecera del armazón: «Madrugá ▾» a la izquierda y sincronización a la derecha. En la segunda fila, el título «Cofradías». Debajo, campo de búsqueda siempre visible, «Buscar hermandad». Debajo, tres filtros: «Todas» (activo) · «En la calle» · «Mis seguidas».
+Lista agrupada por jornada, con rótulos que se quedan pegados al hacer scroll: «Madrugá · hoy» primero y, dentro, por hora de salida; después «Sábado Santo».
+Cada fila, sin caja y separada por filete, toda del mismo peso: escudo pequeño (no hay imágenes: usa el fallback del sistema, iniciales en Newsreader), marca granate si la sigues o la has visto, nombre popular en Newsreader y, a la derecha a la altura del nombre, el chip de fase con su confianza («En la calle · según horario» discontinuo para El Gran Poder). Debajo del nombre, sus alteraciones en chips.
+Sin horas, sin distancias y sin botón «Dar fe» en las filas. Franja «Dar fe» del armazón visible.
+
+Variantes:
+A. Madrugá 02:40, «Todas». Claro y oscuro.
+B. Buscando «g» con «Mis seguidas» activo: El Gran Poder y Los Gitanos (busca por el comienzo de cualquier palabra).
+C. Sin resultados para «xz»: «No hay ninguna hermandad que empiece por "xz"» y un botón «Borrar búsqueda».
+D. Fuera de temporada, 13 de octubre de 2026, cabecera «Domingo de Ramos ▾» como en Inicio: mismas filas sin chip de fase ni alteraciones, sin franja «Dar fe».
+
+PANTALLA 2 · FICHA DE COFRADÍA. Secundaria que viene de Cofradías («← Cofradías»). Registro editorial.
+Contenido, de arriba abajo:
+1. Identidad: escudo (fallback), «La Macarena» en Newsreader grande, debajo «Real, Ilustre y Fervorosa Hermandad y Cofradía de Nazarenos de Nuestra Señora del Rosario, Nuestro Padre Jesús de la Sentencia y María Santísima de la Esperanza Macarena», marca granate «La has visto».
+2. Estado: chip «En la calle» y chip ámbar «Retraso 12 min».
+3. «Dónde va cada parte del cortejo», cada elemento en su fila con su posición, hora y confianza:
+   - Cruz de guía · llegando a La Campana · 02:36 (confirmado, trazo continuo)
+   - Paso de Cristo · Nuestro Padre Jesús de la Sentencia · entre la Plaza del Duque y La Campana · según horario (sin hora propia: se estima entre la cruz y el palio)
+   - Paso de palio · María Santísima de la Esperanza Macarena · camino de la Plaza del Duque · 02:56 · según horario (discontinuo)
+4. Acciones: «Ver en el mapa», «Recorrido y horarios» (lleva a otra pantalla), «Seguir» (inactivo) y «La he visto» (activo, en granate). Sin botón «Dar fe» aquí: está en la franja.
+5. «La hermandad»: Basílica de la Macarena · sale 00:05, entra 13:25 · dos pasos y sus titulares · hermanos y nazarenos: dato pendiente.
+No incluyas el «final» del cortejo como elemento ni información de otros usuarios.
+
+Variantes:
+A. La Macarena en la calle (lo anterior). Claro y oscuro.
+B. Esperanza de Triana, varias alteraciones: aviso rojo «Interrumpida» encima de ámbar «Cambio de recorrido»; el elemento confirmado es el paso de Cristo (Santísimo Cristo de las Tres Caídas, 02:39), la cruz de guía y el palio (Nuestra Señora de la Esperanza) quedan según horario. Marca granate «Diste fe».
+C. Los Gitanos, inminente: chip «Inminente», «Sale a las 03:00 del Santuario de los Gitanos», elementos sin posición, marca «La sigues». Sin franja «Dar fe».
+D. El Calvario, finalizada: chip «Finalizada», «Entró a las 02:30» y «Regreso anticipado» en su histórico. Sin franja.
+E. Cancelada, con una hermandad rotulada «Hermandad de ejemplo»: aviso rojo «La hermandad ha decidido no hacer estación de penitencia · Publicado por Cofradar». Sin franja.
+F. Fuera de temporada: La Soledad de San Lorenzo, un solo paso (palio de Nuestra Señora de la Soledad), «Sale el Sábado Santo · 27 de marzo de 2027», solo identidad y «La hermandad», sin estado en vivo. Sin franja.
+
+PANTALLA 3 · RECORRIDO Y HORARIOS de La Macarena. Secundaria que viene de su ficha («← La Macarena»). Registro funcional.
+Arriba: barra de progreso «1.396 de 2.172 m · 64 %» y «Cruz de guía llegando a La Campana».
+Debajo, la lista de puntos en orden de paso, cada fila con dos columnas, «Cruz de guía» y «Palio», con la hora prevista y debajo la real o estimada:
+- Basílica de la Macarena (salida): 00:05 · 00:31
+- Plaza del Duque: 02:30 · 02:56
+- La Campana: 02:53 · 03:19 ← va por aquí: la cruz de guía, vista a las 02:36 llegando, estimada 03:05 «+12 min» en ámbar
+- Sierpes: 03:08 · 03:34
+- Plaza de San Francisco: 03:22 · 03:48
+- Avenida de la Constitución: 03:34 · 04:00
+- Catedral (Palquillo): 03:45 · 04:11
+- Plaza Virgen de los Reyes: 04:05 · 04:31
+- Basílica de la Macarena (entrada): 13:25 · 13:51
+Donde nadie dio fe solo hay hora prevista: no pongas horas reales inventadas. Lo pendiente lleva «· según horario» con trazo discontinuo.
+La Campana, Sierpes, Plaza de San Francisco, Avenida y Catedral marcadas juntas como tramo «Carrera oficial».
+Las filas no son botones. Claro y oscuro.

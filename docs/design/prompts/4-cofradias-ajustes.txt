@@ -1,0 +1,42 @@
+Gracias, bien visto lo de La Macarena: el error estaba en el horario previsto, no en la hora vista. Correcciones y respuestas:
+
+1 · HORARIO DE LA MACARENA CORREGIDO
+La cruz de guía se vio a las 02:36 en La Campana, donde estaba prevista a las 02:24: +12 min. La estimación siguiente es Sierpes a las 02:51.
+- Ficha A: Cruz de guía · en La Campana · 02:36 (continuo). Paso de Cristo · entre la Plaza del Duque y La Campana · según horario. Palio · camino de La Campana · 02:50 · según horario.
+- Recorrido, previstas cruz · palio:
+  Basílica de la Macarena (salida) 00:05 · 00:31
+  Plaza del Duque 02:01 · 02:27
+  La Campana 02:24 · 02:50 ← va por aquí: cruz vista a las 02:36, «+12 min» en ámbar, continuo
+  Sierpes 02:39 · 03:05 → cruz estimada 02:51 «+12 min · según horario», discontinuo
+  Plaza de San Francisco 02:53 · 03:19
+  Avenida de la Constitución 03:05 · 03:31
+  Catedral (Palquillo) 03:16 · 03:42
+  Plaza Virgen de los Reyes 03:36 · 04:02
+  Basílica de la Macarena (entrada) 13:25 · 13:51
+  Arriba: «Cruz de guía en La Campana».
+
+2 · TUS DECISIONES
+- Granate junto a rojo, por componente: de acuerdo, como en Inicio.
+- «Diste fe»: márcala con contorno, no rellena. El dato no dice que se verificara y no queremos afirmar más de lo que sabemos.
+- Escudo de reserva con iniciales sin artículo: de acuerdo. Anótalo como regla en el README del sistema.
+- Cabecera de la ficha sin título: de acuerdo.
+- La Soledad con «Prevista»: correcto.
+- Cancelada solo con «Recorrido y horarios» y «Seguir»: de acuerdo.
+- Los Gitanos y el recorrido: correctos.
+
+3 · DATOS QUE SÍ TENEMOS (sustituye los «dato pendiente» correspondientes)
+Denominaciones completas:
+- El Calvario: Antigua, Real e Ilustre Hermandad y Cofradía de Nazarenos del Santísimo Cristo del Calvario, Nuestra Señora de la Presentación y San Juan Evangelista.
+- El Silencio: Primitiva Hermandad de los Nazarenos de Sevilla, Archicofradía Pontificia y Real de Nuestro Padre Jesús Nazareno, Santa Cruz en Jerusalén y María Santísima de la Concepción.
+- El Gran Poder: Pontificia, Real, Ilustre y Antigua Hermandad de Nuestro Padre Jesús del Gran Poder y María Santísima del Mayor Dolor y Traspaso.
+- Esperanza de Triana: Real, Ilustre y Fervorosa Hermandad de Nuestro Padre Jesús de las Tres Caídas, Nuestra Señora de la Esperanza y San Juan Evangelista.
+- Los Gitanos: Real, Ilustre y Fervorosa Hermandad Sacramental de Nuestro Padre Jesús de la Salud y María Santísima de las Angustias.
+- La Soledad de San Lorenzo: Pontificia y Real Hermandad Sacramental, Nuestra Señora de Roca Amador, Ánimas Benditas, Beato Marcelo Spínola y Primitiva Cofradía de Nazarenos de María Santísima en su Soledad.
+Titulares:
+- Los Gitanos: paso de Cristo, Nuestro Padre Jesús de la Salud; palio, María Santísima de las Angustias.
+- El Calvario: paso de Cristo, Santísimo Cristo del Calvario; palio, Nuestra Señora de la Presentación.
+Horas de entrada previstas: El Calvario 04:10 (entró antes, a las 02:30), El Silencio 05:50, El Gran Poder 06:10, Esperanza de Triana 07:40, Los Gitanos 08:30.
+Esperanza de Triana (ficha B): el paso de Cristo está detenido, visto a las 02:39 (continuo). Su próximo punto es el Puente de Triana, estimado a las 03:20 · según horario. Las calles concretas siguen como «dato pendiente».
+Hermanos y nazarenos siguen como «dato pendiente» en todas.
+
+Aplica todo en las pantallas que correspondan, en claro y oscuro.

@@ -1,0 +1,7 @@
+Ajuste de datos en Inicio para que cuadre con el resto de pantallas. La estructura no cambia. Aplícalo en A, B y E (y A oscuro):
+- Incidencias: en lugar de El Silencio, «Esperanza de Triana · Interrumpida», en rojo, con hora 02:39. Debajo, en ámbar, «Cambio de recorrido».
+- La Macarena (protagonista): marca granate de vista; chip ámbar «Retraso 12 min»; Cruz de guía · llegando a La Campana · 02:36 (continuo); Palio · camino de la Plaza del Duque · 02:56 · según horario (discontinuo). En E, la cruz pasa a «02:26 · hace 14 min» como ahora.
+- En la calle, en este orden: Esperanza de Triana (chip rojo «Interrumpida» y ámbar «Cambio de recorrido»); El Silencio («En la calle · hace 23 min», discontinuo con reloj, sin incidencia); El Gran Poder (marca granate, «En la calle · según horario», discontinuo, sin retraso).
+- A punto de salir: Los Gitanos · sale a las 03:00 · Inminente, con marca granate de seguida.
+- El Calvario no aparece: ya ha entrado.
+- El pie de «datos de ejemplo» solo menciona la distancia.
