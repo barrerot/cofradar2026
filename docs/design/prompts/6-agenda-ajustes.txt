@@ -1,0 +1,6 @@
+Todo bien: datos, marcas, selector de días y la lectura de «sin marcas de estado» en D (solo seguidas) son correctos.
+
+Densidad: baja el estado debajo del nombre en TODAS las filas, no solo en las de chip de dos líneas, para que todas se lean igual. Cada fila queda así:
+- izquierda, la hora de salida, como ahora;
+- a la derecha de la hora, a todo el ancho: marca + nombre en Newsreader; debajo el templo; debajo «Campana 02:24 · Entrada 13:25»; debajo, en una línea, el chip de fase y las alteraciones (por gravedad), y «Entró a las 02:30» en El Calvario.
+El objetivo es que el templo y la línea de Campana y entrada quepan en un renglón y la Madrugá entera se vea con poco desplazamiento. Aplícalo en A (claro y oscuro), B, C y D.

@@ -87,6 +87,17 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `13-7-centrado-en-un-hito-llegada-desde-la-ficha` — 7 · CENTRADO EN UN HITO · LLEGADA DESDE LA FICHA
 - `14-8-fuera-de-temporada` — 8 · FUERA DE TEMPORADA
 
+## 5-agenda
+
+**Vigentes** · lienzo «Cofradar · Agenda» (https://claude.ai/artifact/5drUVRNbvZTyJAQ9Erwffk), aprobado el 13 de octubre de 2026 en BUL-194. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Datos del fixture; lo que no está, «dato pendiente».
+
+- `agenda-A-madruga-en-curso-{claro,oscuro}` — A · MADRUGÁ 02:40 EN CURSO. Por hora de salida, sin priorizar; el estado va debajo del nombre en todas las filas. La finalizada (El Calvario) sigue en su sitio.
+- `agenda-B-sabado-santo-claro` — B · SÁBADO SANTO CONSULTADO DURANTE LA MADRUGÁ. La franja «Dar fe» sigue: hay cofradías en la calle ahora.
+- `agenda-C-con-cancelada-claro` — C · CON UNA CANCELADA (hermandad de ejemplo). La fila no desaparece.
+- `agenda-D-fuera-de-temporada-claro` — D · FUERA DE TEMPORADA. «Horario previsto 2027», sin estado y solo con marcas de seguida.
+
+El selector de días y la jornada de la cabecera son el mismo estado.
+
 ## 4-cofradias
 
 **Vigentes** · lienzo «Cofradar · Cofradías» (https://claude.ai/artifact/FHSoReZHR4djgfGoDJ7Apa), aprobado el 13 de octubre de 2026 en BUL-193. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Todos los datos salen del fixture (`docs/datos/mock/`); lo que no está, «dato pendiente».
