@@ -16,8 +16,7 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 
 - **Las fichas numeradas de `1-marco/` (01 a 12)**: la cabecera lleva búsqueda global y selector de ciudad, que ya no existen. Las sustituyen las `armazon-*` (BUL-191).
 - **Todo `2-inicio-ahora/`**: sustituido por `2-inicio/`.
-- `2-inicio/07-3-fuera-de-temporada…`: fuera de temporada pasa a ser cuenta atrás + acceso a consultar las cofradías. Se revisa en BUL-192.
-- `2-inicio/08-selector-de-ciudad-y-jornada…`: ya no hay selector de ciudad, solo de jornada. Se revisa en BUL-192.
+- **Las fichas numeradas de `2-inicio/` (01 a 08)**: llevan búsqueda global, selector de ciudad y la fuera de temporada antigua. Las sustituyen las `inicio-*` (BUL-192).
 - `3-mapa/07-4-agrupacion-nivel-3` y `08-4-deshacer-el-grupo`: sin agrupación de marcas.
 - `3-mapa/09-5-filtros-en-la-cabecera` y `10-5-finalizadas-trae-a-el-calvario`: el mapa no tiene filtros.
 - `3-mapa/13-7-centrado-en-un-hito…`: los hitos ya no son tocables.
@@ -50,6 +49,17 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `12-autenticado-con-ubicacion` — AUTENTICADO · CON UBICACIÓN
 
 ## 2-inicio
+
+**Vigentes** · lienzo «Cofradar · Inicio» (https://claude.ai/artifact/N8L84mRcJePUtfK6rEpJH7), aprobado el 13 de octubre de 2026 en BUL-192. Solo PNG, a 780 de ancho (390 a 2×); las de jornada activa son largas porque se dibujan enteras, con el desplazamiento incluido. Las horas de la incidencia, la distancia y el retraso son datos de ejemplo.
+
+- `inicio-A-con-ubicacion-{claro,oscuro}` — A · JORNADA ACTIVA · MADRUGÁ, 02:40 · CON UBICACIÓN. La protagonista (La Macarena) va bajo «Cerca de ti» y no se repite en «En la calle». El Silencio aparece en el aviso de incidencias y además en su fila de «En la calle», con chip «Incidencia».
+- `inicio-B-sin-ubicacion-claro` — B · SIN UBICACIÓN. La protagonista encabeza «En la calle».
+- `inicio-C-sin-actividad-claro` — C · SIN ACTIVIDAD. Ninguna en la calle; próxima salida.
+- `inicio-D-fuera-de-temporada-claro` — D · FUERA DE TEMPORADA. Cuenta atrás al Domingo de Ramos y «Consultar las cofradías»; la cabecera muestra la jornada a la que apunta.
+- `inicio-E-sin-conexion-claro` — E · SIN CONEXIÓN. Pantalla congelada: la cruz de guía pasa a «02:26 · hace 14 min», discontinua, sin posiciones calculadas por horario.
+- `inicio-elegir-jornada-{claro,oscuro}` — HOJA PARA ELEGIR JORNADA. Las once jornadas; la Madrugá marcada como «hoy».
+
+**Superadas**, se conservan como histórico:
 
 - `01-1-inicio-jornada-activa-madruga-02-40-con-ubicacion` — 1 · INICIO · JORNADA ACTIVA · MADRUGÁ, 02:40 · CON UBICACIÓN
 - `02-1-contenido-completo-scroll` — 1 · CONTENIDO COMPLETO (SCROLL)
