@@ -1,28 +1,21 @@
-cofradia,elemento,orden,localizable
-el-silencio,cruz-guia,1,si
-el-silencio,paso-cristo,2,si
-el-silencio,palio,3,si
-el-silencio,final,4,no
-el-gran-poder,cruz-guia,1,si
-el-gran-poder,paso-cristo,2,si
-el-gran-poder,palio,3,si
-el-gran-poder,final,4,no
-la-macarena,cruz-guia,1,si
-la-macarena,paso-cristo,2,si
-la-macarena,palio,3,si
-la-macarena,final,4,no
-el-calvario,cruz-guia,1,si
-el-calvario,paso-cristo,2,si
-el-calvario,palio,3,si
-el-calvario,final,4,no
-esperanza-de-triana,cruz-guia,1,si
-esperanza-de-triana,paso-cristo,2,si
-esperanza-de-triana,palio,3,si
-esperanza-de-triana,final,4,no
-los-gitanos,cruz-guia,1,si
-los-gitanos,paso-cristo,2,si
-los-gitanos,palio,3,si
-los-gitanos,final,4,no
-la-soledad-san-lorenzo,cruz-guia,1,si
-la-soledad-san-lorenzo,palio,2,si
-la-soledad-san-lorenzo,final,3,no
+cofradia,elemento,orden,titular
+el-silencio,cruz-guia,1,
+el-silencio,paso-cristo,2,Nuestro Padre Jesús Nazareno
+el-silencio,palio,3,María Santísima de la Concepción
+el-gran-poder,cruz-guia,1,
+el-gran-poder,paso-cristo,2,Nuestro Padre Jesús del Gran Poder
+el-gran-poder,palio,3,María Santísima del Mayor Dolor y Traspaso
+la-macarena,cruz-guia,1,
+la-macarena,paso-cristo,2,Nuestro Padre Jesús de la Sentencia
+la-macarena,palio,3,María Santísima de la Esperanza Macarena
+el-calvario,cruz-guia,1,
+el-calvario,paso-cristo,2,Santísimo Cristo del Calvario
+el-calvario,palio,3,Nuestra Señora de la Presentación
+esperanza-de-triana,cruz-guia,1,
+esperanza-de-triana,paso-cristo,2,Santísimo Cristo de las Tres Caídas
+esperanza-de-triana,palio,3,Nuestra Señora de la Esperanza
+los-gitanos,cruz-guia,1,
+los-gitanos,paso-cristo,2,Nuestro Padre Jesús de la Salud
+los-gitanos,palio,3,María Santísima de las Angustias
+la-soledad-san-lorenzo,cruz-guia,1,
+la-soledad-san-lorenzo,palio,2,Nuestra Señora de la Soledad

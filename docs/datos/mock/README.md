@@ -6,15 +6,15 @@
 >
 > La transcripción real vive en `docs/datos/`, un nivel por encima. **No se mezclan.**
 
-Linear: [B-01 · BUL-122](https://linear.app/buluu/issue/BUL-122). Es la **fuente única
-de datos del milestone Diseño**: ningún prompt de diseño se inventa nombres, horas,
+Linear: nació en [B-01 · BUL-122](https://linear.app/buluu/issue/BUL-122) (proyecto Cofradar_bak) y se alineó con el PRD revisado en [BUL-166](https://linear.app/buluu/issue/BUL-166). Es la **fuente única
+de datos de los prompts de diseño**: ningún prompt de diseño se inventa nombres, horas,
 templos ni puntos. Si algo cambia aquí, hay que propagarlo a los issues que lo repiten.
 
 ## Qué es real y qué no
 
 | | |
 |---|---|
-| **Real** | Las seis hermandades de la Madrugá, sus denominaciones, sus nombres populares y sus templos. Los nueve hitos del centro y sus coordenadas. |
+| **Real** | Las seis hermandades de la Madrugá, sus denominaciones, sus nombres populares, sus templos y los titulares de sus pasos (`revisado: no` hasta contrastarlos con la fuente). Los nueve hitos del centro y sus coordenadas. |
 | **Real** | La séptima fila, **La Soledad de San Lorenzo**: Sábado Santo, **un solo paso de palio**, parroquia de San Lorenzo Mártir. Verificado contra la web de la hermandad y Wikipedia. `revisado: si`. |
 | **Aproximado** | Los recorridos: siguen calles reales y van en el sentido de la marcha, pero no son el itinerario oficial. |
 | **Inventado a propósito** | Todas las horas y todo el estado de las 02:40. |
@@ -31,9 +31,9 @@ diseñar mal.
 |---|---|
 | `cofradias.csv` | Las seis, con denominación completa y `nombre_popular` como **columnas separadas** |
 | `elementos.csv` | La taxonomía de elementos de Sevilla, con su orden en el cortejo y su descripción en llano |
-| `cofradia_elementos.csv` | **Qué elementos tiene cada hermandad y cuáles se localizan en el mapa.** La taxonomía es configurable, no universal |
+| `cofradia_elementos.csv` | **Qué elementos tiene cada hermandad**, en el orden del cortejo, con el **titular** de cada paso. Todos se localizan en el mapa. La taxonomía es configurable, no universal |
 | `puntos_control.csv` | Nueve hitos con coordenadas reales + los seis templos, para que salida y entrada sean puntos referenciables |
-| `horarios.csv` | 212 filas: itinerario programado por cofradía × elemento × punto |
+| `horarios.csv` | 106 filas: itinerario programado de la **cruz de guía y el palio** por cofradía × punto, como el horario del Consejo. El paso de Cristo no tiene horas: se interpola |
 | `jornada.csv` | La jornada, la hora de referencia (02:40) y el contexto activo (`lluvia`) |
 | `estado_jornada.csv` | El corazón del fixture: fase, confianza, **qué elemento ancla la observación**, alteraciones, próximo punto y relación del usuario |
 | `itinerarios/*.geojson` | Un recorrido completo por hermandad |
@@ -71,19 +71,20 @@ Sevilla en salir bajo palio. Fuentes: la web de la propia hermandad
 (`hermandaddelasoledad.org`) y su artículo en Wikipedia. La coordenada de su templo es
 la de la **Plaza de San Lorenzo**, que comparte con la Basílica del Gran Poder.
 
-**4 · El final del cortejo está configurado y NO es localizable.**
-`localizable: no` en las siete. Cofradar **no lo sitúa** en el mapa —no está en el
-cuadrante y ponerlo exigiría suponer una longitud de cortejo—, pero **sí acepta que le
-den fe de él**: la fila de El Calvario observa precisamente el `final`, y el verificador
-lo da por bueno. Es la regla de D34 convertida en dato.
+**4 · El final del cortejo no es un elemento, y el horario solo trae dos.**
+Desde la revisión del PRD (D35) el final no está en la taxonomía, ni en ninguna hermandad,
+ni en el selector de «Dar fe»: en la calle no se destaca como tal. Y `horarios.csv` trae,
+como el horario del Consejo, **solo la cruz de guía y el último paso**; el paso de Cristo
+se sitúa interpolando entre ambos y queda estimado hasta que alguien da fe de él. El
+verificador falla si reaparece el final o si el horario trae un paso intermedio.
 
 **5 · Qué elemento ancla cada observación.**
 `elemento_observado` es nuevo y es lo que decide qué marca va confirmada. Las seis filas
 recorren todos los casos: la cruz de guía (La Macarena), **el palio y no la cabeza**
-(El Silencio), el paso de Cristo (Esperanza de Triana), el final (El Calvario), y **dos
+(El Silencio y El Calvario, a su entrada), el paso de Cristo (Esperanza de Triana), y **dos
 sin elemento** — El Gran Poder porque nadie ha dado fe, Los Gitanos porque la aportación
 fue genérica, que da presencia y fase pero **ningún anclaje de posición**. El verificador
-exige que un segmento `confirmado` tenga detrás un elemento localizable observado.
+exige que un segmento `confirmado` tenga detrás un elemento observado.
 
 **6 · Dos cofradías no tienen segmento, y tiene que seguir siendo así.**
 Los Gitanos están `inminente`: todavía no ocupan calle. El Calvario está `finalizada`:

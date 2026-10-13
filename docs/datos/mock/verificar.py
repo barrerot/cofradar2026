@@ -23,10 +23,13 @@ ahora = m(jor["hora_referencia"])
 # jornadas que solo existen para ejercitar la configuracion por hermandad.
 de_la_jornada = {k for k,v in cof.items() if v["jornada"] == jor["jornada"]}
 
-conf = {}           # cofradia -> {elemento: localizable}
+conf = {}           # cofradia -> {elemento: orden}
 for r in cfg:
-    conf.setdefault(r["cofradia"], {})[r["elemento"]] = (r["localizable"] == "si")
-localizables = {c: [e for e,l in d.items() if l] for c,d in conf.items()}
+    conf.setdefault(r["cofradia"], {})[r["elemento"]] = int(r["orden"])
+# Todo elemento configurado se localiza: el final del cortejo no es elemento (D35)
+localizables = {c: list(d) for c,d in conf.items()}
+# El ultimo paso del cortejo, el que el horario del Consejo marca junto a la cruz
+ultimo = {c: max(d, key=d.get) for c,d in conf.items()}
 
 prog = {}
 for r in hor:
@@ -45,13 +48,14 @@ for c,d in conf.items():
     for e in d:
         if e not in ele:
             errores.append("%s: elemento %s no esta en la taxonomia" % (c,e))
-    if not [e for e,l in d.items() if l]:
-        errores.append("%s: ninguna elemento localizable" % c)
+    if "cruz-guia" not in d:
+        errores.append("%s: sin cruz de guia" % c)
+    if not 2 <= len(d) <= 4:
+        errores.append("%s: %d elementos; una hermandad tiene cruz de guia y de 1 a 3 pasos" % (c,len(d)))
 
-# El final del cortejo NO se localiza en el mapa (D34), en ninguna hermandad.
-for c,d in conf.items():
-    if d.get("final"):
-        errores.append("%s: el final del cortejo no es localizable (D34)" % c)
+# El final del cortejo no es un elemento (D35): ni en la taxonomia ni en ninguna hermandad.
+if "final" in ele or any("final" in d for d in conf.values()):
+    errores.append("el final del cortejo no es un elemento (D35)")
 
 # La configuracion tiene que variar de verdad: si todas las hermandades
 # tuvieran los mismos elementos, el fixture no ejercitaria nada.
@@ -59,10 +63,15 @@ if len({len(v) for v in localizables.values()}) < 2:
     errores.append("todas las hermandades tienen el mismo numero de elementos localizables: "
                    "el fixture no ejercita la configuracion por hermandad")
 
-# horarios.csv solo puede hablar de elementos configurados para esa cofradia
+# horarios.csv solo puede hablar de elementos configurados para esa cofradia,
+# y como el del Consejo, solo de la cruz de guia y del ultimo paso: los pasos
+# intermedios se interpolan.
 for r in hor:
-    if r["cofradia"] in conf and r["elemento"] not in conf[r["cofradia"]]:
-        errores.append("%s: horario de %s, que no esta configurado para ella" % (r["cofradia"],r["elemento"]))
+    c = r["cofradia"]
+    if c in conf and r["elemento"] not in conf[c]:
+        errores.append("%s: horario de %s, que no esta configurado para ella" % (c,r["elemento"]))
+    elif c in conf and r["elemento"] not in ("cruz-guia", ultimo[c]):
+        errores.append("%s: horario de %s; el Consejo solo da cruz de guia y ultimo paso" % (c,r["elemento"]))
 print("Jornada %s · hora de referencia %s · contexto %s\n" % (jor["nombre"], jor["hora_referencia"], jor["contexto"]))
 print("%-20s %-12s %-15s %-22s %s" % ("cofradia","fase","confianza","proximo punto","programado vs publicado"))
 print("-"*105)
@@ -98,7 +107,7 @@ for r in est:
         errores.append("%s: desactualizado exige ultima_observacion" % c)
     if r["confianza_fase"] == "estimado" and r["ultima_observacion"]:
         errores.append("%s: estimado no deberia tener observacion (seria confirmado)" % c)
-    # --- que elemento ancla la observacion (D34) ---
+    # --- que elemento ancla la observacion (D34, D35) ---
     eo = r["elemento_observado"]
     if eo and not r["ultima_observacion"]:
         errores.append("%s: elemento observado sin hora de observacion" % c)
@@ -115,14 +124,14 @@ for r in est:
     tiene = c in con_seg
     if debe and not tiene: errores.append("%s: en calle y sin segmento en el mapa" % c)
     if tiene and not debe: errores.append("%s: tiene segmento pero su fase es %s" % (c,r["fase"]))
-    # Una posicion confirmada exige que alguien haya nombrado un elemento
-    # LOCALIZABLE: una aportacion generica da presencia y fase, no anclaje (D34).
+    # Una posicion confirmada exige que alguien haya nombrado un elemento:
+    # una aportacion generica da presencia y fase, no anclaje (D34).
     if conf_seg.get(c) == "confirmado":
         eo = r["elemento_observado"]
         if not eo:
             errores.append("%s: segmento confirmado sin elemento observado que lo ancle" % c)
-        elif not conf.get(c, {}).get(eo):
-            errores.append("%s: segmento confirmado anclado en %s, que no se localiza" % (c,eo))
+        elif eo not in conf.get(c, {}):
+            errores.append("%s: segmento confirmado anclado en %s, que no esta configurado" % (c,eo))
 for c in de_la_jornada:
     f = os.path.join(BASE,"itinerarios",c+".geojson")
     if not os.path.exists(f): errores.append("%s: sin itinerario" % c)
