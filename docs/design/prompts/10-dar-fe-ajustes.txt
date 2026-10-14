@@ -1,0 +1,9 @@
+Acepto tus decisiones. No toques Inicio: está aprobado y manda él. Ajusta Dar fe a Inicio:
+
+1. Distancias en el paso 2 (con ubicación), todas «ejemplo»: La Macarena «a unos 300 m», El Gran Poder «a unos 450 m», El Silencio «a unos 600 m». Mismo orden.
+
+2. Como La Macarena queda a 300 m, no estás en La Campana sino cerca. En Confirmar, el punto del minimapa va cerca de La Campana, no encima, y el rótulo «Tu posición: La Campana» pasa a «Tu posición: cerca de La Campana».
+
+3. El Silencio no choca: en tu copia de Inicio ya está «En la calle · hace 23 min», sin incidencia. La roja es Esperanza de Triana, la fila de encima. No cambies nada ahí.
+
+Cuando lo tengas, publica y exporta el zip con todos los tableros.

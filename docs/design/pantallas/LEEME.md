@@ -127,6 +127,24 @@ Escudo de reserva: iniciales del nombre popular sin artículo (M, GP, ET…).
 - `07-4-desplazado-hasta-la-madruga` — 4 · DESPLAZADO HASTA LA MADRUGÁ
 - `08-4-listado-completo-scroll` — 4 · LISTADO COMPLETO (SCROLL)
 
+## 6-dar-fe
+
+**Vigentes** · lienzo «Cofradar · Dar fe» (https://claude.ai/artifact/FN8eSbaJYLcKu3nNsjcLT6), aprobado el 14 de octubre de 2026 en BUL-195. Solo PNG, a 780 de ancho (390 a 2×). Todo el flujo va en una hoja inferior sobre Inicio de la Madrugá (copia del lienzo «Inicio», sin redibujar). Distancias y puntos rotulados «Ejemplo»; la aportación de ejemplo es La Macarena · Cruz de guía · 02:40.
+
+Reglas que fija: tocar una opción lleva al paso siguiente (sin botón «Continuar»); opciones abajo, al alcance del pulgar, y la pregunta arriba; «Atrás» y «Cancelar» siempre arriba de la hoja; nada preseleccionado.
+
+- `dar-fe-1-guia-inicial-claro` — 1 · GUÍA INICIAL, solo la primera vez. Solo «Cancelar»: no hay paso anterior.
+- `dar-fe-2-que-cofradia-{claro,oscuro}` — 2 · ¿QUÉ COFRADÍA? Por cercanía: La Macarena 300 m, El Gran Poder 450 m, El Silencio 600 m. «Atrás» vuelve a Inicio.
+- `dar-fe-2b-que-cofradia-sin-ubicacion-claro` — 2b · SIN UBICACIÓN. Las de la calle por hora de salida y Los Gitanos aparte, «A punto de salir». La hoja sube casi hasta arriba. Marca de «Diste fe» de Esperanza de Triana en tinta (comparte fila con chip rojo).
+- `dar-fe-3-que-tienes-delante-{claro,oscuro}` — 3 · ¿QUÉ TIENES DELANTE? Cuatro opciones en el orden del cortejo, mismo estilo. Desde la ficha, el flujo empieza aquí y «Atrás» vuelve a la ficha.
+- `dar-fe-4-confirmar-{claro,oscuro}` — 4 · CONFIRMAR, «¿Das fe de esto?». Minimapa esquemático (en producción, OpenStreetMap) con tu punto cerca de La Campana.
+- `dar-fe-4b-confirmar-sin-ubicacion-claro` — 4b · SIN UBICACIÓN. El botón sigue activo.
+- `dar-fe-4c-confirmar-sin-conexion-claro` — 4c · SIN CONEXIÓN. «Guardar y enviar después»; el aviso de sin conexión sigue visible.
+- `dar-fe-4d-confirmar-sin-cuenta-claro` — 4d · SIN CUENTA. «Entrar con Google y dar fe»: la cuenta se pide aquí y se vuelve al mismo paso.
+- `dar-fe-5-hecho-{claro,oscuro}` — 5 · HECHO. Panel compacto con Inicio visible detrás; la marca se rellena de abajo arriba en 0,7 s (ya rellena si se pide menos movimiento). Se cierra con un toque y se va sola.
+- `dar-fe-5b-hecho-pendiente-claro` — 5b · PENDIENTE DE ENVIAR. Reloj en lugar de la marca, sin puntos.
+- `dar-fe-5c-bonus-claro` — 5c · BONUS, más tarde. Aviso sobre la franja, «+5» en granate.
+
 ## 7-mi-cofradar
 
 **Vigentes** · lienzo «Cofradar · Mi Cofradar» (https://claude.ai/artifact/BbjE1xwHztK67A6tyNzwev), aprobado el 14 de octubre de 2026 en BUL-196. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Datos del fixture; puntos y nivel rotulados «Ejemplo» hasta que se decidan (BUL-219).
