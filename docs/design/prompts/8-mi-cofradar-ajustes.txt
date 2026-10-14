@@ -1,0 +1,6 @@
+Todo bien; acepto tus decisiones. Un único ajuste en AJUSTES:
+
+El texto de por qué pedimos la ubicación es cierto, pero le falta la otra mitad, que es una regla del producto: sin ubicación todo funciona. Déjalo así:
+«Para decirte a qué distancia te queda cada cofradía y para situar en el mapa lo que ves cuando das fe. Sin ella, Cofradar funciona igual y puedes dar fe.»
+
+En la variante «Bloqueada en el navegador», añade la misma segunda frase.

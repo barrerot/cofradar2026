@@ -126,3 +126,19 @@ Escudo de reserva: iniciales del nombre popular sin artículo (M, GP, ET…).
 - `06-4-fuera-de-temporada` — 4 · FUERA DE TEMPORADA
 - `07-4-desplazado-hasta-la-madruga` — 4 · DESPLAZADO HASTA LA MADRUGÁ
 - `08-4-listado-completo-scroll` — 4 · LISTADO COMPLETO (SCROLL)
+
+## 7-mi-cofradar
+
+**Vigentes** · lienzo «Cofradar · Mi Cofradar» (https://claude.ai/artifact/BbjE1xwHztK67A6tyNzwev), aprobado el 14 de octubre de 2026 en BUL-196. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Datos del fixture; puntos y nivel rotulados «Ejemplo» hasta que se decidan (BUL-219).
+
+- `portada-A-con-cuenta-{claro,oscuro}` — PORTADA CON CUENTA (P-19). Registro editorial: «120 puntos · Nivel 2» en granate, accesos a Seguidas (2), Mi colección (2 de 7) y Mis aportaciones (3); abajo Cuenta, Ajustes y Ayuda y fuentes.
+- `portada-B-sin-cuenta-claro` — PORTADA SIN CUENTA. Lo guardado en el teléfono, sin cifras inventadas: «Empiezas a sumar puntos cuando das fe», «Esto está guardado solo en este teléfono» y «Entrar con Google» como botón secundario, no como barrera.
+- `seguidas-claro` — SEGUIDAS (P-20). Por jornada, con marca granate y fase de hoy; dejar de seguir en cada fila.
+- `seguidas-vacia-claro` — SEGUIDAS VACÍA. «Aún no sigues ninguna. Puedes seguirlas desde su ficha.»
+- `coleccion-claro` — MI COLECCIÓN (P-21). «2 de 7», vistas con el año; «Añadir una que vi». Sin comparar con nadie.
+- `aportaciones-claro` — MIS APORTACIONES (P-22). «Contribuyó a la posición», sin etiqueta o «Pendiente de enviar»; nunca «rechazada». Cierra con «¿Cómo se usan mis aportaciones?».
+- `cuenta-claro` — CUENTA (P-23). Cuenta de Google, descargar datos, cerrar sesión y «Eliminar cuenta» en rojo.
+- `eliminar-cuenta-claro` — ELIMINAR CUENTA (P-24). «Se borra» / «Se conserva, sin tu nombre»; botón de peligro desactivado hasta marcar la casilla.
+- `ajustes-claro` — AJUSTES (P-25). Apariencia, máximo contraste, ubicación «No permitida» con «Permitir». El texto dice para qué la pedimos y que sin ella Cofradar funciona igual.
+- `ajustes-ubicacion-bloqueada-claro` — AJUSTES · UBICACIÓN BLOQUEADA EN EL NAVEGADOR. Mismo texto y el aviso «Puedes cambiarlo en los permisos de tu navegador».
+- `ayuda-y-fuentes-claro` — AYUDA Y FUENTES (P-26). Cómo leer los trazos y colores, de dónde salen los datos y © OpenStreetMap.
