@@ -1,0 +1,67 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de ejemplo de abajo. No inventes hermandades, horas ni cifras. Distancias y puntos aún no están decididos: van rotulados «ejemplo».
+
+ARMAZÓN: usa el de los lienzos «Cofradar · Armazón», «Inicio», «Cofradías», «Agenda» y «Mi Cofradar» tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda (abre «Elegir jornada») y sincronización a la derecha: flechas circulares + «hace 1 min». Sin búsqueda global ni selector de ciudad.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar.
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en una franja encima de la barra, solo cuando hay cofradías en la calle (en la Madrugá de los datos, sí). Nunca botón flotante ni en la barra.
+- Sin conexión: aviso azul bajo la cabecera con nube tachada: «Sin conexión · último dato hace 12 min».
+
+ESTILO
+- Herramienta de campo con personalidad editorial sobria. No debe parecer app de transporte ni web de hermandad. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Tipografía: Inter para todo dato (cifras tabulares); Newsreader solo para nombres de hermandades y títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, texto tinta #1D1A16, texto secundario #4A443C, bordes #E6E3DC.
+- Estados, siempre color + texto + icono: en la calle y confirmado verde #15603B (texto #0E4A2D, fondo #E3F1E7); retraso, adelanto, cambio de recorrido e inminente ámbar #7A4800 (texto #5E3700, fondo #FBF0D8); incidencia, interrumpida, regreso anticipado y cancelada rojo #9B2016 (texto #7A1810, fondo #FBE9E6); información y lluvia azul #14537A (texto #0F3F5C, fondo #E4EFF6); prevista y finalizada gris #6A655C (fondo #F4F2ED).
+- Granate #6E1C2F solo para «lo tuyo»: seguidas, vistas, tus aportaciones, puntos y la celebración. La marca va delante del nombre. Nunca en estados, avisos ni botones de acción. Si la marca comparte fila con un chip rojo, va en tinta. Granate y rojo nunca juntos.
+- Botón primario en tinta (#1D1A16, texto claro), nunca granate. «Dar fe» también es tinta.
+- Confianza del dato: confirmado con trazo continuo; estimado «· según horario» con trazo discontinuo; desactualizado «· hace 23 min» discontinuo + icono de reloj hacia atrás. La coletilla nunca en gris tenue. Prohibido expresar incertidumbre con transparencia o difuminado.
+- Solo lleva sombra lo que está realmente encima de otra cosa. Radios: botones y chips 6 px, tarjetas 10, paneles 14, hoja inferior 20.
+- Iconos Phosphor: relleno = activo o verificado; contorno = inactivo. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Registro funcional (denso, casi blanco, solo Inter) en todo el flujo; editorial (tono cera #F7F1E6, Newsreader) solo dentro del panel de «Hecho».
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA; granate pasa a #D97E8B.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40. Estás en La Campana.
+- La Macarena · En la calle · Retraso 12 min (ámbar) · la cruz de guía, confirmada a las 02:36 · la has visto · «a unos 80 m» (ejemplo).
+- El Gran Poder · En la calle · según horario (nadie ha dado fe) · la sigues · «a unos 150 m» (ejemplo).
+- El Silencio · En la calle · hace 23 min (desactualizado) · «a unos 300 m» (ejemplo).
+- Esperanza de Triana · En la calle · Interrumpida (rojo) y Cambio de recorrido (ámbar) · diste fe · lejos, en Triana.
+- Los Gitanos · Inminente · sale a las 03:00 · la sigues · lejos.
+- El Calvario · Finalizada: entró a las 02:30. No es candidata: ya no está en la calle.
+Elementos de La Macarena, en el orden del cortejo:
+  · Cruz de guía
+  · Paso de Cristo · Nuestro Padre Jesús de la Sentencia
+  · Palio · María Santísima de la Esperanza Macarena
+La aportación de ejemplo de todo el flujo: La Macarena · Cruz de guía · 02:40.
+Puntos: «+10 puntos» al dar fe y «+5» de bonus, rotulados «ejemplo».
+
+FLUJO: «Dar fe», de principio a fin. Se usa de pie, entre gente y con una mano, mirando el paso y no la pantalla: cada paso con una sola pregunta, opciones grandes (56 px de alto) en la mitad inferior, al alcance del pulgar, y «Atrás» y «Cancelar» siempre visibles. Todo el flujo vive en una hoja inferior alta sobre la pantalla de la que se sale; en los tableros, esa pantalla es Inicio de la Madrugá, como en el lienzo «Inicio». Cofradar propone, el usuario decide: nada va preseleccionado nunca, aunque haya una opción evidente.
+
+1. GUÍA INICIAL (solo la primera vez). Hoja breve. Título «Dar fe». Texto: «Es decir "estoy viendo esta cofradía ahora".» Tres ideas en tres líneas cortas: elige la cofradía · dinos qué parte ves, si lo sabes · confirma. Botón «Entendido» en tinta. Sin puntos, sin reglas, sin varias pantallas de tutorial.
+
+2. ¿QUÉ COFRADÍA? Título «¿Qué cofradía estás viendo?». Candidatas por cercanía, cada una en una fila grande con su marca granate si la tiene, el nombre en Newsreader, el chip de fase con su confianza y la distancia: La Macarena, El Gran Poder, El Silencio. Ninguna marcada. Al final, «Ver todas las de hoy».
+   Variante sin ubicación: sin distancias. Las que están en la calle por hora de salida (La Macarena, El Silencio, El Gran Poder, Esperanza de Triana) y después Los Gitanos, inminente. Encima, una línea neutra: «Sin ubicación: elige tú de la lista». No bloquea nada.
+
+3. ¿QUÉ TIENES DELANTE? «La Macarena» en Newsreader encima y el título «¿Qué tienes delante?». Cuatro opciones del mismo tamaño y peso, cada una con el texto en llano y debajo el término cofrade en cursiva:
+   - «La cruz que abre el cortejo» / Cruz de guía
+   - «El paso del Cristo» / Paso de Cristo · Nuestro Padre Jesús de la Sentencia
+   - «El paso de la Virgen» / Palio · María Santísima de la Esperanza Macarena
+   - «Estoy viendo la cofradía» / Sin precisar
+   Ninguna preseleccionada, en el orden del cortejo, nunca por probabilidad. Nada sugiere que «Estoy viendo la cofradía» sea peor. Sin «final del cortejo».
+   Si se entra desde la ficha de La Macarena, el flujo empieza aquí y «Atrás» vuelve a la ficha: anótalo junto al tablero, no hace falta otro.
+
+4. CONFIRMAR. Resumen: «La Macarena · Cruz de guía · 02:40» y un minimapa pequeño con tu punto en La Campana (cartografía de OpenStreetMap, sobria). Botón «Dar fe» en tinta, a todo el ancho.
+   Variante sin ubicación: «Sin ubicación» en lugar del minimapa. El botón igual, activo.
+   Variante sin conexión: el aviso del armazón arriba y, en el resumen, «Se guardará en tu teléfono con la hora 02:40 y se enviará sola cuando vuelva la conexión.» Botón «Guardar y enviar después».
+   Variante sin cuenta: el mismo resumen y «Para dar fe, entra con tu cuenta de Google. Al volver, seguirás aquí con todo igual.» Botón en tinta «Entrar con Google y dar fe». La cuenta se pide aquí, nunca antes.
+
+5. HECHO. Panel inferior compacto, NO pantalla completa: Inicio tiene que seguir visible detrás. Dentro del panel, registro editorial: «Has dado fe» en Newsreader y debajo «La Macarena · Cruz de guía · 02:40». «+10 puntos» en granate (ejemplo) y una celebración breve y sobria: la marca de «Diste fe» que se rellena. Se cierra con un toque y se va solo a los pocos segundos.
+   Variante pendiente: «Guardado · pendiente de enviar» con icono de reloj. Sin puntos todavía.
+   Variante bonus, que llega más tarde como aviso breve sobre la franja: «Tu aportación ayudó a situar a La Macarena · +5» (ejemplo), como buena noticia.
+
+Nunca: «rechazada», «poco precisa», «no verificada», cuentas atrás, pantallas completas de celebración, opciones preseleccionadas, el «final» del cortejo como opción, puntos que bajan.
+
+Claro en todos los tableros. En oscuro, además: 2 (con ubicación), 3, 4 (con ubicación) y 5 (normal).
