@@ -217,3 +217,20 @@ Hojas: la que interrumpe y espera respuesta (Dar fe, ubicación) llega hasta aba
 - `acceso-4a-mapa-sin-pedir-claro` — 4a · MAPA SIN UBICACIÓN, NUNCA PEDIDA (P-04). El 1a del Mapa con «Centrar en mi ubicación». Si la persona dijo que no o está bloqueada, el botón no aparece.
 - `acceso-4b-hoja-ubicacion-{claro,oscuro}` — 4b · «¿USAR TU UBICACIÓN?». Mismo texto que Ajustes; «Permitir» lanza el aviso del navegador y «Ahora no» cierra la hoja (el botón sigue en el mapa). Si en el aviso del navegador dice que no, el botón desaparece. Desde Ajustes, «Permitir» lanza el aviso directamente, sin hoja.
 - `acceso-4c-bloqueada-claro` — 4c · BLOQUEADA EN EL NAVEGADOR. «Tu navegador tiene bloqueada la ubicación para Cofradar.» y «Entendido», sin pasos de ningún navegador concreto.
+
+## 9-admin
+
+**Vigentes** · lienzo «Cofradar · Administración» (https://claude.ai/artifact/1eWPmZ1Bx5Ui7K6eRBTVBu), aprobado el 15 de octubre de 2026 en BUL-200. Solo PNG, escritorio a 2880 × 1800 (1440 × 900 a 2×) y móvil a 780 de ancho, solo tema claro. Datos del fixture a las 02:40; la hora de la lluvia es de ejemplo y lo que el fixture no trae va como «hora pendiente».
+
+Regla: el panel no es una mesa de control. Las fases las mueve el horario y las alteraciones las publica el motor («Cofradar»). El equipo solo marca cancelada (antes de salir), publica avisos de jornada e incidencias en texto, y retira lo que resulte falso. Nada se borra: se retira con motivo y queda en el registro. Borde rojo, nunca relleno, para lo que deja rastro («Retirar», «Marcar como cancelada»). Cancelada ≠ no procesiona: lo segundo es «no es su día» y sale de los datos base.
+
+- `admin-1-acceso` — 1 · ACCESO (P-27). «Entrar con Google».
+- `admin-1b-sin-permiso` — 1b · SIN PERMISO. «Esta cuenta no tiene acceso al panel.», en gris, y «Entrar con otra cuenta».
+- `admin-2-jornada-en-curso` — 2 · JORNADA EN CURSO (P-28). Aviso de jornada, tabla de las seis con fase, alteraciones (hora y autor) y solo las acciones con sentido; «Registro de hoy» por hora.
+- `admin-2b-marcar-cancelada` — 2b · MARCAR COMO CANCELADA, Los Gitanos (la única que no ha salido). Nota obligatoria; el botón se activa al escribirla.
+- `admin-2c-retirar` — 2c · RETIRAR «Interrumpida» de Esperanza de Triana. Motivo obligatorio.
+- `admin-2d-publicar-incidencia` — 2d · PUBLICAR INCIDENCIA en La Macarena, con vista previa de la tarjeta de Inicio.
+- `admin-2e-jornada-en-curso-movil` — 2e · JORNADA EN CURSO EN MÓVIL, para usarla desde la calle. Tarjeta por cofradía, botones de 48 px, menú en la cabecera.
+- `admin-3-datos-base` — 3 · DATOS BASE (P-29). Las siete hermandades; La Macarena con su ficha e itinerario esquemático. La Soledad, «Sin horarios» y «Sin itinerario» en gris.
+- `admin-4-taxonomias` — 4 · TAXONOMÍAS (P-30). Los tres elementos en orden de cortejo, reordenables; hitos y templos.
+- `admin-5-permisos-y-configuracion` — 5 · PERMISOS Y CONFIGURACIÓN (P-31). Personas con acceso; umbrales de posición 10 y 30 min (§7.1); ventana de «Inminente» y horarios, pendientes (BUL-83, BUL-82).

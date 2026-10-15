@@ -1,0 +1,7 @@
+He revisado los 10 PNG y están muy bien. Quedan dos detalles:
+
+1. Jornada en curso (2, 2b, 2c, 2d y el móvil 2e): el retraso de La Macarena tiene que llevar hora. Lo publicó Cofradar a las 02:36, cuando se dio fe de la cruz de guía en La Campana con 12 minutos más de lo previsto. Pon «02:36 · Cofradar» en la tabla, en la tarjeta del móvil y en el Registro de hoy, y ordena el registro por hora: 00:40 lluvia, 02:36 retraso, 02:39 interrumpida, y al final el cambio de recorrido con «hora pendiente».
+
+2. Datos base: en la fila de La Soledad de San Lorenzo, las etiquetas «Sin horarios» y «Sin itinerario» se parten en dos líneas. Que cada una quepa en una sola línea; si no caben juntas, una debajo de otra.
+
+No cambies nada más. Publica y exporta de nuevo el zip con todos los tableros.

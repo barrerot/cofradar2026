@@ -1,0 +1,8 @@
+Buen trabajo. Acepto cómo resuelves los tres choques y todas tus decisiones:
+- «Inminente», como en la app aprobada.
+- «Cancelada», como en la app aprobada. Cancelada y no procesiona no son el mismo estado: cancelada es que la hermandad decide no salir el día que le toca; no procesiona es que ese día no es el suyo. Por eso en la jornada en curso solo está «Marcar como cancelada».
+- El Calvario con «Histórico · hora y autor pendientes» y sin acciones.
+
+Un solo ajuste. La hora del retraso de La Macarena sí se sabe: lo publicó Cofradar a las 02:36, cuando se dio fe de la cruz de guía en La Campana con 12 minutos más de lo previsto. Pon «Cofradar · 02:36» en la tabla y en el Registro de hoy, y ordena el registro con ella. El Cambio de recorrido de la Esperanza sigue con «hora pendiente».
+
+No cambies nada más. Publica y exporta de nuevo el zip con todos los tableros.
