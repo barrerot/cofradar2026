@@ -1,0 +1,91 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Mapa». Móvil 390 × 844, mobile-first. Español de España.
+- Usa solo los datos de ejemplo de abajo. No inventes hermandades, horas, calles ni cifras. Las distancias aún no están decididas: van rotuladas «ejemplo».
+- Los lienzos «Armazón», «Inicio», «Cofradías», «Agenda», «Mi Cofradar» y «Dar fe» están aprobados y mandan: no los toques; si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+ARMAZÓN: el de los lienzos aprobados, tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda (abre «Elegir jornada») y sincronización a la derecha: flechas circulares + «hace 1 min». Sin búsqueda global, sin selector de ciudad y sin filtros.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar. Activo: Mapa (icono relleno + texto principal + barra de 2 px).
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en una franja encima de la barra (en la Madrugá de los datos hay cofradías en la calle). Nunca botón flotante ni en la barra.
+- Sin conexión: aviso azul bajo la cabecera con nube tachada: «Sin conexión · último dato hace 12 min».
+
+ESTILO
+- Herramienta de campo con personalidad editorial sobria. No debe parecer app de transporte ni web de hermandad. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Tipografía: Inter para todo dato (cifras tabulares); Newsreader solo para nombres de hermandades. Nada por debajo de 12 px; 16 px para leer.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, texto tinta #1D1A16, texto secundario #4A443C, bordes #E6E3DC.
+- Estados, siempre color + texto + icono: en la calle y confirmado verde #15603B (texto #0E4A2D, fondo #E3F1E7); retraso, adelanto, cambio de recorrido e inminente ámbar #7A4800 (texto #5E3700, fondo #FBF0D8); incidencia, interrumpida, regreso anticipado y cancelada rojo #9B2016 (texto #7A1810, fondo #FBE9E6); información y lluvia azul #14537A (texto #0F3F5C, fondo #E4EFF6); prevista y finalizada gris #6A655C (fondo #F4F2ED).
+- Granate #6E1C2F solo para «lo tuyo»: seguidas, vistas y tus aportaciones. La marca va delante del nombre. Nunca en estados, avisos ni botones. Si comparte sitio con rojo, va en tinta. Granate y rojo nunca juntos.
+- Botón primario en tinta (#1D1A16, texto claro), nunca granate.
+- Confianza del dato: confirmado «02:36» con trazo continuo; estimado «02:50 · según horario» con trazo discontinuo; desactualizado «02:17 · hace 23 min» discontinuo + icono de reloj hacia atrás. La coletilla nunca en gris tenue. Prohibido expresar incertidumbre con transparencia o difuminado.
+- Solo lleva sombra lo que está realmente encima de otra cosa. Radios: botones y chips 6 px, tarjetas 10, paneles 14, hoja inferior 20.
+- Iconos Phosphor: relleno = activo o verificado; contorno = inactivo. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Registro funcional en todo el área: denso, casi blanco, solo Inter salvo los nombres de hermandad.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA; granate pasa a #D97E8B.
+
+CARTOGRAFÍA
+- En producción será OpenStreetMap pintado con MapLibre, con estilo propio. Aquí dibújala esquemática pero fiel: las calles y plazas reales del centro de Sevilla, en su sitio, con sus nombres. Neutra y sobria, con poco color, menos comercios y etiquetas, para que destaquen las marcas. Rótulo pequeño «© OpenStreetMap» en una esquina.
+- Las superficies sobre el mapa son opacas: nada de desenfoque, translucidez ni degradados.
+- Puntos de referencia (lat, lon), de norte a sur:
+  · Basílica de la Macarena 37.4019, -5.9887 y Santuario de los Gitanos 37.3978, -5.9865 (al norte, fuera del encuadre principal)
+  · Basílica del Gran Poder / San Lorenzo 37.3959, -6.0013
+  · Plaza del Duque 37.3934, -5.9967
+  · La Campana 37.3917, -5.9949 (entrada a la carrera oficial)
+  · San Antonio Abad 37.3914, -5.9985
+  · La Magdalena 37.3905, -6.0003
+  · Sierpes 37.3900, -5.9955
+  · Plaza de San Francisco 37.3885, -5.9947
+  · Puente de Triana 37.3879, -6.0022 y Capilla de los Marineros 37.3843, -6.0033 (al otro lado del río)
+  · Avenida de la Constitución 37.3870, -5.9937
+  · Catedral (Palquillo) 37.3862, -5.9931 (salida de la carrera oficial)
+- Encuadre de la vista general: de la Plaza del Duque a la Plaza de San Francisco, con La Campana en el centro.
+
+REGLA PRINCIPAL
+«Quiero abrir el mapa y saber dónde está la cruz de guía y dónde están los pasos de una hermandad.» Una cofradía no es un punto: hay UNA MARCA POR ELEMENTO.
+- Marca de elemento: superficie blanca opaca, borde grueso del color del estado y dentro el icono del elemento (cruz de guía, paso de Cristo, palio), sencillo, geométrico, de la misma familia que Phosphor; nada ornamental. 32 px; 40 px si está seleccionada; toque de 48 px. Borde continuo si la posición de ese elemento está confirmada, discontinuo si es estimada o desactualizada; si está desactualizada, etiqueta pequeña con su antigüedad («hace 23 min»). La confianza es la de cada elemento, no la de la cofradía: en una misma hermandad la cruz puede ir continua y el palio discontinuo.
+- Junto a la cruz de guía, el nombre popular de la hermandad (con su marca granate delante si la tiene). Los pasos, sin nombre salvo al seleccionarlos.
+- Entre la cruz y el último paso, una línea fina y secundaria marca el tramo que ocupa la cofradía; continua si la cofradía está confirmada, discontinua si no. Sin protagonismo: es una propuesta a validar.
+- Las que aún no han salido (inminente) llevan una marca de hermandad en su templo, distinta de las de elemento: no están en la calle.
+- Nunca: flechas de dirección, agrupar marcas, «final» del cortejo, filtros, hitos tocables, tiempos de ruta a pie, pines o chinchetas.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40. Tu posición: cerca de La Campana (igual que en «Dar fe»).
+- La Macarena · En la calle · Retraso 12 min (ámbar) · la has visto (marca granate).
+  · Cruz de guía: en La Campana · 02:36 · confirmada (alguien dio fe de ella). A unos 300 m · parece alcanzable (ejemplo).
+  · Paso de Cristo · Nuestro Padre Jesús de la Sentencia: entre la Plaza del Duque y La Campana · según horario (sin hora propia: se estima entre la cruz y el palio).
+  · Palio · María Santísima de la Esperanza Macarena: camino de La Campana, a la altura de la Plaza del Duque · 02:50 · según horario. A unos 350 m (ejemplo).
+  · Recorrido: Basílica de la Macarena → Plaza del Duque → La Campana → Sierpes → Plaza de San Francisco → Avenida de la Constitución → Catedral. Va por el 64 % (1.396 de 2.172 m).
+  · Horas (prevista / real o estimada), como en el tablero «Recorrido y horarios» del lienzo «Cofradías»: salida 00:05; La Campana 02:24 / 02:36 (+12 min); Sierpes 02:39 / 02:51 según horario; Catedral 03:16 / según horario; entrada 13:25 / según horario.
+- El Gran Poder · En la calle · según horario: nadie ha dado fe todavía, así que sus tres elementos van discontinuos · la sigues (marca granate). Sin alteraciones: su color es el verde de en la calle, no ámbar.
+  · Cruz de guía: llegando a La Campana · 02:42 · según horario.
+  · Paso de Cristo · Nuestro Padre Jesús del Gran Poder: entre la Plaza del Duque y La Campana · según horario.
+  · Palio · María Santísima del Mayor Dolor y Traspaso: camino de la Plaza del Duque · 02:46 · según horario.
+- El Silencio · En la calle · desactualizado: el último dato es del palio, a las 02:17, hace 23 min. Todas sus marcas discontinuas, con reloj hacia atrás y «hace 23 min».
+  · Cruz de guía: por la Plaza de San Francisco · según horario.
+  · Paso de Cristo · Nuestro Padre Jesús Nazareno: por Sierpes · según horario.
+  · Palio · María Santísima de la Concepción: visto a las 02:17 · hace 23 min, cerca de La Campana.
+- Esperanza de Triana · En la calle · Interrumpida (rojo) y Cambio de recorrido (ámbar) · diste fe (marca en tinta, porque va con rojo). Está detenida. Color de sus marcas: rojo, la alteración más grave.
+  · Cruz de guía: en Sierpes · según horario.
+  · Paso de Cristo · Santísimo Cristo de las Tres Caídas: en La Campana · 02:39 · confirmado.
+  · Palio · Nuestra Señora de la Esperanza: entrando hacia La Campana desde La Magdalena · según horario.
+- Los Gitanos · Inminente (ámbar) · sale a las 03:00 del Santuario de los Gitanos · la sigues. Marca de hermandad en su templo, sin elementos ni tramo. Fuera del encuadre principal: si no cabe, un indicador en el borde del mapa.
+- El Calvario · Finalizada: entró a las 02:30. No aparece en el mapa.
+Fíjate en que La Macarena, El Gran Poder, El Silencio y la Esperanza de Triana coinciden alrededor de La Campana y Sierpes: es el caso difícil, «¿de quién es ese palio?». No lo resuelvas agrupando ni ocultando marcas, y el color no ayuda (cuenta el estado, no la hermandad). Prueba con el tramo como vínculo y el nombre junto a la cruz, y dime qué te funciona.
+
+PANTALLAS
+
+1. MAPA GENERAL · Madrugá 02:40 · con ubicación. Todo lo de arriba sobre el mapa. Tu posición: punto azul con un radio de precisión honesto, cerca de La Campana. Botón «Centrar en mi ubicación» (icono de diana, 48 px, superficie blanca) abajo a la derecha, por encima de la franja «Dar fe» y sin taparla.
+   Variantes:
+   a. Sin ubicación: sin punto ni botón de centrar. No se pide nada.
+   b. Sin conexión: el aviso del armazón y las marcas congeladas en su último dato, como en el tablero E de «Inicio»: nada se recalcula por horario.
+   c. Sin cartografía: el mapa no carga. Fondo liso y el texto «No podemos dibujar el mapa, pero sabemos dónde van». Debajo, una lista legible por hermandad con cada elemento, dónde está, su hora y su confianza. Nada se pierde.
+
+2. MAPA DE UNA COFRADÍA · La Macarena seleccionada (se llega tocando su cruz o desde «Ver en el mapa» de su ficha). Su recorrido completo: lo hecho en línea continua verde de 3 px, lo pendiente en discontinua neutra. Sus tres marcas en primer plano y a 40 px. Las demás cofradías siguen visibles en segundo plano, más pequeñas, no más transparentes. Los puntos de su recorrido llevan su hora pero no son botones.
+   Hoja inferior asomada: «La Macarena» en Newsreader con su marca granate, chips «En la calle» y «Retraso 12 min», «Cruz de guía en La Campana · 64 % del recorrido» y las horas de La Campana, la Catedral y la entrada, prevista y real o estimada. Botón «Cerrar» para volver a la vista general.
+
+3. DETALLE DE UN ELEMENTO · tocado el palio de La Macarena. Hoja inferior a media altura:
+   «Palio de La Macarena» y debajo «María Santísima de la Esperanza Macarena»; «Camino de La Campana · 02:50 · según horario», discontinuo; «Nadie ha dado fe del palio todavía»; «A unos 350 m · parece alcanzable» (ejemplo, nunca un tiempo de ruta). Debajo, los otros elementos de la cofradía en el orden del cortejo, con su posición y confianza (cruz de guía en La Campana 02:36, continua; paso de Cristo entre la Plaza del Duque y La Campana, según horario). Botón «Dar fe» en tinta en el mismo sitio y tamaño que el de la franja: la franja desaparece; nunca dos «Dar fe» a la vez.
+   Variante: tocada la cruz de guía. «En La Campana · 02:36», continuo, «Vista hace 4 min», «A unos 300 m · parece alcanzable» (ejemplo).
+
+Claro en todos los tableros. En oscuro, además: 1 (con ubicación), 2 y 3 (palio). En el oscuro, la cartografía también cálida y oscura, sin grises azulados.
