@@ -1,0 +1,45 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Arranque y acceso». Móvil 390 × 844, mobile-first. Español de España.
+- Usa solo los datos de ejemplo de abajo. No inventes nombres, correos, cifras ni textos de Google.
+- Los lienzos «Armazón», «Inicio», «Cofradías», «Agenda», «Mi Cofradar», «Dar fe» y «Mapa» están aprobados y mandan. Las pantallas de fondo se copian de ellos tal cual, sin redibujarlas. Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+LA REGLA DE ESTA ÁREA
+Cofradar no pide nada antes de que haga falta: ni cuenta ni ubicación al abrir. La cuenta se pide al ir a participar y la ubicación, cuando la persona toca algo que la necesita. Nunca se pide dos veces y nunca con tono de amenaza («sin ubicación no funcionará»).
+
+ESTILO
+- El del sistema de diseño Cofradar, como en los lienzos aprobados. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados.
+- Inter para todo dato; Newsreader para el nombre «Cofradar», los nombres de hermandades y los títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Tema claro: fondo #FBF9F5, superficie #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC. Registro editorial: tono cera #F7F1E6.
+- Información azul #14537A (texto #0F3F5C, fondo #E4EFF6). Botón primario en tinta, nunca granate. Granate #6E1C2F solo para «lo tuyo».
+- Hoja inferior con radio 20 y la pantalla de detrás oscurecida con una capa opaca, sin desenfoque. Toque mínimo 48 px. Iconos Phosphor.
+- Tema oscuro cálido: fondo #15120F, texto #F5F1EA; granate #D97E8B.
+
+EL LOGOTIPO
+Es provisional: la palabra «Cofradar» en Newsreader, sin símbolo ni icono. No dibujes un logotipo.
+
+PANTALLAS
+
+1. ARRANQUE (P-01). Fondo de la app y «Cofradar» centrado. Nada más: sin barra de progreso, sin mensajes, sin cabecera ni barra de navegación. Anota junto al tablero: «Solo la primera vez o sin datos guardados. Si ya hay datos, se abre directamente el último estado conocido.»
+
+2. INTRODUCCIÓN (P-02), solo la primera vez. Una sola pantalla, registro editorial (cera, Newsreader en títulos), sin cabecera ni barra de navegación. Arriba, «Cofradar». Tres bloques breves, cada uno con un icono de contorno:
+   - «Por dónde va de verdad cada cofradía» — la cruz de guía y cada paso, y cuánto puedes fiarte de cada dato.
+   - «Dar fe» — si la estás viendo, dilo con un toque: ayudas a todos.
+   - «Tu ubicación es opcional» — sin ella, Cofradar funciona igual.
+   Abajo, un solo botón en tinta a todo el ancho: «Empezar», que lleva a Inicio. No pongas «Saltar»: con una sola pantalla haría lo mismo que «Empezar». Ni cuenta, ni ubicación, ni glosario, ni pantallas deslizables.
+
+3. ENTRAR CON GOOGLE (P-03). No hay hoja intermedia: tocar «Entrar con Google» abre directamente la ventana de Google. Esa ventana es de Google y no se dibuja. Lo que se diseña es lo que Cofradar enseña antes y después:
+   a. Vuelta con éxito desde «Dar fe». La persona tocó «Entrar con Google y dar fe» en Confirmar (tablero 4d del lienzo «Dar fe»). Al volver, la aportación se envía sola, porque ya lo decidió con ese botón, y aparece el panel «Hecho» del tablero 5 de «Dar fe», tal cual, sobre Inicio. Añade una sola línea encima de «Has dado fe»: «Has entrado con tu cuenta de Google.»
+   b. Vuelta con éxito desde Mi Cofradar. La persona tocó «Entrar con Google» en la portada sin cuenta. Vuelve a Mi Cofradar, ya con cuenta, y lo que tenía en el teléfono sigue ahí: Seguidas 2, Mi colección 2 de 7. Mis aportaciones sigue vacía («Tus aportaciones aparecerán aquí cuando des fe») y no hay puntos todavía: «Empiezas a sumar puntos cuando das fe». Arriba, un aviso azul breve que se va solo: «Has entrado. Lo que tenías en este teléfono ya está en tu cuenta.» Desaparecen «Esto está guardado solo en este teléfono» y el botón «Entrar con Google».
+   c. No se pudo entrar, desde «Dar fe». La persona cerró la ventana de Google o algo falló. Vuelve a Confirmar (tablero 4d), con todo igual: La Macarena · Cruz de guía · 02:40 y el minimapa. Sobre el resumen, un aviso azul: «No has entrado con Google. Tu aportación sigue aquí.» El botón sigue siendo «Entrar con Google y dar fe», y «Atrás» y «Cancelar» siguen arriba. Nunca rojo ni la palabra «error».
+   Nunca: formularios, contraseña, correo, «¿Olvidaste tu contraseña?», nombre público ni avatar.
+
+4. PERMISO DE UBICACIÓN (P-04). La ubicación se puede activar desde dos sitios: Ajustes, como ya está aprobado, y el Mapa.
+   a. Mapa sin ubicación, nunca pedida. Copia el tablero 1a del lienzo «Mapa» y añádele solo el botón «Centrar en mi ubicación», en el mismo sitio y con el mismo aspecto que en el tablero 1. Anota junto al tablero: «Solo si nunca se ha pedido. Si la persona dijo que no o está bloqueada, el botón no aparece (tablero 1a de Mapa).»
+   b. La hoja, al tocar ese botón. Icono de ubicación en contorno. Título «¿Usar tu ubicación?». Texto, igual que en Ajustes: «Para decirte a qué distancia te queda cada cofradía y para situar en el mapa lo que ves cuando das fe. Sin ella, Cofradar funciona igual y puedes dar fe.» Botón en tinta «Permitir», que lanza el aviso del navegador, y botón secundario «Ahora no». Debajo, en pequeño: «Tu posición no sale de tu teléfono para dibujar el mapa.» Anota: «"Ahora no" cierra la hoja; el botón sigue en el mapa porque fue la persona quien lo tocó. Si en el aviso del navegador dice que no, el botón desaparece y no se vuelve a pedir.»
+   c. Bloqueada en el navegador. La persona tocó «Permitir», pero el navegador la tiene bloqueada y ni siquiera pregunta. La misma hoja cambia a: «Tu navegador tiene bloqueada la ubicación para Cofradar. Puedes cambiarlo en sus permisos. Sin ella, Cofradar funciona igual y puedes dar fe.» Un solo botón «Entendido». Sin pasos ni capturas de ningún navegador concreto: no podemos saber cuál usa.
+   Anota también: «Desde Ajustes, "Permitir" lanza directamente el aviso del navegador, sin hoja: el texto que explica para qué sirve ya está en esa pantalla.»
+
+Claro en todos los tableros. En oscuro, además: 1, 2 y 4b.
