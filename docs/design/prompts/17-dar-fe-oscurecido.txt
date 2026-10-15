@@ -1,0 +1,8 @@
+Sí, añádeselo, para que todo cumpla la misma regla.
+
+1. Lienzo «Dar fe»: pon el oscurecido del sistema (55 % en claro, 60 % en oscuro, sin desenfoque) detrás de las hojas de los pasos 1 a 4, en todos sus tableros: 1, 2, 2b, 3, 4, 4b, 4c y 4d, en claro y en oscuro. Que cubra toda la pantalla, barra incluida, igual que en la hoja de ubicación.
+   No lo pongas en el panel «Hecho» (5, 5b y 5c), ni en el aviso del bonus: no esperan respuesta, se cierran con un toque o se van solos, y se tiene que ver Inicio detrás. Anota en el README que ese panel es un aviso pasajero y no lleva capa.
+
+2. Lienzo «Arranque y acceso»: haz el mismo cambio en tu copia de «Dar fe», para que el tablero 3c lleve el oscurecido. El 3a es el panel «Hecho» y se queda sin capa.
+
+No cambies nada más. Publica los dos lienzos y exporta dos zips: el de «Dar fe» con todos sus tableros y el de «Arranque y acceso» con todos los suyos.

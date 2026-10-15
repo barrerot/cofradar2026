@@ -156,6 +156,8 @@ Escudo de reserva: iniciales del nombre popular sin artículo (M, GP, ET…).
 
 Reglas que fija: tocar una opción lleva al paso siguiente (sin botón «Continuar»); opciones abajo, al alcance del pulgar, y la pregunta arriba; «Atrás» y «Cancelar» siempre arriba de la hoja; nada preseleccionado.
 
+Hojas: las de los pasos 1 a 4 esperan respuesta, así que tapan la barra de navegación y llevan el oscurecido del sistema detrás (añadido el 15 de octubre de 2026 en BUL-198, ver `8-acceso`). El panel «Hecho» y el aviso del bonus son avisos pasajeros y no llevan capa.
+
 - `dar-fe-1-guia-inicial-claro` — 1 · GUÍA INICIAL, solo la primera vez. Solo «Cancelar»: no hay paso anterior.
 - `dar-fe-2-que-cofradia-{claro,oscuro}` — 2 · ¿QUÉ COFRADÍA? Por cercanía: La Macarena 300 m, El Gran Poder 450 m, El Silencio 600 m. «Atrás» vuelve a Inicio.
 - `dar-fe-2b-que-cofradia-sin-ubicacion-claro` — 2b · SIN UBICACIÓN. Las de la calle por hora de salida y Los Gitanos aparte, «A punto de salir». La hoja sube casi hasta arriba. Marca de «Diste fe» de Esperanza de Triana en tinta (comparte fila con chip rojo).
@@ -190,7 +192,7 @@ Reglas que fija: tocar una opción lleva al paso siguiente (sin botón «Continu
 
 Regla que fija: no se pide nada antes de que haga falta. La cuenta se pide al ir a participar y la ubicación, cuando la persona toca algo que la necesita. Nunca dos veces y nunca con tono de amenaza.
 
-Hojas: la que interrumpe y espera respuesta (Dar fe, ubicación) llega hasta abajo y tapa la barra de navegación, con el fondo oscurecido; la informativa (las del Mapa) se apoya sobre la barra. Así lo dice el README del sistema.
+Hojas: la que interrumpe y espera respuesta (Dar fe, ubicación) llega hasta abajo y tapa la barra de navegación, con el fondo oscurecido; la informativa (las del Mapa) se apoya sobre la barra, sin capa. El panel «Hecho» de Dar fe es un aviso pasajero y tampoco lleva capa. Así lo dice el README del sistema.
 
 - `acceso-1-arranque-{claro,oscuro}` — 1 · ARRANQUE (P-01). Solo «Cofradar» en Newsreader. Solo la primera vez o sin datos guardados; si hay datos, se abre el último estado conocido.
 - `acceso-2-introduccion-{claro,oscuro}` — 2 · INTRODUCCIÓN (P-02), solo la primera vez. Una pantalla editorial con tres ideas y un único botón, «Empezar»; sin «Saltar».
