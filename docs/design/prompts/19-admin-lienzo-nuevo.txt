@@ -1,0 +1,62 @@
+CONTEXTO
+Cofradar es una web app que sigue la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos— y cuánto puede uno fiarse del dato. Esto es su panel de administración interno, solo para el equipo.
+
+LA REGLA DE ESTA ÁREA
+El panel no es una mesa de control: si nadie toca nada, Cofradar funciona solo. Las fases las mueve el horario y las alteraciones (retraso, interrumpida, cambio de recorrido…) las publica el motor a partir de lo que la gente da fe. El panel solo sirve para:
+- lo que el motor no puede deducir nunca: que una hermandad no realiza estación de penitencia (cancelada);
+- los avisos de jornada (lluvia) y las incidencias en texto;
+- retirar algo publicado que resulta falso, sea del motor o del equipo.
+Nada se borra: se retira, y queda anotado quién, cuándo y por qué.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Administración». Escritorio 1440 × 900, salvo el tablero móvil (390 × 844). Español de España. Solo tema claro.
+- Usa solo los datos de abajo. No inventes nombres, correos, horas ni cifras. Lo que falte se rotula «ejemplo» o «pendiente de decidir».
+- Los lienzos aprobados de Cofradar mandan en chips de estado, colores y textos. Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+ESTILO
+- Herramienta interna sobria y densa, sin decoración. Inter en todo; nada por debajo de 12 px; 14 px en tablas.
+- Fondo #FBF9F5, superficies #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC.
+- Estados con los mismos chips de la app (color + icono + texto): verde #15603B en la calle; ámbar #7A4800 retraso, inminente, cambio de recorrido; rojo #9B2016 interrumpida, incidencia, regreso anticipado, cancelada; azul #14537A lluvia; gris #6A655C prevista, finalizada. La coletilla de confianza igual que en la app: «según horario», «hace 23 min».
+- Botón principal en tinta. Acciones que no se pueden deshacer sin dejar rastro, en botón con borde rojo, nunca relleno. Nada en granate: aquí no hay «lo tuyo».
+- Menú lateral izquierdo: «Jornada en curso», «Datos base», «Taxonomías», «Permisos y configuración». Abajo del menú, la cuenta: nombre@ejemplo.com y «Salir».
+
+DATOS (fixture de la Madrugá, 26 de marzo de 2027, a las 02:40)
+- Aviso de jornada activo: Lluvia · «Las hermandades están valorando su salida» (el texto de Inicio). Publicado por nombre@ejemplo.com a las 00:40 (hora de ejemplo).
+- Cofradías, en orden de salida, con fase, confianza, alteraciones y última observación:
+  · El Silencio · En la calle · hace 23 min · sin alteraciones · última: palio, 02:17
+  · El Gran Poder · En la calle · según horario · sin alteraciones · nadie ha dado fe
+  · La Macarena · En la calle · Retraso 12 min · última: cruz de guía, 02:36
+  · El Calvario · Finalizada · Regreso anticipado (en el histórico) · última: palio, 02:30
+  · Esperanza de Triana · En la calle · Interrumpida (02:39) y Cambio de recorrido · última: paso de Cristo, 02:39
+  · Los Gitanos · Sale pronto · sale a las 03:00 · aportación genérica a las 02:38
+- Hermandad fuera de la Madrugá: La Soledad de San Lorenzo, Sábado Santo, Parroquia de San Lorenzo Mártir, un solo paso (palio de Nuestra Señora de la Soledad), sin horarios ni itinerario.
+- Elementos rastreables, en orden de cortejo: Cruz de guía «La cruz que abre el cortejo» · Paso de Cristo o de misterio «El paso del Cristo» · Palio «El paso de la Virgen».
+- Hitos de Sevilla: La Campana, Sierpes, Plaza de San Francisco, Avenida de la Constitución, Catedral (Palquillo), Plaza Virgen de los Reyes, Plaza del Duque, San Lorenzo, Puente de Triana. Templos: San Antonio Abad, Basílica del Gran Poder, Basílica de la Macarena, La Magdalena, Capilla de los Marineros, Santuario de los Gitanos, Parroquia de San Lorenzo Mártir.
+- La Macarena: titulares Nuestro Padre Jesús de la Sentencia y María Santísima de la Esperanza Macarena; salida 00:05 de la Basílica de la Macarena, entrada 13:25.
+
+PANTALLAS
+
+1. ACCESO (P-27). Pantalla limpia: «Cofradar» en Newsreader, debajo «Panel de administración» y el botón «Entrar con Google».
+   1b. La misma, tras entrar con una cuenta sin permiso: aviso gris «Esta cuenta no tiene acceso al panel.» y «Entrar con otra cuenta». Sin rojo.
+
+2. JORNADA EN CURSO (P-28), Madrugá 02:40.
+   - Arriba, bloque «Aviso de jornada»: el de lluvia, con quién y cuándo, y «Retirar». Botón «Publicar aviso de jornada».
+   - Tabla de las seis cofradías con los datos de arriba: nombre, fase con su confianza, alteraciones (cada una con su hora y quién la publicó: «Cofradar» si fue el motor) y última observación.
+   - Acciones por fila, solo las que tienen sentido:
+     · «Marcar como cancelada» solo en Los Gitanos, porque es la única que aún no ha salido. Cancelada es no salir: a una cofradía en la calle no se le puede poner.
+     · «Publicar incidencia» en las que están en la calle.
+     · «Retirar» junto a cada alteración publicada.
+     · El Calvario, finalizada: sin acciones.
+   - A la derecha, «Registro de hoy»: cada publicación y retirada con hora, quién y qué. Con los datos de arriba: lluvia 00:40 por nombre@ejemplo.com; Interrumpida y Cambio de recorrido de Esperanza de Triana por Cofradar; Retraso de La Macarena por Cofradar.
+   2b. Diálogo al pulsar «Marcar como cancelada» en Los Gitanos: «¿Los Gitanos no realiza estación de penitencia?», texto «Se mostrará como "No realiza estación" en toda la app y se avisará a quienes la siguen.», campo obligatorio «Nota (queda en el registro)», botones «Cancelar» y «Marcar como cancelada» con borde rojo, desactivado hasta escribir la nota.
+   2c. Diálogo al pulsar «Retirar» en Interrumpida de Esperanza de Triana: «¿Retirar "Interrumpida" de Esperanza de Triana?», texto «Dejará de mostrarse. Queda en el registro con el motivo.», campo obligatorio «Motivo», botones «Cancelar» y «Retirar».
+   2d. Diálogo «Publicar incidencia» desde la fila de La Macarena: la cofradía ya elegida, campo «Texto del aviso» y vista previa del chip rojo «Incidencia» como se verá en la app. Botones «Cancelar» y «Publicar».
+   2e. Móvil 390 × 844 de la Jornada en curso, para usarla desde la calle: el aviso de jornada arriba y una tarjeta por cofradía con su fase, alteraciones y acciones. Sin la columna de registro; un enlace «Registro de hoy». Botones de 48 px.
+
+3. DATOS BASE (P-29). Pestañas «Cofradías», «Jornadas», «Horarios», con «Importar CSV» arriba a la derecha. Pestaña Cofradías: tabla con nombre popular, jornada, templo, número de pasos y titulares, con las siete hermandades. La Macarena seleccionada: a la derecha, su ficha con el nombre completo, los titulares, salida y entrada, y su itinerario sobre un mapa pequeño (esquemático, como el minimapa de «Dar fe»). La Soledad de San Lorenzo con «Sin horarios» y «Sin itinerario» en gris, no en rojo.
+
+4. TAXONOMÍAS (P-30). Dos bloques: «Elementos rastreables», los tres en su orden con su texto en llano y un asa para reordenar; y «Hitos y templos de Sevilla», la lista de arriba. Botón «Añadir» en cada bloque.
+
+5. PERMISOS Y CONFIGURACIÓN (P-31). Dos bloques:
+   - «Personas con acceso»: nombre@ejemplo.com · Administración, con «Quitar», y botón «Añadir persona» (por correo de Google).
+   - «Umbrales»: Posición estimada · vigente menos de 10 min · desactualizada de 10 a 30 min · deja de afirmarse a partir de 30 min. «Ventana de "Sale pronto"»: pendiente de decidir. «Horarios e hitos»: pendiente de decidir. Cada cambio queda en el registro.
