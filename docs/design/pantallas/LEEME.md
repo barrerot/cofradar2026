@@ -233,4 +233,4 @@ Regla: el panel no es una mesa de control. Las fases las mueve el horario y las 
 - `admin-2e-jornada-en-curso-movil` — 2e · JORNADA EN CURSO EN MÓVIL, para usarla desde la calle. Tarjeta por cofradía, botones de 48 px, menú en la cabecera.
 - `admin-3-datos-base` — 3 · DATOS BASE (P-29). Las siete hermandades; La Macarena con su ficha e itinerario esquemático. La Soledad, «Sin horarios» y «Sin itinerario» en gris.
 - `admin-4-taxonomias` — 4 · TAXONOMÍAS (P-30). Los tres elementos en orden de cortejo, reordenables; hitos y templos.
-- `admin-5-permisos-y-configuracion` — 5 · PERMISOS Y CONFIGURACIÓN (P-31). Personas con acceso; umbrales de posición 10 y 30 min (§7.1); ventana de «Inminente» y horarios, pendientes (BUL-83, BUL-82).
+- `admin-5-permisos-y-configuracion` — 5 · PERMISOS Y CONFIGURACIÓN (P-31). Personas con acceso; umbrales de posición 10 y 30 min (§7.1); ventana de «Inminente» y horarios, pendientes (BUL-226, BUL-227).
