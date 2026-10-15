@@ -23,6 +23,21 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - **Las fichas numeradas de `3-mapa/` (01 a 14)**: la marca con flecha de dirección y el «final» del cortejo ya no existen. Las sustituyen las `mapa-*` (BUL-197).
 - **Las fichas numeradas de `4-cofradias/` (01 a 08)**: llevan búsqueda global en la cabecera. Las sustituyen las `cofradias-*`, `ficha-*` y `recorrido-*` (BUL-193).
 
+## 0-sistema/estados
+
+**Vigentes** · lienzo «Cofradar · Estados» (https://claude.ai/artifact/EuCqAKEQihwLFiGnfanf84), aprobado el 15 de octubre de 2026 en BUL-199. Solo PNG, a 780 de ancho (390 a 2×). Los estados 1, 2, 6 y 8 salen de ese lienzo; los 3, 4, 5 y 7 son copias de fichas ya aprobadas en otras áreas, para tener los ocho juntos.
+
+Regla: una actualización nunca borra información que todavía sirve, y un dato guardado no se presenta como actual. Sin spinners ni cargas que tapen la pantalla. Sin conexión sin datos y error solo existen cuando no hay nada guardado que enseñar: si lo hay, se enseña con su antigüedad.
+
+- `estado-1-primera-carga-{claro,oscuro}` — 1 · PRIMERA CARGA. Tras «Empezar», sin nada guardado. Esqueleto de Inicio en el relleno, sin texto ni animación, sin franja «Dar fe». Único estado con esqueleto.
+- `estado-2-refrescando-claro` — 2 · REFRESCANDO. Inicio completo; solo cambia el indicador a «actualizando» (las flechas giran). Si falla con datos en pantalla, los datos se quedan.
+- `estado-3-nada-en-la-calle-claro` — 3 · NO HAY NADA EN LA CALLE. Copia de `2-inicio/inicio-C`.
+- `estado-4-sin-datos-claro` — 4 · SIN DATOS. Copia de `4-cofradias/ficha-2F`: «Dato pendiente» en cada campo que no tenemos.
+- `estado-5-sin-conexion-con-datos-claro` — 5 · SIN CONEXIÓN CON DATOS. Copia de `2-inicio/inicio-E`; ver también `armazon-5` y `mapa-1b`.
+- `estado-6-sin-conexion-sin-datos-{claro,oscuro}` — 6 · SIN CONEXIÓN, SIN NADA GUARDADO. «Necesitas conexión para verlo la primera vez.», «Cuando vuelva, se cargará solo.» y «Reintentar». Sin el aviso azul, porque no hay último dato. Mensaje centrado sin datos de la jornada, distinto del 3.
+- `estado-7-sin-cartografia-claro` — 7 · SIN CARTOGRAFÍA. Copia de `3-mapa/mapa-1c`.
+- `estado-8-error-claro` — 8 · ERROR. «Algo ha fallado.», «Inténtalo de nuevo en un momento.» y «Reintentar». Triángulo en contorno gris, nunca rojo; el indicador, sin antigüedad.
+
 ## 1-marco
 
 **Vigentes** · lienzo «Cofradar · Armazón» (https://claude.ai/artifact/GjRRWCSgTTvC6xLFSBjELs), aprobado el 13 de octubre de 2026 en BUL-191. Solo PNG, a 780 × 1688 (390 × 844 a 2×); el marcado de referencia es el del lienzo. Las decisiones que fija están en el README del sistema, sección «Marco · armazón global».
