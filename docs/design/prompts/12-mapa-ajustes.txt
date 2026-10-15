@@ -1,0 +1,21 @@
+Buen trabajo. Acepto tus decisiones: los iconos provisionales, la marca cuadrada de Los Gitanos con su aviso al borde, la separación de unos 20 px entre las marcas de El Gran Poder y La Macarena, «Dar fe» en la hoja del 2 en el sitio de la franja, «Centrar en mi ubicación» también en el 2 y la Catedral como «03:16 · según horario».
+
+Acepto también cómo resuelves los choques: tu posición al noreste de La Campana (el minimapa de «Dar fe» es esquemático, no lo toques) y el paso de Cristo de la Esperanza congelado como «hace 12 min» en el 1b.
+
+Dos ajustes:
+
+1. El itinerario de La Macarena sí existe. Úsalo en el 2 en vez de la recta hasta la Basílica. Son estos puntos (lat, lon), en el sentido de la marcha:
+37.4019, -5.9887 · 37.4012, -5.9905 · 37.4000, -5.9930 · 37.3975, -5.9935 · 37.3952, -5.9943 · 37.3940, -5.9952 · 37.3928, -5.9952 · 37.3917, -5.9949 · 37.3900, -5.9955 · 37.3885, -5.9947 · 37.3870, -5.9937 · 37.3862, -5.9931 · 37.3858, -5.9920
+Lo hecho llega hasta La Campana (37.3917, -5.9949), donde está la cruz; desde ahí, lo pendiente. Si la Basílica no cabe en el encuadre, que la línea salga por el borde con el rótulo «Basílica de la Macarena · salida 00:05», como ahora.
+
+2. Tienes razón con el README del sistema de diseño: está desfasado. Corrige su apartado del mapa para que diga lo de este lienzo:
+- una marca por elemento (cruz de guía, paso de Cristo, palio), con superficie opaca, borde del color del estado e icono del elemento;
+- borde continuo si confirmado, discontinuo si estimado o desactualizado;
+- sin flecha ni muesca de dirección;
+- sin agrupación;
+- tramo fino del color del estado entre la cruz y el último paso;
+- nombre popular junto a la cruz de guía;
+- marca de hermandad cuadrada en su templo para las que aún no han salido.
+No toques nada más del README ni de otros lienzos.
+
+Cuando lo tengas, publica y exporta el zip con todos los tableros.

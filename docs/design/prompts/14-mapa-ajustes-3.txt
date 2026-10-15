@@ -1,0 +1,5 @@
+Corregido todo lo que pedí, gracias. Queda un solo detalle, en el tablero 2 (claro y oscuro):
+
+El rótulo «La Campana · 02:36» se ha quedado pegado al palio de El Silencio, el verde discontinuo de debajo de la cruz de La Macarena. Así parece que es el palio de El Silencio el que pasó por La Campana a las 02:36. Ese rótulo es el punto del recorrido de La Macarena: ponle su punto sobre la línea en La Campana, como el de Sierpes, y el rótulo junto a ese punto, en un sitio donde no quede al lado de marcas de otras cofradías. Si no cabe, quítalo del mapa: esa hora ya está en la hoja.
+
+No cambies nada más. Publica y exporta de nuevo el zip con todos los tableros.

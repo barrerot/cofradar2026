@@ -1,0 +1,9 @@
+Gracias por la sección de iconos: me parece bien. He revisado los 10 PNG. El planteamiento funciona, pero en los tableros 3, 1b y 2 hay rótulos colocados donde no van. La regla para todos: ningún rótulo ni tarjeta tapa una marca, y cada rótulo va pegado a la marca de la que habla.
+
+1. Tablero 3 · detalle del palio (claro y oscuro). El rótulo «Palio · La Macarena» está junto al palio de El Gran Poder, el verde discontinuo de arriba a la izquierda, junto a Alfonso XII. Tiene que ir junto al palio de La Macarena, el ámbar discontinuo de la Plaza del Duque. Ese palio es el seleccionado: ponlo a 40 px, como la cruz en el 3b. Además, el rótulo «La Macarena» de la cruz se corta por el borde derecho; muévelo para que se lea entero.
+
+2. Tablero 1b · sin conexión. El rótulo «hace 14 min» de la cruz de La Macarena tapa el paso de Cristo de la Esperanza de Triana, la marca roja de al lado. Muévelo. La tarjeta de Los Gitanos tapa tu posición; deja las dos a la vista.
+
+3. Tablero 2 · mapa de La Macarena (claro y oscuro). El rótulo «hace 23 min» del palio de El Silencio tapa el palio de la Esperanza de Triana, el rojo discontinuo junto a Tetuán. Muévelo. La tarjeta de Los Gitanos tapa marcas en Sierpes: en este tablero, que sea un aviso compacto de una línea en un borde libre del mapa, por ejemplo «G Los Gitanos · 03:00 · al noreste».
+
+No cambies nada más. Cuando lo tengas, publica y exporta de nuevo el zip con todos los tableros.

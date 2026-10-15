@@ -20,7 +20,7 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `3-mapa/07-4-agrupacion-nivel-3` y `08-4-deshacer-el-grupo`: sin agrupación de marcas.
 - `3-mapa/09-5-filtros-en-la-cabecera` y `10-5-finalizadas-trae-a-el-calvario`: el mapa no tiene filtros.
 - `3-mapa/13-7-centrado-en-un-hito…`: los hitos ya no son tocables.
-- **El resto de `3-mapa/`**: la marca con flecha de dirección y el «final» del cortejo ya no existen. Se revisa en BUL-197.
+- **Las fichas numeradas de `3-mapa/` (01 a 14)**: la marca con flecha de dirección y el «final» del cortejo ya no existen. Las sustituyen las `mapa-*` (BUL-197).
 - **Las fichas numeradas de `4-cofradias/` (01 a 08)**: llevan búsqueda global en la cabecera. Las sustituyen las `cofradias-*`, `ficha-*` y `recorrido-*` (BUL-193).
 
 ## 1-marco
@@ -71,6 +71,29 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 - `08-selector-de-ciudad-y-jornada-desde-la-cabecera` — SELECTOR DE CIUDAD Y JORNADA · DESDE LA CABECERA
 
 ## 3-mapa
+
+**Vigentes** · lienzo «Cofradar · Mapa» (https://claude.ai/artifact/Asf77skgP8xGzthvyeFmRK), aprobado el 15 de octubre de 2026 en BUL-197. Solo PNG, a 780 de ancho (390 a 2×). Datos del fixture; distancias rotuladas «Ejemplo».
+
+**Cartografía:** el callejero está dibujado a mano sobre los puntos de referencia, con las calles aproximadas. Sirve para juzgar las marcas, no el mapa. En producción será OpenStreetMap con MapLibre (D36).
+
+**Cómo funciona el mapa:**
+- Una marca por elemento: cruz de guía, paso de Cristo y palio, con iconos provisionales.
+- Cada marca lleva el borde del color del estado: continuo si está confirmada, discontinuo si es estimada o desactualizada.
+- Sin flecha y sin agrupación.
+- Un tramo fino del color del estado une la cruz con el último paso.
+- El nombre popular va junto a la cruz.
+- Ningún rótulo tapa una marca, y cada rótulo va pegado a la suya.
+
+**Las fichas:**
+- `mapa-1-general-{claro,oscuro}` — 1 · MAPA GENERAL · MADRUGÁ 02:40 · CON UBICACIÓN. Tu posición, al noreste de La Campana. Los Gitanos (inminente) aparecen como aviso al borde: «Fuera del mapa, al noreste». El Calvario (finalizada) no sale. Las marcas de El Gran Poder y La Macarena, que comparten calle, van separadas unos 20 px.
+- `mapa-1a-sin-ubicacion-claro` — 1a · SIN UBICACIÓN. Sin punto ni «Centrar»; no se pide nada.
+- `mapa-1b-sin-conexion-claro` — 1b · SIN CONEXIÓN. Todas las marcas discontinuas. Solo llevan etiqueta de antigüedad las que no tienen los 12 min del aviso: la cruz de La Macarena («hace 14 min», como en Inicio E) y El Silencio («hace 23 min»).
+- `mapa-1c-sin-cartografia-claro` — 1c · SIN CARTOGRAFÍA. «No podemos dibujar el mapa, pero sabemos dónde van», con la lista por hermandad y elemento.
+- `mapa-2-cofradia-{claro,oscuro}` — 2 · MAPA DE LA MACARENA. El recorrido del fixture: hecho en verde continuo hasta La Campana y pendiente en discontinuo. La Basílica sale por el borde. Las demás cofradías van en segundo plano, más pequeñas. En la hoja asomada, las horas, el 64 % y «Dar fe» en el sitio de la franja.
+- `mapa-3-palio-{claro,oscuro}` — 3 · DETALLE DEL PALIO DE LA MACARENA. «Nadie ha dado fe del palio todavía» y «A unos 350 m · parece alcanzable» (ejemplo). Debajo, el resto de la cofradía.
+- `mapa-3b-cruz-claro` — 3b · DETALLE DE LA CRUZ DE GUÍA. «Vista hace 4 min» y «A unos 300 m» (ejemplo).
+
+**Superadas**, se conservan como histórico:
 
 - `01-1-vista-general-nivel-1-madruga-02-40` — 1 · VISTA GENERAL · NIVEL 1 · MADRUGÁ, 02:40
 - `02-2-vista-rapida-sheet-asomado-sobre-la-macarena` — 2 · VISTA RÁPIDA · SHEET ASOMADO SOBRE LA MACARENA
