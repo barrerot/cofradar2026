@@ -601,7 +601,7 @@ Temporal, ordenada, y siempre hay exactamente una.
 | `en_calle` | Realizando el recorrido | `--cf-live` | Punto, `fill` | «En la calle» |
 | `proxima_entrada` | De regreso, próxima a entrar | `--cf-warn` | Flecha de retorno, `fill` | «Próxima a entrar» |
 | `finalizada` | Ya ha entrado | `--cf-idle` | Check, `regular` | «Finalizada» |
-| `cancelada` | **Terminal.** Debía procesionar y la hermandad decide **antes de salir** que no realiza estación de penitencia. No llega a estar en la calle | `--cf-alert` | Círculo tachado, `fill` | «No realiza estación» |
+| `cancelada` | **Terminal.** Debía procesionar y la hermandad decide **antes de salir** que no realiza estación de penitencia. No llega a estar en la calle | `--cf-alert` | Círculo tachado, `fill` | «Cancelada» |
 | `no_procesiona` | No es su día. Para cuando se consulta su ficha fuera de jornada | `--cf-idle` | Calendario, `regular` | «Hoy no procesiona» |
 
 #### La fase también es un dato, y lleva su confianza

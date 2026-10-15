@@ -19,7 +19,7 @@ Muestra la fase de una cofradía (uno y solo uno de los siete estados canónicos
 Contorno SVG (`.cf-outline`) con trazo 1,5px en el color base (`--cf-<estado>`): continuo si confirmado, `--cf-dash-pattern` si estimado o desactualizado. Icono 16 bold en el color base. Texto en `--cf-<estado>-text`. Coletilla en `--cf-text-secondary`.
 
 ## Reglas
-- Nunca fusionar, reinterpretar ni crear fases. «No realiza estación · según horario» no existe.
+- Nunca fusionar, reinterpretar ni crear fases. «Cancelada · según horario» no existe.
 - La confianza nunca va solo en el trazo: estimado añade «· según horario»; desactualizado añade el icono de desfase y «· hace N min».
 - En la calle nunca se representa con un pin.
 - Familias: `en_calle` live · `inminente` y `proxima_entrada` warn (los dos umbrales del recorrido) · `prevista`, `finalizada`, `no_procesiona` idle · `cancelada` alert.
