@@ -114,3 +114,16 @@ erDiagram
 | | `orden` | orden de paso dentro de la salida y la referencia, desde 1 | `7` |
 
 Los CSV van en UTF-8, separados por comas; los textos con comas, entre comillas. Los datos inventados de `mock/` son solo para diseñar y no se mezclan con estos.
+
+## Comprobar
+
+```sh
+python3 docs/datos/verificar.py
+```
+
+Revisa los ocho CSV y dice archivo, fila y columna de cada problema:
+
+- **Errores**: un `id` repetido o que no es un número, una columna obligatoria vacía, un `*_id` que apunta a una fila que no existe, un valor fuera de los permitidos (`tipo`, `referencia`, `hora_publicada`), una `fecha_hora` mal escrita, coordenadas fuera de Sevilla, dos pasos con el mismo orden en una hermandad y horas que van hacia atrás dentro de una salida (lo normal es olvidar cambiar el día tras la medianoche).
+- **Avisos**: dos puntos que parecen el mismo lugar escrito de dos formas («La Campana» y «Campana»), un templo cuyo punto no es de tipo `templo`, más de tres pasos en una hermandad o dos salidas de la misma hermandad en un año.
+
+Los puntos sin coordenadas no son error: durante el inventario se cuentan aparte.
