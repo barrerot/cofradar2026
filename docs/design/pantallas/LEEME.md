@@ -86,7 +86,7 @@ Estas fichas se hicieron antes de la revisión del PRD y **no deben usarse como 
 
 **Las fichas:**
 - `mapa-1-general-{claro,oscuro}` — 1 · MAPA GENERAL · MADRUGÁ 02:40 · CON UBICACIÓN. Tu posición, al noreste de La Campana. Los Gitanos (inminente) aparecen como aviso al borde: «Fuera del mapa, al noreste». El Calvario (finalizada) no sale. Las marcas de El Gran Poder y La Macarena, que comparten calle, van separadas unos 20 px.
-- `mapa-1a-sin-ubicacion-claro` — 1a · SIN UBICACIÓN. Sin punto ni «Centrar»; no se pide nada.
+- `mapa-1a-sin-ubicacion-claro` — 1a · SIN UBICACIÓN, DENEGADA O BLOQUEADA. Sin punto ni «Centrar»; no se pide nada. Si nunca se ha pedido, lleva «Centrar en mi ubicación»: ver `8-acceso/acceso-4a`.
 - `mapa-1b-sin-conexion-claro` — 1b · SIN CONEXIÓN. Todas las marcas discontinuas. Solo llevan etiqueta de antigüedad las que no tienen los 12 min del aviso: la cruz de La Macarena («hace 14 min», como en Inicio E) y El Silencio («hace 23 min»).
 - `mapa-1c-sin-cartografia-claro` — 1c · SIN CARTOGRAFÍA. «No podemos dibujar el mapa, pero sabemos dónde van», con la lista por hermandad y elemento.
 - `mapa-2-cofradia-{claro,oscuro}` — 2 · MAPA DE LA MACARENA. El recorrido del fixture: hecho en verde continuo hasta La Campana y pendiente en discontinuo. La Basílica sale por el borde. Las demás cofradías van en segundo plano, más pequeñas. En la hoja asomada, las horas, el 64 % y «Dar fe» en el sitio de la franja.
@@ -183,3 +183,20 @@ Reglas que fija: tocar una opción lleva al paso siguiente (sin botón «Continu
 - `ajustes-claro` — AJUSTES (P-25). Apariencia, máximo contraste, ubicación «No permitida» con «Permitir». El texto dice para qué la pedimos y que sin ella Cofradar funciona igual.
 - `ajustes-ubicacion-bloqueada-claro` — AJUSTES · UBICACIÓN BLOQUEADA EN EL NAVEGADOR. Mismo texto y el aviso «Puedes cambiarlo en los permisos de tu navegador».
 - `ayuda-y-fuentes-claro` — AYUDA Y FUENTES (P-26). Cómo leer los trazos y colores, de dónde salen los datos y © OpenStreetMap.
+
+## 8-acceso
+
+**Vigentes** · lienzo «Cofradar · Arranque y acceso» (https://claude.ai/artifact/X23AUrqSFpBsFg5nSLtjRJ), aprobado el 15 de octubre de 2026 en BUL-198. Solo PNG, a 780 de ancho (390 a 2×). Las pantallas de fondo son copias sin redibujar de Inicio, Dar fe, Mi Cofradar y Mapa.
+
+Regla que fija: no se pide nada antes de que haga falta. La cuenta se pide al ir a participar y la ubicación, cuando la persona toca algo que la necesita. Nunca dos veces y nunca con tono de amenaza.
+
+Hojas: la que interrumpe y espera respuesta (Dar fe, ubicación) llega hasta abajo y tapa la barra de navegación, con el fondo oscurecido; la informativa (las del Mapa) se apoya sobre la barra. Así lo dice el README del sistema.
+
+- `acceso-1-arranque-{claro,oscuro}` — 1 · ARRANQUE (P-01). Solo «Cofradar» en Newsreader. Solo la primera vez o sin datos guardados; si hay datos, se abre el último estado conocido.
+- `acceso-2-introduccion-{claro,oscuro}` — 2 · INTRODUCCIÓN (P-02), solo la primera vez. Una pantalla editorial con tres ideas y un único botón, «Empezar»; sin «Saltar».
+- `acceso-3a-vuelta-dar-fe-claro` — 3a · VUELTA DE GOOGLE DESDE DAR FE (P-03). No hay hoja intermedia: «Entrar con Google y dar fe» abre Google y, al volver, la aportación se envía sola. Panel «Hecho» con «Has entrado con tu cuenta de Google.»
+- `acceso-3b-vuelta-mi-cofradar-claro` — 3b · VUELTA DE GOOGLE DESDE MI COFRADAR. «Has entrado. Lo que tenías en este teléfono ya está en tu cuenta.» (se va solo); Seguidas 2 y colección 2 de 7 se conservan; aparece la fila Cuenta.
+- `acceso-3c-no-se-pudo-entrar-claro` — 3c · NO SE PUDO ENTRAR. Vuelve a Confirmar con todo igual y el aviso azul «No has entrado con Google. Tu aportación sigue aquí.» Nunca rojo ni «error».
+- `acceso-4a-mapa-sin-pedir-claro` — 4a · MAPA SIN UBICACIÓN, NUNCA PEDIDA (P-04). El 1a del Mapa con «Centrar en mi ubicación». Si la persona dijo que no o está bloqueada, el botón no aparece.
+- `acceso-4b-hoja-ubicacion-{claro,oscuro}` — 4b · «¿USAR TU UBICACIÓN?». Mismo texto que Ajustes; «Permitir» lanza el aviso del navegador y «Ahora no» cierra la hoja (el botón sigue en el mapa). Si en el aviso del navegador dice que no, el botón desaparece. Desde Ajustes, «Permitir» lanza el aviso directamente, sin hoja.
+- `acceso-4c-bloqueada-claro` — 4c · BLOQUEADA EN EL NAVEGADOR. «Tu navegador tiene bloqueada la ubicación para Cofradar.» y «Entendido», sin pasos de ningún navegador concreto.

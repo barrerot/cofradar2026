@@ -1,0 +1,12 @@
+Buen trabajo. Acepto tus cuatro decisiones: la fila «Cuenta · nombre@ejemplo.com» y el aviso fijo en el 3b, la primera frase como título en el 4c, los iconos en recuadro de la Introducción y «Cofradar» a 44 px en el Arranque.
+
+Los dos choques:
+
+1. La capa. Tienes razón: «capa opaca» fue un error del brief. Se queda el oscurecido del sistema (55 % en claro, 60 % en oscuro, sin desenfoque).
+
+2. Dónde se apoya la hoja. Valen las dos cosas, según el tipo de hoja:
+- Hoja que interrumpe y espera respuesta (las de «Dar fe», la de ubicación): llega hasta abajo y tapa la barra de navegación. Mientras está abierta no se puede ir a otra pestaña: o respondes o la cierras.
+- Hoja informativa que convive con la pantalla (las del Mapa con la cofradía o el elemento): se apoya sobre la barra de navegación y no la tapa.
+Cambia la hoja de ubicación (4b claro y oscuro, 4c) a la primera forma: que llegue hasta abajo del todo, tapando la barra, y que el oscurecido cubra también la barra. Corrige el README del sistema de diseño para que diga esta distinción en lugar de «nunca la tapa». No toques los lienzos «Dar fe» ni «Mapa».
+
+No cambies nada más. Cuando lo tengas, publica y exporta el zip con todos los tableros.
