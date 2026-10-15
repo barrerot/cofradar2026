@@ -1,0 +1,37 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Estados». Móvil 390 × 844, mobile-first. Español de España.
+- Usa solo los datos de ejemplo de los lienzos aprobados. No inventes nombres, cifras ni textos fuera de los de este brief.
+- Los lienzos «Armazón», «Inicio», «Cofradías», «Agenda», «Mi Cofradar», «Dar fe», «Mapa» y «Arranque y acceso» están aprobados y mandan. Las pantallas de fondo se copian de ellos tal cual, sin redibujarlas. Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+LA REGLA DE ESTA ÁREA
+Una actualización nunca borra información que todavía sirve, y un dato guardado no se presenta como actual. Nunca un indicador de carga que tape o bloquee la pantalla.
+
+YA APROBADOS, NO LOS DIBUJES
+Cuatro de los ocho estados ya existen y se quedan como están:
+- No hay nada en la calle: Inicio C (sin actividad, con la próxima salida).
+- Sin datos de un campo: «Dato pendiente», en la ficha de La Soledad de San Lorenzo (Cofradías 2F).
+- Sin conexión con datos: Inicio E, el armazón 5 y el Mapa 1b.
+- Sin cartografía: Mapa 1c.
+Este lienzo dibuja los otros cuatro, siempre sobre Inicio de la Madrugá.
+
+ESTILO
+- El del sistema de diseño Cofradar, como en los lienzos aprobados. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados, spinners.
+- Inter para todo dato; Newsreader para nombres de hermandades y títulos editoriales. Nada por debajo de 12 px; 16 px para leer.
+- Tema claro: fondo #FBF9F5, superficie #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC, relleno #F4F2ED. Información azul #14537A (texto #0F3F5C, fondo #E4EFF6). Botón primario en tinta. Nunca rojo en estos estados: no son incidencias de la calle.
+- Toque mínimo 48 px. Iconos Phosphor.
+- Tema oscuro cálido: fondo #15120F, texto #F5F1EA.
+
+PANTALLAS
+
+1. PRIMERA CARGA. Justo después de «Empezar» en la Introducción, la primera vez, mientras llegan los datos y no hay nada guardado. Cabecera del armazón con «Madrugá ▾» (la jornada se sabe por la fecha) y, a la derecha, el indicador de sincronización como en el estado 2. Debajo, el esqueleto de Inicio: bloques y filas en el relleno #F4F2ED con la misma forma y el mismo sitio que el aviso, «Cerca de ti» y las filas de «En la calle» de Inicio A. Sin texto, sin spinner, sin animación brillante. Barra de navegación visible. Sin franja «Dar fe»: todavía no sabemos si hay cofradías en la calle. Anota: «Es el único estado con esqueleto. Si hay algo guardado, se enseña lo guardado.»
+
+2. REFRESCANDO. Inicio A tal cual, completo y usable. Lo único que cambia es el indicador de la cabecera: las flechas circulares y el texto «actualizando» en lugar de «hace 1 min». Nada se tapa ni se atenúa. Anota: «Las flechas giran mientras dura. Al terminar vuelve a "hace 1 min". Si falla con datos en pantalla, los datos se quedan y el indicador sigue diciendo cuándo fue el último dato, como en sin conexión.»
+
+3. SIN CONEXIÓN, SIN NADA GUARDADO. La primera vez, sin conexión y sin datos. Cabecera del armazón con «Madrugá ▾» y el indicador sin conexión (nube tachada) con el texto «sin conexión», porque no hay último dato. En el centro, icono de nube tachada en contorno, «Necesitas conexión para verlo la primera vez.» y debajo, en secundario, «Cuando vuelva, se cargará solo.» Botón secundario «Reintentar». Barra de navegación visible, sin franja «Dar fe». Tiene que verse distinto de Inicio C (no hay nada en la calle): aquí no sabemos nada; allí sabemos que no hay nada.
+
+4. ERROR. La primera vez, con conexión, pero los datos no llegan por un fallo nuestro y no hay nada guardado. Mismo esquema que el 3, con icono de aviso en contorno (no rojo), «Algo ha fallado.» y «Inténtalo de nuevo en un momento.», y botón «Reintentar». Sin códigos ni jerga. El indicador de la cabecera, sin texto de antigüedad. Anota: «Solo cuando no hay nada que enseñar. Si hay datos guardados, se enseñan y no hay pantalla de error.»
+
+Claro en todos los tableros. En oscuro, además: 1 y 3.
