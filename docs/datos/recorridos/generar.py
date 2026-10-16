@@ -11,7 +11,9 @@ from nombres import mejor, plano
 
 CATEDRAL = {"manual": "Catedral: interior sin dato (Puerta de San Miguel → Puerta de los Palos)",
             "puntos": [[37.3855144, -5.9938093], [37.3860529, -5.9925407]]}
-CARRERA = [{"via": [37.39261, -5.99517]}, "Calle Sierpes", "Plaza de San Francisco",
+# La carrera oficial empieza en la Campana: se llega sin pisar Sierpes fuera de la plaza (si no, el trazador
+# entra por una bocacalle a mitad de Sierpes, sube hasta la Campana y vuelve a bajar)
+CARRERA = [{"via": [37.39261, -5.99517], "nombre": "La Campana", "evitar": ["Calle Sierpes"], "radio_libre": 31}, "Calle Sierpes", "Plaza de San Francisco",
            "Avenida de la Constitución", CATEDRAL]
 
 JORNADAS = {2: "Viernes de Dolores", 4: "Domingo de Ramos", 6: "Lunes Santo", 8: "Martes Santo",

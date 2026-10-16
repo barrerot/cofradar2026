@@ -72,8 +72,9 @@ def cercano(p):
             return min(cand, key=lambda n: dist(nodos[n], p))
     return min(grafo, key=lambda n: dist(nodos[n], p))
 
-def ruta(origen, destinos, permitidas):
-    """Dijkstra hasta el primer nodo de destinos; fuera de las calles permitidas cuesta 25 veces más."""
+def ruta(origen, destinos, permitidas, prohibidos=frozenset()):
+    """Dijkstra hasta el primer nodo de destinos; fuera de las calles permitidas cuesta 25 veces más.
+    Los nodos `prohibidos` no se pisan."""
     cola, previo, coste = [(0, origen)], {origen: None}, {origen: 0}
     while cola:
         c, n = heapq.heappop(cola)
@@ -85,6 +86,8 @@ def ruta(origen, destinos, permitidas):
         if c > coste[n]:
             continue
         for v, m, nn, _ in grafo[n]:
+            if v in prohibidos:
+                continue
             nc = c + m * (1 if nn in permitidas else 25)
             if nc < coste.get(v, 1e18):
                 coste[v], previo[v] = nc, n
@@ -113,6 +116,14 @@ def medias_vueltas(linea):
             while k - 1 - j >= 0 and k + 1 + j < len(linea) and linea[k - 1 - j] == linea[k + 1 + j]:
                 metros += dist(linea[k - 1 - j][::-1], linea[k - j][::-1]); j += 1
     return n, metros
+
+def a_evitar(punto):
+    """Para un punto de paso con "evitar": [calles], los nodos de esas calles a más de "radio_libre" m del punto.
+    Sirve para llegar a la Campana sin entrar en Sierpes por una bocacalle y subir hasta la plaza."""
+    if not isinstance(punto, dict) or "evitar" not in punto:
+        return frozenset()
+    p, libre = punto["via"], punto.get("radio_libre", 30)
+    return frozenset(v for c in punto["evitar"] for v in por_calle.get(norm(c), ()) if dist(nodos[v], p) > libre)
 
 def cerca(nodos_calle, desde, radio=2000):
     """Nodos de una calle a menos de `radio` metros de `desde` (si no hay, todos)."""
@@ -160,7 +171,7 @@ def trazar(rec):
             destinos, permitidas = {cercano(paso["via"])}, set()
             if actual in destinos:
                 continue
-            camino = ruta(actual, destinos, permitidas)
+            camino = ruta(actual, destinos, permitidas, a_evitar(paso))
             if not camino:
                 avisos.append("no hay camino hasta el punto %s" % paso.get("nombre", paso["via"])); continue
             for a, b in zip(camino, camino[1:]):
@@ -199,7 +210,8 @@ def trazar(rec):
                     continue
             else:
                 destinos = cerca(por_calle[n], actual)
-        camino = ruta(actual, destinos, permitidas)
+        siguiente = pasos[i + 1] if i + 1 < len(pasos) and not (isinstance(paso, dict) and "fin" in paso) else None
+        camino = ruta(actual, destinos, permitidas, a_evitar(siguiente))
         if not camino:
             avisos.append("no hay camino hacia «%s»" % paso); continue
         for a, b in zip(camino, camino[1:]):
