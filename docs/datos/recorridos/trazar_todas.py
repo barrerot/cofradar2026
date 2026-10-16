@@ -13,11 +13,8 @@ for f in sorted(glob.glob("rec/[0-9]*.json")):
     if sal is None:
         informe.append({"n": n, "nombre": rec["nombre"], "error": avisos}); continue
     linea = sal["features"][0]["geometry"]["coordinates"]
-    # media vuelta: el trazado vuelve por el mismo segmento por el que acaba de pasar
-    vueltas, m_vueltas = 0, 0
-    for a, b, c in zip(linea, linea[1:], linea[2:]):
-        if a == c and a != b:
-            vueltas += 1; m_vueltas += T.dist(a[::-1], b[::-1])
+    # media vuelta: el trazado vuelve por el mismo sitio por el que acaba de pasar (se cuenta todo lo desandado)
+    vueltas, m_vueltas = T.medias_vueltas(linea)
     ajenas = sum(m for c, m in sal["features"][0]["properties"]["calles"] if c and not c.startswith("["))
     props = sal["features"][0]["properties"]
     informe.append({"n": n, "nombre": rec["nombre"], "metros": props["metros"], "medias_vueltas": vueltas,

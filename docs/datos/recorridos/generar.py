@@ -341,7 +341,7 @@ def coste(rec):
     if sal is None:
         return 1e12
     linea = sal["features"][0]["geometry"]["coordinates"]
-    vueltas = sum(T.dist(a[::-1], b[::-1]) for a, b, c in zip(linea, linea[1:], linea[2:]) if a == c and a != b)
+    _, vueltas = T.medias_vueltas(linea)
     return sal["features"][0]["properties"]["metros"] + 5 * vueltas
 
 def mejorar_orden(rec, fuentes):

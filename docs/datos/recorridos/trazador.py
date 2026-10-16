@@ -77,7 +77,7 @@ def ruta(origen, destinos, permitidas):
     cola, previo, coste = [(0, origen)], {origen: None}, {origen: 0}
     while cola:
         c, n = heapq.heappop(cola)
-        if n in destinos and n != origen:
+        if n in destinos:   # si ya está en la calle siguiente (un cruce), no se mueve
             camino = []
             while n is not None:
                 camino.append(n); n = previo[n]
@@ -101,6 +101,18 @@ def pegar(p, calle, radio=120):
             if dist(nodos[v], p) < radio:
                 return v
     return cercano(p)
+
+def medias_vueltas(linea):
+    """Medias vueltas de una línea [[lon, lat], ...]: cuántas y cuántos metros se desandan en total.
+    Cuenta todo el tramo que se recorre de vuelta por el mismo sitio, no solo el último segmento."""
+    n, metros = 0, 0.0
+    for k in range(1, len(linea) - 1):
+        if linea[k - 1] == linea[k + 1] and linea[k - 1] != linea[k]:
+            n += 1
+            j = 0
+            while k - 1 - j >= 0 and k + 1 + j < len(linea) and linea[k - 1 - j] == linea[k + 1 + j]:
+                metros += dist(linea[k - 1 - j][::-1], linea[k - j][::-1]); j += 1
+    return n, metros
 
 def cerca(nodos_calle, desde, radio=2000):
     """Nodos de una calle a menos de `radio` metros de `desde` (si no hay, todos)."""
