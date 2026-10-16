@@ -70,11 +70,11 @@ claro por defecto.
 
 La fuente son los **horarios e itinerarios públicos del Consejo General de Hermandades y Cofradías de Sevilla**, citados siempre; **no se usan los cuadrantes de los medios**. El horario del Consejo marca la **cruz de guía y el palio** por todas las calles del recorrido, cada 30 minutos, y se traduce a puntos con latitud y longitud. Los pasos que van entre ambos se interpolan. Se trabaja con los horarios de 2026 y se actualiza con los de 2027 en cuanto se publiquen. **Cada dato lleva registrada su `fuente`** y un cambio de última hora **se corrige y se anota, nunca se sobrescribe en silencio**.
 
-El modelo de datos son ocho entidades, una por CSV, descritas con su diagrama en [`docs/datos/MODELO.md`](docs/datos/MODELO.md).
+El modelo de datos son ocho entidades, una por CSV, descritas con su diagrama en [`docs/datos/MODELO.md`](docs/datos/MODELO.md). Allí está también el concepto del **GPS social** (cómo se validarán las aportaciones de «Dar fe» contra el itinerario), en diseño y sin implementar.
 
 | Archivo | Qué contiene |
 |---|---|
-| `punto_geografico.csv` | Cada lugar del horario, con sus coordenadas, una sola vez |
+| `punto_geografico.csv` | Cada lugar del horario, una sola vez, con su punto representativo y su trazado (`geometria`) |
 | `templo.csv` | Los templos, cada uno sobre su punto geográfico |
 | `hermandad.csv` | Lo que no cambia de un año a otro: nombres, templo, hermanos, nazarenos |
 | `paso.csv` | Los pasos de cada hermandad, en el orden del cortejo |
