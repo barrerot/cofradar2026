@@ -75,7 +75,7 @@ El modelo de datos son ocho entidades, una por CSV, descritas con su diagrama en
 
 | Archivo | Qué contiene |
 |---|---|
-| `punto_geografico.csv` | Cada lugar del horario, una sola vez, con su punto representativo y su trazado (`geometria`) |
+| `punto_geografico.csv` | Cada lugar del horario, una sola vez, con su punto representativo; su trazado va aparte, en `punto_geografico.geojson` (pendiente, BUL-168) |
 | `templo.csv` | Los templos, cada uno sobre su punto geográfico |
 | `hermandad.csv` | Lo que no cambia de un año a otro: nombres, templo, hermanos, nazarenos |
 | `paso.csv` | Los pasos de cada hermandad, en el orden del cortejo |

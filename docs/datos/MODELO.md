@@ -12,7 +12,6 @@ erDiagram
         string tipo
         decimal latitud
         decimal longitud
-        string geometria
     }
 
     TEMPLO {
@@ -90,13 +89,13 @@ erDiagram
 
 - **Hermandad y salida van separadas.** La hermandad es lo que no cambia; la salida es su estación de penitencia en una jornada de un año (`EDICION`). Los horarios de 2027 se añaden como salidas nuevas, sin tocar los de 2026.
 - **Cada lugar se da de alta una sola vez** en `PUNTO_GEOGRAFICO` y lo comparten todas las hermandades. Los nombres se normalizan a mano: no hay alias.
-- **`geometria`** guarda el trazado del lugar en GeoJSON (añadido el 16 de octubre de 2026 para el GPS social). Una coordenada sola no basta para saber si alguien está cerca de una calle larga: en Sierpes, una persona a 200 m del punto representativo puede estar en plena calle. `latitud` y `longitud` siguen siendo el punto representativo, el que se usa para centrar el mapa o rotular.
+- **La geometría de cada lugar** (su trazado) va en un archivo aparte, **`punto_geografico.geojson`**, no en una columna del CSV (decisión del 16 de octubre de 2026, para el GPS social). Es un `FeatureCollection` con un `Feature` por punto, y su `properties.id` es el `id` de `punto_geografico.csv`. Una coordenada sola no basta para saber si alguien está cerca de una calle larga: en Sierpes, una persona a 200 m del punto representativo puede estar en plena calle. `latitud` y `longitud` siguen en el CSV como punto representativo, el que se usa para centrar el mapa o rotular.
   - Calles y vías: `LineString`, o `MultiLineString` si la calle está partida en tramos.
-  - Templos y lugares puntuales: `Point`, o vacía cuando repetiría `latitud` y `longitud`.
+  - Templos y lugares puntuales: `Point`, o sin `Feature` cuando repetiría `latitud` y `longitud`.
   - Se obtiene de OpenStreetMap con consultas automáticas y se revisan a mano las coincidencias ambiguas.
   - Una calle sigue siendo **un solo registro** aunque pasen por ella muchas hermandades.
   - La geometría es de la calle entera: **no dice qué tramo ocupa una hermandad**. Eso sale de combinarla con el orden del itinerario, los horarios y las aportaciones.
-  - El almacenamiento definitivo (en la celda del CSV o en archivos asociados) está por decidir: ver «GPS social · abierto».
+  - Va aparte porque un trazado no cabe cómodo en una celda (las comillas dobladas lo hacen ilegible y fácil de romper) y porque así se abre directamente en cualquier visor de mapas.
 - **`referencia`** dice a qué parte del cortejo corresponde la hora: `cruz_guia` o `ultimo_paso`.
 - **`hora_publicada`** distingue la hora que viene del documento (`si`) de una estimada (`no`).
 - **`fecha_hora`** lleva fecha y hora, porque la Madrugá cruza la medianoche: `2026-04-03T00:30` va después de `2026-04-02T23:50`.
@@ -109,7 +108,7 @@ erDiagram
 |---|---|---|---|
 | `punto_geografico.csv` | `tipo` | `calle`, `plaza`, `templo`, `puente` u `otro` | `plaza` |
 | | `latitud`, `longitud` | grados decimales, 5 decimales; en calles largas, un punto del tramo por donde pasan las cofradías | `37.39170`, `-5.99490` |
-| | `geometria` | solo el objeto `geometry` de GeoJSON, en una línea y entre comillas. **Ojo: GeoJSON va longitud primero** | `"{""type"":""LineString"",""coordinates"":[[-5.99490,37.39170],[-5.99460,37.39320]]}"` |
+| `punto_geografico.geojson` | un `Feature` por punto | `properties.id` = `id` del CSV; `geometry` = `LineString`, `MultiLineString` o `Point`. **Ojo: GeoJSON va longitud primero** | `{"type":"Feature","properties":{"id":16},"geometry":{"type":"LineString","coordinates":[[-5.99490,37.39170],[-5.99460,37.39320]]}}` |
 | `templo.csv` | `punto_geografico_id` | id del punto donde está el templo | `16` |
 | `hermandad.csv` | `nombre` | el popular, como se usa en la app | `La Macarena` |
 | | `nombre_oficial` | la denominación completa | `Real, Ilustre y Fervorosa Hermandad…` |
@@ -122,7 +121,7 @@ erDiagram
 | | `hora_publicada` | `si` o `no` | `si` |
 | | `orden` | orden de paso dentro de la salida y la referencia, desde 1 | `7` |
 
-Los CSV van en UTF-8, separados por comas; los textos con comas, entre comillas (y las comillas de dentro, dobladas, como en el ejemplo de `geometria`). Los datos inventados de `mock/` son solo para diseñar y no se mezclan con estos.
+Los CSV van en UTF-8, separados por comas; los textos con comas, entre comillas (y las comillas de dentro, dobladas). Los datos inventados de `mock/` son solo para diseñar y no se mezclan con estos.
 
 ## Comprobar
 
@@ -137,7 +136,7 @@ Revisa los ocho CSV y dice archivo, fila y columna de cada problema:
 
 Los puntos sin coordenadas no son error: durante el inventario se cuentan aparte.
 
-> **Pendiente (BUL-168):** `punto_geografico.csv` y el comprobador todavía no tienen la columna `geometria`. Se añadirán a la vez en BUL-168: si se añadiera solo al CSV, el comprobador daría error de cabecera.
+> **Pendiente (BUL-168):** `punto_geografico.geojson` todavía no existe y el comprobador no lo revisa. Se añadirán a la vez en BUL-168: GeoJSON válido, cada `id` presente en el CSV y sin repetir, tipo de geometría permitido y dentro de Sevilla.
 
 ## GPS social · concepto
 
@@ -211,7 +210,7 @@ No significan lo mismo y no se tratan igual:
 |---|---|---|
 | `punto_itinerario` (`orden`) | Por qué lugares pasa y en qué orden | La Macarena: … → Campana → Sierpes → Plaza de San Francisco → … |
 | `punto_itinerario` (`fecha_hora`, `referencia`) | A qué hora debería estar la cruz de guía o el último paso en cada lugar (la previsión) | Cruz de guía en la Campana a las `2026-04-03T02:30` |
-| `punto_geografico.geometria` | Si una persona está **en** ese lugar, aunque esté lejos de su punto representativo | Un usuario a mitad de Sierpes está en Sierpes |
+| Geometría del punto (`punto_geografico.geojson`) | Si una persona está **en** ese lugar, aunque esté lejos de su punto representativo | Un usuario a mitad de Sierpes está en Sierpes |
 | `paso.orden` | Qué elementos hay entre la cruz de guía y el último paso | El paso de Cristo va entre los dos |
 
 **Ejemplo.** A las 02:50 alguien da fe del paso de Cristo de La Macarena desde la mitad de Sierpes.
@@ -231,12 +230,32 @@ La geometría de OpenStreetMap es la **base cartográfica**. **Unir calles compl
 - **Intersecciones.** Hay que saber en qué cruce se sale de una calle y se entra en la siguiente.
 - **Repeticiones.** Una misma calle puede aparecer dos veces en un itinerario, a la ida y a la vuelta, en dos `punto_itinerario` con distinto `orden`.
 
-BUL-169 (los GeoJSON por hermandad) sigue cancelada. Solo se reabre si el modelo actual no puede cubrir una necesidad concreta, y habrá que justificarla.
+**Solución (aprobada el 16/10/2026): un recorrido por salida, en un archivo aparte.** No hay entidades nuevas (ni `TRAMO_RECORRIDO` ni parecidas).
+
+- Cada salida procesional tiene un GeoJSON en `docs/datos/itinerarios/<año>/`, con **una sola línea continua, ordenada y orientada** desde que sale del templo hasta que entra.
+- La línea va por las calles por las que pasa de verdad la hermandad. Por eso resuelve los cuatro problemas:
+  - **Tramos parciales:** la línea solo cubre el trozo de calle que recorre.
+  - **Sentido:** va en el sentido de la marcha.
+  - **Intersecciones:** se ven en los cruces donde la línea cambia de calle.
+  - **Repeticiones:** la ida y la vuelta son dos trozos distintos de la misma línea.
+- Las horas siguen en `punto_itinerario`, sin cambios. Falta decidir cómo se sitúa cada hora sobre la línea: es la fase siguiente (ver «Abierto», punto 3).
+- La geometría de cada calle sigue en `punto_geografico.geojson`. Sirve para saber si alguien está **en** un lugar; la del recorrido, para saber por dónde va **esa** salida.
+- **Ejemplo:** La Borriquita 2026 sale de El Salvador, sube por Cuna y Orfila hasta la Campana, hace la carrera oficial, cruza la Catedral y vuelve por Placentines, Francos y Chapineros. Mide 2,5 km, en una sola línea con flechas de sentido.
+
+**Datos de ahora.** Hay 72 recorridos provisionales de 2026 en `docs/datos/itinerarios/2026/` para desarrollar mientras sale el programa de 2027.
+
+- Salen del programa de mano 2026 y del Llamador 2025, trazados sobre OpenStreetMap.
+- Las calles entre dos puntos del programa las elige el trazador, así que cada archivo lleva `"provisional": true`. Solo la Borriquita está revisada a mano.
+- El interior de la Catedral no se conoce: es una línea recta de la Puerta de San Miguel a la de los Palos.
+- Cómo se hacen y cómo se rehacen en 2027: [`recorridos/LEEME.md`](recorridos/LEEME.md).
+
+BUL-169 sigue cancelada: pedía una estructura propia para los itinerarios, y esto es un archivo por salida, no una entidad del modelo.
 
 ### Aprobado
 
 - Siguen las **ocho entidades**. No hay tablas nuevas de aportaciones, posiciones estimadas ni geometrías.
-- `PUNTO_GEOGRAFICO` gana `geometria`, inicialmente en GeoJSON. `latitud` y `longitud` siguen siendo el punto representativo.
+- Cada salida tiene su recorrido como una sola línea continua, ordenada y orientada, en un GeoJSON aparte (`docs/datos/itinerarios/<año>/`). Las horas siguen en `punto_itinerario`.
+- Cada `PUNTO_GEOGRAFICO` tiene su geometría en GeoJSON, en el archivo aparte `punto_geografico.geojson` enlazado por `id`. `latitud` y `longitud` siguen en el CSV como punto representativo.
 - Un registro por lugar. La geometría sale de OpenStreetMap, con revisión manual de las coincidencias ambiguas.
 - Se mantiene el principio de la previsión oficial corregida por observaciones independientes.
 - Registro, elegibilidad y cálculo van siempre separados.
@@ -245,16 +264,16 @@ BUL-169 (los GeoJSON por hermandad) sigue cancelada. Solo se reabre si el modelo
 - «Estoy viendo la cofradía» informa de la presencia del cortejo y nunca se atribuye automáticamente a un elemento.
 - Nunca se impide dar fe. Sin coordenadas fiables, la aportación no participa directamente en el cálculo geográfico.
 - En las aportaciones diferidas se guardan por separado la hora de observación y la de recepción, y la hora del dispositivo no se da por fiable automáticamente.
-- La implementación de `geometria` en CSV y comprobador va en BUL-168.
+- El archivo de geometrías y su comprobación van en BUL-168.
 - No cambian las decisiones sobre `referencia`, `hora_publicada`, `fecha_hora`, `EDICION`, `JORNADA` y `SALIDA_PROCESIONAL`.
 
 ### Abierto
 
 1. **Umbrales.** Distancia al recorrido, tolerancia horaria, niveles de confianza y criterios de penalización por patrones. Se fijarán con pruebas; nada de lo escrito aquí es una cifra.
-2. **Dónde vive la geometría.** Hay que elegir entre la celda del CSV o archivos asociados (por ejemplo, la columna con el nombre del archivo), y cuánta precisión hace falta. Se estudia antes de cerrar el almacenamiento definitivo. El formato de la columna en BUL-168 dependerá de esto.
-3. **Tramo, sentido, intersecciones y repeticiones** del recorrido sobre la cartografía (sección anterior). Hay que resolverlo sin entidades nuevas, o justificar lo contrario.
+2. **Dónde vive la geometría.** *Resuelto el 16/10/2026:* en `punto_geografico.geojson`, aparte del CSV (ver «Decisiones»). Solo queda ver cuánta precisión hace falta.
+3. **Horas sobre el recorrido.** Tramo, sentido, intersecciones y repeticiones están *resueltos el 16/10/2026* con un recorrido por salida (sección anterior). Queda cómo casar cada hora de `punto_itinerario` con su posición en la línea, y cómo enlazar cada archivo con su fila de `salida_procesional.csv` cuando esta tenga datos. Ahora el archivo se nombra por jornada y hermandad.
 4. **Fiabilidad de la hora diferida.** Falta decidir cómo se juzga una hora de observación que no se da por fiable automáticamente.
 5. **Evidencia sin ubicación.** Falta decidir cómo pesa en la fase y en la presencia una aportación sin coordenadas fiables, o una genérica «Estoy viendo la cofradía».
 6. **Cuándo varias observaciones son «independientes»** y cuántas hacen falta para corregir una estimación.
 7. **Dónde se guardan aportaciones y posiciones estimadas.** El PRD ya nombra la Aportación, que guarda por separado el registro personal y el valor colaborativo. Su estructura se propondrá cuando se defina el motor, con un caso de uso concreto y pidiendo aprobación antes de crear ninguna entidad.
-8. **«Cómo se calcula la posición» del PRD.** Sigue hablando de «punto de control» y de «la línea del itinerario». Se revisará cuando se resuelvan los puntos 2 y 3.
+8. **«Cómo se calcula la posición» del PRD.** Sigue hablando de «punto de control» y de «la línea del itinerario». Se revisará cuando se resuelva el punto 3.
