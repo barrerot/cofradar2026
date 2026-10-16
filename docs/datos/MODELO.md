@@ -249,7 +249,7 @@ La geometría de OpenStreetMap es la **base cartográfica**. **Unir calles compl
 - El interior de la Catedral no se conoce: es una línea recta de la Puerta de San Miguel a la de los Palos.
 - Cómo se hacen y cómo se rehacen en 2027: [`recorridos/LEEME.md`](recorridos/LEEME.md).
 
-BUL-169 sigue cancelada: pedía una estructura propia para los itinerarios, y esto es un archivo por salida, no una entidad del modelo.
+BUL-169 (el recorrido de cada cofradía sobre el callejero) se da por hecha con estos recorridos de 2026. Rehacerlos con el programa de 2027 y casar las horas con la línea quedan para issues nuevas.
 
 ### Aprobado
 
