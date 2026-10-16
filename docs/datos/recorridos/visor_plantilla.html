@@ -1,0 +1,286 @@
+<title>Recorrido sobre el callejero</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/*LEAFLET_CSS*/
+/* Mapa a la izquierda, ficha de comprobación a la derecha; en móvil, mapa arriba y ficha debajo */
+:root {
+  --papel: #f5f4f1;
+  --superficie: #ffffff;
+  --tinta: #1f1d22;
+  --tinta-suave: #5d5862;
+  --linea: #dcd8d3;
+  --calle: #b9b3ad;
+  --area: #e6e1da;
+  --granate: #7d1f2e;
+  --ocre: #a86b12;
+  --aviso-fondo: #fbf0dc;
+  --aviso-tinta: #6b4300;
+  --ok: #2f6b3a;
+  --resalte: #0b6fa4;
+  --f-titulo: "Source Serif 4", Georgia, serif;
+  --f-texto: "IBM Plex Sans", system-ui, sans-serif;
+  --f-dato: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --papel: #161519; --superficie: #1f1e23; --tinta: #ece9ee; --tinta-suave: #a7a1ac;
+    --linea: #34313a; --calle: #4c4852; --area: #2a2830; --granate: #e2707f; --ocre: #e0a54a;
+    --aviso-fondo: #3a2c14; --aviso-tinta: #f2cf91; --ok: #7cc48a; --resalte: #5fb7e6;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --papel: #161519; --superficie: #1f1e23; --tinta: #ece9ee; --tinta-suave: #a7a1ac;
+  --linea: #34313a; --calle: #4c4852; --area: #2a2830; --granate: #e2707f; --ocre: #e0a54a;
+  --aviso-fondo: #3a2c14; --aviso-tinta: #f2cf91; --ok: #7cc48a; --resalte: #5fb7e6;
+}
+html, body { height: 100%; }
+body {
+  background: var(--papel); color: var(--tinta); font-family: var(--f-texto); font-size: 14px;
+  display: grid; grid-template-rows: auto 1fr;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; padding-block: 14px 12px; }
+h1 { font-family: var(--f-titulo); font-size: 1.35rem; margin: 0; text-wrap: balance; }
+.sub { color: var(--tinta-suave); }
+label { color: var(--tinta-suave); display: flex; gap: 8px; align-items: center; }
+select { font: inherit; color: var(--tinta); background: var(--superficie); border: 1px solid var(--linea); border-radius: 6px; padding: 4px 8px; }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; min-height: 0; padding-block-end: 16px; }
+#mapa { min-height: 420px; border: 1px solid var(--linea); border-radius: 8px; }
+.leaflet-container { background: var(--papel); font-family: var(--f-texto); }
+aside { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 16px; }
+section { display: flex; flex-direction: column; gap: 8px; }
+h2 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--tinta-suave); margin: 0; font-weight: 600; }
+.cifras { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.cifra { background: var(--superficie); border: 1px solid var(--linea); border-radius: 6px; padding: 8px 10px; }
+.cifra b { display: block; font-family: var(--f-dato); font-size: 1.05rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.cifra span { color: var(--tinta-suave); font-size: 0.78rem; }
+ul.avisos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+ul.avisos li { background: var(--aviso-fondo); color: var(--aviso-tinta); border-radius: 6px; padding: 7px 10px; line-height: 1.4; }
+ul.avisos li.bien { background: transparent; color: var(--ok); padding-inline: 0; }
+ol.calles { margin: 0; padding: 0; list-style: none; counter-reset: c; border-top: 1px solid var(--linea); }
+ol.calles li { counter-increment: c; border-bottom: 1px solid var(--linea); }
+ol.calles button {
+  all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px;
+  padding: 7px 4px; align-items: baseline;
+}
+ol.calles button::before { content: counter(c); font-family: var(--f-dato); color: var(--tinta-suave); font-size: 0.8rem; }
+ol.calles button:hover, ol.calles button:focus-visible, ol.calles button[aria-pressed="true"] { background: var(--superficie); outline: none; }
+ol.calles button:focus-visible { box-shadow: inset 0 0 0 2px var(--resalte); }
+.m { font-family: var(--f-dato); color: var(--tinta-suave); font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+.chip { font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 4px; padding: 1px 5px; margin-left: 6px; }
+.chip.mano { color: var(--ocre); border: 1px solid currentColor; }
+.chip.sin { color: var(--tinta-suave); border: 1px solid var(--linea); }
+.leyenda { display: grid; gap: 6px; color: var(--tinta-suave); }
+.leyenda div { display: flex; align-items: center; gap: 10px; }
+.leyenda i { display: inline-block; width: 28px; height: 0; border-top: 4px solid var(--granate); }
+.leyenda i.mano { border-top: 4px dashed var(--ocre); }
+.leyenda i.calle { border-top: 2px solid var(--calle); }
+.leyenda i.area { height: 10px; border: 0; background: var(--area); }
+.leyenda i.cat { height: 10px; border: 1.5px solid var(--tinta-suave); background: transparent; }
+.flecha svg { display: block; }
+.marca { font-family: var(--f-texto); font-weight: 600; font-size: 0.75rem; color: var(--superficie); background: var(--tinta); border-radius: 4px; padding: 2px 6px; white-space: nowrap; transform: translate(-50%, -140%); width: max-content; }
+.nav { display: flex; gap: 6px; }
+.nav button { font: inherit; color: var(--tinta); background: var(--superficie); border: 1px solid var(--linea); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.nav button:focus-visible { outline: 2px solid var(--resalte); outline-offset: 1px; }
+.programa { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.programa h3 { font-size: 0.78rem; font-weight: 600; margin: 0 0 4px; color: var(--tinta-suave); }
+.programa ol { margin: 0; padding-left: 1.4em; line-height: 1.45; }
+.programa li::marker { color: var(--tinta-suave); font-family: var(--f-dato); font-size: 0.75rem; }
+.revisado { color: var(--ok); line-height: 1.4; margin: 0; }
+.nota { color: var(--tinta-suave); line-height: 1.45; max-width: 65ch; margin: 0; }
+@media (max-width: 760px) {
+  body { height: auto; display: block; }
+  main { grid-template-columns: 1fr; }
+  #mapa { height: 62vh; }
+  aside { overflow: visible; }
+}
+@media (prefers-reduced-motion: reduce) { .leaflet-zoom-anim .leaflet-zoom-animated { transition: none !important; } }
+</style>
+
+<header>
+  <h1 id="titulo">Recorrido</h1>
+  <span class="sub">Prueba visual · programa de mano 2026 y Llamador 2025 sobre OpenStreetMap</span>
+  <label for="ruta">Hermandad <select id="ruta"></select></label>
+  <span class="nav"><button type="button" id="ant" aria-label="Hermandad anterior">←</button><button type="button" id="sig" aria-label="Hermandad siguiente">→</button></span>
+</header>
+<main>
+  <div id="mapa" role="region" aria-label="Mapa del recorrido"></div>
+  <aside>
+    <section>
+      <h2>Comprobaciones</h2>
+      <div class="cifras">
+        <div class="cifra"><b id="c-metros">–</b><span>longitud</span></div>
+        <div class="cifra"><b id="c-ini">–</b><span>de la salida prevista</span></div>
+        <div class="cifra"><b id="c-fin">–</b><span>de la entrada prevista</span></div>
+        <div class="cifra"><b id="c-vueltas">–</b><span>medias vueltas</span></div>
+      </div>
+      <p class="revisado" id="revisado" hidden></p>
+      <ul class="avisos" id="avisos"></ul>
+    </section>
+    <section>
+      <h2>Lo que dice el programa</h2>
+      <div class="programa"><div><h3>Cruz de guía</h3><ol id="p-cruz"></ol></div><div><h3>Paso / palio</h3><ol id="p-paso"></ol></div></div>
+    </section>
+    <section>
+      <h2>Llamador 2025</h2>
+      <p class="nota" id="ll-nota"></p>
+      <div class="programa" id="ll-bloque"><div><h3 id="l-cruz-t">Cruz de guía</h3><ol id="l-cruz"></ol></div><div id="l-paso-col"><h3>Paso / palio</h3><ol id="l-paso"></ol></div></div>
+    </section>
+    <section>
+      <h2>Calles en el orden de la marcha</h2>
+      <ol class="calles" id="calles"></ol>
+    </section>
+    <section>
+      <h2>Leyenda</h2>
+      <div class="leyenda">
+        <div><i></i>Recorrido trazado sobre el callejero; las flechas marcan el sentido</div>
+        <div><i class="mano"></i>Catedral: interior sin dato, de puerta a puerta</div>
+        <div><i class="calle"></i>Calles de OSM</div>
+        <div><i class="area"></i>Plazas y avenidas dibujadas como superficie en OSM</div>
+        <div><i class="cat"></i>Catedral</div>
+      </div>
+      <p class="nota">Datos © colaboradores de OpenStreetMap (ODbL). Prueba fuera del repositorio: nada de esto es dato definitivo. Las calles entre los puntos del programa las elige el trazador (camino más corto), así que hay que revisarlas en el mapa.</p>
+    </section>
+  </aside>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const DATOS = /*DATOS*/null;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mapa = L.map("mapa", { zoomSnap: 0.25, preferCanvas: true, attributionControl: false });
+let fondo, capaRuta;
+
+function pintarFondo() {
+  if (fondo) fondo.remove();
+  fondo = L.layerGroup().addTo(mapa);
+  const caja = cajaRuta(+sel.value);
+  const dentro = c => c.p.some(([la, lo]) => la >= caja[0] && la <= caja[2] && lo >= caja[1] && lo <= caja[3]);
+  for (const c of DATOS.calles) {
+    if (c.a && dentro(c)) L.polygon(c.p, { stroke: false, fillColor: css("--area"), fillOpacity: 1, interactive: false }).addTo(fondo);
+  }
+  for (const c of DATOS.calles) {
+    if (c.a || !dentro(c)) continue;
+    const l = L.polyline(c.p, { color: css("--calle"), weight: 2, opacity: 1 }).addTo(fondo);
+    if (c.n) l.bindTooltip(c.n, { sticky: true });
+  }
+  for (const anillo of DATOS.catedral)
+    L.polygon(anillo, { color: css("--tinta-suave"), weight: 1.5, fill: false, interactive: false }).addTo(fondo);
+}
+
+function cajaRuta(i) {
+  const pts = DATOS.rutas[i].features[0].geometry.coordinates, m = 0.004;
+  return [Math.min(...pts.map(p => p[1])) - m, Math.min(...pts.map(p => p[0])) - m,
+          Math.max(...pts.map(p => p[1])) + m, Math.max(...pts.map(p => p[0])) + m];
+}
+function metros(a, b) {
+  const la = (a[0] + b[0]) / 2 * Math.PI / 180;
+  return Math.hypot((a[0] - b[0]) * 111320, (a[1] - b[1]) * 111320 * Math.cos(la));
+}
+function rumbo(a, b) {
+  const la = (a[0] + b[0]) / 2 * Math.PI / 180;
+  return Math.atan2((b[1] - a[1]) * Math.cos(la), b[0] - a[0]) * 180 / Math.PI;
+}
+function flecha(p, grados, color) {
+  const svg = `<svg width="14" height="14" viewBox="0 0 14 14" style="transform: rotate(${grados}deg)"><path d="M7 1 L12 12 L7 9 L2 12 Z" fill="${color}" stroke="${css("--papel")}" stroke-width="1"/></svg>`;
+  return L.marker(p, { icon: L.divIcon({ className: "flecha", html: svg, iconSize: [14, 14], iconAnchor: [7, 7] }), interactive: false, keyboard: false });
+}
+
+function pintarRuta(i) {
+  const ruta = DATOS.rutas[i];
+  const props = ruta.features[0].properties, comp = ruta.comprobaciones;
+  if (capaRuta) capaRuta.remove();
+  capaRuta = L.layerGroup().addTo(mapa);
+  const segmentos = [];
+  // flechas cada 70 m a lo largo de todo el recorrido
+  let acumulado = 35;
+  ruta.tramos.forEach((t, k) => {
+    const pts = t.geometry.coordinates.map(([lo, la]) => [la, lo]);
+    const color = t.properties.manual ? css("--ocre") : css("--granate");
+    const linea = L.polyline(pts, { color, weight: 5, opacity: 0.95, dashArray: t.properties.manual ? "8 6" : null })
+      .bindTooltip(`${t.properties.calle} · ${t.properties.metros} m`, { sticky: true }).addTo(capaRuta);
+    segmentos.push(linea);
+    for (let j = 0; j + 1 < pts.length; j++) {
+      const d = metros(pts[j], pts[j + 1]);
+      while (acumulado <= d) {
+        const f = acumulado / d;
+        flecha([pts[j][0] + (pts[j + 1][0] - pts[j][0]) * f, pts[j][1] + (pts[j + 1][1] - pts[j][1]) * f], rumbo(pts[j], pts[j + 1]), color).addTo(capaRuta);
+        acumulado += 70;
+      }
+      acumulado -= d;
+    }
+  });
+  const todos = ruta.features[0].geometry.coordinates.map(([lo, la]) => [la, lo]);
+  L.marker(todos[0], { icon: L.divIcon({ className: "", html: '<div class="marca">Salida</div>', iconSize: [0, 0] }) }).addTo(capaRuta);
+  L.circleMarker(todos[0], { radius: 6, color: css("--papel"), weight: 2, fillColor: css("--tinta"), fillOpacity: 1 }).addTo(capaRuta);
+  L.marker(todos.at(-1), { icon: L.divIcon({ className: "", html: '<div class="marca">Fin</div>', iconSize: [0, 0] }) }).addTo(capaRuta);
+  L.circleMarker(todos.at(-1), { radius: 6, color: css("--papel"), weight: 2, fillColor: css("--granate"), fillOpacity: 1 }).addTo(capaRuta);
+  mapa.fitBounds(L.latLngBounds(todos), { padding: [30, 30] });
+
+  document.getElementById("titulo").textContent = props.nombre;
+  document.getElementById("c-metros").textContent = props.metros.toLocaleString("es-ES") + " m";
+  document.getElementById("c-ini").textContent = comp.empieza_a_m + " m";
+  document.getElementById("c-fin").textContent = comp.acaba_a_m + " m";
+  document.getElementById("c-vueltas").textContent = ruta.medias_vueltas;
+  const rev = document.getElementById("revisado");
+  rev.hidden = !ruta.revisado; rev.textContent = ruta.revisado ? "✓ " + ruta.revisado : "";
+  const ll = ruta.llamador;
+  const unica = ll && !ll.paso.length;   // en Vísperas el Llamador trae una sola columna
+  document.getElementById("l-paso-col").hidden = !!unica;
+  document.getElementById("l-cruz-t").textContent = unica ? "Columna única (Vísperas)" : "Cruz de guía";
+  document.getElementById("ll-bloque").hidden = !ll;
+  document.getElementById("ll-nota").textContent = !ll ? "Esta hermandad no está en el Llamador o su columna no se lee bien: solo se usa el programa 2026."
+    : ruta.anadidos.length ? "Puntos añadidos al recorrido: " + ruta.anadidos.join(", ") + "."
+    : "No añade puntos: los que trae ya están en el programa 2026 o no coinciden con él.";
+  for (const [id, lista] of [["p-cruz", ruta.programa.cruz], ["p-paso", ruta.programa.paso], ["l-cruz", ll ? ll.cruz : []], ["l-paso", ll ? ll.paso : []]])
+    document.getElementById(id).replaceChildren(...lista.map(t => { const li = document.createElement("li"); li.textContent = t; return li; }));
+  const av = document.getElementById("avisos");
+  av.replaceChildren(...(props.avisos.length ? props.avisos : ["Sin avisos del trazador"]).map(t => {
+    const li = document.createElement("li"); li.textContent = t; if (!props.avisos.length) li.className = "bien"; return li;
+  }));
+  const ol = document.getElementById("calles");
+  ol.replaceChildren(...ruta.tramos.map((t, k) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.type = "button"; b.id = "tramo-" + k; b.setAttribute("aria-pressed", "false");
+    const nombre = document.createElement("span"); nombre.textContent = t.properties.calle.replace(/^\[a mano\] /, "");
+    if (t.properties.manual) nombre.insertAdjacentHTML("beforeend", '<span class="chip mano">a mano</span>');
+    if (t.properties.calle === "(sin nombre)" || t.properties.calle.startsWith("[")) if (!t.properties.manual) nombre.insertAdjacentHTML("beforeend", '<span class="chip sin">enlace</span>');
+    const m = document.createElement("span"); m.className = "m"; m.textContent = t.properties.metros + " m";
+    b.append(nombre, m);
+    b.addEventListener("click", () => {
+      const activo = b.getAttribute("aria-pressed") === "true";
+      ol.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", "false"));
+      segmentos.forEach((s, j) => s.setStyle({ weight: 5, color: ruta.tramos[j].properties.manual ? css("--ocre") : css("--granate") }));
+      if (!activo) {
+        b.setAttribute("aria-pressed", "true");
+        segmentos[k].setStyle({ weight: 9, color: css("--resalte") }).bringToFront();
+        mapa.fitBounds(segmentos[k].getBounds(), { padding: [80, 80], maxZoom: 18 });
+      } else mapa.fitBounds(L.latLngBounds(todos), { padding: [30, 30] });
+    });
+    li.append(b); return li;
+  }));
+}
+
+const sel = document.getElementById("ruta");
+const grupos = {};
+DATOS.rutas.forEach((r, i) => {
+  if (!grupos[r.jornada]) { grupos[r.jornada] = document.createElement("optgroup"); grupos[r.jornada].label = r.jornada; sel.append(grupos[r.jornada]); }
+  grupos[r.jornada].append(new Option(r.hermandad, i));
+});
+let inicial = 0;
+try { const g = +localStorage.getItem("cofradar-recorrido"); if (g >= 0 && g < DATOS.rutas.length) inicial = g; } catch (e) {}
+sel.value = inicial;
+const ir = i => { sel.value = (i + DATOS.rutas.length) % DATOS.rutas.length; pintarFondo(); pintarRuta(+sel.value);
+  try { localStorage.setItem("cofradar-recorrido", sel.value); } catch (e) {} };
+sel.addEventListener("change", () => ir(+sel.value));
+document.getElementById("ant").addEventListener("click", () => ir(+sel.value - 1));
+document.getElementById("sig").addEventListener("click", () => ir(+sel.value + 1));
+pintarFondo(); pintarRuta(+sel.value);
+const repintar = () => { pintarFondo(); pintarRuta(+sel.value); };
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", repintar);
+new MutationObserver(repintar).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

@@ -33,6 +33,7 @@ reset) y `marco.css` (las zonas del armazon).
 | `frontend/src/marco/` | El armazon: cabecera, navegacion de cinco destinos, franja de accion, pantalla secundaria y bottom sheet |
 | `frontend/src/rutas/` | Una pantalla por area, con relleno a la espera de su hito |
 | `docs/datos/mock/` | Fixture inventado de la Madrugá para diseñar, con su verificador (`python3 docs/datos/mock/verificar.py`) |
+| `docs/datos/itinerarios/2026/` | Recorrido provisional de cada salida de 2026 (un GeoJSON por salida) para desarrollar mientras sale el programa de 2027. Cómo se hacen y qué hacer en 2027: [`docs/datos/recorridos/LEEME.md`](docs/datos/recorridos/LEEME.md) |
 | `backend/src/` | Esqueleto de la API. Sin motor todavia |
 | `docs/design/pantallas/` | El export del design system: `.png` como se ve, `.html` el marcado de referencia, `.md` las notas |
 

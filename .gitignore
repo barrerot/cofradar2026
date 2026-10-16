@@ -13,3 +13,9 @@ dist/
 frontend/src/estilos/bundle.css
 frontend/src/estilos/tokens.json
 frontend/src/estilos/fuentes/
+
+# Recorridos: descargas de OSM y ficheros intermedios (docs/datos/recorridos/LEEME.md)
+docs/datos/recorridos/trabajo/
+docs/datos/recorridos/__pycache__/
+# Programas y Llamadores en PDF: se dejan en docs/datos/ para trabajar, no se suben (el Llamador pesa 25 MB)
+docs/datos/*.pdf
