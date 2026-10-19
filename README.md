@@ -34,8 +34,38 @@ reset) y `marco.css` (las zonas del armazon).
 | `frontend/src/rutas/` | Una pantalla por area, con relleno a la espera de su hito |
 | `docs/datos/mock/` | Fixture inventado de la Madrugá para diseñar, con su verificador (`python3 docs/datos/mock/verificar.py`) |
 | `docs/datos/itinerarios/2026/` | Recorrido provisional de cada salida de 2026 (un GeoJSON por salida) para desarrollar mientras sale el programa de 2027. Cómo se hacen y qué hacer en 2027: [`docs/datos/recorridos/LEEME.md`](docs/datos/recorridos/LEEME.md) |
-| `backend/src/` | Esqueleto de la API. Sin motor todavia |
+| `backend/src/` | La API (Express). Lee los datos base de Supabase; el motor en vivo llega en la fase 4 |
+| `backend/supabase/`, `backend/scripts/` | Las tablas de Supabase y el script que carga en ellas los CSV y los recorridos |
 | `docs/design/pantallas/` | El export del design system: `.png` como se ve, `.html` el marcado de referencia, `.md` las notas |
+
+## API y Supabase
+
+Los datos base viven en **Supabase** (Postgres). La API de Express los lee con la clave secreta, que solo está en `backend/.env` (no se sube a Git; plantilla abajo). Las tablas tienen RLS sin políticas: sin esa clave no se lee nada.
+
+```
+SUPABASE_URL=https://<proyecto>.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_...
+SUPABASE_DB_URL=postgresql://postgres:<contraseña>@db.<proyecto>.supabase.co:5432/postgres
+```
+
+**Cargar o recargar los datos** después de cambiar los CSV de `docs/datos/` o los recorridos:
+
+```bash
+npm run cargar:datos -w backend
+```
+
+Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a llenar todo en una sola transacción y cuenta las filas al final. Se puede repetir sin miedo.
+
+**Rutas.** Las horas son las del programa, hora de Sevilla sin zona (`2026-03-29T15:35`). El `id` de una cofradía es su nombre en minúsculas y con guiones (`la-borriquita`). Todas aceptan `?anio=2026`; sin él, la última edición.
+
+| Ruta | Devuelve |
+|---|---|
+| `GET /api/jornadas` | Las 11 jornadas: `id`, `nombre`, `orden`, `fecha` y cuántas `cofradias` salen |
+| `GET /api/cofradias?jornada=<id>` | Las cofradías de una jornada (sin `jornada`, las 72), por hora de salida: `id`, `nombre`, `orden` (sin artículo), `jornada`, `templo`, `horaSalida`, `horaEntrada` |
+| `GET /api/cofradias/:id` | La ficha: nombre oficial, web, fundación, historia, cifras, `sede`, `pasos` y la `salida` del año (templo del que sale, horario de `cruzGuia` y `ultimoPaso` por lugar, con `hora` y si está `publicada` en el programa) |
+| `GET /api/cofradias/:id/recorrido` | La línea del recorrido (GeoJSON) |
+| `GET /api/estado-jornada` | Estado en vivo: hoy responde `sin-motor` hasta la fase 4 |
+| `GET /api/salud` | `{ ok: true }` |
 
 ## Publicar
 
