@@ -23,7 +23,6 @@ export function PantallaSecundaria({
   accion,
   children,
   sheet,
-  sincronizacion,
   registro,
 }: {
   titulo: string;
@@ -33,7 +32,6 @@ export function PantallaSecundaria({
   accion?: ReactNode;
   children: ReactNode;
   sheet?: ReactNode;
-  sincronizacion: Date | null;
   /** §3. La ficha de hermandad va en `editorial`. */
   registro?: "editorial";
 }) {
@@ -47,7 +45,6 @@ export function PantallaSecundaria({
       cabecera={
         <Cabecera
           etiqueta="Cabecera de pantalla secundaria"
-          sincronizacion={sincronizacion}
           titulo={titulo}
           acciones={acciones}
           principal={

@@ -11,8 +11,17 @@
     <title>Cofradar</title>
     <meta
       name="description"
-      content="Que cofradias procesionan, por donde van realmente y con que grado de confianza."
+      content="Qué cofradías procesionan, por dónde van realmente y con qué grado de confianza."
     />
+    <!-- App instalable (PWA): manifiesto, iconos y color de la barra. El color
+         lo cambia tema.ts segun el tema claro u oscuro. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/iconos/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/iconos/apple-touch-icon.png" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="apple-mobile-web-app-title" content="Cofradar" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
   </head>
   <body>
     <div id="raiz"></div>

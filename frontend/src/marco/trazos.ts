@@ -3,7 +3,8 @@
  *
  * Trazos SVG extraidos literalmente de las capturas del export
  * (docs/design/pantallas/*​/*.html). Son iconos Phosphor con el lienzo
- * 0 0 256 256 que usa el export. Se copian en lugar de instalar la libreria:
+ * 0 0 256 256 que usa el export (y alguno que solo sale en las capturas PNG,
+ * copiado de Phosphor: ver EXTRA en el generador). Se copian en lugar de instalar la libreria:
  * asi no hay una dependencia que pueda dibujar algo distinto a la captura.
  *
  * Regenerar: node scripts/gen-trazos.mjs
@@ -81,6 +82,8 @@ export const TRAZOS = {
     "M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Z",
   marca:
     "M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z",
+  sinConexion:
+    "M56.88,31.93A12,12,0,1,0,39.12,48.07L71.79,84A68,68,0,0,0,72,220h88a91.26,91.26,0,0,0,30.66-5.24l8.46,9.31a12,12,0,0,0,17.76-16.14ZM160,196H72a44,44,0,0,1-1.8-87.95A91.91,91.91,0,0,0,68,128a12,12,0,0,0,24,0,68.22,68.22,0,0,1,2.66-18.84l77.88,85.67A68.67,68.67,0,0,1,160,196Zm92-68a91.32,91.32,0,0,1-17.53,54,12,12,0,1,1-19.41-14.11,68,68,0,0,0-89.57-98.53,12,12,0,0,1-12.2-20.66A92,92,0,0,1,252,128Z",
 } as const;
 
 export type NombreTrazo = keyof typeof TRAZOS;

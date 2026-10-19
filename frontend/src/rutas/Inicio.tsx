@@ -34,7 +34,7 @@ export function Inicio({ estado }: { estado: EstadoJornada }) {
 
   return (
     <Marco
-      cabecera={<CabeceraRaiz estado={estado} />}
+      cabecera={<CabeceraRaiz />}
       accion={estado.activa ? <DarFe /> : undefined}
     >
       {contenido.intensidad === "activa" ? (

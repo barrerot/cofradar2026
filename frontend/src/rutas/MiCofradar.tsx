@@ -1,5 +1,4 @@
 import { Marco } from "../marco";
-import type { EstadoJornada } from "../fixture";
 import { CabeceraRaiz } from "./CabeceraRaiz";
 import { Relleno } from "./Relleno";
 
@@ -12,15 +11,12 @@ import { Relleno } from "./Relleno";
  * Sin franja de accion: «Dar fe» es contextual y aqui no hay contexto donde
  * dar fe de nada.
  *
- * SUPUESTO · la cabecera lleva el selector de jornada porque asi lo pintan
- * las capturas 06-10 de 1-marco. Pero §8.2 asigna ese selector a Ahora y
- * Jornada en concreto, y esas capturas existen para ensenar el estado activo
- * de la barra, no para fijar la cabecera de cada area. Si al cerrar B-05 la
- * capa personal no lleva selector, se cambia aqui y en ningun otro sitio.
+ * La cabecera lleva la jornada consultada como todas las areas: §8.2 dice
+ * que «ningun area es excepcion» (D35).
  */
-export function MiCofradar({ estado }: { estado: EstadoJornada }) {
+export function MiCofradar() {
   return (
-    <Marco cabecera={<CabeceraRaiz estado={estado} />}>
+    <Marco cabecera={<CabeceraRaiz />}>
       <Relleno>Mi Cofradar · capa personal</Relleno>
     </Marco>
   );

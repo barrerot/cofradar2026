@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Boton, Icono, PantallaSecundaria } from "../marco";
+import { PantallaSecundaria } from "../marco";
 import { COFRADIAS_FIXTURE, type EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
 import { Relleno } from "./Relleno";
@@ -23,14 +23,7 @@ export function FichaCofradia({ estado }: { estado: EstadoJornada }) {
       registro="editorial"
       titulo={cofradia?.nombre ?? "Cofradía"}
       vuelta={{ etiqueta: "Cofradías", ruta: "/cofradias" }}
-      sincronizacion={estado.sincronizacion}
       accion={estado.activa ? <DarFe /> : undefined}
-      acciones={
-        <Boton variante="terciario" tamano="36">
-          <Icono nombre="buscar" tamano={16} />
-          <span>Buscar</span>
-        </Boton>
-      }
     >
       <Relleno>Ficha de cofradía</Relleno>
     </PantallaSecundaria>

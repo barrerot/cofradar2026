@@ -122,6 +122,21 @@
   justify-content: space-between;
 }
 
+/* La jornada consultada, como en las capturas aprobadas del armazon
+   (1-marco/armazon-1 a 5): texto en negrita con la flecha pegada, sin caja.
+   Sigue siendo un boton de 48 px de alto tactil; solo cambia como se ve.
+   La caja de borde a borde de arriba era la del export antiguo (`.sel`). */
+.cf-marco-cabecera-slot > .cf-btn[data-jornada] {
+  flex: 0 1 auto;
+  justify-content: flex-start;
+  --bg: transparent;
+  --bd: transparent;
+  padding-inline: 0 var(--cf-space-2);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-critical);
+}
+
 .cf-marco-cabecera-slot > .cf-btn[aria-haspopup] > span {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -352,4 +367,15 @@
   .cf-marco-rail .cf-rail a {
     min-height: var(--cf-touch-min);
   }
+}
+
+/* Aviso «Sin conexion · ultimo dato hace…» bajo la cabecera (§12.2,
+   1-marco/armazon-5). A todo el ancho y pegado a la cabecera: la banda del
+   sistema sin su radio. El contenedor existe siempre para que la region
+   aria-live este en el DOM antes de que aparezca el aviso. */
+.cf-marco-aviso {
+  flex: none;
+}
+.cf-marco-aviso > .cf-band {
+  border-radius: 0;
 }

@@ -2,7 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { App } from "./App";
-import { seguirTemaDelSistema } from "./tema";
+import { JornadaProvider } from "./datos/jornada";
+import { SincronizacionProvider } from "./datos/sincronizacion";
+import { registrarServiceWorker } from "./pwa";
+import { iniciarTema } from "./tema";
 
 /* Orden de carga deliberado: base primero, para que cualquier regla de
    componente del design system gane sobre ella. bundle.css es generado y no
@@ -15,7 +18,8 @@ import "./estilos/inicio.css";
 import "./estilos/cofradias.css";
 import "./estilos/relleno.css";
 
-seguirTemaDelSistema();
+iniciarTema();
+registrarServiceWorker();
 
 /*
  * Enrutado segun el build (ver vite-env.d.ts).
@@ -34,8 +38,12 @@ if (!raiz) throw new Error("Falta #raiz en index.html");
 
 createRoot(raiz).render(
   <StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <SincronizacionProvider>
+      <JornadaProvider>
+        <Router>
+          <App />
+        </Router>
+      </JornadaProvider>
+    </SincronizacionProvider>
   </StrictMode>,
 );

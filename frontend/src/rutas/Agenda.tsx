@@ -14,7 +14,7 @@ import { Relleno } from "./Relleno";
 export function Agenda({ estado }: { estado: EstadoJornada }) {
   return (
     <Marco
-      cabecera={<CabeceraRaiz estado={estado} />}
+      cabecera={<CabeceraRaiz />}
       accion={estado.activa ? <DarFe /> : undefined}
     >
       <Relleno>Agenda · jornada completa sin priorizar</Relleno>

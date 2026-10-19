@@ -74,9 +74,19 @@ npm run build --workspace=frontend          # URL limpias: /cofradias
 rsync -av --delete frontend/dist/ usuario@servidor:/ruta/public_html/
 ```
 
-El build es estático: no necesita Node en el servidor, porque hoy todo sale
-del fixture y no hay ni una llamada al backend. El `.htaccess` con la regla de
-reescritura que necesitan las rutas viaja dentro de `frontend/public/`.
+El build del frontend es estático, pero **pide los datos a la API en `/api`
+del mismo dominio** (la jornada de la cabecera ya sale de ahí). En el servidor
+tiene que haber, por tanto, la API de Express (`npm run build -w backend` y
+`npm start -w backend`, con su `backend/.env`) y una regla que mande `/api` a
+ella. Sin API la app abre igual, con lo último que guardó en el teléfono y el
+aviso «Sin conexión». El `.htaccess` con la regla de reescritura que necesitan
+las rutas viaja dentro de `frontend/public/`.
+
+**App instalable (PWA).** `frontend/public/` lleva el manifiesto, los iconos y
+el service worker (`sw.js`), que guarda la app para que abra sin conexión; los
+datos los guarda la propia app con su hora. Solo se registra en el build de
+producción. Los iconos son provisionales mientras no haya logotipo y se
+regeneran con `node scripts/gen-iconos.mjs`.
 
 **Si el servidor no deja configurar esa reescritura** —nginx sirviendo los
 estáticos sin pasar por Apache, o un hosting ajeno— se compila con rutas de

@@ -1,27 +1,35 @@
+import { useSyncExternalStore } from "react";
+import { guardar, leer } from "./datos/almacen";
+
 /**
- * Tema y contraste (§5). Son atributos en <html>, no clases:
+ * Tema y contraste (§5, D16). Son atributos en <html>, no clases:
  *
  *   data-theme     light | dark
  *   data-contrast  max         (opcional)
  *   data-register  editorial   (opcional, por zona)
  *
- * Por defecto se sigue la preferencia del sistema. El selector manual de tema
- * es una decision de producto que todavia no esta tomada, asi que aqui solo
- * queda la puerta abierta: `fijarTema` existe y nadie la llama aun.
+ * Dos ejes independientes:
+ *   · Tema: por defecto, el del sistema. Cualquier elección manual prevalece
+ *     y se recuerda. No hay cambio automático por hora.
+ *   · Contraste: normal por defecto; el máximo es elección manual y
+ *     persistente. No se adivina si el usuario está al sol.
  *
- * Se puede forzar por query, con la misma convencion que el fixture usa para
- * recorrer las variantes del export sin motor detras:
+ * Las preferencias se guardan en el teléfono. Las elige el usuario en Ajustes
+ * (P-25, issue 1.7) con `cambiarPreferencias`.
  *
- *   ?tema=oscuro   fuerza el oscuro, ignorando la preferencia del sistema
- *   ?tema=claro    fuerza el claro
- *
- * Es ANDAMIO DE REVISION, no una funcion: sirve para mirar una pantalla en
- * los dos temas sin tocar los ajustes del sistema operativo. §5 mantiene
- * «claro por defecto» y esto no lo cambia — mientras no haya parametro, el
- * tema lo sigue decidiendo el sistema. Si alguna vez se decide que durante la
- * jornada el oscuro sea el defecto, esa decision va al PRD, no aqui.
+ * Andamio de revisión, que no se guarda: `?tema=oscuro` o `?tema=claro` fuerza
+ * el tema para mirar una pantalla en los dos sin tocar nada más.
  */
 export type Tema = "light" | "dark";
+export type PreferenciaTema = "sistema" | "claro" | "oscuro";
+export type Contraste = "normal" | "max";
+export type Preferencias = { tema: PreferenciaTema; contraste: Contraste };
+
+const POR_DEFECTO: Preferencias = { tema: "sistema", contraste: "normal" };
+const sistemaOscuro = () => window.matchMedia("(prefers-color-scheme: dark)");
+
+let actuales: Preferencias = { ...POR_DEFECTO, ...leer<Partial<Preferencias>>("preferencias") };
+const oyentes = new Set<() => void>();
 
 /** El tema forzado por query, si lo hay. */
 function temaForzado(busqueda: string): Tema | null {
@@ -31,23 +39,38 @@ function temaForzado(busqueda: string): Tema | null {
   return null;
 }
 
-export function seguirTemaDelSistema(): () => void {
-  const forzado = temaForzado(window.location.search);
-  if (forzado) {
-    fijarTema(forzado);
-    /* Con tema forzado no se escucha al sistema: el parametro manda hasta que
-       se quita de la URL. */
-    return () => {};
-  }
-
-  const consulta = window.matchMedia("(prefers-color-scheme: dark)");
-  const aplicar = () => fijarTema(consulta.matches ? "dark" : "light");
-
-  aplicar();
-  consulta.addEventListener("change", aplicar);
-  return () => consulta.removeEventListener("change", aplicar);
+function aplicar(): void {
+  const raiz = document.documentElement;
+  const tema =
+    temaForzado(window.location.search) ??
+    (actuales.tema === "claro" ? "light" : actuales.tema === "oscuro" ? "dark" : sistemaOscuro().matches ? "dark" : "light");
+  raiz.dataset.theme = tema;
+  if (actuales.contraste === "max") raiz.dataset.contrast = "max";
+  else delete raiz.dataset.contrast;
+  // La barra del navegador y la de la app instalada, del color del fondo
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", tema === "dark" ? "#1D1A16" : "#FFFFFF");
 }
 
-export function fijarTema(tema: Tema): void {
-  document.documentElement.dataset.theme = tema;
+/** Se llama una vez al arrancar: aplica lo guardado y sigue al sistema mientras el tema sea «sistema». */
+export function iniciarTema(): void {
+  aplicar();
+  sistemaOscuro().addEventListener("change", aplicar);
+}
+
+export function cambiarPreferencias(cambio: Partial<Preferencias>): void {
+  actuales = { ...actuales, ...cambio };
+  guardar("preferencias", actuales);
+  aplicar();
+  oyentes.forEach((o) => o());
+}
+
+/** Para Ajustes: las preferencias actuales, que se repintan al cambiar. */
+export function usePreferencias(): Preferencias {
+  return useSyncExternalStore(
+    (o) => {
+      oyentes.add(o);
+      return () => oyentes.delete(o);
+    },
+    () => actuales,
+  );
 }

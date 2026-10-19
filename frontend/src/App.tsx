@@ -25,7 +25,7 @@ export function App() {
       <Route path="/cofradias" element={<Cofradias estado={estado} />} />
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
       <Route path="/agenda" element={<Agenda estado={estado} />} />
-      <Route path="/mi-cofradar" element={<MiCofradar estado={estado} />} />
+      <Route path="/mi-cofradar" element={<MiCofradar />} />
     </Routes>
   );
 }

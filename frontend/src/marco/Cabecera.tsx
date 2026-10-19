@@ -5,7 +5,8 @@ import { IndicadorSincronizacion } from "./IndicadorSincronizacion";
  * La cabecera es una ZONA del marco, no un componente (§8.2, regla dura).
  *
  * Lo que decide el marco: donde cae (pegada arriba, con su area segura y su
- * z-sticky) y que lleva siempre (la ultima sincronizacion, §7.3).
+ * z-sticky) y que lleva siempre (la ultima sincronizacion, §7.3, que lee del
+ * estado global de datos/sincronizacion).
  *
  * Lo que decide cada ruta: todo lo demas. Y por eso esta zona solo conoce
  * POSICIONES, nunca contenidos: no sabe que existe un selector de ciudad, ni
@@ -29,7 +30,6 @@ export function Cabecera({
   titulo,
   secundaria,
   terciaria,
-  sincronizacion,
   etiqueta = "Cabecera",
 }: {
   principal?: ReactNode;
@@ -37,15 +37,13 @@ export function Cabecera({
   titulo?: ReactNode;
   secundaria?: ReactNode;
   terciaria?: ReactNode;
-  /** Instante de la ultima sincronizacion correcta. */
-  sincronizacion: Date | null;
   /** aria-label de la zona. La secundaria usa el suyo. */
   etiqueta?: string;
 }) {
   return (
     <header className="cf-marco-cabecera" aria-label={etiqueta}>
       <span className="cf-marco-cabecera-slot">{principal}</span>
-      <IndicadorSincronizacion instante={sincronizacion} />
+      <IndicadorSincronizacion />
       {acciones}
       {titulo ? <h1 className="cf-marco-titulo">{titulo}</h1> : null}
       {secundaria ? <div className="cf-marco-cabecera-fila">{secundaria}</div> : null}

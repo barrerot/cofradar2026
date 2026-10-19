@@ -6,10 +6,8 @@ export { FranjaAccion } from "./FranjaAccion";
 export { BottomSheet, type AlturaSheet } from "./BottomSheet";
 export { Boton, type VarianteBoton, type TamanoBoton } from "./Boton";
 export { Icono } from "./Icono";
-export {
-  IndicadorSincronizacion,
-  formatearSincronizacion,
-} from "./IndicadorSincronizacion";
+export { IndicadorSincronizacion } from "./IndicadorSincronizacion";
+export { AvisoSinConexion } from "./AvisoSinConexion";
 export { DESTINOS, RELLENO_EN_DESTINO_ACTIVO, type Destino } from "./destinos";
 export { useAnclajeNavegacion, useAltoZonaInferior } from "./ganchos";
 export { TRAZOS, type NombreTrazo } from "./trazos";

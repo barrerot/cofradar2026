@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { AvisoSinConexion } from "./AvisoSinConexion";
 import { FranjaAccion } from "./FranjaAccion";
 import { NavegacionPrincipal } from "./NavegacionPrincipal";
 import { useAltoZonaInferior, useAnclajeNavegacion } from "./ganchos";
@@ -9,6 +10,7 @@ import { useAltoZonaInferior, useAnclajeNavegacion } from "./ganchos";
  *
  *   area segura superior
  *   cabecera                 sticky, z-sticky   ← la compone cada ruta
+ *   aviso sin conexion       solo sin conexion  ← «Sin conexion · ultimo dato hace…»
  *   contenido                z-base, scrollea
  *   franja de accion         z-action           ← solo si hay algo que hacer
  *   navegacion               z-nav              ← nunca se oculta
@@ -72,6 +74,8 @@ export function Marco({
         <div className="cf-marco-safe" data-borde="superior" />
 
         {cabecera}
+
+        <AvisoSinConexion />
 
         <main id="contenido" className="cf-marco-contenido" data-sangrado={sangrado}>
           {children}

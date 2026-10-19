@@ -32,8 +32,11 @@
   </FilesMatch>
 
   # index.html NO se cachea: es el que apunta a los assets nuevos. Si se
-  # cachea, el navegador sigue pidiendo el build anterior.
-  <FilesMatch "^index\.html$">
+  # cachea, el navegador sigue pidiendo el build anterior. Tampoco el service
+  # worker ni el manifiesto, que no llevan hash: si se cachearan, la app
+  # instalada no se enteraria de las versiones nuevas. Va despues de la regla
+  # de los .js para ganarle a sw.js.
+  <FilesMatch "^(index\.html|sw\.js|manifest\.webmanifest)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 </IfModule>

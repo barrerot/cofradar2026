@@ -11,6 +11,7 @@ import {
   type NombreJornada,
 } from "../fixture-cofradias";
 import { DarFe } from "./DarFe";
+import { SelectorJornada } from "./SelectorJornada";
 
 /**
  * Cofradias · «¿cual es esta y como llego a ella?»
@@ -67,14 +68,8 @@ export function Cofradias({ estado }: { estado: EstadoJornada }) {
       cabecera={
         <Cabecera
           etiqueta="Cabecera de Cofradías"
-          sincronizacion={estado.sincronizacion}
-          principal={<span className="cf-cofradias-titulo">Cofradías</span>}
-          acciones={
-            <Boton variante="terciario" tamano="36">
-              <Icono nombre="buscar" tamano={16} />
-              <span>Buscar</span>
-            </Boton>
-          }
+          principal={<SelectorJornada />}
+          titulo="Cofradías"
           secundaria={
             <div className="cf-field cf-cofradias-busqueda">
               <label className="cf-oculto-visual" htmlFor="buscar-hermandad">

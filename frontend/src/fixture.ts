@@ -52,8 +52,6 @@ export type EstadoJornada = {
   activa: boolean;
   intensidad: Intensidad;
   jornada: Jornada;
-  /** Ultima sincronizacion correcta con el servidor. */
-  sincronizacion: Date | null;
   /**
    * Si hay ubicacion utilizable. No es un detalle de presentacion: decide si
    * el bloque «Cerca» y los juicios de alcance existen siquiera.
@@ -79,7 +77,6 @@ export function leerEstadoJornada(busqueda: string): EstadoJornada {
     activa: intensidad === "activa",
     intensidad,
     jornada: JORNADAS[intensidad],
-    sincronizacion: new Date(Date.now() - 60_000),
     ubicacion: parametros.get("ubicacion") !== "no",
     cuenta: parametros.get("cuenta") !== "no",
   };
