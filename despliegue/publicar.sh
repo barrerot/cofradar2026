@@ -5,8 +5,9 @@
 # Uso: despliegue/publicar.sh            compila y reinicia
 #      despliegue/publicar.sh --arrancar  solo arranca lo ya compilado (al reiniciar el servidor)
 #
-# El proceso sigue vivo al cerrar la sesión, pero no sobrevive a un reinicio
-# del servidor: después de reiniciar hay que lanzar `publicar.sh --arrancar`.
+# El proceso sigue vivo al cerrar la sesión. Al reiniciar el servidor lo
+# levanta esta línea del crontab del usuario dev (puesta el 19/10/2026):
+#   @reboot /home/dev/projects/cofradar2026/despliegue/publicar.sh --arrancar >> /home/dev/.cofradar/web.log 2>&1
 # Registro en ~/.cofradar/web.log.
 set -euo pipefail
 

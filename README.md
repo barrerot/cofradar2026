@@ -69,6 +69,18 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 
 ## Publicar
 
+**Versión de desarrollo: https://cofradar.buluu.es**, en el VPS de dev.buluu.es (91.107.207.230). Un solo proceso de Node sirve la web y la API en `127.0.0.1:3010` y Apache le reenvía las visitas, con certificado de Let's Encrypt y usuario y contraseña mientras está en desarrollo. Todo está en `despliegue/`:
+
+```bash
+despliegue/publicar.sh            # compila y reinicia (tras cada cambio)
+despliegue/publicar.sh --arrancar # solo arranca; lo lanza el crontab de dev al reiniciar el VPS
+```
+
+Registro en `~/.cofradar/web.log` del usuario `dev`. El sitio de Apache es `despliegue/cofradar.buluu.es.conf` (la parte https la añadió certbot) y la contraseña, `despliegue/cofradar-acceso.conf`.
+
+### En otro servidor
+
+
 ```bash
 npm run build --workspace=frontend          # URL limpias: /cofradias
 rsync -av --delete frontend/dist/ usuario@servidor:/ruta/public_html/
