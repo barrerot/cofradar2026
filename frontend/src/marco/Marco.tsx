@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { CapaMarco } from "./CapaMarco";
 import { AvisoSinConexion } from "./AvisoSinConexion";
 import { FranjaAccion } from "./FranjaAccion";
 import { NavegacionPrincipal } from "./NavegacionPrincipal";
@@ -53,48 +54,54 @@ export function Marco({
 }) {
   const anclaje = useAnclajeNavegacion();
   const { ref, alto } = useAltoZonaInferior<HTMLDivElement>();
+  const [capa, setCapa] = useState<HTMLDivElement | null>(null);
 
   return (
-    <div
-      className="cf-marco"
-      data-register={registro}
-      style={{ "--cf-marco-alto-inferior": `${alto}px` } as CSSProperties}
-    >
-      <a className="cf-salto" href="#contenido">
-        Saltar al contenido
-      </a>
+    <CapaMarco.Provider value={capa}>
+      <div
+        className="cf-marco"
+        data-register={registro}
+        style={{ "--cf-marco-alto-inferior": `${alto}px` } as CSSProperties}
+      >
+        <a className="cf-salto" href="#contenido">
+          Saltar al contenido
+        </a>
 
-      {anclaje === "rail" ? (
-        <div className="cf-marco-rail">
-          <NavegacionPrincipal anclaje="rail" />
+        {anclaje === "rail" ? (
+          <div className="cf-marco-rail">
+            <NavegacionPrincipal anclaje="rail" />
+          </div>
+        ) : null}
+
+        <div className="cf-marco-columna">
+          <div className="cf-marco-safe" data-borde="superior" />
+
+          {cabecera}
+
+          <AvisoSinConexion />
+
+          <main id="contenido" className="cf-marco-contenido" data-sangrado={sangrado}>
+            {children}
+          </main>
+
+          <div className="cf-marco-inferior" ref={ref}>
+            <FranjaAccion>{accion}</FranjaAccion>
+
+            {anclaje === "barra" ? (
+              <div className="cf-marco-navz">
+                <NavegacionPrincipal />
+              </div>
+            ) : null}
+
+            <div className="cf-marco-safe" data-borde="inferior" />
+          </div>
         </div>
-      ) : null}
 
-      <div className="cf-marco-columna">
-        <div className="cf-marco-safe" data-borde="superior" />
+        {sheet}
 
-        {cabecera}
-
-        <AvisoSinConexion />
-
-        <main id="contenido" className="cf-marco-contenido" data-sangrado={sangrado}>
-          {children}
-        </main>
-
-        <div className="cf-marco-inferior" ref={ref}>
-          <FranjaAccion>{accion}</FranjaAccion>
-
-          {anclaje === "barra" ? (
-            <div className="cf-marco-navz">
-              <NavegacionPrincipal />
-            </div>
-          ) : null}
-
-          <div className="cf-marco-safe" data-borde="inferior" />
-        </div>
+        {/* Hojas abiertas desde dentro de una zona (ver CapaMarco). */}
+        <div ref={setCapa} className="cf-marco-capa" />
       </div>
-
-      {sheet}
-    </div>
+    </CapaMarco.Provider>
   );
 }

@@ -1,4 +1,5 @@
 export { Marco } from "./Marco";
+export { EnCapaDelMarco } from "./CapaMarco";
 export { Cabecera } from "./Cabecera";
 export { PantallaSecundaria } from "./PantallaSecundaria";
 export { NavegacionPrincipal } from "./NavegacionPrincipal";

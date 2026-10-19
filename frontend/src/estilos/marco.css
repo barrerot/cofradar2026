@@ -249,6 +249,9 @@
   /* La altura viva la pone el componente en la variable; los imanes de §9.9
      son 20 / 55 / 90 dvh. */
   height: var(--cf-marco-alto-sheet, 20dvh);
+  /* La hoja se apoya sobre la franja y la barra: sin este tope, a 90 dvh y con
+     la franja «Dar fe» visible, se saldria por arriba de la pantalla. */
+  max-height: calc(100dvh - var(--cf-marco-alto-inferior, 0px) - var(--cf-space-8));
 }
 
 /* Durante el arrastre no hay transicion: el sheet sigue al dedo. */
@@ -392,4 +395,62 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cf-marco-sync > .cf-ph { animation: none; }
+}
+
+/* Hoja «Elegir jornada» (P-06, 2-inicio/inicio-elegir-jornada; vive en
+   rutas/SelectorJornada). Filas de 56 px con separador; la consultada en negrita con ✓, la de hoy con la etiqueta «hoy». */
+.cf-jornadas {
+  display: flex;
+  flex-direction: column;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-jornadas-opcion {
+  display: grid;
+  grid-template-columns: 1.25rem 1fr auto;
+  column-gap: var(--cf-space-3);
+  align-items: center;
+  min-height: 3.5rem;
+  padding: var(--cf-space-2) 0;
+  border: 0;
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  background: transparent;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-jornadas-opcion:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-jornadas-opcion[aria-checked="true"] {
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-jornadas-marca {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.cf-jornadas-nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+.cf-jornadas-hoy {
+  padding: 0 var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-jornadas-fecha {
+  font-feature-settings: var(--cf-font-features-data);
 }
