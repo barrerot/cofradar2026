@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
 import { Cofradias } from "./rutas/Cofradias";
+import { Estados } from "./rutas/Estados";
 import { FichaCofradia } from "./rutas/FichaCofradia";
 import { Inicio } from "./rutas/Inicio";
 import { Mapa } from "./rutas/Mapa";
@@ -26,6 +27,8 @@ export function App() {
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
       <Route path="/agenda" element={<Agenda estado={estado} />} />
       <Route path="/mi-cofradar" element={<MiCofradar />} />
+      {/* Andamio de revisión: los ocho estados (issue 1.4). */}
+      <Route path="/estados" element={<Estados />} />
     </Routes>
   );
 }

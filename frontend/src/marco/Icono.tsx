@@ -24,8 +24,9 @@ export function Icono({
   etiqueta,
 }: {
   nombre: NombreTrazo;
-  /** Los tres tamanos del export: 16 y 24 en el marco, 20 en bandas. */
-  tamano?: 16 | 20 | 24;
+  /** Los del export: 16 y 24 en el marco, 20 en bandas, 40 en el centro de
+      los estados que ocupan la pantalla (0-sistema/estados/6 y 8). */
+  tamano?: 16 | 20 | 24 | 40;
   etiqueta?: string;
 }) {
   return (

@@ -1,0 +1,163 @@
+/* Estados comunes (componentes/Estados.tsx, 0-sistema/estados/). Solo tokens
+   semanticos: funcionan en claro, oscuro y contraste maximo. */
+
+/* ── 1 · Primera carga: esqueleto ─────────────────────────────────────── */
+.cf-esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cf-space-4);
+}
+
+.cf-esq {
+  height: 1.25rem;
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+  animation: cf-esq-latido 1.6s var(--cf-ease-in-out) infinite alternate;
+}
+
+@keyframes cf-esq-latido {
+  from { opacity: 1; }
+  to { opacity: 0.55; }
+}
+
+/* Sin movimiento, el esqueleto se queda quieto: no se pierde nada. */
+@media (prefers-reduced-motion: reduce) {
+  .cf-esq { animation: none; }
+}
+
+.cf-esq-banda {
+  height: 4.5rem;
+  border-radius: var(--cf-radius-md);
+}
+
+.cf-esq-titulo {
+  width: 5.25rem;
+  height: 0.875rem;
+  margin-top: var(--cf-space-2);
+}
+
+.cf-esq-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  background: var(--cf-surface);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+}
+
+.cf-esq-tarjeta hr {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-esq-fila {
+  display: flex;
+  gap: var(--cf-space-2);
+}
+
+.cf-esq-renglon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--cf-space-3) 0 var(--cf-space-3) var(--cf-space-6);
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-esq-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cf-space-2);
+}
+
+/* ── 3 · Nada en la calle: tranquilo, sin iconografia de alerta ──────── */
+.cf-nada {
+  padding: var(--cf-space-4);
+  background: var(--cf-surface);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+}
+
+.cf-nada-titulo {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-nada-texto {
+  margin: var(--cf-space-2) 0 0;
+  color: var(--cf-text-secondary);
+}
+
+/* ── 4 · Sin datos ────────────────────────────────────────────────────── */
+.cf-dato-pendiente {
+  color: var(--cf-text-secondary);
+}
+
+/* ── 6 y 8 · Ocupan la pantalla: necesita conexion, error ─────────────── */
+.cf-estado-centrado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cf-space-3);
+  min-height: 60vh;
+  padding: var(--cf-space-6) var(--cf-space-4);
+  text-align: center;
+  color: var(--cf-text);
+}
+
+.cf-estado-centrado > .cf-ph {
+  color: var(--cf-text-secondary);
+}
+
+.cf-estado-titulo {
+  margin: 0;
+  max-width: 20rem;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-estado-texto {
+  margin: 0 0 var(--cf-space-2);
+  color: var(--cf-text-secondary);
+}
+
+/* ── 7 · Sin cartografia ──────────────────────────────────────────────── */
+.cf-sin-cartografia {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cf-space-2);
+  margin: 0 0 var(--cf-space-4);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-sin-cartografia > .cf-ph {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Andamio de /estados (rutas/Estados.tsx): la ficha minima del estado 4. */
+.cf-estados-ficha {
+  margin: 0;
+  background: var(--cf-surface);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+}
+.cf-estados-ficha dt {
+  padding: var(--cf-space-3) var(--cf-space-4) 0;
+  font-weight: var(--cf-weight-data);
+  color: var(--cf-text-secondary);
+}
+.cf-estados-ficha dd {
+  margin: 0;
+  padding: var(--cf-space-1) var(--cf-space-4) var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+}
+.cf-estados-ficha dd:last-child {
+  border-bottom: 0;
+}

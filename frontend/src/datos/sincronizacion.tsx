@@ -16,6 +16,12 @@ import { guardar, leer } from "./almacen";
  *
  * Que Cofradar se haya sincronizado hace un minuto NO dice que una posición
  * sea de hace un minuto (§7.3): cada dato lleva su propia frescura.
+ *
+ * Andamio de revisión, para ver los estados sin cortar la red (se lee al
+ * cargar la página; ver también /estados):
+ *   ?conexion=sin          como si no hubiera conexión
+ *   ?sincronizacion=nunca  como si nunca se hubiera sincronizado
+ *   ?actualizando=si       como si hubiera una petición en curso
  */
 export type Conexion = "en-linea" | "sin-conexion";
 
@@ -31,6 +37,8 @@ type Sincronizacion = {
 };
 
 const Contexto = createContext<Sincronizacion | null>(null);
+
+const forzado = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search);
 
 export function SincronizacionProvider({ children }: { children: ReactNode }) {
   const [ultima, setUltima] = useState<Date | null>(() => {
@@ -59,7 +67,15 @@ export function SincronizacionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const valor = useMemo(
-    () => ({ ultima, conexion, refrescando: enCurso > 0, empieza, exito, sinRed, termina }),
+    () => ({
+      ultima: forzado.get("sincronizacion") === "nunca" ? null : ultima,
+      conexion: forzado.get("conexion") === "sin" ? ("sin-conexion" as const) : conexion,
+      refrescando: forzado.get("actualizando") === "si" || enCurso > 0,
+      empieza,
+      exito,
+      sinRed,
+      termina,
+    }),
     [ultima, conexion, enCurso, empieza, exito, sinRed, termina],
   );
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;

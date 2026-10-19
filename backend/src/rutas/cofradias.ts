@@ -89,8 +89,26 @@ const SELECT_SALIDA = `
             paso(orden, nombre, autor, capataz, musica, fotografia)),
   punto_itinerario(referencia, orden, fecha_hora, hora_publicada, punto_geografico(id, nombre, tipo, latitud, longitud))`;
 
+/**
+ * Los datos base cambian solo al recargar Supabase (npm run cargar:datos), y leer las salidas con sus
+ * horarios cuesta: se guardan 5 minutos en memoria. Una recarga se ve, como mucho, 5 minutos después.
+ */
+const MEMORIA_MS = 5 * 60_000;
+const memoria = new Map<string, { hasta: number; salidas: Promise<Salida[]> }>();
+
 /** Las salidas de una edición (la última si no se pide año), con todo lo necesario para las rutas. */
 async function salidas(anio?: number): Promise<Salida[]> {
+  const clave = String(anio ?? "ultima");
+  const guardada = memoria.get(clave);
+  if (guardada && guardada.hasta > Date.now()) return guardada.salidas;
+  const pedidas = leerSalidas(anio);
+  memoria.set(clave, { hasta: Date.now() + MEMORIA_MS, salidas: pedidas });
+  // Si falla, no se guarda el fallo: la siguiente petición lo vuelve a intentar
+  pedidas.catch(() => memoria.delete(clave));
+  return pedidas;
+}
+
+async function leerSalidas(anio?: number): Promise<Salida[]> {
   const db = supabase();
   if (anio === undefined) {
     const { data, error } = await db.from("edicion").select("anio").order("anio", { ascending: false }).limit(1).single();

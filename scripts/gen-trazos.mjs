@@ -32,6 +32,11 @@ const EXTRA = {
       (0-sistema/estados/estado-5, 1-marco/armazon-5). cloud-slash-bold. */
   sinConexion:
     "M56.88,31.93A12,12,0,1,0,39.12,48.07L71.79,84A68,68,0,0,0,72,220h88a91.26,91.26,0,0,0,30.66-5.24l8.46,9.31a12,12,0,0,0,17.76-16.14ZM160,196H72a44,44,0,0,1-1.8-87.95A91.91,91.91,0,0,0,68,128a12,12,0,0,0,24,0,68.22,68.22,0,0,1,2.66-18.84l77.88,85.67A68.67,68.67,0,0,1,160,196Zm92-68a91.32,91.32,0,0,1-17.53,54,12,12,0,1,1-19.41-14.11,68,68,0,0,0-89.57-98.53,12,12,0,0,1-12.2-20.66A92,92,0,0,1,252,128Z",
+  /** Sin cartografia (0-sistema/estados/estado-7): map-trifold-bold con una
+      barra que lo tacha de arriba a la izquierda a abajo a la derecha, del
+      mismo grosor que la de cloud-slash. Phosphor no trae «map-slash». */
+  sinCartografia:
+    "M231.38,46.54a12,12,0,0,0-10.29-2.18L161.4,59.28l-60-30a12,12,0,0,0-8.28-.91l-64,16A12,12,0,0,0,20,56V200a12,12,0,0,0,14.91,11.64L94.6,196.72l60,30a12,12,0,0,0,8.28.91l64-16A12,12,0,0,0,236,200V56A12,12,0,0,0,231.38,46.54ZM108,59.42l40,20V196.58l-40-20Zm-64,6,40-10V174.63l-40,10ZM212,190.63l-40,10V81.37l40-10ZM24.88,15.93a12,12,0,1,0-17.76,16.14l224,208a12,12,0,1,0,17.76-16.14Z",
 };
 
 // clave = los 20 primeros caracteres del trazo tal como aparece en el export

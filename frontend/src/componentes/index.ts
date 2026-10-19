@@ -19,6 +19,15 @@ export {
   type DatoAlteracion,
 } from "./ChipAlteracion";
 export { ChipEstado, type Confianza, type Fase } from "./ChipEstado";
+export {
+  DatoPendiente,
+  ErrorCarga,
+  Esqueleto,
+  NadaEnLaCalle,
+  NecesitaConexion,
+  SegunDato,
+  SinCartografia,
+} from "./Estados";
 export { Contorno } from "./Contorno";
 export {
   HuecoRelacion,

@@ -17,6 +17,7 @@ import "./estilos/listas.css";
 import "./estilos/inicio.css";
 import "./estilos/cofradias.css";
 import "./estilos/relleno.css";
+import "./estilos/estados.css";
 
 iniciarTema();
 registrarServiceWorker();
