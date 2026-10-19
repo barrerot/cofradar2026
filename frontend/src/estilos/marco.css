@@ -379,3 +379,17 @@
 .cf-marco-aviso > .cf-band {
   border-radius: 0;
 }
+
+/* «actualizando»: las flechas giran mientras hay una peticion en curso
+   (0-sistema/estados/estado-2). Sin movimiento, quietas: el texto ya lo dice. */
+.cf-marco-sync[aria-busy="true"][data-conexion="en-linea"] > .cf-ph {
+  animation: cf-sync-gira 1.2s linear infinite;
+}
+
+@keyframes cf-sync-gira {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-marco-sync > .cf-ph { animation: none; }
+}

@@ -149,3 +149,27 @@ output,
   white-space: nowrap;
   border: 0;
 }
+
+/* ── P-01 Arranque (8-acceso/acceso-1) ─────────────────────────────────────
+   Solo «Cofradar» en Newsreader, centrado, sobre el fondo del tema. Esta en
+   index.html y no en React: se pinta antes de que llegue el JavaScript y
+   desaparece en cuanto React arranca. Solo sale con [data-arranque], que el
+   script de index.html pone la primera vez o sin nada guardado.
+   -------------------------------------------------------------------------- */
+.cf-arranque {
+  display: none;
+}
+
+[data-arranque] .cf-arranque {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-4xl);
+  line-height: var(--cf-leading-4xl);
+  font-weight: var(--cf-weight-data);
+}

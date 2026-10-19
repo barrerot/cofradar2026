@@ -45,3 +45,14 @@
   font-weight: var(--cf-weight-emphasis);
   text-decoration: none;
 }
+
+/* Introduccion de andamio (rutas/Introduccion.tsx) hasta la issue 2.2. */
+.cf-introduccion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--cf-space-6);
+  min-height: 100dvh;
+  padding: var(--cf-space-6) var(--cf-space-4);
+  background: var(--cf-bg);
+}

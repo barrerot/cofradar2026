@@ -22,9 +22,39 @@
     <meta name="apple-mobile-web-app-title" content="Cofradar" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Antes de pintar nada: el tema guardado, para que no destelle el claro
+         a quien eligio el oscuro, y si toca la pantalla de arranque (P-01):
+         solo la primera vez o sin nada guardado; si hay datos guardados, la
+         app abre directamente el ultimo estado conocido. Repite a proposito lo
+         minimo de src/tema.ts, que lo vuelve a aplicar al cargar. -->
+    <script>
+      (function () {
+        var raiz = document.documentElement;
+        try {
+          var p = JSON.parse(localStorage.getItem("cofradar:preferencias") || "{}");
+          var q = new URLSearchParams(location.search).get("tema");
+          var oscuro =
+            q === "oscuro" || q === "dark" ||
+            (!q && (p.tema === "oscuro" ||
+              (p.tema !== "claro" && matchMedia("(prefers-color-scheme: dark)").matches)));
+          raiz.dataset.theme = oscuro ? "dark" : "light";
+          if (p.contraste === "max") raiz.dataset.contrast = "max";
+          if (!localStorage.getItem("cofradar:ultima-sincronizacion")) raiz.dataset.arranque = "";
+        } catch (e) {
+          raiz.dataset.arranque = "";
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div id="raiz"></div>
+    <!-- P-01 Arranque: se ve solo mientras llega el JavaScript. React
+         sustituye el contenido de #raiz al arrancar, asi que nunca tapa mas
+         tiempo del que tarda la carga. -->
+    <div id="raiz">
+      <div class="cf-arranque" role="status" aria-label="Cargando Cofradar">
+        <span aria-hidden="true">Cofradar</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

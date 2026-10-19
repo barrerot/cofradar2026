@@ -1,10 +1,12 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { leer } from "./datos/almacen";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
 import { Cofradias } from "./rutas/Cofradias";
 import { Estados } from "./rutas/Estados";
 import { FichaCofradia } from "./rutas/FichaCofradia";
 import { Inicio } from "./rutas/Inicio";
+import { Introduccion } from "./rutas/Introduccion";
 import { Mapa } from "./rutas/Mapa";
 import { MiCofradar } from "./rutas/MiCofradar";
 
@@ -21,7 +23,13 @@ export function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Inicio estado={estado} />} />
+      {/* La primera vez que se entra por la portada, el arranque (P-01) da paso a
+          la Introducción (P-02). Un enlace directo a una cofradía no la impone. */}
+      <Route
+        path="/"
+        element={leer("introduccion-vista") ? <Inicio estado={estado} /> : <Navigate to="/introduccion" replace />}
+      />
+      <Route path="/introduccion" element={<Introduccion />} />
       <Route path="/mapa" element={<Mapa estado={estado} />} />
       <Route path="/cofradias" element={<Cofradias estado={estado} />} />
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
