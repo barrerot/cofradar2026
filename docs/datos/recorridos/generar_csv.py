@@ -52,8 +52,8 @@ PUERTA_PALOS = ("Catedral · Puerta de los Palos", [37.38605, -5.99254])
 AQUI = os.path.dirname(os.path.abspath(__file__))
 APORTE_HERMANDADES = os.path.join(AQUI, "aportes", "hermandades_carlos.csv")
 # Datos de la aportación que no se usan, tras revisarla con Carlos (19/10/2026)
-DESCARTAR = {("La Paz", "historia"): "es la misma que la de La Hiniesta (copiar y pegar)",
-             ("El Amor", "numero_nazarenos"): "son las cifras de la Borriquita", ("El Amor", "duracion_cortejo"): "ídem",
+DESCARTAR = {("El Amor", "numero_nazarenos"): "son las de la Borriquita; se quedan las del Llamador (Carlos, 19/10/2026)",
+             ("El Amor", "duracion_cortejo"): "ídem",
              ("Bendición y Esperanza", "templo"): "es una frase, no el nombre del templo"}
 # Hermandades que en 2026 no salen de su sede: la hermandad lleva la sede y el itinerario el templo de salida.
 # Coordenadas de la sede, de OpenStreetMap.
