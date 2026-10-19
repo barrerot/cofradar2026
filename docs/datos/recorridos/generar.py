@@ -105,7 +105,7 @@ CORREGIDAS = {
                                  "Plaza", "S. Miguel", "Palos", "Placentines", "Cuesta del Rosario", "Sales y Ferré",
                                  "Doña Mª Coronel", "Pl. San Marcos", "San Luis", "Entrada"])},
 }
-MANUAL.update({"San Luis - Relator": ["Calle San Luis", "Calle Relator"], "Arco de la Macarena": V(37.40330, -5.98955), "Madre Mª Purísima": "Calle Madre María de la Purísima"})
+MANUAL.update({"San Luis - Relator": ["Calle San Luis", "Calle Relator"], "Arco de la Macarena": V(37.40330, -5.98955), "Madre Mª Purísima": "Calle Madre Purísima"})
 
 HORA = re.compile(r"\(?\b\d{1,2}[:.]\d\d\)?")
 

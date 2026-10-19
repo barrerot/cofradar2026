@@ -58,7 +58,7 @@ VALORES = {
     ("punto_itinerario", "hora_publicada"): {"si", "no"},
 }
 # Caja amplia alrededor de Sevilla capital
-LAT, LON = (37.30, 37.45), (-6.06, -5.90)
+LAT, LON = (37.30, 37.45), (-6.06, -5.86)   # hasta Torreblanca, por el este
 
 errores, avisos = [], []
 def error(t, fila, col, msg): errores.append("%s.csv:%s: %s: %s" % (t, fila, col, msg))

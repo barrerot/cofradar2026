@@ -87,6 +87,35 @@ Cuando una calle esté mal, la corrección se guarda en `revisados/NN.json` con 
 3. **La revisión de los recorridos dudosos** en el visor. Basta con frases como «la Cena no va por ahí, va por X».
 4. **El camino por dentro de la Catedral**, si algún día se sabe. Mientras tanto se queda en «sin dato».
 
+## Los CSV del modelo (borrador de 2026)
+
+`generar_csv.py` rellena los ocho CSV de `docs/datos/` a partir de lo mismo que los recorridos:
+
+| CSV | De dónde sale |
+|---|---|
+| `punto_itinerario` | Solo del programa del Consejo. Cada celda de la cruz de guía o del paso es un punto. Si la celda lleva hora («Campana 15:35»), `hora_publicada = si`; si no, la hora de su fila de media hora y `no` |
+| `punto_geografico` | Cada lugar de esas celdas, una vez, con el punto de la calle por donde pasan los recorridos (fuera de los cruces); además, los templos y las dos puertas de la Catedral |
+| `hermandad`, `paso`, `templo` | Nombres del programa y fichas del Llamador; encima, lo rellenado a mano en `aportes/` (ver su LEEME), que manda |
+| `salida_procesional`, `edicion` | Una salida por columna del programa; la edición del año |
+
+**Sede y templo de salida.** La hermandad lleva su sede (`templo_id`). El itinerario empieza y acaba en el templo del que sale ese año, que puede ser otro (en 2026, las Cigarreras, la Hiniesta y Pasión y Muerte: `SEDE_DISTINTA`).
+
+Se lanza dentro de `trabajo/`, después de `rehacer.sh`, y se comprueba con el comprobador:
+
+```bash
+venv/bin/python -I ../generar_csv.py programa.json ../../<llamador>.pdf osm/sevilla.json 2026 borrador_csv
+python3 -I ../../verificar.py borrador_csv
+```
+
+Si da bien, se copian los CSV de `borrador_csv/` a `docs/datos/` (menos `jornada.csv`, que no cambia).
+
+**Para 2027 hay que adaptarlo antes de usarlo.** Hoy escribe los CSV desde cero con una sola edición. En 2027 tiene que **añadir** la edición 2027 y sus salidas e itinerarios **sin tocar los de 2026**, reutilizando los `id` de hermandades, templos y lugares que ya existen. Además:
+
+- cambiar `FECHAS` a las fechas de 2027;
+- revisar `ERRATAS`, `SEDE_DISTINTA` y `DESCARTAR`.
+
+`plantilla_excel.py` crea el Excel para completar a mano lo que falta (`aportes/datos_pendientes_2026.xlsx`).
+
 ## Ficheros
 
 | Fichero | Para qué |
@@ -100,6 +129,8 @@ Cuando una calle esté mal, la corrección se guarda en `revisados/NN.json` con 
 | `trazador.py`, `trazar_todas.py` | Dibuja la línea sobre el callejero y la comprueba |
 | `construir_visor.py`, `visor_plantilla.html`, `leaflet.css` | Visor para revisar en el mapa |
 | `exportar.py` | Un GeoJSON limpio por salida en `docs/datos/itinerarios/<año>/` |
+| `generar_csv.py` | Borrador de los ocho CSV del modelo (ver arriba) |
+| `plantilla_excel.py`, `aportes/` | Excel para completar a mano lo que falta, y lo ya completado |
 | `medias_vueltas.py` | Dónde da media vuelta cada recorrido |
 | `revisados/` | Recorridos corregidos a mano, que mandan sobre los generados |
 | `trabajo/` | Descargas y ficheros intermedios; no se sube al repositorio |

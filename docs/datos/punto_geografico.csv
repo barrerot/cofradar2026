@@ -1,1 +1,452 @@
 id,nombre,tipo,latitud,longitud
+1,Parroquia de Jesús Obrero,templo,37.35907,-5.96990
+2,Parroquia de San Isidro Labrador,templo,37.42350,-5.96352
+3,Parroquia de San Antonio María Claret,templo,37.35682,-5.98471
+4,Parroquia del Sagrado Corazón de Jesús,templo,,
+5,Parroquia de San Juan Bosco,templo,37.38058,-6.00765
+6,Parroquia de Nuestra Señora del Buen Aire,templo,,
+7,Parroquia del Sagrario,templo,37.38634,-5.99384
+8,Parroquia del Buen Pastor y San Juan de la Cruz (Palmete-Padre Pío),templo,37.37201,-5.94081
+9,Parroquia de San Antonio de Padua,templo,,
+10,Iglesia de la Beata Ana María,templo,37.41041,-5.91895
+11,Parroquia de San José Obrero,templo,37.39756,-5.97535
+12,Parroquia de la Milagrosa,templo,37.37698,-5.96697
+13,Iglesia Colegial del Divino Salvador,templo,37.39008,-5.99267
+14,Iglesia de los Terceros,templo,37.39380,-5.98745
+15,Capilla del Mayor Dolor,templo,37.38781,-5.99761
+16,Parroquia de San Julián,templo,37.39880,-5.98522
+17,Iglesia de Santa Marina y San Juan Bautista de La Salle,templo,37.39902,-5.98773
+18,Parroquia de San Sebastián,templo,37.37496,-5.98318
+19,Parroquia de San Roque,templo,37.39113,-5.98382
+20,Capilla de la Estrella,templo,37.38326,-6.00545
+21,Iglesia de San Juan de la Palma,templo,37.39546,-5.99105
+22,Parroquia de San Ignacio de Loyola,templo,37.39876,-5.95818
+23,Iglesia de Santiago el Mayor,templo,37.39135,-5.98651
+24,Parroquia de Ntra. Sra. de las Mercedes y Santa Genoveva,templo,37.36858,-5.97490
+25,Parroquia de San Andrés,templo,37.39434,-5.99397
+26,Parroquia de San Gonzalo,templo,37.38016,-6.01003
+27,Capilla del Dulce Nombre de Jesús,templo,37.39513,-5.99839
+28,Parroquia de San Vicente Martir,templo,37.39440,-5.99925
+29,Capilla de Ntra. Señora del Rosario,templo,37.38454,-5.99642
+30,Capilla de la Expiración (Capilla del Museo),templo,37.39290,-6.00000
+31,Parroquia Nuestra Señora de los Dolores. Cerro del Águila,templo,,
+32,Iglesia de San Esteban,templo,37.38989,-5.98613
+33,Parroquia de San Nicolás de Bari,templo,37.38866,-5.98933
+34,Parroquia de San Benito de Abad,templo,37.38773,-5.97935
+35,Iglesia del Sagrado Corazón y Capilla de los Luises,templo,37.39575,-5.99534
+36,Parroquia de San Lorenzo Mártir,templo,37.39736,-5.99661
+37,Capilla de la Universidad,templo,37.38070,-5.99200
+38,Parroquia de Santa Cruz,templo,37.38658,-5.98944
+39,Real Parroquia de Omnium Sanctorum,templo,37.39920,-5.99128
+40,Convento de San Antonio de Padua (PP. Franciscanos),templo,37.39839,-5.99886
+41,Parroquia de la Concepción lnmaculada de la Santísima Virgen María,templo,37.38326,-5.96591
+42,Parroquia de San Bernardo,templo,37.38254,-5.98180
+43,Iglesia de San Martín de Tours,templo,37.39627,-5.99283
+44,Capilla de la Piedad. (Baratillo),templo,37.38623,-5.99747
+45,Parroquia de San Pedro,templo,37.39271,-5.98998
+46,Capilla de Nuestra Señora de los Ángeles,templo,37.39085,-5.98395
+47,Iglesia de Santa Catalina,templo,37.39313,-5.98817
+48,Capilla de la Fábrica de Tabacos,templo,37.37758,-5.99550
+49,Capilla del Rosario de Monte-Sión,templo,37.39686,-5.99129
+50,Capilla propia del Dulce Nombre de Jesús. Real Parroquia de Sta. Mª Magdalena,templo,37.39054,-5.99848
+51,Iglesia de la Anunciación,templo,37.39248,-5.99249
+52,Real Iglesia de San Antonio Abad,templo,37.39251,-5.99668
+53,Basílica de Nuestro Padre Jesús del Gran Poder,templo,37.39717,-5.99615
+54,Basílica de Santa María de la Esperanza Macarena,templo,37.40247,-5.98943
+55,Capilla de los Marineros,templo,37.38407,-6.00104
+56,Santuario de Ntro. Padre Jesús de la Salud y María Santísima de las Angustias Coronada,templo,37.39499,-5.98392
+57,"Capilla de las tres necesidades de María, vulgo la Carretería",templo,37.38420,-5.99630
+58,Convento de San Buenaventura (P.P. Franciscanos),templo,37.38902,-5.99732
+59,Basílica del Stmo. Cristo de la Expiración,templo,37.38957,-6.01095
+60,Parroquia de la O,templo,37.38714,-6.00514
+61,Parroquia de San Isidoro,templo,37.38945,-5.99078
+62,Capilla de Montserrat,templo,37.39016,-5.99880
+63,Iglesia del ex Convento de Ntra. Sra. de la Paz,templo,37.39443,-5.98838
+64,"Capilla Sacramental de Nuestra Señora del Sol, anexa a la Parroquia de San Diego de Alcalá",templo,37.37591,-5.97386
+65,Capilla de Ntra. Sra. de los Dolores,templo,37.39535,-5.98760
+66,Capilla propia en la Basílica de María Auxiliadora de los Cristianos,templo,37.39749,-5.97998
+67,Iglesia del Santo Sepulcro y San Gregorio Magno (PR Mercedarios),templo,37.39299,-5.99712
+68,La Campana,plaza,37.39261,-5.99517
+69,Sierpes,calle,37.39170,-5.99476
+70,Plaza de San Francisco,plaza,37.38843,-5.99389
+71,Catedral · Puerta de San Miguel,otro,37.38551,-5.99381
+72,Catedral · Puerta de los Palos,otro,37.38605,-5.99254
+73,Avenida de las Letanías,calle,37.36394,-5.96648
+74,Ronda Nuestra Señora de la Oliva,calle,37.36432,-5.96845
+75,Getsemaní,calle,37.36386,-5.96991
+76,Nenúfar,calle,37.36459,-5.97185
+77,Alfonso Lasso de Vega,calle,37.36642,-5.97302
+78,Almirante Topete,calle,37.36890,-5.97585
+79,Avenida Teatinos,calle,37.36894,-5.97676
+80,Bendición y Esperanza,calle,37.36024,-5.97103
+81,Padre José Sebastián Bandarán,calle,37.35994,-5.96865
+82,Plaza Diputado Ramón Rueda,plaza,37.42200,-5.96415
+83,Sembradores,calle,37.42238,-5.96571
+84,Estrella Agena,calle,37.42161,-5.96903
+85,Camino de los toros,calle,37.42110,-5.96929
+86,Corral del Agua,calle,37.42086,-5.97201
+87,Corral de la Encarnación,calle,37.41864,-5.97057
+88,Corral del Acabose,calle,37.41905,-5.97024
+89,Mar de Alborán,calle,37.41836,-5.96923
+90,Travesía de Nuestra Señora de la Consolación,calle,37.41911,-5.96643
+91,Viñadores,calle,37.41999,-5.96440
+92,Impresores,calle,37.42010,-5.96298
+93,Esparteros,calle,37.42155,-5.96199
+94,Alfareros,calle,37.42323,-5.96411
+95,Agricultores,calle,37.42253,-5.96707
+96,Parque Sierra de Aroche,calle,37.42113,-5.97276
+97,Mar Egeo,calle,37.41954,-5.96456
+98,Soladores,calle,37.42025,-5.96169
+99,Charolistas,calle,37.42160,-5.96125
+100,San Antonio María Claret,calle,37.35811,-5.98434
+101,Periodista Ramón Resa,calle,37.36205,-5.98528
+102,Páez de Rivera,calle,37.36349,-5.98460
+103,Avenida Manuel Siurot,calle,37.36212,-5.98207
+104,Torcuato Luca de Tena,calle,37.35999,-5.98258
+105,Fotógrafo Antonio del Junco,otro,37.35788,-5.98575
+106,Teba,calle,37.35608,-5.98668
+107,Tajo,calle,37.35495,-5.98712
+108,Ebro,calle,37.35416,-5.98664
+109,Avenida Padre García Tejero,calle,37.35571,-5.98658
+110,Cardenal Ilundáin,calle,37.36357,-5.98407
+111,Monzón,calle,37.35918,-5.98561
+112,Avenida de la Reina Mercedes,calle,37.35649,-5.98639
+113,Ensanche,calle,37.35585,-5.98768
+114,Panamá,calle,37.35475,-5.98763
+115,Plaza Fernando VI,plaza,37.32577,-5.96746
+116,Ávila,calle,37.32366,-5.96686
+117,Almirante Argandoña,calle,37.32536,-5.96573
+118,Santa Margarita,calle,37.32214,-5.96459
+119,Pamplona,calle,37.32163,-5.96568
+120,Guadalajara,calle,37.32000,-5.96706
+121,Caldereros,calle,37.31800,-5.96765
+122,Plaza La Venus del Espejo,plaza,37.39289,-5.96508
+123,Almenas,calle,37.32076,-5.96558
+124,Rosas,calle,37.32371,-5.96617
+125,Logroño,calle,37.32605,-5.96741
+126,Asensio y Toledo,calle,37.32484,-5.96653
+127,Alcuceros,calle,37.32278,-5.96600
+128,Prosperidad,calle,37.38003,-6.00632
+129,Febo,calle,37.38112,-6.00401
+130,Victoria,calle,37.38322,-6.00233
+131,Plazuela de Santa Ana,plaza,37.38257,-6.00093
+132,Pureza,calle,37.38491,-6.00297
+133,Rodrigo de Triana,calle,37.38271,-6.00131
+134,San Jacinto,calle,37.38402,-6.00472
+135,Evangelista,calle,37.38158,-6.00440
+136,Trabajo,calle,37.37962,-6.00409
+137,Pagés del Corro,calle,37.38209,-6.00150
+138,Fabié,calle,37.38458,-6.00280
+139,Francos,calle,37.38891,-5.99260
+140,Entre Cárceles,calle,37.38937,-5.99387
+141,Fernández y González,calle,37.38723,-5.99460
+142,Real de la Carretería,calle,37.38555,-5.99704
+143,Almirantazgo,calle,37.38519,-5.99467
+144,Santo Tomás,calle,37.38411,-5.99356
+145,Rodrigo Caro,calle,37.38594,-5.99080
+146,Chapineros,calle,37.38863,-5.99326
+147,Plaza Nueva,plaza,37.38863,-5.99519
+148,García de Vinuesa,calle,37.38662,-5.99424
+149,Dos de Mayo,calle,37.38488,-5.99611
+150,Santander,calle,37.38350,-5.99481
+151,Plaza de la Alianza,plaza,37.38548,-5.99108
+152,Plaza Virgen de los Reyes,plaza,37.38568,-5.99223
+153,Ronda de la Doctora Oeste,calle,37.37177,-5.94181
+154,La Puebla del Rio,calle,37.37197,-5.94353
+155,Avenida Doña Francisquita,calle,37.37412,-5.94969
+156,Puerto de la Mora,calle,37.37323,-5.95461
+157,Calatayud,calle,37.37374,-5.95662
+158,Nuestra Señora de los Dolores,calle,37.37023,-5.95927
+159,Párroco Antonio Gómez Villalobos,calle,37.37048,-5.95741
+160,Galicia,calle,37.37108,-5.95596
+161,Coimbra,calle,37.37137,-5.95487
+162,Avenida de los Gavilanes,calle,37.37288,-5.95253
+163,Ronda Padre Pío,calle,37.37175,-5.94074
+164,Carrión de los Céspedes,calle,37.37081,-5.94273
+165,Puebla de Cazalla,calle,37.37022,-5.94189
+166,Castillo de las Guardas,calle,37.37079,-5.94065
+167,Avenida de la Plata,calle,37.37320,-5.94585
+168,Puerto de Piedrafita,calle,37.37274,-5.95317
+169,"Francisco Carrera Iglesias ""Paquili""",calle,37.37353,-5.95682
+170,Afán de Ribera,calle,37.37286,-5.95877
+171,Lisboa,calle,37.37145,-5.95559
+172,Plaza del Platanero,plaza,37.38473,-5.89793
+173,Álamo,calle,37.38370,-5.89778
+174,Encina,calle,37.38275,-5.90171
+175,Torres Quevedo,calle,37.38381,-5.90534
+176,Torrebermeja,calle,37.38406,-5.90787
+177,Torrenaharro,calle,37.38426,-5.90950
+178,Torrenueva,calle,37.38464,-5.90932
+179,Torre Donjimeno,calle,37.38523,-5.90853
+180,Torre Cuadrada,calle,37.38570,-5.90659
+181,Torres del Río,calle,37.38534,-5.90530
+182,Torre Carcelas,calle,37.38526,-5.90336
+183,Torrelaguna,calle,37.38531,-5.90601
+184,Torremegía,calle,37.38450,-5.90315
+185,Plaza Salvador Valverde,plaza,37.38249,-5.90312
+186,Cedro,calle,37.38175,-5.90000
+187,Plaza de las Acacias,plaza,37.38329,-5.89913
+188,Pino,calle,37.38366,-5.90252
+189,Torrellana,calle,37.38379,-5.90712
+190,Torregrosa,calle,37.38663,-5.90443
+191,Torregorda,calle,37.38433,-5.90447
+192,José Muñoz San Román,calle,37.38229,-5.90256
+193,Carmen Conde,calle,37.41182,-5.92191
+194,Pintor Alfonso Grosso,calle,37.41182,-5.92378
+195,Avenida Ciudad de Chiva,calle,37.40983,-5.92492
+196,Ciudad de Alfafar,calle,37.41222,-5.92936
+197,Ciudad de Paterna,calle,37.41229,-5.92690
+198,Ontur,calle,37.40965,-5.92093
+199,Plaza Zocodover,plaza,37.40939,-5.92206
+200,Plaza del Obradoiro,plaza,37.40822,-5.92290
+201,Emilia Barral,calle,37.40944,-5.91912
+202,Antonio Filpo Rojas,calle,37.39697,-5.97554
+203,Venecia,calle,37.39473,-5.98009
+204,Joaquín Morales y Torres,calle,37.39466,-5.98314
+205,Mateos,calle,37.39459,-5.98351
+206,Sol,calle,37.39533,-5.98535
+207,María Auxiliadora,calle,37.39689,-5.98172
+208,Carretera de Carmona,calle,37.39755,-5.98120
+209,Jabugo,calle,37.39791,-5.97778
+210,Mamá Margarita,calle,37.39911,-5.97703
+211,José María de Mena,calle,37.39938,-5.97398
+212,Arroyo,calle,37.39504,-5.98130
+213,Imaginero Luis Álvarez Duarte,calle,37.39709,-5.97348
+214,Nicasio Gallego,calle,37.39762,-5.97501
+215,Cristo de las Cinco Llagas,calle,37.39532,-5.98455
+216,Madre Isabel de la Trinidad,calle,37.39684,-5.98192
+217,San Juan Bosco,calle,37.39770,-5.97904
+218,Pinta,calle,37.39878,-5.97760
+219,Maestro Gómez Zarzuela,calle,37.39954,-5.97637
+220,Vicente Alanís,calle,37.39898,-5.97370
+221,Guanahani,calle,37.39787,-5.97374
+222,Iriarte,calle,37.39725,-5.97546
+223,Avenida de la Ciudad Jardin,calle,37.37614,-5.96682
+224,Antonio de Nebrija,calle,37.37894,-5.96167
+225,Almotamid,calle,37.38004,-5.96220
+226,Arzobispo Salcedo,calle,37.37982,-5.96346
+227,Gran Plaza,otro,37.38127,-5.96608
+228,Avenida de Eduardo Dato,calle,37.38277,-5.97278
+229,San Juan de Dios,calle,37.38046,-5.96993
+230,Espinosa y Cárcel,calle,37.38007,-5.97033
+231,Villegas Marmolejo,calle,37.37821,-5.97023
+232,Parque Federico García Lorca,otro,37.37718,-5.97077
+233,Fernández de Ribera,calle,37.37628,-5.96891
+234,Cardenal Rodrigo de Castro,calle,37.37802,-5.96613
+235,Alfonso XI,calle,37.38115,-5.96542
+236,Santa María Mazzarello,calle,37.37920,-5.97101
+237,Marqués de Nervion,calle,37.38029,-5.96865
+238,Cuna,calle,37.39275,-5.99364
+239,Amor de Dios,calle,37.39422,-5.99477
+240,Álvarez Quintero,calle,37.38904,-5.99330
+241,San Miguel,calle,37.39438,-5.99551
+242,Plaza de los Terceros,plaza,37.39361,-5.98809
+243,Imagen,calle,37.39265,-5.99109
+244,Plaza de la Encarnación,plaza,37.39277,-5.99198
+245,Javier Lasso de la Vega,calle,37.39352,-5.99468
+246,Argote de Molina,calle,37.38718,-5.99285
+247,Cuesta del Rosario,calle,37.38981,-5.99119
+248,Plaza de la Alfalfa,plaza,37.39040,-5.99085
+249,Plaza del Cristo de Burgos,plaza,37.39199,-5.98987
+250,Doña María Coronel,calle,37.39334,-5.98959
+251,Alemanes,calle,37.38678,-5.99272
+252,Sales y Ferré,calle,37.39116,-5.99002
+253,Zaragoza,calle,37.38861,-5.99811
+254,San Pablo,calle,37.39053,-5.99769
+255,Plaza de la Magdalena,plaza,37.39105,-5.99717
+256,Velázquez,calle,37.39168,-5.99543
+257,Adolfo Rodríguez Jurado,calle,37.38372,-5.99403
+258,Gamazo,calle,37.38704,-5.99620
+259,Fray Bartolomé de las Casas,calle,37.38829,-5.99796
+260,Tomás de Ybarra,calle,37.38488,-5.99457
+261,Castelar,calle,37.38632,-5.99611
+262,Relator,calle,37.40041,-5.99034
+263,Feria,calle,37.39825,-5.99158
+264,Correduría,calle,37.39758,-5.99253
+265,Alameda de Hércules,otro,37.39741,-5.99426
+266,Trajano,calle,37.39462,-5.99522
+267,Plaza del Duque de la Victoria,plaza,37.39310,-5.99564
+268,Plaza de San Marcos,plaza,37.39623,-5.98782
+269,Cardenal Carlos Amigo,calle,37.38635,-5.99248
+270,Odreros,calle,37.39039,-5.99043
+271,Bustos Tavera,calle,37.39550,-5.98797
+272,San Luis,calle,37.39782,-5.98790
+273,Avenida de la Borbolla,calle,37.37235,-5.98545
+274,Plaza de España,plaza,37.37721,-5.98660
+275,Palos de la Frontera,calle,37.38064,-5.99266
+276,Avenida de la Constitución,calle,37.38775,-5.99430
+277,Postigo del Aceite,otro,37.38526,-5.99497
+278,Harinas,calle,37.38655,-5.99580
+279,Barcelona,calle,37.38819,-5.99553
+280,Miguel de Mañara,calle,37.38432,-5.99230
+281,Avenida de Roma,calle,37.38185,-5.99338
+282,Glorieta Covadonga,plaza,37.37411,-5.98612
+283,Brasil,calle,37.37375,-5.98442
+284,Río de la Plata,calle,37.37408,-5.98301
+285,Tetuán,calle,37.38908,-5.99496
+286,Plaza del Triunfo,plaza,37.38511,-5.99181
+287,Plaza de la Contratación,plaza,37.38369,-5.99259
+288,Avenida de El Cid,calle,37.38043,-5.98865
+289,Plaza de España (Torre Norte),plaza,37.37787,-5.98805
+290,Plaza de España (Torre Sur),plaza,37.37588,-5.98684
+291,Puñonrostro,calle,37.39312,-5.98418
+292,Plaza Ponce de León,plaza,37.39310,-5.98739
+293,Orfila,calle,37.39345,-5.99369
+294,de las Caballerizas,calle,37.39030,-5.98775
+295,Medinaceli,calle,37.39003,-5.98631
+296,Guadalupe,calle,37.39047,-5.98421
+297,Recaredo,calle,37.39151,-5.98407
+298,Puerta Osario,calle,37.39337,-5.98499
+299,Juan de Mesa,calle,37.39293,-5.98810
+300,Imperial,calle,37.39020,-5.98640
+301,Reyes Católicos,calle,37.38818,-6.00066
+302,Rioja,calle,37.39107,-5.99548
+303,Fray Ceferino González,calle,37.38514,-5.99299
+304,Arfe,calle,37.38574,-5.99548
+305,Adriano,calle,37.38667,-5.99854
+306,Pastor y Landero,calle,37.38777,-5.99956
+307,Puente de Isabel II,puente,37.38693,-6.00185
+308,Santa Ángela de la Cruz,calle,37.39327,-5.99038
+309,San Juan de la Palma,calle,37.39505,-5.99071
+310,Plaza del Salvador,plaza,37.39019,-5.99315
+311,Avenida de Pedro Romero,calle,37.39861,-5.95938
+312,Dr. Laffón Soto,calle,37.39650,-5.96273
+313,Avenida de la Soleá,calle,37.39322,-5.96606
+314,Sinaí,calle,37.39013,-5.97044
+315,Luis Montoto,calle,37.38721,-5.97830
+316,San Esteban,calle,37.38974,-5.98581
+317,Granada,calle,37.38912,-5.99409
+318,Jesús de las Tres Caídas,calle,37.38983,-5.99078
+319,Valle,calle,37.39392,-5.98441
+320,José Laguillo,calle,37.39027,-5.97556
+321,Pérez Hervás,calle,37.39428,-5.98041
+322,Avenida El Greco,calle,37.39039,-5.96744
+323,Plaza de San Pedro,plaza,37.39249,-5.99015
+324,Dormitorio,calle,37.39153,-5.98933
+325,Plaza de San Leandro,plaza,37.39125,-5.98825
+326,Cardenal Cervantes,calle,37.39193,-5.98696
+327,Alhóndiga,calle,37.39313,-5.98839
+328,Santiago,calle,37.39162,-5.98655
+329,Felipe II,calle,37.37184,-5.98112
+330,Porvenir,calle,37.37296,-5.98348
+331,Avenida Isabel la Católica,calle,37.37778,-5.98828
+332,Puerta del Arenal,calle,37.38625,-5.99605
+333,Calle San Fernando,calle,37.38179,-5.99096
+334,Bogotá,calle,37.37130,-5.98174
+335,Pedro Salinas,calle,37.37064,-5.97894
+336,Diego de la Barrera,calle,37.37188,-5.98161
+337,San Gregorio,calle,37.38354,-5.99275
+338,Don Pelayo,calle,37.38530,-5.99607
+339,Romero de Torres,calle,37.36818,-5.97580
+340,Placentines,calle,37.38684,-5.99246
+341,Plaza Fernando de Herrera,plaza,37.39380,-5.99390
+342,Daoiz,calle,37.39428,-5.99419
+343,Plaza del Altozano,plaza,37.38511,-6.00324
+344,Paseo de Cristóbal Colón,calle,37.38702,-6.00096
+345,Nuestra Señora de la Salud,calle,37.38098,-6.01025
+346,Giralda,calle,37.38047,-6.00963
+347,Plaza San Martín de Porres,plaza,37.38095,-6.00916
+348,Teniente Borges,calle,37.39374,-5.99673
+349,Plaza de la Gavidia,plaza,37.39493,-5.99668
+350,Alfonso XII,calle,37.39270,-5.99622
+351,Villegas,calle,37.38969,-5.99314
+352,Virgen de los Buenos Libros,calle,37.39388,-5.99768
+353,San Vicente,calle,37.39461,-5.99950
+354,Plaza del Museo,plaza,37.39263,-5.99963
+355,Doña Guiomar,calle,37.38813,-5.99747
+356,Gravina,calle,37.39028,-6.00040
+357,Miguel de Carvajal,calle,37.39217,-5.99952
+358,Plaza de Molviedro,plaza,37.38786,-5.99795
+359,Avenida de Hytasa,calle,37.37293,-5.96373
+360,Avenida Ramón y Cajal,calle,37.37589,-5.97066
+361,Avenida de Carlos V,calle,37.38039,-5.98586
+362,Puerta Jerez,otro,37.38242,-5.99320
+363,Muñoz y Pabón,calle,37.38893,-5.98990
+364,Puerta la Carne,calle,37.38569,-5.98623
+365,Gallinato,calle,37.38280,-5.98326
+366,Avenida de la Buhaira,calle,37.37918,-5.97977
+367,Aníbal González,calle,37.37248,-5.96282
+368,Aragón,calle,37.37611,-5.96004
+369,Enramadilla,calle,37.37889,-5.97964
+370,Candilejo,calle,37.38981,-5.99015
+371,Santa María la Blanca,calle,37.38640,-5.98740
+372,Campamento,calle,37.38064,-5.98121
+373,Plaza de San Ildefonso,plaza,37.39059,-5.98838
+374,Laraña,calle,37.39279,-5.99277
+375,Águilas,calle,37.38987,-5.98769
+376,Plaza de Pilatos,plaza,37.38983,-5.98710
+377,Plaza Jesús de la Pasión,plaza,37.39009,-5.99234
+378,Paseo Catalina de Ribera,calle,37.38520,-5.98652
+379,Cano y Cueto,calle,37.38556,-5.98710
+380,San José,calle,37.38725,-5.98835
+381,Alcaicería de la Loza,calle,37.39039,-5.99145
+382,Muro de los Navarros,calle,37.39036,-5.98559
+383,Santa Bárbara,calle,37.39655,-5.99539
+384,Méndez Núñez,calle,37.39066,-5.99690
+385,O'Donnell,calle,37.39231,-5.99542
+386,Jesús del Gran Poder,calle,37.39549,-5.99566
+387,Cardenal Spinola,calle,37.39630,-5.99695
+388,Conde Barajas,calle,37.39679,-5.99586
+389,Mateos Gago,calle,37.38609,-5.99132
+390,Leonor Dávalos,calle,37.39807,-5.99443
+391,Lineros,calle,37.39071,-5.99240
+392,Belén,calle,37.39952,-5.99328
+393,Puente y Pellón,calle,37.39155,-5.99210
+394,Guadiana,calle,37.39863,-5.99195
+395,Plaza San Lorenzo,plaza,37.39694,-5.99673
+396,Plaza de la Concordia,plaza,37.39463,-5.99677
+397,Pedro del Toro,calle,37.39180,-6.00056
+398,Marqués de la Mina,calle,37.39784,-5.99783
+399,Jiménez Aranda,calle,37.38687,-5.98122
+400,Puerta de Carmona,otro,37.38925,-5.98465
+401,Benito Mas y Prat,calle,37.38726,-5.97089
+402,Rico Cejudo,calle,37.38605,-5.96935
+403,Goya,calle,37.38601,-5.96879
+404,Alejandro Collantes,calle,37.38460,-5.96861
+405,Cardenal Lluch,calle,37.38183,-5.96780
+406,Puente de San Bernardo,puente,37.38497,-5.98415
+407,San Bernardo,calle,37.38322,-5.98333
+408,Madre de Dios,calle,37.38759,-5.98883
+409,Alberto Lista,calle,37.39644,-5.99212
+410,Plaza de San Andrés,plaza,37.39393,-5.99376
+411,Cervantes,calle,37.39517,-5.99364
+412,García Tassara,calle,37.39450,-5.99459
+413,Gerona,calle,37.39430,-5.98941
+414,Castellar,calle,37.39623,-5.99152
+415,Jesús de la Vera-Cruz,calle,37.39413,-5.99838
+416,Las Cortes,calle,37.39433,-5.99660
+417,Jovellanos,calle,37.39001,-5.99459
+418,Plaza de la Pescadería,plaza,37.38998,-5.99146
+419,Sagasta,calle,37.39021,-5.99326
+420,Aponte,calle,37.39392,-5.99532
+421,Almirante Apodaca,calle,37.39287,-5.98862
+422,Jardines de Murillo,otro,37.38437,-5.98677
+423,Alcázares,calle,37.39361,-5.99086
+424,Santas Patronas,calle,37.38813,-5.99880
+425,Bailén,calle,37.39071,-5.99808
+426,Resolana,calle,37.40308,-5.98962
+427,Parras,calle,37.40131,-5.99031
+428,Muro,calle,37.40289,-5.98984
+429,Arco de la Macarena,otro,37.40330,-5.98955
+430,Boteros,calle,37.39061,-5.98996
+431,Madre Purísima,calle,37.36446,-5.96833
+432,Párroco Don Eugenio,calle,37.38316,-6.00033
+433,Plaza de San Román,plaza,37.39490,-5.98650
+434,Escuelas Pías,calle,37.39332,-5.98660
+435,Pinto,calle,37.39373,-5.98486
+436,Temprado,calle,37.38381,-5.99573
+437,Carlos Cañal,calle,37.38885,-5.99803
+438,Castilla,calle,37.38854,-6.00758
+439,Callao,calle,37.38596,-6.00425
+440,San Jorge,calle,37.38530,-6.00383
+441,Plaza de Chapina,plaza,37.38933,-6.00785
+442,Rodo,calle,37.38486,-5.99682
+443,Virgen del Sol,calle,37.37560,-5.97361
+444,Plaza Don Juan de Austria,plaza,37.38100,-5.98865
+445,Avión Cuatro Vientos,calle,37.37698,-5.97678
+446,Dueñas,calle,37.39474,-5.98944
+447,Plaza Santa Isabel,plaza,37.39646,-5.98707
+448,Plaza Padre Jerónimo de Córdoba,plaza,37.39311,-5.98658
+449,Francisco Carrión Mejías,calle,37.39271,-5.98799
+450,Jáuregui,calle,37.39321,-5.98545
+451,Hernando Colón,calle,37.38736,-5.99342
