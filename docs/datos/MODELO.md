@@ -271,7 +271,7 @@ BUL-169 (el recorrido de cada cofradía sobre el callejero) se da por hecha con 
 
 1. **Umbrales.** Distancia al recorrido, tolerancia horaria, niveles de confianza y criterios de penalización por patrones. Se fijarán con pruebas; nada de lo escrito aquí es una cifra.
 2. **Dónde vive la geometría.** *Resuelto el 16/10/2026:* en `punto_geografico.geojson`, aparte del CSV (ver «Decisiones»). Solo queda ver cuánta precisión hace falta.
-3. **Horas sobre el recorrido.** Tramo, sentido, intersecciones y repeticiones están *resueltos el 16/10/2026* con un recorrido por salida (sección anterior). Queda cómo casar cada hora de `punto_itinerario` con su posición en la línea, y cómo enlazar cada archivo con su fila de `salida_procesional.csv` cuando esta tenga datos. Ahora el archivo se nombra por jornada y hermandad.
+3. **Horas sobre el recorrido.** Tramo, sentido, intersecciones y repeticiones están *resueltos el 16/10/2026* con un recorrido por salida (sección anterior). Queda cómo casar cada hora de `punto_itinerario` con su posición en la línea. *Resuelto el 19/10/2026:* cada archivo lleva en `properties.salida_procesional_id` el `id` de su salida, y así se enlaza en Supabase (tabla `recorrido`).
 4. **Fiabilidad de la hora diferida.** Falta decidir cómo se juzga una hora de observación que no se da por fiable automáticamente.
 5. **Evidencia sin ubicación.** Falta decidir cómo pesa en la fase y en la presencia una aportación sin coordenadas fiables, o una genérica «Estoy viendo la cofradía».
 6. **Cuándo varias observaciones son «independientes»** y cuántas hacen falta para corregir una estimación.

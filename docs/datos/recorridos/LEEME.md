@@ -109,6 +109,15 @@ python3 -I ../../verificar.py borrador_csv
 
 Si da bien, se copian los CSV de `borrador_csv/` a `docs/datos/` (menos `jornada.csv`, que no cambia).
 
+Después se enlaza cada recorrido con su salida y se cargan los datos en Supabase:
+
+```bash
+python3 -I ../enlazar_itinerarios.py ../../itinerarios/2026 ../.. 2026   # dentro de trabajo/
+npm run cargar:datos -w backend                                          # en la raíz del repositorio
+```
+
+`enlazar_itinerarios.py` escribe en cada GeoJSON el `salida_procesional_id` de su salida y el nombre de la hermandad del modelo («Vera Cruz», no el «Vera+Cruz» abreviado del programa). Casa por columna del programa: las salidas de una edición van en `salida_procesional.csv` en el mismo orden. La carga vacía las tablas de Supabase y las vuelve a llenar con los CSV y los recorridos, y cuenta las filas al final.
+
 **Para 2027 hay que adaptarlo antes de usarlo.** Hoy escribe los CSV desde cero con una sola edición. En 2027 tiene que **añadir** la edición 2027 y sus salidas e itinerarios **sin tocar los de 2026**, reutilizando los `id` de hermandades, templos y lugares que ya existen. Además:
 
 - cambiar `FECHAS` a las fechas de 2027;
@@ -130,6 +139,7 @@ Si da bien, se copian los CSV de `borrador_csv/` a `docs/datos/` (menos `jornada
 | `construir_visor.py`, `visor_plantilla.html`, `leaflet.css` | Visor para revisar en el mapa |
 | `exportar.py` | Un GeoJSON limpio por salida en `docs/datos/itinerarios/<año>/` |
 | `generar_csv.py` | Borrador de los ocho CSV del modelo (ver arriba) |
+| `enlazar_itinerarios.py` | Escribe en cada GeoJSON el id de su salida |
 | `plantilla_excel.py`, `aportes/` | Excel para completar a mano lo que falta, y lo ya completado |
 | `medias_vueltas.py` | Dónde da media vuelta cada recorrido |
 | `revisados/` | Recorridos corregidos a mano, que mandan sobre los generados |
