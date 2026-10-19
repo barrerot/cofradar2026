@@ -1,0 +1,196 @@
+/* P-25 Ajustes (rutas/Ajustes.tsx, 7-mi-cofradar/ajustes). Grupos a todo el
+   ancho: el titulo del grupo sobre el fondo y las filas sobre la superficie,
+   con separadores. Solo tokens semanticos: vale en claro, oscuro y contraste
+   maximo. */
+
+.cf-ajustes-grupo {
+  margin-bottom: var(--cf-space-6);
+}
+
+.cf-ajustes-titulo {
+  margin: 0;
+  padding: var(--cf-space-6) var(--cf-space-4) var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-ajustes-fila {
+  display: block;
+  padding: var(--cf-space-4);
+  background: var(--cf-surface);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  color: var(--cf-text);
+}
+
+.cf-ajustes-con-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-4);
+}
+
+.cf-ajustes-nombre {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-ajustes-texto {
+  margin: var(--cf-space-1) 0 0;
+  color: var(--cf-text-secondary);
+}
+
+/* ── Selector segmentado: Sistema / Claro / Oscuro ──────────────────────── */
+.cf-segmentado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-1);
+  background: var(--cf-surface-sunken);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+}
+
+.cf-segmentado button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cf-space-2);
+  min-height: var(--cf-touch-min);
+  border: 0;
+  border-radius: var(--cf-radius-sm);
+  background: transparent;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  cursor: pointer;
+  transition: background var(--cf-dur-fast) var(--cf-ease-in-out);
+}
+
+/* La elegida, en tinta como el primario (el granate es identidad, nunca estado). */
+.cf-segmentado button[aria-checked="true"] {
+  background: var(--cf-primary-bg);
+  color: var(--cf-text-inverse);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-segmentado button:focus-visible,
+.cf-interruptor:focus-visible,
+.cf-ajustes-enlace:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
+/* ── Interruptor (máximo contraste) ─────────────────────────────────────── */
+.cf-interruptor {
+  position: relative;
+  flex: none;
+  width: 3.25rem;
+  height: 2rem;
+  padding: 0;
+  border: 2px solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-surface-sunken);
+  cursor: pointer;
+  transition: background var(--cf-dur-fast) var(--cf-ease-in-out);
+}
+
+/* Area tactil de 48 px aunque el interruptor mida 32. */
+.cf-interruptor::before {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--cf-touch-min);
+  height: var(--cf-touch-min);
+  transform: translate(-50%, -50%);
+}
+
+.cf-interruptor::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--cf-text-secondary);
+  transform: translateY(-50%);
+  transition: transform var(--cf-dur-fast) var(--cf-ease-in-out);
+}
+
+/* Encendido: relleno de tinta y la bola a la derecha. Forma y posicion, no
+   solo color. */
+.cf-interruptor[aria-checked="true"] {
+  background: var(--cf-primary-bg);
+  border-color: var(--cf-primary-bg);
+}
+
+.cf-interruptor[aria-checked="true"]::after {
+  background: var(--cf-text-inverse);
+  transform: translate(1.25rem, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-segmentado button,
+  .cf-interruptor,
+  .cf-interruptor::after {
+    transition: none;
+  }
+}
+
+/* ── Permiso de ubicación ───────────────────────────────────────────────── */
+.cf-ajustes-permiso {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--cf-space-3);
+  margin-bottom: var(--cf-space-2);
+}
+
+.cf-ajustes-permiso > .cf-ph {
+  margin-top: var(--cf-space-1);
+}
+
+.cf-ajustes-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  margin: 0;
+  color: var(--cf-text-secondary);
+}
+
+.cf-ajustes-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cf-space-2);
+  margin: var(--cf-space-4) 0 0;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  background: var(--cf-info-soft);
+  border: var(--cf-border-width) solid var(--cf-info-border);
+  border-radius: var(--cf-radius-md);
+  color: var(--cf-info-text);
+}
+
+.cf-ajustes-aviso > .cf-ph {
+  flex: none;
+  color: var(--cf-info);
+}
+
+/* ── Fila que lleva a otra pantalla ─────────────────────────────────────── */
+.cf-ajustes-enlace {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-height: var(--cf-touch-min);
+  font-size: var(--cf-text-lg);
+  text-decoration: none;
+}
+
+.cf-ajustes-enlace:hover {
+  background: var(--cf-surface-hover);
+}

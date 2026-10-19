@@ -38,8 +38,11 @@ export function Marco({
   children: ReactNode;
   /** Sheet o panel acoplado, si la ruta tiene uno abierto. */
   sheet?: ReactNode;
-  /** `completo` quita el padding y el scroll: es lo que necesita el mapa. */
-  sangrado?: "completo";
+  /**
+   * `completo` quita el padding y el scroll: es lo que necesita el mapa.
+   * `lista` quita el padding y deja el scroll: listas de ajustes a todo el ancho.
+   */
+  sangrado?: "completo" | "lista";
   /**
    * Registro visual (§3). `funcional` es el valor por defecto del sistema y
    * por eso no se escribe: lo lleva todo lo operativo —Inicio, mapa, agenda,

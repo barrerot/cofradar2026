@@ -137,6 +137,17 @@
   font-weight: var(--cf-weight-critical);
 }
 
+/* La vuelta de una pantalla secundaria, igual: flecha y nombre sin caja
+   (7-mi-cofradar/ajustes, 0-sistema/estados/estado-4). */
+.cf-marco-cabecera-slot > .cf-btn[data-vuelta] {
+  --bg: transparent;
+  --bd: transparent;
+  padding-inline: 0 var(--cf-space-2);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
 .cf-marco-cabecera-slot > .cf-btn[aria-haspopup] > span {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -160,6 +171,16 @@
   font-weight: var(--cf-weight-600);
   font-size: var(--cf-text-xl);
   line-height: var(--cf-leading-xl);
+}
+
+/* Fuera del registro editorial el titulo es funcional: Inter, 24, negrita
+   (7-mi-cofradar/ajustes, 4-cofradias/cofradias-1A). La serif queda para la
+   identidad: la ficha de una hermandad. */
+.cf-marco:not([data-register="editorial"]) .cf-marco-titulo {
+  font-family: var(--cf-font-sans);
+  font-weight: var(--cf-weight-critical);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
 }
 
 /* Indicador de ultima sincronizacion: lo unico fijo de la cabecera (§7.3). */
@@ -189,6 +210,11 @@
 .cf-marco-contenido[data-sangrado="completo"] {
   padding: 0;
   overflow: hidden;
+}
+
+/* Listas a todo el ancho (Ajustes): sin padding, pero con scroll. */
+.cf-marco-contenido[data-sangrado="lista"] {
+  padding: 0;
 }
 
 /* Ancho maximo de lectura. No se estira porque haya espacio (§8.4). */

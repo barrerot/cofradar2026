@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Marco } from "../marco";
 import { CabeceraRaiz } from "./CabeceraRaiz";
 import { Relleno } from "./Relleno";
@@ -18,6 +19,11 @@ export function MiCofradar() {
   return (
     <Marco cabecera={<CabeceraRaiz />}>
       <Relleno>Mi Cofradar · capa personal</Relleno>
+      {/* Andamio hasta la portada de verdad (3.6, P-19), que lleva abajo Cuenta,
+          Ajustes y Ayuda y fuentes. */}
+      <nav className="cf-lista-provisional" aria-label="Más" style={{ marginTop: "var(--cf-space-4)" }}>
+        <Link to="/mi-cofradar/ajustes">Ajustes</Link>
+      </nav>
     </Marco>
   );
 }

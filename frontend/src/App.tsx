@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { leer } from "./datos/almacen";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
+import { Ajustes } from "./rutas/Ajustes";
 import { Cofradias } from "./rutas/Cofradias";
 import { Estados } from "./rutas/Estados";
 import { FichaCofradia } from "./rutas/FichaCofradia";
@@ -9,6 +10,7 @@ import { Inicio } from "./rutas/Inicio";
 import { Introduccion } from "./rutas/Introduccion";
 import { Mapa } from "./rutas/Mapa";
 import { MiCofradar } from "./rutas/MiCofradar";
+import { Privacidad } from "./rutas/Privacidad";
 
 /**
  * Las cinco areas, en el orden en que viven en la barra.
@@ -35,6 +37,8 @@ export function App() {
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
       <Route path="/agenda" element={<Agenda estado={estado} />} />
       <Route path="/mi-cofradar" element={<MiCofradar />} />
+      <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />
+      <Route path="/mi-cofradar/ajustes/privacidad" element={<Privacidad />} />
       {/* Andamio de revisión: los ocho estados (issue 1.4). */}
       <Route path="/estados" element={<Estados />} />
     </Routes>

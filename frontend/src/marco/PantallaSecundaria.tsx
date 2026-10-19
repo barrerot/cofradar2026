@@ -24,6 +24,7 @@ export function PantallaSecundaria({
   children,
   sheet,
   registro,
+  sangrado,
 }: {
   titulo: string;
   /** A donde vuelve y como se llama ese sitio. */
@@ -34,6 +35,8 @@ export function PantallaSecundaria({
   sheet?: ReactNode;
   /** §3. La ficha de hermandad va en `editorial`. */
   registro?: "editorial";
+  /** Ver Marco. */
+  sangrado?: "lista";
 }) {
   const navegar = useNavigate();
 
@@ -42,6 +45,7 @@ export function PantallaSecundaria({
       accion={accion}
       sheet={sheet}
       registro={registro}
+      sangrado={sangrado}
       cabecera={
         <Cabecera
           etiqueta="Cabecera de pantalla secundaria"
@@ -51,6 +55,7 @@ export function PantallaSecundaria({
             <Boton
               variante="secundario"
               tamano="36"
+              data-vuelta=""
               onClick={() => (vuelta.ruta ? navegar(vuelta.ruta) : navegar(-1))}
             >
               <Icono nombre="flechaIzquierda" tamano={16} />
