@@ -86,24 +86,31 @@ def filas(inicio, textos):
     t0 = h * 60 + m
     return [(t0 + 30 * k, t) for k, t in enumerate(textos) if t]
 
+# Columnas que el PDF no deja leer bien (el texto de una se monta con el de la vecina): se copian de la
+# imagen del programa CON SUS HORAS, tal como vienen escritas en la celda («Campana 1:39»). Sin la hora,
+# generar_csv.py las daría todas por aproximadas («≈»). El primer argumento de filas() es la hora de la fila
+# de media hora en la que está la primera celda.
 CORREGIDAS = {
-    54: {"cruz": filas("0:30", ["Salida", "Jesús del Gran Poder", "Campana", "Plaza", "S. Miguel", "Palos", "Arfe",
-                                 "Santas Patronas", "Gravina", "Pl. del Museo", "Entrada"]),
-         "paso": filas("1:30", ["Salida", "Jesús del Gran Poder", "Campana", "Plaza", "S. Miguel", "Palos", "Arfe",
-                                 "Santas Patronas", "Gravina", "Bailén", "Pl. del Museo", "Cardenal Spínola", "Entrada"])},
-    55: {"cruz": filas("0:00", ["Salida", "Resolana", "Feria", "Correduría", "Trajano", "Campana", "Plaza", "S. Miguel",
-                                 "Palos", "Francos", "Cuesta del Rosario", "Sales y Ferré", "Imagen", "S. Ángela de la Cruz",
-                                 "Feria", "Feria", "Parras", "Muro", "Resolana", "Arco de la Macarena", "Entrada"]),
-         "paso": filas("1:30", ["Salida", "Resolana", "Feria", "Correduría", "Trajano", "Pl. Duque", "Campana", "Plaza",
-                                 "S. Miguel", "Palos", "Alemanes", "Francos", "Villegas", "Boteros", "S. Ángela de la Cruz",
-                                 "S. Ángela de la Cruz", "Madre Mª Purísima", "Feria", "Feria", "Feria", "Parras", "Muro",
-                                 "Resolana", "Arco de la Macarena", "Entrada"])},
-    71: {"cruz": filas("8:30", ["Salida", "San Luis - Relator", "Alameda", "Conde de Barajas", "J. del Gran Poder", "Campana",
-                                 "Plaza", "S. Miguel", "Palos", "Francos", "Jesús Tres Caídas", "Pl. Cristo de Burgos",
-                                 "Bustos Tavera", "San Luis", "Entrada"]),
-         "paso": filas("8:30", ["Salida", "San Luis", "Relator", "Alameda", "Conde de Barajas", "J. del Gran Poder", "Campana",
-                                 "Plaza", "S. Miguel", "Palos", "Placentines", "Cuesta del Rosario", "Sales y Ferré",
-                                 "Doña Mª Coronel", "Pl. San Marcos", "San Luis", "Entrada"])},
+    54: {"cruz": filas("0:30", ["Salida 0:35", "Jesús del Gran Poder", "Campana 1:39", "Plaza 2:19", "S. Miguel 2:45",
+                                 "Palos 3:04", "Arfe", "Santas Patronas", "Gravina", "Pl. del Museo", "Entrada 6:15"]),
+         "paso": filas("1:30", ["Salida 1:55", "Jesús del Gran Poder", "Campana 2:50", "Plaza 3:30", "S. Miguel 3:56",
+                                 "Palos 4:15", "Arfe", "Santas Patronas", "Gravina", "Bailén", "Pl. del Museo",
+                                 "Cardenal Spínola", "Entrada 7:45"])},
+    55: {"cruz": filas("0:00", ["Salida 0:00", "Resolana", "Feria", "Correduría", "Trajano", "Campana 2:50", "Plaza 3:30",
+                                 "S. Miguel 3:56", "Palos 4:15", "Francos", "Cuesta del Rosario", "Sales y Ferré", "Imagen",
+                                 "S. Ángela de la Cruz", "Feria", "Feria", "Parras", "Muro", "Resolana",
+                                 "Arco de la Macarena", "Entrada 10:10"]),
+         "paso": filas("1:30", ["Salida 1:40", "Resolana", "Feria", "Correduría", "Trajano", "Pl. Duque", "Campana 4:38",
+                                 "Plaza 5:18", "S. Miguel 5:44", "Palos 6:03", "Alemanes", "Francos", "Villegas", "Boteros",
+                                 "S. Ángela de la Cruz", "S. Ángela de la Cruz", "Madre Mª Purísima", "Feria", "Feria",
+                                 "Feria", "Parras", "Muro", "Resolana", "Arco de la Macarena", "Entrada 13:30"])},
+    71: {"cruz": filas("8:30", ["Salida 8:15", "San Luis - Relator", "Alameda", "Conde de Barajas", "J. del Gran Poder",
+                                 "Campana 10:55", "Plaza 11:35", "S. Miguel 12:06", "Palos 12:25", "Francos",
+                                 "Jesús Tres Caídas", "Pl. Cristo de Burgos", "Bustos Tavera", "San Luis", "Entrada 15:20"]),
+         "paso": filas("8:30", ["Salida 8:50", "San Luis", "Relator", "Alameda", "Conde de Barajas", "J. del Gran Poder",
+                                 "Campana 11:35", "Plaza 12:15", "S. Miguel 12:41", "Palos 13:00", "Placentines",
+                                 "Cuesta del Rosario", "Sales y Ferré", "Doña Mª Coronel", "Pl. San Marcos", "San Luis",
+                                 "Entrada"])},
 }
 MANUAL.update({"San Luis - Relator": ["Calle San Luis", "Calle Relator"], "Arco de la Macarena": V(37.40330, -5.98955), "Madre Mª Purísima": "Calle Madre Purísima"})
 

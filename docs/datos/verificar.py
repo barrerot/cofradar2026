@@ -192,6 +192,18 @@ for (salida, ref), puntos in serie.items():
                   "salida %s, %s: el orden %d va a las %s, antes que el %d (%s); ¿falta cambiar el día tras la medianoche?"
                   % (salida, ref, o2, m2.strftime("%d %H:%M"), o1, m1.strftime("%d %H:%M")))
 
+# --- toda salida trae al menos su hora de salida escrita en el programa ---
+# Si ninguna hora de una salida es «si», casi seguro que la extracción del PDF las ha perdido (pasó en 2026
+# con las Vísperas y con las columnas copiadas a mano: ver CORREGIDAS en recorridos/generar.py).
+publicadas = {}
+for n, r in datos["punto_itinerario"]:
+    sid = r.get("salida_procesional_id")
+    publicadas[sid] = publicadas.get(sid, False) or r.get("hora_publicada") == "si"
+for n, r in datos["salida_procesional"]:
+    if r["id"] in publicadas and not publicadas[r["id"]]:
+        aviso("salida_procesional", n, "id",
+              "la salida %s no tiene ninguna hora publicada: ¿se han perdido al leer el PDF?" % r["id"])
+
 # --- informe ---
 for t, filas in datos.items():
     print("%-20s %5d filas" % (t + ".csv", len(filas)))

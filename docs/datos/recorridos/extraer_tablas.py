@@ -24,6 +24,19 @@ def pagina(p):
     lineas = {}
     for w in ws:
         lineas.setdefault((w[5], w[6]), []).append(w)
+    # ejes de horas: líneas que solo contienen una hora, agrupadas por columna
+    sueltas = sorted((ls[0][0], round(ls[0][1], 1), " ".join(w[4] for w in ls)) for ls in lineas.values()
+                     if HORA.match(" ".join(w[4] for w in ls)) and ls[0][1] > yh)
+    ejes, actual = [], []
+    for x, y, t in sueltas:
+        if actual and x - actual[-1][2] > 15:
+            ejes.append(actual); actual = []
+        actual.append((y, t, x))
+    if actual: ejes.append(actual)
+    ejes = [sorted(e) for e in ejes if len(e) >= 6]
+    # Una hora sola en su línea que NO es del eje es de una celda partida en dos líneas («Salida» / «17:20»,
+    # en las Vísperas): se queda en la celda, y unir() la junta con la línea de arriba
+    del_eje = {(x, y) for e in ejes for y, _, x in e}
     for ls in lineas.values():
         ls.sort(key=lambda w: w[0])
         x0, y0 = ls[0][0], ls[0][1]
@@ -33,7 +46,7 @@ def pagina(p):
             continue
         if y0 < yh - 2:
             g["cab"].append((round(y0, 1), x0, texto)); continue
-        if y0 < yh + 4 or HORA.match(texto):
+        if y0 < yh + 4 or (x0, round(y0, 1)) in del_eje:
             continue
         col = "paso" if g["medio"] is not None and x0 >= g["medio"] else "cruz"
         g[col].append((round(y0, 1), texto))
@@ -49,16 +62,6 @@ def pagina(p):
             else:
                 res.append([y, t, y])
         return [(a, b) for a, b, _ in res]
-    # ejes de horas: líneas que solo contienen una hora, agrupadas por columna
-    sueltas = sorted((ls[0][0], round(ls[0][1], 1), " ".join(w[4] for w in ls)) for ls in lineas.values()
-                     if HORA.match(" ".join(w[4] for w in ls)) and ls[0][1] > yh)
-    ejes, actual = [], []
-    for x, y, t in sueltas:
-        if actual and x - actual[-1][2] > 15:
-            ejes.append(actual); actual = []
-        actual.append((y, t, x))
-    if actual: ejes.append(actual)
-    ejes = [sorted(e) for e in ejes if len(e) >= 6]
     out = []
     for g in grupos:
         cand = [e for e in ejes if min(x for _, _, x in e) <= g["izq"] + 5]

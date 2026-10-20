@@ -38,7 +38,7 @@ El programa cambia de maquetación y de orden de un año a otro. Antes de lanzar
 | Qué | Dónde | Ejemplo de 2026 |
 |---|---|---|
 | Página de cada jornada | `JORNADAS` y los `if` de `jornada` en `main()` | pág. 4 = Domingo de Ramos; la 2 lleva las dos Vísperas |
-| Columnas que no se leen bien | `CORREGIDAS` (se copian de la imagen del PDF, por número de columna) | 54 Gran Poder, 55 Macarena, 71 Resurrección |
+| Columnas que no se leen bien | `CORREGIDAS` (se copian de la imagen del PDF, por número de columna, **con las horas escritas en cada celda**: «Campana 1:39»; sin ellas, todas salen como aproximadas) | 54 Gran Poder, 55 Macarena, 71 Resurrección |
 | Templos que OSM no reconoce | `TEMPLOS` | la Universidad, los Negritos… |
 | Nombres abreviados que no casan con OSM | `MANUAL` | «F. Cef. González» → Calle Fray Ceferino González |
 | Páginas del Llamador por jornada | `JORNADA_LL` y `PAGINAS_LLAMADOR` en `rehacer.sh` | 22–24 Domingo de Ramos |
@@ -67,6 +67,8 @@ La primera vez crea un entorno de Python con PyMuPDF en `trabajo/venv`. Tarda un
 Si OSM ha cambiado mucho, borra `trabajo/osm/` para que se descargue de nuevo.
 
 ### 4. Comprobar
+
+- `python3 docs/datos/verificar.py` avisa si una salida se queda **sin ninguna hora publicada**: casi siempre es que se han perdido al leer el PDF. En 2026 pasó con las Vísperas, cuya hora va en una segunda línea de la celda («Salida» / «17:20»; ya lo resuelve `extraer_tablas.py`), y con las columnas de `CORREGIDAS` copiadas sin horas.
 
 - `trabajo/generar.log`:
   - las líneas **«sin casar»** son nombres del programa que no se han encontrado en OSM y hay que añadir a `MANUAL`;
