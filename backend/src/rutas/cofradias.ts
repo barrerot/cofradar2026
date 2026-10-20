@@ -144,6 +144,8 @@ function directorio(s: Salida) {
     jornadaId: s.jornada.id,
     templo: s.hermandad.templo.nombre,
     ...salidaYEntrada(s.punto_itinerario),
+    // Para la Agenda: cuándo llega la cruz de guía a La Campana, el comienzo de la carrera oficial
+    horaCampana: horario(s.punto_itinerario, "cruz_guia").find((p) => p.lugar.nombre === "La Campana")?.hora ?? null,
   };
 }
 

@@ -1,0 +1,89 @@
+/* ==========================================================================
+   COFRADAR · AGENDA (P-13, 5-agenda/agenda-*)
+   Lista a todo el ancho (sangrado «lista»): hora de salida a la izquierda,
+   marca, y nombre en serif con templo y paso por La Campana debajo.
+   Namespace: cf-agenda*.
+   ========================================================================== */
+
+/* El selector se desplaza dentro de su fila; .cf-days ya trae su margen */
+.cf-agenda-dias {
+  min-width: 0;
+  padding-inline: 0;
+}
+
+.cf-agenda-dias .cf-day .d {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+}
+
+.cf-agenda-rotulo {
+  margin: 0;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-agenda-vacio {
+  margin: 0;
+  padding: var(--cf-space-8) var(--cf-space-4);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-agenda-lista {
+  margin: 0;
+  padding: 0 0 var(--cf-space-8);
+  list-style: none;
+}
+
+.cf-agenda-lista > li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-agenda-fila {
+  display: grid;
+  grid-template-columns: 4.5rem auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-4);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cf-agenda-hora {
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-agenda-fila .cf-slot {
+  height: var(--cf-leading-2xl);
+}
+
+.cf-agenda-datos {
+  display: grid;
+  gap: var(--cf-space-1);
+  min-width: 0;
+}
+
+.cf-agenda-nombre {
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-agenda-templo {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-agenda-paso {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}

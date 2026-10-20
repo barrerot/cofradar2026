@@ -26,6 +26,7 @@ import "./estilos/logo-animado.css";
 import "./estilos/introduccion.css";
 import "./estilos/ficha.css";
 import "./estilos/recorrido.css";
+import "./estilos/agenda.css";
 
 iniciarTema();
 registrarServiceWorker();

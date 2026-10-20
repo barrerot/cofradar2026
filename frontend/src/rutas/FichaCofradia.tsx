@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AvisoEntrada, DatoPendiente, Esqueleto, SegunDato } from "../componentes";
 import { Icono, PantallaSecundaria } from "../marco";
+import { diaProximo } from "../datos/fechas";
 import { useJornada } from "../datos/jornada";
 import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
@@ -255,40 +256,10 @@ function duracion(minutos: number) {
   return h === 0 ? `${m} min` : m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
 
-/**
- * El día de la próxima Semana Santa en que sale: «27 de marzo de 2027». Los
- * horarios de los datos son de la última edición publicada, pero el día se
- * mueve con la Pascua: se toma su distancia al Domingo de Resurrección de
- * ese año y se lleva al de la próxima.
- */
+/** «27 de marzo de 2027»: el día de la próxima Semana Santa en que sale su jornada. */
 function useDiaDeSalida(jornadaId: number | null): string | null {
   const { jornadas } = useJornada();
   const fecha = jornadas.datos?.find((j) => j.id === jornadaId)?.fecha;
-  if (!fecha) return null;
-  const dato = new Date(`${fecha}T12:00`);
-  const desfase = Math.round((dato.getTime() - pascua(dato.getFullYear()).getTime()) / 86_400_000);
-  const hoy = new Date();
-  let anio = hoy.getFullYear();
-  if (hoy.getTime() > pascua(anio).getTime() + 86_400_000) anio += 1;
-  const dia = new Date(pascua(anio).getTime() + desfase * 86_400_000);
-  return dia.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
-}
-
-/** Domingo de Pascua (algoritmo de Meeus), a mediodía. */
-function pascua(anio: number): Date {
-  const a = anio % 19;
-  const b = Math.floor(anio / 100);
-  const c = anio % 100;
-  const d = Math.floor(b / 4);
-  const e = b % 4;
-  const f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3);
-  const h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4);
-  const k = c % 4;
-  const l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const mes = Math.floor((h + l - 7 * m + 114) / 31);
-  const dia = ((h + l - 7 * m + 114) % 31) + 1;
-  return new Date(anio, mes - 1, dia, 12);
+  const dia = fecha ? diaProximo(fecha) : null;
+  return dia ? dia.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : null;
 }
