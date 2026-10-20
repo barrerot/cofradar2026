@@ -28,16 +28,7 @@
 
 /* Listado minimo de cofradias, solo para poder entrar en una ficha. Lo
    sustituyen las tarjetas de cofradia (§9.4) cuando el area exista. */
-.cf-cuenta-provisional {
-  display: grid;
-  justify-items: start;
-  gap: var(--cf-space-2);
-  margin-top: var(--cf-space-6);
-}
 
-.cf-cuenta-provisional p {
-  margin: 0;
-}
 
 /* Mapa (andamio hasta 4.4): el hueco del mapa con sus controles flotantes */
 .cf-mapa-hueco {

@@ -8,6 +8,7 @@ import { hermandadesYEdicion } from "./cofradias.js";
  *
  *   GET    /api/yo                   quién soy para el servidor
  *   GET    /api/yo/relaciones        { anio, seguidas: [id], vistas: [{ id, anio }] }
+ *   GET    /api/yo/datos             todo lo tuyo, para descargarlo (P-23, RGPD art. 15 y 20)
  *   PUT    /api/yo/seguidas/:id      seguir  (se puede repetir: no duplica)
  *   DELETE /api/yo/seguidas/:id      dejar de seguir
  *   PUT    /api/yo/vistas/:id        «La he visto» en la edición actual, o en `?anio=` (Mi colección:
@@ -49,6 +50,49 @@ routerCuenta.get(
       seguidas: seguidas.data.map((f) => porId.get(f.hermandad_id)).filter(Boolean),
       vistas: vistas.data.flatMap((f) => (porId.has(f.hermandad_id) ? [{ id: porId.get(f.hermandad_id), anio: f.anio }] : [])),
     });
+  }),
+);
+
+/**
+ * «Descargar mis datos»: TODO lo que Cofradar guarda de la persona, legible y en un solo fichero JSON.
+ * Hoy: la cuenta (de Supabase Auth), las seguidas y las vistas, cada una con cuándo se guardó. Cuando haya
+ * aportaciones («Dar fe», fase 4) se añaden aquí.
+ */
+routerCuenta.get(
+  "/yo/datos",
+  exigirSesion,
+  ruta(async (_peticion, respuesta, usuario) => {
+    const { porId } = await hermandadesYEdicion();
+    const db = supabase();
+    const [cuenta, seguidas, vistas, nombres] = await Promise.all([
+      db.auth.admin.getUserById(usuario.id),
+      db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
+      db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
+      db.from("hermandad").select("id, nombre"),
+    ]);
+    for (const r of [seguidas, vistas, nombres]) if (r.error) throw r.error;
+    if (cuenta.error) throw cuenta.error;
+    const nombre = new Map((nombres.data ?? []).map((h) => [h.id as number, h.nombre as string]));
+    const u = cuenta.data.user;
+    const cofradia = (id: number) => ({ id: porId.get(id) ?? null, nombre: nombre.get(id) ?? null });
+    respuesta
+      .set("Cache-Control", "no-store")
+      .attachment("cofradar-mis-datos.json")
+      .json({
+        descargado: new Date().toISOString(),
+        explicacion:
+          "Todo lo que Cofradar guarda de ti. La cuenta la da Google al entrar; seguidas y vistas, lo que tú has marcado.",
+        cuenta: {
+          id: u.id,
+          correo: u.email ?? null,
+          nombre: (u.user_metadata?.full_name ?? u.user_metadata?.name ?? null) as string | null,
+          entra_con: u.app_metadata?.provider ?? "google",
+          creada: u.created_at,
+          ultima_entrada: u.last_sign_in_at ?? null,
+        },
+        seguidas: (seguidas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), desde: f.creada })),
+        vistas: (vistas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), anio: f.anio, guardada: f.creada })),
+      });
   }),
 );
 

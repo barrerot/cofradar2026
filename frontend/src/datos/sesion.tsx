@@ -160,7 +160,11 @@ export function SesionProvider({ children }: { children: ReactNode }) {
       } catch {
         /* sin sessionStorage se entra igual; solo no habrá aviso al volver */
       }
-      const { error } = await a.signInWithOAuth({ provider: "google", options: { redirectTo: destino.href } });
+      // Siempre el selector de cuentas de Google: quien tiene varias elige con cuál entra («Cambiar de cuenta»)
+      const { error } = await a.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: destino.href, queryParams: { prompt: "select_account" } },
+      });
       // Ni siquiera se pudo salir hacia Google (sin conexión): se avisa aquí mismo
       if (error) {
         sessionStorage.removeItem(PENDIENTE);

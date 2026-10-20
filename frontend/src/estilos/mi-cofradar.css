@@ -303,3 +303,70 @@
   color: var(--cf-brand);
   font-weight: var(--cf-weight-emphasis);
 }
+
+/* ── Cuenta (P-23) ──────────────────────────────────────────────────────────
+   Filas a todo el ancho como Ajustes (.cf-ajustes-fila), en grupos separados
+   por aire; «Eliminar cuenta» aparte, en rojo. */
+.cf-cuenta {
+  display: grid;
+  gap: var(--cf-space-6);
+  padding-block: var(--cf-space-4) var(--cf-space-8);
+}
+
+.cf-cuenta-grupo {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-cuenta-rotulo,
+.cf-cuenta-correo {
+  margin: 0;
+}
+
+.cf-cuenta-rotulo {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cuenta-correo {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-critical);
+  overflow-wrap: anywhere;
+}
+
+/* Los botones con forma de fila: sin el cromado del botón */
+.cf-cuenta-accion {
+  width: 100%;
+  border: 0;
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-cuenta-nota {
+  margin: 0;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cuenta-eliminar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  justify-self: start;
+  min-height: var(--cf-touch-min);
+  margin-inline: var(--cf-space-4);
+  color: var(--cf-alert-text);
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-critical);
+  text-decoration: none;
+}
+
+.cf-cuenta-eliminar .cf-ph {
+  color: var(--cf-alert);
+}

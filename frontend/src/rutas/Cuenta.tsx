@@ -1,49 +1,140 @@
-import { useEffect, useState } from "react";
-import { Boton, PantallaSecundaria } from "../marco";
+import { useState, type ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AvisoEntrada } from "../componentes";
+import { Boton, HojaDecision, Icono, PantallaSecundaria, type NombreTrazo } from "../marco";
 import { cabecerasSesion, useSesion } from "../datos/sesion";
-import { Relleno } from "./Relleno";
 
 /**
- * P-23 Cuenta. Andamio hasta la 2.5: la cuenta de Google con la que has
- * entrado, que el servidor la reconoce y «Cerrar sesión». Descargar datos y
- * eliminar la cuenta llegan con la 2.5 y la 2.6.
+ * P-23 Cuenta (7-mi-cofradar/cuenta).
+ *
+ *   Cuenta de Google        con la que has entrado.
+ *   Cambiar de cuenta       cierra esta sesión y abre el selector de cuentas de
+ *                           Google. Avisa antes: lo tuyo se queda en ESTA cuenta,
+ *                           no se pasa a la otra.
+ *   Descargar mis datos     todo lo que Cofradar guarda de ti, en un fichero
+ *                           (GET /api/yo/datos).
+ *   Cerrar sesión           no borra nada: lo tuyo sigue en tu cuenta.
+ *   Eliminar cuenta         en rojo y aparte (P-24, 2.6).
+ *
+ * Solo con sesión: sin ella no hay cuenta que enseñar y se vuelve a Mi Cofradar.
  */
 export function Cuenta() {
-  const { usuario, salir } = useSesion();
-  const [servidor, setServidor] = useState<string>();
+  const { usuario, entrar, salir } = useSesion();
+  const navegar = useNavigate();
+  const [cambiando, setCambiando] = useState(false);
+  const [descarga, setDescarga] = useState<"lista" | "bajando" | "fallo">("lista");
 
-  useEffect(() => {
-    if (!usuario) return setServidor(undefined);
-    let vivo = true;
-    cabecerasSesion()
-      .then((cabeceras) => fetch("/api/yo", { headers: cabeceras }))
-      .then((r) => (r.ok ? "El servidor te reconoce." : `El servidor no te reconoce (${r.status}).`))
-      .catch(() => "No se ha podido preguntar al servidor.")
-      .then((texto) => vivo && setServidor(texto));
-    return () => {
-      vivo = false;
-    };
-  }, [usuario]);
+  const cerrar = async () => {
+    await salir();
+    navegar("/mi-cofradar");
+  };
+
+  const cambiar = async () => {
+    setCambiando(false);
+    await salir();
+    await entrar("cuenta", "/mi-cofradar/cuenta");
+  };
+
+  const descargar = async () => {
+    setDescarga("bajando");
+    try {
+      const r = await fetch("/api/yo/datos", { headers: await cabecerasSesion() });
+      if (!r.ok) throw new Error(String(r.status));
+      const url = URL.createObjectURL(await r.blob());
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cofradar-mis-datos.json";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      setDescarga("lista");
+    } catch {
+      setDescarga("fallo");
+    }
+  };
 
   return (
-    <PantallaSecundaria titulo="Cuenta" vuelta={{ etiqueta: "Mi Cofradar", ruta: "/mi-cofradar" }}>
-      <section className="cf-cuenta-provisional" aria-label="Cuenta">
-        {usuario ? (
-          <>
-            <p>
-              Has entrado como <strong>{usuario.nombre ?? usuario.email}</strong>
-              {usuario.nombre && usuario.email ? ` (${usuario.email})` : null}.
-            </p>
-            {servidor ? <p data-servidor>{servidor}</p> : null}
-            <Boton variante="secundario" onClick={() => void salir()}>
+    <PantallaSecundaria titulo="Cuenta" vuelta={{ etiqueta: "Mi Cofradar", ruta: "/mi-cofradar" }} sangrado="lista">
+      <AvisoEntrada motivo="cuenta" />
+      {usuario === null ? (
+        <p className="cf-cuenta-nota">No has entrado con ninguna cuenta.</p>
+      ) : usuario ? (
+        <div className="cf-cuenta">
+          <section className="cf-cuenta-grupo" aria-label="Tu cuenta">
+            <div className="cf-ajustes-fila">
+              <p className="cf-cuenta-rotulo">Cuenta de Google</p>
+              <p className="cf-cuenta-correo">{usuario.email ?? usuario.nombre}</p>
+            </div>
+            <Accion icono="cambiarCuenta" onClick={() => setCambiando(true)}>
+              Cambiar de cuenta de Google
+            </Accion>
+          </section>
+
+          <section className="cf-cuenta-grupo" aria-label="Tus datos">
+            <Accion icono="descargar" onClick={() => void descargar()} cargando={descarga === "bajando"}>
+              Descargar mis datos
+            </Accion>
+            {descarga === "fallo" ? (
+              <p className="cf-cuenta-nota" role="status">
+                No se ha podido descargar. Inténtalo de nuevo en un momento.
+              </p>
+            ) : null}
+          </section>
+
+          <section className="cf-cuenta-grupo" aria-label="Sesión">
+            <Accion icono="salir" onClick={() => void cerrar()}>
               Cerrar sesión
-            </Boton>
-          </>
-        ) : (
-          <p>No has entrado con ninguna cuenta.</p>
-        )}
-      </section>
-      <Relleno>Descargar tus datos y eliminar la cuenta · llegan con la 2.5 y la 2.6</Relleno>
+            </Accion>
+            <p className="cf-cuenta-nota">No se borra nada: lo tuyo sigue en tu cuenta para la próxima vez.</p>
+          </section>
+
+          <Link to="/mi-cofradar/cuenta/eliminar" className="cf-cuenta-eliminar">
+            <Icono nombre="papelera" tamano={24} />
+            Eliminar cuenta
+          </Link>
+
+          <HojaDecision
+            abierta={cambiando}
+            icono={<Icono nombre="cambiarCuenta" tamano={24} />}
+            titulo="¿Cambiar de cuenta de Google?"
+            alCerrar={() => setCambiando(false)}
+            acciones={
+              <>
+                <Boton variante="primario" tamano="52" onClick={() => void cambiar()}>
+                  Elegir otra cuenta
+                </Boton>
+                <Boton variante="secundario" tamano="52" onClick={() => setCambiando(false)}>
+                  Seguir con esta
+                </Boton>
+              </>
+            }
+          >
+            <p>
+              Se cierra la sesión de {usuario.email ?? "esta cuenta"} y eliges otra. Lo que tienes guardado (seguidas
+              y vistas) se queda en esta cuenta: no pasa a la otra. Puedes volver a entrar con esta cuando quieras.
+            </p>
+          </HojaDecision>
+        </div>
+      ) : null}
     </PantallaSecundaria>
+  );
+}
+
+function Accion({
+  icono,
+  onClick,
+  cargando = false,
+  children,
+}: {
+  icono: NombreTrazo;
+  onClick: () => void;
+  cargando?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <button type="button" className="cf-ajustes-fila cf-ajustes-enlace cf-cuenta-accion" onClick={onClick} aria-busy={cargando || undefined} disabled={cargando}>
+      <Icono nombre={icono} tamano={24} />
+      <span>{cargando ? "Preparando…" : children}</span>
+      <Icono nombre="chevronDerecha" tamano={20} />
+    </button>
   );
 }
