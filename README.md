@@ -67,6 +67,7 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 | `GET /api/cofradias?jornada=<id>` | Las cofradías de una jornada (sin `jornada`, las 72), por hora de salida: `id`, `nombre`, `orden` (sin artículo), `jornada`, `templo`, `horaSalida`, `horaEntrada` |
 | `GET /api/cofradias/:id` | La ficha: nombre oficial, web, fundación, historia, cifras, `sede`, `pasos` y la `salida` del año (templo del que sale, horario de `cruzGuia` y `ultimoPaso` por lugar, con `hora` y si está `publicada` en el programa) |
 | `GET /api/cofradias/:id/recorrido` | La línea del recorrido (GeoJSON) |
+| `GET /api/jornadas/:id/mapa` | Para el Mapa: cada cofradía de la jornada con su recorrido y las horas de cruz y último paso situadas sobre la línea (metros desde la salida) |
 | `GET /api/estado-jornada` | Estado en vivo: hoy responde `sin-motor` hasta la fase 4 |
 | `GET /api/yo` | Con sesión, `{ id, email }`; sin ella, 401 |
 | `DELETE /api/yo` | Con sesión: elimina la cuenta al momento, con sus seguidas y vistas |

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   COFRADAR · MAPA (P-07, 3-mapa/mapa-1*)
+   El lienzo de MapLibre ocupa todo el contenido (sangrado completo). Las marcas
+   reutilizan el marcado del sistema (.cf-map .mk); aquí solo su colocación y
+   lo que flota sobre el mapa. Namespace: cf-mapa*.
+   ========================================================================== */
+
+.cf-mapa {
+  position: absolute;
+  inset: 0;
+}
+
+.cf-mapa-lienzo {
+  position: absolute;
+  inset: 0;
+  background: var(--cf-map-land);
+}
+
+/* La marca es un botón: sin cromado, y el sistema la pinta (.cf-map .mk) */
+.cf-mapa-marca {
+  display: block;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.cf-mapa-marca svg {
+  display: block;
+  overflow: visible;
+}
+
+/* El nombre, junto a la cruz: píldora opaca con el nombre en serif */
+.cf-mapa-nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  max-width: 20rem;
+  padding: 2px var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  box-shadow: var(--cf-elev-1);
+  cursor: pointer;
+}
+
+.cf-mapa-nombre .nm {
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cf-mapa-nombre .ex {
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-warn-text);
+  white-space: nowrap;
+}
+
+/* La marca de relación (seguida o vista): un punto granate, sin icono, para no recargar */
+.cf-mapa-rel {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-brand);
+}
+
+/* Tu posición: punto con su halo, sin relleno translúcido (.cf-map .me) */
+.cf-mapa-yo {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-text);
+  border: 3px solid var(--cf-map-casing);
+  outline: 1.5px dashed var(--cf-text);
+  outline-offset: 6px;
+}
+
+.cf-mapa .cf-locate {
+  right: var(--cf-space-4);
+  bottom: var(--cf-space-6);
+  z-index: 2;
+}
+
+.cf-mapa-aviso,
+.cf-mapa-vacio {
+  position: absolute;
+  top: var(--cf-space-3);
+  left: var(--cf-space-3);
+  right: var(--cf-space-3);
+  z-index: 2;
+}
+
+.cf-mapa-vacio {
+  margin: 0;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface-raised);
+  box-shadow: var(--cf-elev-2);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+/* La atribución de OpenStreetMap, discreta pero legible y obligatoria */
+.cf-mapa .maplibregl-ctrl-attrib {
+  background: color-mix(in srgb, var(--cf-surface) 85%, transparent);
+  color: var(--cf-text-secondary);
+  font-family: var(--cf-font-sans);
+  font-size: var(--cf-text-xs);
+}
+
+.cf-mapa .maplibregl-ctrl-attrib a {
+  color: inherit;
+}
+
+.cf-mapa-rapida {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-mapa-rapida-estado {
+  margin: 0;
+  color: var(--cf-text-secondary);
+}
+
+.cf-mapa-rapida ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2) var(--cf-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-mapa-rapida li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+}
+
+.cf-mapa-rapida-enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2);
+}
+
+.cf-mapa-rapida-enlaces .cf-btn {
+  text-decoration: none;
+}
+
+/* Diseño vigente (mapa-1): la marca es clara, con el borde del color de su
+   estado (discontinuo si es estimado) y el icono en tinta. El relleno vivo del
+   sistema se reserva para lo seleccionado (4.5). */
+.cf-mapa-marca .mk .b {
+  fill: var(--cf-surface);
+  stroke: var(--cf-live);
+  stroke-width: 3px;
+}
+
+.cf-mapa-marca .mk[data-fase="inminente"] .b {
+  stroke: var(--cf-warn);
+}
+
+.cf-mapa-marca .mk .ico {
+  color: var(--cf-text);
+}

@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "../backend", "");
   return {
     plugins: [react()],
+    // El worker de MapLibre se empaqueta aparte como módulo (src/mapa/worker.ts)
+    worker: { format: "es" },
     define: {
       "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.SUPABASE_URL ?? ""),
       "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(env.SUPABASE_PUBLISHABLE_KEY ?? ""),

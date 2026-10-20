@@ -28,19 +28,3 @@
 
 /* Listado minimo de cofradias, solo para poder entrar en una ficha. Lo
    sustituyen las tarjetas de cofradia (§9.4) cuando el area exista. */
-
-
-/* Mapa (andamio hasta 4.4): el hueco del mapa con sus controles flotantes */
-.cf-mapa-hueco {
-  position: relative;
-  min-height: 24rem;
-}
-
-.cf-mapa-hueco .cf-relleno {
-  min-height: 24rem;
-}
-
-.cf-mapa-hueco .cf-locate {
-  right: var(--cf-space-4);
-  bottom: var(--cf-space-4);
-}

@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from "express";
+import { acumulados, situarEnOrden, type Coord } from "../geo.js";
 import { supabase } from "../supabase.js";
 
 /**
@@ -243,5 +244,71 @@ routerCofradias.get(
       return;
     }
     respuesta.type("application/geo+json").json(data.geojson);
+  }),
+);
+
+/**
+ * Lo que necesita el Mapa (4.4) de una jornada, en un solo pedido: cada cofradía con su recorrido y las
+ * horas de la cruz de guía y del último paso SITUADAS SOBRE LA LÍNEA, en metros desde la salida. Con eso
+ * el cliente sabe dónde debería ir cada elemento a cada minuto según el programa (BUL-234, la parte de
+ * situar las horas). Los lugares sin coordenadas no se sitúan (`m: null`).
+ *
+ * Se guarda 5 minutos en memoria, como las salidas: los recorridos no cambian sin recargar los datos.
+ */
+const memoriaMapa = new Map<string, { hasta: number; datos: Promise<unknown> }>();
+
+async function mapaDeJornada(jornada: number, anio?: number) {
+  const lista = (await salidas(anio)).filter((s) => s.jornada.id === jornada);
+  const { data, error } = await supabase()
+    .from("recorrido")
+    .select("salida_procesional_id, geojson, metros, provisional")
+    .in("salida_procesional_id", lista.map((s) => s.id));
+  if (error) throw error;
+  const porSalida = new Map((data ?? []).map((r) => [r.salida_procesional_id as number, r]));
+
+  return lista
+    .map((s) => {
+      const rec = porSalida.get(s.id);
+      const geometria = rec?.geojson?.features?.[0]?.geometry ?? rec?.geojson?.geometry;
+      const linea: Coord[] = geometria?.type === "LineString" ? geometria.coordinates : [];
+      const acum = acumulados(linea);
+      const situar = (ref: PuntoItinerario["referencia"]) => {
+        const puntos = horario(s.punto_itinerario, ref);
+        const t = puntos.map((p) => Date.parse(`${p.hora}:00Z`));
+        const [t0, t1] = [t[0] ?? 0, t[t.length - 1] ?? 0];
+        const ms = situarEnOrden(
+          linea,
+          puntos.map((p) => (p.lugar.latitud !== null && p.lugar.longitud !== null ? [Number(p.lugar.longitud), Number(p.lugar.latitud)] : null)),
+          t.map((x) => (t1 > t0 ? (x - t0) / (t1 - t0) : 0)),
+        );
+        return puntos.map((p, i) => ({ hora: p.hora, publicada: p.publicada, lugar: p.lugar.nombre, m: ms[i] === null ? null : Math.round(ms[i]!) }));
+      };
+      return {
+        id: slug(s.hermandad.nombre),
+        nombre: s.hermandad.nombre,
+        pasos: s.hermandad.paso.length,
+        metros: Math.round(acum[acum.length - 1] ?? 0),
+        provisional: rec?.provisional ?? true,
+        linea,
+        cruzGuia: situar("cruz_guia"),
+        ultimoPaso: situar("ultimo_paso"),
+      };
+    })
+    .sort((a, b) => (a.cruzGuia[0]?.hora ?? "").localeCompare(b.cruzGuia[0]?.hora ?? ""));
+}
+
+routerCofradias.get(
+  "/jornadas/:id/mapa",
+  ruta(async (peticion, respuesta) => {
+    const jornada = Number(peticion.params.id);
+    const anio = anioPedido(peticion);
+    const clave = `${jornada}|${anio ?? "ultima"}`;
+    let guardado = memoriaMapa.get(clave);
+    if (!guardado || guardado.hasta < Date.now()) {
+      guardado = { hasta: Date.now() + MEMORIA_MS, datos: mapaDeJornada(jornada, anio) };
+      memoriaMapa.set(clave, guardado);
+      guardado.datos.catch(() => memoriaMapa.delete(clave));
+    }
+    respuesta.json(await guardado.datos);
   }),
 );
