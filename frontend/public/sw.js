@@ -10,7 +10,7 @@
  *                    el index.html guardado (las rutas las resuelve React)
  *   el resto         la caché al momento y se actualiza por detrás
  */
-const CACHE = "cofradar-app-v1";
+const CACHE = "cofradar-app-v2";
 const BASE = new URL("./", self.location).pathname;
 const ESENCIAL = [BASE, `${BASE}index.html`, `${BASE}manifest.webmanifest`, `${BASE}iconos/favicon.svg`];
 

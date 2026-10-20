@@ -1,67 +1,139 @@
-/* P-02 Introduccion (rutas/Introduccion.tsx, 8-acceso/acceso-2). Registro
-   editorial: fondo de cera, titulos en Newsreader, texto en Inter. El boton,
-   abajo y a todo el ancho, como cierre de la pantalla. */
+/* P-02 Introduccion (rutas/Introduccion.tsx). Medidas de la referencia
+   intro-animada/intro.html, con los tokens editoriales (cera) del sistema en
+   lugar de sus --c-*: coinciden valor a valor en claro y en oscuro. La
+   animacion vive en logo-animado.css. */
 
 .cf-introduccion {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding: var(--cf-space-12) var(--cf-space-6) var(--cf-space-6);
   background: var(--cf-bg);
   color: var(--cf-text);
+  font-family: var(--cf-font-sans);
 }
 
-.cf-introduccion-marca {
-  margin: var(--cf-space-8) 0 var(--cf-space-12);
-  font-family: var(--cf-font-serif);
-  font-size: var(--cf-text-4xl);
-  line-height: var(--cf-leading-4xl);
-  font-weight: var(--cf-weight-data);
+.cf-introduccion-cuerpo {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 28px) 24px 0;
+}
+
+.cf-introduccion-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cf-simbolo-animado {
+  flex: none;
+  display: block;
+  overflow: visible;
+}
+
+.cf-introduccion-palabra {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.cf-introduccion-palabra h1 {
+  font-size: 54px;
+  line-height: 62px;
+}
+
+.cf-introduccion-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  color: var(--cf-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.cf-introduccion-leyenda span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cf-introduccion-leyenda svg {
+  flex: none;
 }
 
 .cf-introduccion-ideas {
-  display: grid;
-  gap: var(--cf-space-8);
-  margin: 0 0 var(--cf-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 40px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .cf-introduccion-ideas li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 14px;
   align-items: start;
-  gap: var(--cf-space-4);
 }
 
 .cf-introduccion-icono {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
   background: var(--cf-surface);
-  border: var(--cf-border-width) solid var(--cf-border-strong);
-  border-radius: var(--cf-radius-md);
+  border: 1px solid var(--cf-border-strong);
+  border-radius: 10px;
 }
 
 .cf-introduccion-ideas h2 {
   margin: 0;
   font-family: var(--cf-font-serif);
-  font-size: var(--cf-text-2xl);
-  line-height: var(--cf-leading-2xl);
-  font-weight: var(--cf-weight-data);
+  font-size: 21px;
+  line-height: 26px;
+  font-weight: 600;
 }
 
 .cf-introduccion-ideas p {
-  margin: var(--cf-space-2) 0 0;
+  margin: 2px 0 0;
   color: var(--cf-text-secondary);
-  font-size: var(--cf-text-base);
-  line-height: var(--cf-leading-base);
+  font-size: 16px;
+  line-height: 24px;
 }
 
-/* El boton cierra la pantalla: abajo y a todo el ancho, con el margen de
-   16 de la app y no el de 24 del texto editorial. */
-.cf-introduccion > button {
-  width: calc(100% + 2 * (var(--cf-space-6) - var(--cf-space-4)));
-  margin: auto calc(var(--cf-space-4) - var(--cf-space-6)) 0;
+.cf-introduccion-pie {
+  flex: none;
+  padding: 16px 16px max(34px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+}
+
+.cf-introduccion-empezar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--cf-primary-bg);
+  color: var(--cf-text-inverse);
+  font: inherit;
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cf-introduccion-empezar:hover {
+  background: var(--cf-primary-bg-hover);
+}
+
+.cf-introduccion-empezar:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
 }

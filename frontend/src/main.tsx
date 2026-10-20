@@ -21,6 +21,7 @@ import "./estilos/relleno.css";
 import "./estilos/estados.css";
 import "./estilos/ajustes.css";
 import "./estilos/ayuda.css";
+import "./estilos/logo-animado.css";
 import "./estilos/introduccion.css";
 
 iniciarTema();

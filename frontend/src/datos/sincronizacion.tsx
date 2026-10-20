@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { guardar, leer } from "./almacen";
+import { quitarArranque, quitarArranqueSiNadaPendiente } from "./arranque";
 
 /**
  * Estado global de la sincronización (§7.3, §12).
@@ -56,8 +57,19 @@ export function SincronizacionProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("offline", caida);
   }, []);
 
-  const empieza = useCallback(() => setEnCurso((n) => n + 1), []);
-  const termina = useCallback(() => setEnCurso((n) => Math.max(0, n - 1)), []);
+  // La pantalla de arranque espera a la primera respuesta (buena o mala), no al final de su animación
+  const pendientes = useRef(0);
+  useEffect(() => quitarArranqueSiNadaPendiente(() => pendientes.current), []);
+
+  const empieza = useCallback(() => {
+    pendientes.current += 1;
+    setEnCurso((n) => n + 1);
+  }, []);
+  const termina = useCallback(() => {
+    pendientes.current = Math.max(0, pendientes.current - 1);
+    setEnCurso((n) => Math.max(0, n - 1));
+    quitarArranque();
+  }, []);
   const sinRed = useCallback(() => setConexion("sin-conexion"), []);
   const exito = useCallback(() => {
     const ahora = new Date();

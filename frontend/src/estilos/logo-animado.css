@@ -1,0 +1,67 @@
+/* Animación del logotipo D en la Introducción (P-02) y el arranque (P-01).
+   Portada sin cambios de docs/design/intro_logos/cofradar-logotipo-d/
+   intro-animada/: CSS y SVG puros, 2,8 s, una sola vez, nunca en bucle ni
+   girando (así no se confunde con un indicador de carga).
+
+   Cada pieza lleva su retardo en línea. --t y --ps solo sirven para congelar
+   un fotograma al revisar (--ps: paused; --t: 1.4s). Sin animación (reducir
+   movimiento, o un toque que la salta: [data-saltar]) se ve directamente el
+   estado final: las rayas dibujadas y el anillo del radar ya apagado. */
+
+.cf-a {
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.25, 1);
+  animation-fill-mode: both;
+  animation-play-state: var(--ps, running);
+}
+
+.cf-draw { stroke-dasharray: 1 1; animation-name: cfDraw; animation-duration: 0.85s; }
+.cf-dash { stroke-dasharray: 1 1; animation-name: cfDraw; animation-duration: 0.18s; }
+@keyframes cfDraw {
+  from { stroke-dashoffset: 1; visibility: hidden; }
+  to { stroke-dashoffset: 0; visibility: visible; }
+}
+
+.cf-rise { transform-box: fill-box; transform-origin: 50% 100%; animation-name: cfRise; animation-duration: 0.42s; }
+@keyframes cfRise {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.cf-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  stroke-width: 0;
+  animation-name: cfPing;
+  animation-duration: 0.9s;
+  animation-fill-mode: forwards;
+}
+@keyframes cfPing {
+  from { transform: scale(1); stroke-width: 1.4; }
+  to { transform: scale(3.6); stroke-width: 0; }
+}
+
+.cf-up { animation-name: cfUp; animation-duration: 0.6s; }
+@keyframes cfUp {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+
+.cf-in { animation-name: cfIn; animation-duration: 0.45s; }
+@keyframes cfIn {
+  from { transform: translateY(10px); clip-path: inset(0 0 100% 0); }
+  to { transform: translateY(0); clip-path: inset(0 0 0 0); }
+}
+
+[data-saltar] .cf-a { animation: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-a { animation: none !important; }
+}
+
+/* La palabra, en Newsreader 600 (la local de fuentes/). */
+.cf-palabra {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}

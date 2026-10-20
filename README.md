@@ -114,8 +114,8 @@ las rutas viaja dentro de `frontend/public/`.
 **App instalable (PWA).** `frontend/public/` lleva el manifiesto, los iconos y
 el service worker (`sw.js`), que guarda la app para que abra sin conexión; los
 datos los guarda la propia app con su hora. Solo se registra en el build de
-producción. Los iconos son provisionales mientras no haya logotipo y se
-regeneran con `node scripts/gen-iconos.mjs`.
+producción. Los iconos salen del logotipo D
+(`docs/design/intro_logos/cofradar-logotipo-d/iconos/`), copiados tal cual.
 
 **Si el servidor no deja configurar esa reescritura** —nginx sirviendo los
 estáticos sin pasar por Apache, o un hosting ajeno— se compila con rutas de

@@ -209,6 +209,8 @@ Regla que fija: no se pide nada antes de que haga falta. La cuenta se pide al ir
 
 Hojas: la que interrumpe y espera respuesta (Dar fe, ubicación) llega hasta abajo y tapa la barra de navegación, con el fondo oscurecido; la informativa (las del Mapa) se apoya sobre la barra, sin capa. El panel «Hecho» de Dar fe es un aviso pasajero y tampoco lleva capa. Así lo dice el README del sistema.
 
+**Sustituidas el 20/10/2026** · arranque (1) e introducción (2): ahora valen las del logotipo D, en `docs/design/intro_logos/cofradar-logotipo-d/` (pantallas, animación de referencia, SVG e iconos).
+
 - `acceso-1-arranque-{claro,oscuro}` — 1 · ARRANQUE (P-01). Solo «Cofradar» en Newsreader. Solo la primera vez o sin datos guardados; si hay datos, se abre el último estado conocido.
 - `acceso-2-introduccion-{claro,oscuro}` — 2 · INTRODUCCIÓN (P-02), solo la primera vez. Una pantalla editorial con tres ideas y un único botón, «Empezar»; sin «Saltar».
 - `acceso-3a-vuelta-dar-fe-claro` — 3a · VUELTA DE GOOGLE DESDE DAR FE (P-03). No hay hoja intermedia: «Entrar con Google y dar fe» abre Google y, al volver, la aportación se envía sola. Panel «Hecho» con «Has entrado con tu cuenta de Google.»
