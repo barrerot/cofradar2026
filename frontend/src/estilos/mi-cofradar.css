@@ -1,0 +1,108 @@
+/* ==========================================================================
+   COFRADAR · MI COFRADAR (P-19, 7-mi-cofradar/portada-*)
+   Registro editorial: grupos en caja (cera), filas con icono, nombre, cifra
+   y chevron. Namespace: cf-mi*.
+   ========================================================================== */
+
+.cf-mi {
+  display: grid;
+  gap: var(--cf-space-6);
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-mi-progreso,
+.cf-mi-grupo {
+  margin: 0;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-mi-progreso {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: flex-start;
+  padding: var(--cf-space-4);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-mi-progreso .cf-ph {
+  flex: none;
+  margin-top: 2px;
+}
+
+.cf-mi-grupo {
+  display: grid;
+  overflow: hidden;
+}
+
+.cf-mi-fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-height: var(--cf-space-16);
+  padding: var(--cf-space-3) var(--cf-space-4);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-mi-fila + .cf-mi-fila {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-mi-fila:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-mi-fila:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: calc(var(--cf-focus-ring-width) * -1);
+}
+
+.cf-mi-icono {
+  display: inline-flex;
+}
+
+/* Seguidas y vistas llevan el granate de las marcas de relación */
+.cf-mi-icono[data-marca] {
+  color: var(--cf-brand);
+}
+
+.cf-mi-texto {
+  display: grid;
+}
+
+.cf-mi-nombre {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-mi-nota {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.cf-mi-valor {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-critical);
+  color: var(--cf-brand);
+}
+
+.cf-mi-entrar {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-3);
+}
+
+.cf-mi-entrar p {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}

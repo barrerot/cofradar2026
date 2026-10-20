@@ -28,25 +28,6 @@
 
 /* Listado minimo de cofradias, solo para poder entrar en una ficha. Lo
    sustituyen las tarjetas de cofradia (§9.4) cuando el area exista. */
-.cf-lista-provisional {
-  display: grid;
-  gap: var(--cf-space-2);
-}
-
-.cf-lista-provisional a {
-  display: flex;
-  align-items: center;
-  min-height: var(--cf-touch-min);
-  padding: var(--cf-space-3) var(--cf-space-4);
-  background: var(--cf-surface);
-  border: var(--cf-border-width) solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  color: var(--cf-text);
-  font-weight: var(--cf-weight-emphasis);
-  text-decoration: none;
-}
-
-/* Cuenta de andamio en Mi Cofradar (2.1) hasta la portada (3.6) y Cuenta (2.5). */
 .cf-cuenta-provisional {
   display: grid;
   justify-items: start;

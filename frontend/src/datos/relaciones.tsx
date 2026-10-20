@@ -21,6 +21,12 @@ type Relaciones = {
   esVista: (id: string) => boolean;
   /** Hay sesión y ya llegaron del servidor. */
   listas: boolean;
+  /** Cuántas sigues y cuántas has visto este año (0 sin sesión). */
+  seguidas: number;
+  vistas: number;
+  /** Sus ids, para Seguidas (3.7) y Mi colección (3.8). */
+  idsSeguidas: readonly string[];
+  idsVistas: readonly string[];
   cambiarSeguida: (id: string, poner: boolean) => Promise<boolean>;
   cambiarVista: (id: string, poner: boolean) => Promise<boolean>;
 };
@@ -99,6 +105,10 @@ export function RelacionesProvider({ children }: { children: ReactNode }) {
       esSeguida: (id) => estado?.seguidas.has(id) ?? false,
       esVista: (id) => estado?.vistas.has(id) ?? false,
       listas: estado !== null,
+      seguidas: estado?.seguidas.size ?? 0,
+      vistas: estado?.vistas.size ?? 0,
+      idsSeguidas: estado ? [...estado.seguidas] : [],
+      idsVistas: estado ? [...estado.vistas] : [],
       cambiarSeguida: (id, poner) => cambiar("seguidas", id, poner),
       cambiarVista: (id, poner) => cambiar("vistas", id, poner),
     }),

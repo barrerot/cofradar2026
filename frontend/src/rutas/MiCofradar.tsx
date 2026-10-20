@@ -1,81 +1,115 @@
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
-import { Boton, Marco } from "../marco";
-import { cabecerasSesion, useSesion } from "../datos/sesion";
-import { CabeceraRaiz } from "./CabeceraRaiz";
-import { Relleno } from "./Relleno";
+import { Boton, Cabecera, Icono, Marco, type NombreTrazo } from "../marco";
+import { useRelaciones } from "../datos/relaciones";
+import { useSesion } from "../datos/sesion";
+import type { EstadoJornada } from "../fixture";
+import { DarFe } from "./DarFe";
+import { SelectorJornada } from "./SelectorJornada";
 
 /**
- * Mi Cofradar · la capa personal.
+ * P-19 Mi Cofradar · la capa personal (7-mi-cofradar/portada-*), registro
+ * editorial.
  *
- * Lo que antes era «Mi tramo». No cambia de posicion en la navegacion segun
- * la intensidad (§8.3): fuera de temporada gana protagonismo, no sitio.
- *
- * Sin franja de accion: «Dar fe» es contextual y aqui no hay contexto donde
- * dar fe de nada.
- *
- * La cabecera lleva la jornada consultada como todas las areas: §8.2 dice
- * que «ningun area es excepcion» (D35).
+ *   Progreso     los puntos y el nivel llegan con la fase 4 (BUL-219). Hasta
+ *                entonces, para todos, «Empiezas a sumar puntos cuando das fe»
+ *                (portada-B): nunca una cifra inventada.
+ *   Lo tuyo      Seguidas, Mi colección y Mis aportaciones. Con cuenta, con sus
+ *                cifras. Sin cuenta no hay nada guardado (decisión del
+ *                20/10/2026: lo personal es de la cuenta y no se guarda «solo
+ *                en este teléfono»), así que se invita a entrar con Google, como
+ *                botón secundario y no como barrera: Ajustes y Ayuda siguen ahí.
+ *   Más          Cuenta (con sesión), Ajustes y Ayuda y fuentes.
  */
-export function MiCofradar() {
+export function MiCofradar({ estado }: { estado: EstadoJornada }) {
+  const { usuario, disponible, entrar } = useSesion();
+  const relaciones = useRelaciones();
+  const con = !!usuario;
+
+  // Solo cuenta lo que ya ha llegado del servidor: nunca un 0 que no es
+  const cifra = (n: number) => (con && relaciones.listas ? String(n) : undefined);
+
   return (
-    <Marco cabecera={<CabeceraRaiz />}>
-      <AvisoEntrada motivo="mi-cofradar" />
-      <Relleno>Mi Cofradar · capa personal</Relleno>
-      {/* Andamio hasta la portada de verdad (3.6, P-19), que lleva abajo Cuenta,
-          Ajustes y Ayuda y fuentes. */}
-      <nav className="cf-lista-provisional" aria-label="Más" style={{ marginTop: "var(--cf-space-4)" }}>
-        <Link to="/mi-cofradar/ajustes">Ajustes</Link>
-        <Link to="/mi-cofradar/ayuda">Ayuda y fuentes</Link>
-      </nav>
-      <CuentaProvisional />
+    <Marco
+      registro="editorial"
+      cabecera={<Cabecera principal={<SelectorJornada />} titulo="Mi Cofradar" />}
+      accion={estado.activa ? <DarFe /> : undefined}
+    >
+      <div className="cf-mi">
+        <AvisoEntrada motivo="mi-cofradar" />
+
+        <p className="cf-mi-progreso">
+          <Icono nombre="darFeNoVerificable" tamano={24} />
+          <span>Empiezas a sumar puntos cuando das fe.</span>
+        </p>
+
+        <nav className="cf-mi-grupo" aria-label="Lo tuyo">
+          <Fila icono="seguida" marca a="/mi-cofradar/seguidas" valor={cifra(relaciones.seguidas)}>
+            Seguidas
+          </Fila>
+          <Fila icono="vista" marca a="/mi-cofradar/coleccion" valor={cifra(relaciones.vistas)}>
+            Mi colección
+          </Fila>
+          <Fila icono="darFeNoVerificable" a="/mi-cofradar/aportaciones" nota="Tus aportaciones aparecerán aquí cuando des fe.">
+            Mis aportaciones
+          </Fila>
+        </nav>
+
+        {!con && disponible && usuario !== undefined ? (
+          <div className="cf-mi-entrar">
+            <p>Entra con tu cuenta de Google para seguir cofradías y guardar las que ves. Las tendrás en cualquier teléfono.</p>
+            <Boton variante="secundario" onClick={() => void entrar("mi-cofradar")}>
+              Entrar con Google
+            </Boton>
+          </div>
+        ) : null}
+
+        <nav className="cf-mi-grupo" aria-label="Más">
+          {con ? (
+            <Fila icono="usuario" a="/mi-cofradar/cuenta" nota={usuario.email}>
+              Cuenta
+            </Fila>
+          ) : null}
+          <Fila icono="ajustes" a="/mi-cofradar/ajustes">
+            Ajustes
+          </Fila>
+          <Fila icono="ayuda" a="/mi-cofradar/ayuda">
+            Ayuda y fuentes
+          </Fila>
+        </nav>
+      </div>
     </Marco>
   );
 }
 
-/**
- * Andamio de la 2.1 y 2.3: entrar y salir con Google y ver que el servidor reconoce
- * la sesión. Lo sustituyen la portada sin cuenta (P-19, «Entrar con Google»
- * como botón secundario) y Cuenta (P-23, 2.5).
- */
-function CuentaProvisional() {
-  const { usuario, disponible, entrar, salir } = useSesion();
-  const [servidor, setServidor] = useState<string>();
-
-  useEffect(() => {
-    if (!usuario) return setServidor(undefined);
-    let vivo = true;
-    cabecerasSesion()
-      .then((cabeceras) => fetch("/api/yo", { headers: cabeceras }))
-      .then((r) => (r.ok ? "El servidor te reconoce." : `El servidor no te reconoce (${r.status}).`))
-      .catch(() => "No se ha podido preguntar al servidor.")
-      .then((texto) => vivo && setServidor(texto));
-    return () => {
-      vivo = false;
-    };
-  }, [usuario]);
-
-  if (!disponible || usuario === undefined) return null;
-
+function Fila({
+  icono,
+  marca = false,
+  a,
+  valor,
+  nota,
+  children,
+}: {
+  icono: NombreTrazo;
+  /** Icono en el granate de las marcas de relación (seguida, vista). */
+  marca?: boolean;
+  a: string;
+  valor?: string;
+  nota?: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="cf-cuenta-provisional" aria-label="Cuenta">
-      {usuario ? (
-        <>
-          <p>
-            Has entrado como <strong>{usuario.nombre ?? usuario.email}</strong>
-            {usuario.nombre && usuario.email ? ` (${usuario.email})` : null}.
-          </p>
-          {servidor ? <p data-servidor>{servidor}</p> : null}
-          <Boton variante="secundario" onClick={() => void salir()}>
-            Cerrar sesión
-          </Boton>
-        </>
-      ) : (
-        <Boton variante="secundario" onClick={() => void entrar("mi-cofradar")}>
-          Entrar con Google
-        </Boton>
-      )}
-    </section>
+    <Link className="cf-mi-fila" to={a}>
+      <span className="cf-mi-icono" data-marca={marca ? "" : undefined}>
+        <Icono nombre={icono} tamano={24} />
+      </span>
+      <span className="cf-mi-texto">
+        <span className="cf-mi-nombre">{children}</span>
+        {nota ? <span className="cf-mi-nota">{nota}</span> : null}
+      </span>
+      {valor !== undefined ? <span className="cf-mi-valor cf-num">{valor}</span> : <span />}
+      <Icono nombre="chevronDerecha" tamano={20} />
+    </Link>
   );
 }

@@ -28,6 +28,7 @@ import "./estilos/introduccion.css";
 import "./estilos/ficha.css";
 import "./estilos/recorrido.css";
 import "./estilos/agenda.css";
+import "./estilos/mi-cofradar.css";
 
 iniciarTema();
 registrarServiceWorker();
