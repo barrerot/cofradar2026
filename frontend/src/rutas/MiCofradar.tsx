@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Marco } from "../marco";
+import { Boton, Marco } from "../marco";
+import { cabecerasSesion, useSesion } from "../datos/sesion";
 import { CabeceraRaiz } from "./CabeceraRaiz";
 import { Relleno } from "./Relleno";
 
@@ -25,6 +27,53 @@ export function MiCofradar() {
         <Link to="/mi-cofradar/ajustes">Ajustes</Link>
         <Link to="/mi-cofradar/ayuda">Ayuda y fuentes</Link>
       </nav>
+      <CuentaProvisional />
     </Marco>
+  );
+}
+
+/**
+ * Andamio de la 2.1: entrar y salir con Google y ver que el servidor reconoce
+ * la sesión. Lo sustituyen la portada sin cuenta (P-19, «Entrar con Google»
+ * como botón secundario) y Cuenta (P-23, 2.5).
+ */
+function CuentaProvisional() {
+  const { usuario, disponible, entrar, salir } = useSesion();
+  const [servidor, setServidor] = useState<string>();
+
+  useEffect(() => {
+    if (!usuario) return setServidor(undefined);
+    let vivo = true;
+    cabecerasSesion()
+      .then((cabeceras) => fetch("/api/yo", { headers: cabeceras }))
+      .then((r) => (r.ok ? "El servidor te reconoce." : `El servidor no te reconoce (${r.status}).`))
+      .catch(() => "No se ha podido preguntar al servidor.")
+      .then((texto) => vivo && setServidor(texto));
+    return () => {
+      vivo = false;
+    };
+  }, [usuario]);
+
+  if (!disponible || usuario === undefined) return null;
+
+  return (
+    <section className="cf-cuenta-provisional" aria-label="Cuenta">
+      {usuario ? (
+        <>
+          <p>
+            Has entrado como <strong>{usuario.nombre ?? usuario.email}</strong>
+            {usuario.nombre && usuario.email ? ` (${usuario.email})` : null}.
+          </p>
+          {servidor ? <p data-servidor>{servidor}</p> : null}
+          <Boton variante="secundario" onClick={() => void salir()}>
+            Cerrar sesión
+          </Boton>
+        </>
+      ) : (
+        <Boton variante="secundario" onClick={() => void entrar()}>
+          Entrar con Google
+        </Boton>
+      )}
+    </section>
   );
 }

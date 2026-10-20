@@ -56,3 +56,15 @@
   padding: var(--cf-space-6) var(--cf-space-4);
   background: var(--cf-bg);
 }
+
+/* Cuenta de andamio en Mi Cofradar (2.1) hasta la portada (3.6) y Cuenta (2.5). */
+.cf-cuenta-provisional {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-6);
+}
+
+.cf-cuenta-provisional p {
+  margin: 0;
+}

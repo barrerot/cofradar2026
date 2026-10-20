@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { App } from "./App";
 import { JornadaProvider } from "./datos/jornada";
+import { SesionProvider } from "./datos/sesion";
 import { SincronizacionProvider } from "./datos/sincronizacion";
 import { registrarServiceWorker } from "./pwa";
 import { iniciarTema } from "./tema";
@@ -41,12 +42,14 @@ if (!raiz) throw new Error("Falta #raiz en index.html");
 
 createRoot(raiz).render(
   <StrictMode>
-    <SincronizacionProvider>
-      <JornadaProvider>
-        <Router>
-          <App />
-        </Router>
-      </JornadaProvider>
-    </SincronizacionProvider>
+    <SesionProvider>
+      <SincronizacionProvider>
+        <JornadaProvider>
+          <Router>
+            <App />
+          </Router>
+        </JornadaProvider>
+      </SincronizacionProvider>
+    </SesionProvider>
   </StrictMode>,
 );

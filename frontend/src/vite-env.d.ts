@@ -14,6 +14,9 @@ interface ImportMetaEnv {
    * servidor. En produccion NO se usa: las URL de hash no se comparten bien.
    */
   readonly VITE_ROUTER?: "history" | "hash";
+  /** De backend/.env (vite.config.ts). Vacías: la app funciona sin cuenta y no deja entrar. */
+  readonly VITE_SUPABASE_URL: string;
+  readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
 }
 
 interface ImportMeta {

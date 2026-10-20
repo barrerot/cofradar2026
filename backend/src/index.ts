@@ -2,7 +2,9 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import { routerCofradias } from "./rutas/cofradias.js";
+import { routerCuenta } from "./rutas/cuenta.js";
 import { routerEstado } from "./rutas/estado.js";
+import { leerSesion } from "./sesion.js";
 
 /**
  * API de Cofradar.
@@ -24,8 +26,10 @@ const puerto = Number(process.env.PORT ?? 3001);
 const host = process.env.HOST;
 
 app.use(express.json());
+app.use("/api", leerSesion);
 app.use("/api", routerEstado);
 app.use("/api", routerCofradias);
+app.use("/api", routerCuenta);
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

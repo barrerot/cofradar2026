@@ -46,7 +46,10 @@ Los datos base viven en **Supabase** (Postgres). La API de Express los lee con l
 SUPABASE_URL=https://<proyecto>.supabase.co
 SUPABASE_SECRET_KEY=sb_secret_...
 SUPABASE_DB_URL=postgresql://postgres:<contraseña>@db.<proyecto>.supabase.co:5432/postgres
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 ```
+
+La URL y la clave **publicable** las usa también la web para entrar con Google: `vite.config.ts` las pasa al navegador, solo esas dos. La secreta y la de la base de datos nunca salen del servidor.
 
 **Cargar o recargar los datos** después de cambiar los CSV de `docs/datos/` o los recorridos:
 
@@ -65,7 +68,21 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 | `GET /api/cofradias/:id` | La ficha: nombre oficial, web, fundación, historia, cifras, `sede`, `pasos` y la `salida` del año (templo del que sale, horario de `cruzGuia` y `ultimoPaso` por lugar, con `hora` y si está `publicada` en el programa) |
 | `GET /api/cofradias/:id/recorrido` | La línea del recorrido (GeoJSON) |
 | `GET /api/estado-jornada` | Estado en vivo: hoy responde `sin-motor` hasta la fase 4 |
+| `GET /api/yo` | Con sesión, `{ id, email }`; sin ella, 401 |
 | `GET /api/salud` | `{ ok: true }` |
+
+**Entrar con Google** (Supabase Auth). La web guarda la sesión en el teléfono y la renueva sola (`frontend/src/datos/sesion.tsx`). A la API le manda el token en la cabecera `X-Sesion`, no en `Authorization`, porque en cofradar.buluu.es esa la usa la contraseña de Apache. `backend/src/sesion.ts` lo comprueba en todas las rutas; las que necesitan cuenta llevan `exigirSesion`.
+
+Configurado fuera del código:
+- **Google Cloud**, proyecto Cofradar: un cliente OAuth «Cofradar web» con
+  - orígenes `https://cofradar.buluu.es` y `http://localhost:5173`;
+  - redirección `https://<proyecto>.supabase.co/auth/v1/callback`.
+
+  Está «en pruebas», así que solo entran los usuarios de prueba que se añadan allí.
+- **Supabase**, Authentication:
+  - Google activado con ese cliente;
+  - Site URL `https://cofradar.buluu.es`;
+  - Redirect URLs `https://cofradar.buluu.es/**` y `http://localhost:5173/**`.
 
 ## Publicar
 
