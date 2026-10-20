@@ -9,6 +9,7 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 const dirs = [
   "docs/design/pantallas/1-marco",
   "docs/design/pantallas/2-inicio",
+  "docs/design/pantallas/3-mapa",
   "docs/design/pantallas/4-cofradias",
   "docs/design/pantallas/0-sistema/componentes",
 ];
@@ -126,6 +127,8 @@ const mapa = {
   calendario: "M208,28H188V24a12,12",
   /** Opcion marcada en un filtro. */
   marca:      "M232.49,80.49l-128,1",
+  /** «Centrar en mi ubicación» del mapa (3-mapa, 8-acceso/acceso-4a). */
+  centrar:    "M232,116h-4.72A100.2",
 };
 
 const faltan = Object.entries(mapa).filter(([, k]) => !trazos.has(k));

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Boton, Icono, PantallaSecundaria } from "../marco";
 import type { NombreTrazo } from "../marco";
-import { useUbicacion, type EstadoUbicacion } from "../datos/ubicacion";
+import { PARA_QUE_UBICACION, useUbicacion, type EstadoUbicacion } from "../datos/ubicacion";
 import type { EstadoJornada } from "../fixture";
 import { cambiarPreferencias, usePreferencias, type PreferenciaTema } from "../tema";
 import { DarFe } from "./DarFe";
@@ -102,15 +102,12 @@ export function Ajustes({ estado }: { estado: EstadoJornada }) {
               </p>
             </div>
             {ubicacion.estado === "no-permitida" ? (
-              <Boton variante="secundario" cargando={ubicacion.pidiendo} onClick={ubicacion.pedir}>
+              <Boton variante="secundario" cargando={ubicacion.pidiendo} onClick={() => ubicacion.pedir()}>
                 Permitir
               </Boton>
             ) : null}
           </div>
-          <p className="cf-ajustes-texto">
-            Para decirte a qué distancia te queda cada cofradía y para situar en el mapa lo que ves cuando das fe.
-            Sin ella, Cofradar funciona igual y puedes dar fe.
-          </p>
+          <p className="cf-ajustes-texto">{PARA_QUE_UBICACION}</p>
           {ubicacion.estado === "bloqueada" ? (
             <p className="cf-ajustes-aviso">
               <Icono nombre="informativo" tamano={20} />

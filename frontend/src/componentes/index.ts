@@ -36,5 +36,6 @@ export {
   type Relacion,
   type Verificacion,
 } from "./MarcaRelacion";
+export { usePedirUbicacion } from "./PedirUbicacion";
 export { Novedades, type Novedad, type ParteNovedad } from "./Novedades";
 export { TarjetaCofradia, type DatosCofradia, type Densidad } from "./TarjetaCofradia";

@@ -57,3 +57,18 @@
 .cf-cuenta-provisional p {
   margin: 0;
 }
+
+/* Mapa (andamio hasta 4.4): el hueco del mapa con sus controles flotantes */
+.cf-mapa-hueco {
+  position: relative;
+  min-height: 24rem;
+}
+
+.cf-mapa-hueco .cf-relleno {
+  min-height: 24rem;
+}
+
+.cf-mapa-hueco .cf-locate {
+  right: var(--cf-space-4);
+  bottom: var(--cf-space-4);
+}

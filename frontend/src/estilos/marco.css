@@ -480,3 +480,88 @@
 .cf-jornadas-fecha {
   font-feature-settings: var(--cf-font-features-data);
 }
+
+/* ── Hoja que interrumpe y espera respuesta (HojaDecision) ─────────────── */
+/* README de 8-acceso: llega hasta abajo, tapa la navegación y oscurece el
+   fondo. Mide lo que su contenido; las acciones, a todo el ancho. */
+.cf-hoja-decision-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--cf-z-modal) - 1);
+  border: 0;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  animation: cf-marco-aparecer var(--cf-dur-base) var(--cf-ease-out);
+}
+
+.cf-hoja-decision {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--cf-z-modal);
+  max-height: calc(100dvh - var(--cf-space-8));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--cf-space-2) var(--cf-space-4) calc(var(--cf-space-8) + env(safe-area-inset-bottom, 0px));
+  animation: cf-marco-subir var(--cf-dur-sheet) var(--cf-ease-out);
+}
+
+/* En pantallas anchas no se estira de borde a borde */
+@media (min-width: 40rem) {
+  .cf-hoja-decision {
+    left: 50%;
+    right: auto;
+    width: min(100%, 30rem);
+    transform: translateX(-50%);
+    animation-name: cf-marco-aparecer;
+  }
+}
+
+.cf-hoja-decision .cf-handle {
+  display: block;
+  margin-bottom: var(--cf-space-6);
+}
+
+.cf-hoja-decision-icono {
+  display: flex;
+  margin-bottom: var(--cf-space-4);
+}
+
+.cf-hoja-decision h2 {
+  margin: 0 0 var(--cf-space-3);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-hoja-decision p {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+.cf-hoja-decision-acciones {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-6);
+}
+
+.cf-hoja-decision-acciones .cf-btn {
+  width: 100%;
+}
+
+.cf-hoja-decision .cf-hoja-decision-nota {
+  margin-top: var(--cf-space-4);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-hoja-decision,
+  .cf-hoja-decision-scrim {
+    animation: none;
+  }
+}

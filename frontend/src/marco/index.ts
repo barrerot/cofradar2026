@@ -5,6 +5,7 @@ export { PantallaSecundaria } from "./PantallaSecundaria";
 export { NavegacionPrincipal } from "./NavegacionPrincipal";
 export { FranjaAccion } from "./FranjaAccion";
 export { BottomSheet, type AlturaSheet } from "./BottomSheet";
+export { HojaDecision } from "./HojaDecision";
 export { Boton, type VarianteBoton, type TamanoBoton } from "./Boton";
 export { Icono } from "./Icono";
 export { Logo, type VarianteLogo } from "./Logo";
