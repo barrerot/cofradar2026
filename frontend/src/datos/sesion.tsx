@@ -121,7 +121,23 @@ export function SesionProvider({ children }: { children: ReactNode }) {
       if (esperaba) setEntrada({ motivo: esperaba.motivo, resultado: sesion ? "entrado" : "no-entrado" });
       limpiarUrl();
     });
-    return () => data.subscription.unsubscribe();
+    // Vuelta atrás desde Google: el navegador puede devolver la página tal
+    // cual estaba, sin recargarla. Lo pendiente sigue guardado: no se entró.
+    const atras = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      try {
+        const esperaba = JSON.parse(sessionStorage.getItem(PENDIENTE) ?? "null") as { motivo: string } | null;
+        sessionStorage.removeItem(PENDIENTE);
+        if (esperaba) setEntrada({ motivo: esperaba.motivo, resultado: "no-entrado" });
+      } catch {
+        /* sin sessionStorage no hay aviso */
+      }
+    };
+    window.addEventListener("pageshow", atras);
+    return () => {
+      data.subscription.unsubscribe();
+      window.removeEventListener("pageshow", atras);
+    };
   }, [a]);
 
   const entrar = useCallback(
