@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Icono } from "../marco";
 import { useSesion } from "../datos/sesion";
 
@@ -9,6 +9,9 @@ import { useSesion } from "../datos/sesion";
  *   entrado     «Has entrado con tu cuenta de Google.» Se va solo.
  *   no-entrado  azul, nunca rojo ni «error»: lo que la persona iba a hacer
  *               sigue ahí. Se queda hasta que se cierra o se vuelve a intentar.
+ *
+ * Al aparecer se trae a la vista: al volver de Google el navegador restaura el
+ * desplazamiento, y la persona puede estar abajo, junto al botón que pulsó.
  *
  * Quien retoma una acción (seguir, dar fe…) puede pasar sus textos.
  */
@@ -25,6 +28,14 @@ export function AvisoEntrada({
 }) {
   const { entrada, olvidarEntrada } = useSesion();
   const mio = entrada?.motivo === motivo ? entrada : null;
+  const caja = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mio) return;
+    // Un fotograma después, para ir detrás de la restauración del desplazamiento
+    const id = window.requestAnimationFrame(() => caja.current?.scrollIntoView({ block: "nearest" }));
+    return () => window.cancelAnimationFrame(id);
+  }, [mio]);
 
   useEffect(() => {
     if (mio?.resultado !== "entrado") return;
@@ -34,7 +45,7 @@ export function AvisoEntrada({
 
   if (!mio) return null;
   return (
-    <div className="cf-aviso-entrada" role="status">
+    <div ref={caja} className="cf-aviso-entrada" role="status">
       <Icono nombre="informativo" tamano={20} />
       <p>{mio.resultado === "entrado" ? entrado : noEntrado}</p>
       <button type="button" aria-label="Cerrar aviso" onClick={olvidarEntrada}>

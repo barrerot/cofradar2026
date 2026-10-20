@@ -121,22 +121,33 @@ export function SesionProvider({ children }: { children: ReactNode }) {
       if (esperaba) setEntrada({ motivo: esperaba.motivo, resultado: sesion ? "entrado" : "no-entrado" });
       limpiarUrl();
     });
-    // Vuelta atrás desde Google: el navegador puede devolver la página tal
-    // cual estaba, sin recargarla. Lo pendiente sigue guardado: no se entró.
-    const atras = (e: PageTransitionEvent) => {
-      if (!e.persisted) return;
+    // Vuelta atrás desde Google sin recargar: el navegador puede devolver la
+    // página tal cual estaba (pageshow persistida) o, si Google se abrió en una
+    // pestaña encima de la app, la app solo vuelve a verse (visibilitychange).
+    // Si lo pendiente sigue guardado, no se entró: al entrar, la página se
+    // recarga y lo recoge INITIAL_SESSION.
+    const revisar = () => {
       try {
         const esperaba = JSON.parse(sessionStorage.getItem(PENDIENTE) ?? "null") as { motivo: string } | null;
+        if (!esperaba) return;
         sessionStorage.removeItem(PENDIENTE);
-        if (esperaba) setEntrada({ motivo: esperaba.motivo, resultado: "no-entrado" });
+        setEntrada({ motivo: esperaba.motivo, resultado: "no-entrado" });
       } catch {
         /* sin sessionStorage no hay aviso */
       }
     };
+    const atras = (e: PageTransitionEvent) => {
+      if (e.persisted) revisar();
+    };
+    const vuelve = () => {
+      if (document.visibilityState === "visible") revisar();
+    };
     window.addEventListener("pageshow", atras);
+    document.addEventListener("visibilitychange", vuelve);
     return () => {
       data.subscription.unsubscribe();
       window.removeEventListener("pageshow", atras);
+      document.removeEventListener("visibilitychange", vuelve);
     };
   }, [a]);
 
