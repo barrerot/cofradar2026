@@ -1,0 +1,67 @@
+/* P-02 Introduccion (rutas/Introduccion.tsx, 8-acceso/acceso-2). Registro
+   editorial: fondo de cera, titulos en Newsreader, texto en Inter. El boton,
+   abajo y a todo el ancho, como cierre de la pantalla. */
+
+.cf-introduccion {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: var(--cf-space-12) var(--cf-space-6) var(--cf-space-6);
+  background: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-introduccion-marca {
+  margin: var(--cf-space-8) 0 var(--cf-space-12);
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-4xl);
+  line-height: var(--cf-leading-4xl);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-introduccion-ideas {
+  display: grid;
+  gap: var(--cf-space-8);
+  margin: 0 0 var(--cf-space-8);
+  padding: 0;
+  list-style: none;
+}
+
+.cf-introduccion-ideas li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--cf-space-4);
+}
+
+.cf-introduccion-icono {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--cf-surface);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-md);
+}
+
+.cf-introduccion-ideas h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-introduccion-ideas p {
+  margin: var(--cf-space-2) 0 0;
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+/* El boton cierra la pantalla: abajo y a todo el ancho, con el margen de
+   16 de la app y no el de 24 del texto editorial. */
+.cf-introduccion > button {
+  width: calc(100% + 2 * (var(--cf-space-6) - var(--cf-space-4)));
+  margin: auto calc(var(--cf-space-4) - var(--cf-space-6)) 0;
+}

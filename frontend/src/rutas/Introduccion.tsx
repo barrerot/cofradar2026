@@ -1,24 +1,51 @@
 import { useNavigate } from "react-router-dom";
 import { guardar } from "../datos/almacen";
-import { Boton } from "../marco";
-import { Relleno } from "./Relleno";
+import { Boton, Icono } from "../marco";
+import type { NombreTrazo } from "../marco";
 
 /**
- * P-02 Introducción · ANDAMIO hasta la issue 2.2.
+ * P-02 Introducción (8-acceso/acceso-2-introduccion, F-02).
  *
- * La primera vez que se abre Cofradar por la portada, el arranque da paso
- * aquí (8-acceso/acceso-2). La pantalla de verdad es editorial, con tres ideas
- * y un único botón, «Empezar», sin «Saltar». De momento solo existe el botón,
- * para que el recorrido de la primera vez funcione de punta a punta.
+ * Solo la primera vez que se abre Cofradar por la portada: tras el arranque
+ * (P-01), App.tsx manda aquí mientras no esté guardado `introduccion-vista`.
+ * Un enlace directo a una cofradía no la impone.
+ *
+ * Una sola pantalla editorial con tres ideas y un único botón, «Empezar». Sin
+ * «Saltar» (diseño aprobado en BUL-198): con una sola pantalla, «Empezar» ya
+ * es saltar. No pide nada: ni cuenta ni ubicación.
  */
+const IDEAS: { icono: NombreTrazo; titulo: string; texto: string }[] = [
+  {
+    icono: "enCalle",
+    titulo: "Por dónde va de verdad cada cofradía",
+    texto: "La cruz de guía y cada paso, y cuánto puedes fiarte de cada dato.",
+  },
+  { icono: "ojo", titulo: "Dar fe", texto: "Si la estás viendo, dilo con un toque: ayudas a todos." },
+  { icono: "ubicacion", titulo: "Tu ubicación es opcional", texto: "Sin ella, Cofradar funciona igual." },
+];
+
 export function Introduccion() {
   const navegar = useNavigate();
 
   return (
     <main className="cf-introduccion" data-register="editorial">
-      <Relleno>Introducción · P-02, issue 2.2</Relleno>
+      <h1 className="cf-introduccion-marca">Cofradar</h1>
+      <ul className="cf-introduccion-ideas">
+        {IDEAS.map((idea) => (
+          <li key={idea.titulo}>
+            <span className="cf-introduccion-icono">
+              <Icono nombre={idea.icono} tamano={20} />
+            </span>
+            <div>
+              <h2>{idea.titulo}</h2>
+              <p>{idea.texto}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
       <Boton
         variante="primario"
+        tamano="52"
         onClick={() => {
           guardar("introduccion-vista", true);
           navegar("/", { replace: true });

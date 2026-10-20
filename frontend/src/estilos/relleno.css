@@ -46,17 +46,6 @@
   text-decoration: none;
 }
 
-/* Introduccion de andamio (rutas/Introduccion.tsx) hasta la issue 2.2. */
-.cf-introduccion {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--cf-space-6);
-  min-height: 100dvh;
-  padding: var(--cf-space-6) var(--cf-space-4);
-  background: var(--cf-bg);
-}
-
 /* Cuenta de andamio en Mi Cofradar (2.1) hasta la portada (3.6) y Cuenta (2.5). */
 .cf-cuenta-provisional {
   display: grid;
