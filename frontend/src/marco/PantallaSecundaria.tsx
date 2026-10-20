@@ -26,7 +26,8 @@ export function PantallaSecundaria({
   registro,
   sangrado,
 }: {
-  titulo: string;
+  /** Sin título, la pantalla pone el suyo en el contenido (la ficha de cofradía). */
+  titulo?: string;
   /** A donde vuelve y como se llama ese sitio. */
   vuelta: { etiqueta: string; ruta?: string };
   acciones?: ReactNode;

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { App } from "./App";
 import { JornadaProvider } from "./datos/jornada";
+import { RelacionesProvider } from "./datos/relaciones";
 import { SesionProvider } from "./datos/sesion";
 import { SincronizacionProvider } from "./datos/sincronizacion";
 import { registrarServiceWorker } from "./pwa";
@@ -23,6 +24,7 @@ import "./estilos/ajustes.css";
 import "./estilos/ayuda.css";
 import "./estilos/logo-animado.css";
 import "./estilos/introduccion.css";
+import "./estilos/ficha.css";
 
 iniciarTema();
 registrarServiceWorker();
@@ -45,13 +47,15 @@ if (!raiz) throw new Error("Falta #raiz en index.html");
 createRoot(raiz).render(
   <StrictMode>
     <SesionProvider>
-      <SincronizacionProvider>
-        <JornadaProvider>
-          <Router>
-            <App />
-          </Router>
-        </JornadaProvider>
-      </SincronizacionProvider>
+      <RelacionesProvider>
+        <SincronizacionProvider>
+          <JornadaProvider>
+            <Router>
+              <App />
+            </Router>
+          </JornadaProvider>
+        </SincronizacionProvider>
+      </RelacionesProvider>
     </SesionProvider>
   </StrictMode>,
 );

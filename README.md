@@ -69,6 +69,9 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 | `GET /api/cofradias/:id/recorrido` | La línea del recorrido (GeoJSON) |
 | `GET /api/estado-jornada` | Estado en vivo: hoy responde `sin-motor` hasta la fase 4 |
 | `GET /api/yo` | Con sesión, `{ id, email }`; sin ella, 401 |
+| `GET /api/yo/relaciones` | Con sesión: `{ anio, seguidas: [id], vistas: [{ id, anio }] }` |
+| `PUT` / `DELETE /api/yo/seguidas/:id` | Seguir o dejar de seguir una cofradía |
+| `PUT` / `DELETE /api/yo/vistas/:id` | «La he visto» en la edición actual, o quitarlo |
 | `GET /api/salud` | `{ ok: true }` |
 
 **Entrar con Google** (Supabase Auth). La web guarda la sesión en el teléfono y la renueva sola (`frontend/src/datos/sesion.tsx`). A la API le manda el token en la cabecera `X-Sesion`, no en `Authorization`, porque en cofradar.buluu.es esa la usa la contraseña de Apache. `backend/src/sesion.ts` lo comprueba en todas las rutas; las que necesitan cuenta llevan `exigirSesion`.

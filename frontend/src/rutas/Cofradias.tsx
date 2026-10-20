@@ -131,7 +131,7 @@ function Directorio({
   // «En la calle» no deja pasar ninguna: sin motor no se sabe, y no se finge (fase 4)
   const pasa = (c: CofradiaApi) =>
     coincide(c.nombre, consulta) &&
-    (filtro === "todas" || (filtro === "seguidas" && relaciones.get(c.id) === "seguida"));
+    (filtro === "todas" || (filtro === "seguidas" && relaciones.esSeguida(c.id)));
 
   const visibles = grupos.map((g) => ({ ...g, cofradias: g.cofradias.filter(pasa) }));
   if (!visibles.some((g) => g.cofradias.length > 0)) {
@@ -148,7 +148,7 @@ function Directorio({
               {g.cofradias.map((c) => (
                 <Link key={c.id} className="cf-lista-enlace" to={`/cofradias/${c.id}`}>
                   <TarjetaCofradia
-                    cofradia={{ id: c.id, nombre: c.nombre, iniciales: iniciales(c.orden), relacion: relaciones.get(c.id) }}
+                    cofradia={{ id: c.id, nombre: c.nombre, iniciales: iniciales(c.orden), relacion: relaciones.marca(c.id) }}
                     densidad="compacta"
                     nombreResaltado={resaltar(c.nombre, consulta)}
                   />

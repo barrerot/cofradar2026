@@ -120,6 +120,16 @@ async function leerSalidas(anio?: number): Promise<Salida[]> {
   return data as unknown as Salida[];
 }
 
+/**
+ * Para lo personal (rutas/cuenta.ts): el id de cada hermandad por su `id` público, y el año de la
+ * última edición, que es al que se refiere «La he visto».
+ */
+export async function hermandadesYEdicion(): Promise<{ porSlug: Map<string, number>; porId: Map<number, string>; anio: number }> {
+  const lista = await salidas();
+  const porSlug = new Map(lista.map((s) => [slug(s.hermandad.nombre), s.hermandad.id] as const));
+  return { porSlug, porId: new Map([...porSlug].map(([k, v]) => [v, k])), anio: lista[0]?.edicion.anio ?? new Date().getFullYear() };
+}
+
 function anioPedido(peticion: Request): number | undefined {
   const a = Number(peticion.query.anio);
   return Number.isInteger(a) && a > 0 ? a : undefined;

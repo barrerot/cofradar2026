@@ -1,0 +1,181 @@
+/* ==========================================================================
+   COFRADAR · FICHA DE COFRADÍA (P-11, 4-cofradias/ficha-2*)
+   --------------------------------------------------------------------------
+   Registro editorial: las superficies y bordes ya los remapea
+   [data-register="editorial"] en bundle.css (cera). Aquí solo la composición.
+   Namespace: cf-ficha*.
+   ========================================================================== */
+
+.cf-ficha {
+  display: grid;
+  gap: var(--cf-space-8);
+  padding-block: 0 var(--cf-space-8);
+}
+
+.cf-ficha > .cf-aviso-entrada {
+  margin-bottom: calc(var(--cf-space-4) * -1);
+}
+
+/* ── Cabecera: escudo, relación, nombre, nombre oficial y día ───────────── */
+.cf-ficha-cabecera {
+  display: grid;
+  justify-items: start;
+}
+
+.cf-ficha-escudo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cf-space-16);
+  height: var(--cf-space-16);
+  margin-bottom: var(--cf-space-4);
+  border-radius: var(--cf-radius-full);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  background: var(--cf-surface-sunken);
+  color: var(--cf-text-secondary);
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-2xl);
+  line-height: 1;
+}
+
+.cf-ficha-relacion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  margin: 0 0 var(--cf-space-1);
+  color: var(--cf-brand);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-ficha-nombre {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-4xl);
+  line-height: var(--cf-leading-4xl);
+  letter-spacing: -0.015em;
+}
+
+.cf-ficha-oficial {
+  margin: var(--cf-space-3) 0 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ficha-dia {
+  margin: var(--cf-space-4) 0 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+/* ── Acciones: rejilla de dos, a todo el ancho ──────────────────────────── */
+.cf-ficha-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--cf-space-2);
+}
+
+.cf-ficha-acciones .cf-btn {
+  justify-content: flex-start;
+  gap: var(--cf-space-2);
+  height: auto;
+  min-height: var(--cf-space-12);
+  padding-block: var(--cf-space-2);
+  text-align: left;
+  text-decoration: none;
+  white-space: normal;
+}
+
+/* Puesta: color de marca, porque es TU relación con ella (como la marca) */
+.cf-ficha-acciones .cf-btn[aria-pressed="true"] {
+  background: var(--cf-brand-soft);
+  border-color: var(--cf-brand);
+  color: var(--cf-brand);
+}
+
+.cf-ficha-fallo {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: flex-start;
+  margin: calc(var(--cf-space-6) * -1) 0 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* ── Secciones: «La hermandad» y «Su historia» ──────────────────────────── */
+.cf-ficha-seccion {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-ficha-seccion > h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-ficha-datos {
+  margin: 0;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-ficha-dato {
+  display: grid;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-3) var(--cf-space-4);
+}
+
+.cf-ficha-dato + .cf-ficha-dato {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-ficha-dato dt {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ficha-dato dd {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  overflow-wrap: anywhere;
+}
+
+.cf-ficha-dato dd strong {
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-ficha-dato dd a {
+  color: inherit;
+}
+
+.cf-ficha-paso,
+.cf-ficha-nota {
+  display: block;
+}
+
+.cf-ficha-nota {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ficha-historia {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  max-width: 38rem;
+}

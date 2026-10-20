@@ -100,3 +100,29 @@ alter table jornada            enable row level security;
 alter table salida_procesional enable row level security;
 alter table punto_itinerario   enable row level security;
 alter table recorrido          enable row level security;
+
+-- ── Lo personal de cada cuenta (decisión del 20/10/2026: seguir y marcar vista piden cuenta) ──
+-- No son datos base: la carga (cargar-supabase.ts) no las toca nunca. Por eso NO llevan clave ajena a
+-- `hermandad`: la carga vacía y vuelve a llenar las tablas base, y con la clave lo impediría (o, en
+-- cascada, borraría lo de todos). `hermandad_id` es el id del CSV, que no cambia al recargar.
+-- Al borrar la cuenta en Supabase Auth se borra todo lo suyo (on delete cascade).
+
+-- Las cofradías que sigue cada persona
+create table if not exists seguida (
+  usuario_id    uuid not null references auth.users (id) on delete cascade,
+  hermandad_id  integer not null,
+  creada        timestamptz not null default now(),
+  primary key (usuario_id, hermandad_id)
+);
+
+-- Las que ha visto, por año: Mi colección (P-21) junta las de todos los años
+create table if not exists vista (
+  usuario_id    uuid not null references auth.users (id) on delete cascade,
+  hermandad_id  integer not null,
+  anio          integer not null,
+  creada        timestamptz not null default now(),
+  primary key (usuario_id, hermandad_id, anio)
+);
+
+alter table seguida enable row level security;
+alter table vista   enable row level security;
