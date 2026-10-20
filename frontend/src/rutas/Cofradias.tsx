@@ -1,99 +1,87 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { TarjetaCofradia } from "../componentes";
+import { useMemo, useState, type ReactNode } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { AvisoEntrada, Esqueleto, SegunDato, TarjetaCofradia } from "../componentes";
 import { Boton, Cabecera, Icono, Marco } from "../marco";
+import { useJornada, type Jornada } from "../datos/jornada";
+import { useRelaciones } from "../datos/relaciones";
+import { useSesion } from "../datos/sesion";
+import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
-import {
-  coincide,
-  leerDirectorio,
-  type CofradiaDirectorio,
-  type Filtro,
-  type NombreJornada,
-} from "../fixture-cofradias";
 import { DarFe } from "./DarFe";
 import { SelectorJornada } from "./SelectorJornada";
 
 /**
- * Cofradias · «¿cual es esta y como llego a ella?»
+ * P-10 Cofradías · «¿cuál es esta y cómo llego a ella?» (4-cofradias/cofradias-1*).
  *
  * Es el DIRECTORIO permanente de las hermandades de Sevilla capital, no la
- * lista del dia: eso es la Agenda. Existe todo el ano, no depende de que haya
- * jornada activa y no pide ubicacion ni cuenta.
+ * lista del día: eso es la Agenda. Existe todo el año, no depende de que haya
+ * jornada activa y no pide ubicación ni cuenta.
  *
- * Diferencias de fondo con Inicio, que usa las MISMAS filas:
- *   · Aqui NINGUNA fila destaca. Inicio tiene sujeto porque hay una respuesta
- *     mejor que las demas; un directorio con un destacado estaria opinando
- *     sobre a quien ir a ver, y eso es el tablero de misiones que §2 prohibe.
- *   · La fila no lleva punto, ni hora, ni proximidad, ni accion: son datos de
- *     jornada y pertenecen a la Agenda.
- *   · El chip va donde dice §9.4 —a la derecha, a la altura del nombre, en el
- *     mismo punto de todas las filas—. La excepcion del sujeto de Inicio NO
- *     se replica aqui.
+ *   Datos       las 72 de GET /api/cofradias, agrupadas por jornada: primero
+ *               la consultada en la cabecera («· hoy» si es la de hoy) y luego
+ *               las demás en el orden de la semana. Dentro, por hora de salida.
+ *   Filas       escudo de reserva (iniciales), marca de relación y nombre. Sin
+ *               chip: la fase llega con el motor (fase 4, 4.16); hasta entonces
+ *               el listado es el de fuera de temporada (cofradias-1D).
+ *   Búsqueda    por el comienzo de cualquier palabra del nombre popular, sin
+ *               tildes: «g» trae «Los Gitanos» y «El Gran Poder».
+ *   Filtros     «En la calle» (vacío hasta el motor) y «Mis seguidas», que es
+ *               de la cuenta (decisión del 20/10/2026): sin sesión invita a
+ *               entrar con Google en el momento de pedirlas.
+ *
+ * Ninguna fila destaca: un directorio con un destacado estaría opinando sobre
+ * a quién ir a ver (§2).
  */
+type CofradiaApi = {
+  id: string;
+  nombre: string;
+  /** El nombre sin artículo: «Gran Poder». */
+  orden: string;
+  jornada: string;
+  jornadaId: number;
+  templo: string | null;
+  horaSalida: string | null;
+  horaEntrada: string | null;
+};
+
+type Filtro = "todas" | "en-calle" | "seguidas";
+
 export function Cofradias({ estado }: { estado: EstadoJornada }) {
+  const cofradias = useDato<CofradiaApi[]>("/cofradias", { cadaMs: 600_000 });
   const [consulta, setConsulta] = useState("");
-  const [filtro, setFiltro] = useState<Filtro>("todas");
-
-  const fueraDeTemporada = estado.intensidad === "fuera-temporada";
-  const jornadaDeHoy = fueraDeTemporada ? null : (estado.jornada.nombre as NombreJornada);
-
-  const grupos = leerDirectorio({ jornadaDeHoy, conEstado: !fueraDeTemporada });
-
-  const pasaElFiltro = (c: CofradiaDirectorio) =>
-    filtro === "todas" ||
-    (filtro === "en-calle" && c.fase === "en_calle") ||
-    (filtro === "seguidas" && c.relacion === "seguida");
-
-  const visibles = grupos.map((g) => ({
-    ...g,
-    cofradias: g.cofradias.filter((c) => pasaElFiltro(c) && coincide(c.nombre, consulta)),
-  }));
-
-  /* Los contadores cuentan sobre el directorio entero, no sobre lo que la
-     busqueda deja ver: dicen cuantas hay, no cuantas quedan. */
-  const todas = grupos.flatMap((g) => g.cofradias);
-  const cuenta = {
-    enCalle: todas.filter((c) => c.fase === "en_calle").length,
-    seguidas: todas.filter((c) => c.relacion === "seguida").length,
-  };
-
-  /* El relleno representa hermandades que no tenemos transcritas, asi que no
-     se puede ni buscar ni filtrar dentro de el: con cualquiera de los dos
-     puestos, desaparece en vez de fingir que coincide. */
-  const buscando = consulta.trim() !== "" || filtro !== "todas";
-  const hayResultados = visibles.some((g) => g.cofradias.length > 0);
+  // El filtro va en la dirección: al volver de Google se sigue en «Mis seguidas»
+  const [parametros, setParametros] = useSearchParams();
+  const pedido = parametros.get("filtro");
+  const filtro: Filtro = pedido === "seguidas" || pedido === "en-calle" ? pedido : "todas";
+  const setFiltro = (f: Filtro) =>
+    setParametros(
+      (p) => {
+        if (f === "todas") p.delete("filtro");
+        else p.set("filtro", f);
+        return p;
+      },
+      { replace: true },
+    );
 
   return (
     <Marco
+      sangrado="lista"
       cabecera={
         <Cabecera
           etiqueta="Cabecera de Cofradías"
           principal={<SelectorJornada />}
           titulo="Cofradías"
-          secundaria={
-            <div className="cf-field cf-cofradias-busqueda">
-              <label className="cf-oculto-visual" htmlFor="buscar-hermandad">
-                Buscar hermandad
-              </label>
-              <input
-                id="buscar-hermandad"
-                type="search"
-                placeholder="Buscar hermandad por nombre"
-                value={consulta}
-                onChange={(e) => setConsulta(e.target.value)}
-              />
-            </div>
-          }
+          secundaria={<Busqueda consulta={consulta} alCambiar={setConsulta} />}
           terciaria={
             <div className="cf-cofradias-filtros" role="group" aria-label="Filtros">
               <ChipFiltro valor="todas" actual={filtro} alPulsar={setFiltro}>
                 Todas
               </ChipFiltro>
               <ChipFiltro valor="en-calle" actual={filtro} alPulsar={setFiltro}>
-                En la calle <span className="num">({cuenta.enCalle})</span>
+                En la calle
               </ChipFiltro>
               <ChipFiltro valor="seguidas" actual={filtro} alPulsar={setFiltro}>
-                Mis seguidas <span className="num">({cuenta.seguidas})</span>
+                Mis seguidas
               </ChipFiltro>
             </div>
           }
@@ -101,112 +89,166 @@ export function Cofradias({ estado }: { estado: EstadoJornada }) {
       }
       accion={estado.activa ? <DarFe /> : undefined}
     >
-      {hayResultados ? (
-        visibles.map((g) => (
-          <Grupo
-            key={g.jornada}
-            jornada={g.jornada}
-            hoy={g.hoy}
-            cofradias={g.cofradias}
-            consulta={consulta}
-            relleno={buscando ? [] : g.relleno}
-          />
-        ))
-      ) : (
-        <SinResultados
-          consulta={consulta}
-          filtro={filtro}
-          alQuitarFiltro={() => setFiltro("todas")}
-          alBorrar={() => setConsulta("")}
-        />
-      )}
+      <div className="cf-cofradias">
+        <AvisoEntrada motivo="cofradias:seguidas" />
+        <SegunDato dato={cofradias} esqueleto={<Esqueleto forma="lista" />}>
+          {(lista) => (
+            <Directorio
+              lista={lista}
+              consulta={consulta}
+              filtro={filtro}
+              alQuitarFiltro={() => setFiltro("todas")}
+              alBorrar={() => setConsulta("")}
+            />
+          )}
+        </SegunDato>
+      </div>
     </Marco>
   );
 }
 
-/**
- * Un grupo de jornada. El rotulo se queda pegado arriba al desplazarse (ver
- * cofradias.css): con el listado completo, saber en que jornada estas no
- * puede depender de recordar por donde ibas.
- *
- * Un grupo sin nada que ensenar no se pinta, igual que en Inicio.
- */
-function Grupo({
-  jornada,
-  hoy,
-  cofradias,
+function Directorio({
+  lista,
   consulta,
-  relleno,
+  filtro,
+  alQuitarFiltro,
+  alBorrar,
 }: {
-  jornada: string;
-  hoy: boolean;
-  cofradias: readonly CofradiaDirectorio[];
+  lista: CofradiaApi[];
   consulta: string;
-  relleno: readonly number[];
+  filtro: Filtro;
+  alQuitarFiltro: () => void;
+  alBorrar: () => void;
 }) {
-  if (cofradias.length === 0 && relleno.length === 0) return null;
+  const { jornadas, consultada, hoy } = useJornada();
+  const relaciones = useRelaciones();
+
+  const grupos = useMemo(
+    () => agrupar(lista, jornadas.datos ?? [], consultada),
+    [lista, jornadas.datos, consultada],
+  );
+
+  // «En la calle» no deja pasar ninguna: sin motor no se sabe, y no se finge (fase 4)
+  const pasa = (c: CofradiaApi) =>
+    coincide(c.nombre, consulta) &&
+    (filtro === "todas" || (filtro === "seguidas" && relaciones.get(c.id) === "seguida"));
+
+  const visibles = grupos.map((g) => ({ ...g, cofradias: g.cofradias.filter(pasa) }));
+  if (!visibles.some((g) => g.cofradias.length > 0)) {
+    return <SinResultados consulta={consulta} filtro={filtro} alQuitarFiltro={alQuitarFiltro} alBorrar={alBorrar} />;
+  }
 
   return (
-    <section className="cf-cofradias-grupo">
-      <h2>
-        {hoy ? `${jornada} · hoy` : jornada}
-        {cofradias.length > 0 ? <span className="n"> · {cofradias.length}</span> : null}
-      </h2>
-
-      <div className="cf-lista">
-        {cofradias.map((c) => (
-          <Link key={c.id} className="cf-lista-enlace" to={`/cofradias/${c.id}`}>
-            <TarjetaCofradia
-              cofradia={c}
-              densidad="compacta"
-              nombreResaltado={resaltar(c.nombre, consulta)}
-            />
-          </Link>
-        ))}
-
-        {relleno.map((ancho, i) => (
-          <div className="cf-cofradias-relleno" key={`relleno-${i}`} aria-hidden="true">
-            <span className="bar" style={{ width: `${ancho}%` }} />
-            <span className="lab">Relleno</span>
-          </div>
-        ))}
-      </div>
-    </section>
+    <>
+      {visibles.map((g) =>
+        g.cofradias.length === 0 ? null : (
+          <section key={g.id} className="cf-cofradias-grupo" aria-labelledby={`jornada-${g.id}`}>
+            <h2 id={`jornada-${g.id}`}>{g.id === hoy?.id ? `${g.nombre} · hoy` : g.nombre}</h2>
+            <div className="cf-lista">
+              {g.cofradias.map((c) => (
+                <Link key={c.id} className="cf-lista-enlace" to={`/cofradias/${c.id}`}>
+                  <TarjetaCofradia
+                    cofradia={{ id: c.id, nombre: c.nombre, iniciales: iniciales(c.orden), relacion: relaciones.get(c.id) }}
+                    densidad="compacta"
+                    nombreResaltado={resaltar(c.nombre, consulta)}
+                  />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ),
+      )}
+    </>
   );
 }
 
 /**
- * Subraya la parte del nombre que coincide con la busqueda.
- *
- * Se marca SUBRAYADO y no con fondo de color (ver listas.css): la fila ya
- * tiene chip de fase y marca de relacion, y ningun significado puede depender
- * solo del color.
+ * Las jornadas en el orden de la semana, con la consultada delante. Las
+ * cofradías llegan del servidor ya ordenadas por hora de salida.
  */
-function resaltar(nombre: string, consulta: string) {
-  const q = consulta.trim();
-  if (q === "") return nombre;
+function agrupar(lista: CofradiaApi[], jornadas: readonly Jornada[], consultada: Jornada | null) {
+  const porId = new Map<number, { id: number; nombre: string; orden: number; cofradias: CofradiaApi[] }>();
+  for (const j of jornadas) porId.set(j.id, { id: j.id, nombre: j.nombre, orden: j.orden, cofradias: [] });
+  for (const c of lista) {
+    // Si aún no han llegado las jornadas, el grupo se forma con lo que trae la cofradía
+    if (!porId.has(c.jornadaId)) porId.set(c.jornadaId, { id: c.jornadaId, nombre: c.jornada, orden: c.jornadaId, cofradias: [] });
+    porId.get(c.jornadaId)!.cofradias.push(c);
+  }
+  return [...porId.values()].sort(
+    (a, b) => Number(b.id === consultada?.id) - Number(a.id === consultada?.id) || a.orden - b.orden,
+  );
+}
 
-  /* Se resalta el comienzo de cada palabra, que es por donde se busca. */
-  const partes = nombre.split(/(\s+)/).map((trozo, i) => {
-    if (!empiezaPor(trozo, q)) return trozo;
+const MENORES = new Set(["de", "del", "la", "las", "los", "el", "y"]);
+
+/** «Gran Poder» → «GP», «Esperanza de Triana» → «ET», «Soledad de San Lorenzo» → «SL». */
+export function iniciales(nombreSinArticulo: string): string {
+  const palabras = nombreSinArticulo.split(/\s+/).filter((p) => p && !MENORES.has(p.toLowerCase()));
+  const [primera, ...resto] = palabras;
+  const ultima = resto[resto.length - 1];
+  return ((primera?.[0] ?? "") + (ultima?.[0] ?? "")).toUpperCase();
+}
+
+/** Sin tildes y en minúsculas: «macarena» encuentra «Macarena». */
+function normalizar(texto: string): string {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+/**
+ * Busca por el COMIENZO DE CUALQUIER PALABRA del nombre popular: «triana» trae
+ * «Esperanza de Triana». No por subcadena en medio de una palabra —«ran» no
+ * trae «Gran Poder»—, que daría coincidencias que nadie sabe explicarse.
+ */
+export function coincide(nombre: string, consulta: string): boolean {
+  const q = normalizar(consulta.trim());
+  if (q === "") return true;
+  // «san lorenzo»: cada palabra de la búsqueda empieza alguna del nombre
+  const palabras = normalizar(nombre).split(/\s+/);
+  return q.split(/\s+/).every((trozo) => palabras.some((p) => p.startsWith(trozo)));
+}
+
+/**
+ * Subraya el comienzo de cada palabra que coincide (ver listas.css): la fila ya
+ * tiene marca de relación, y ningún significado depende solo del color.
+ */
+function resaltar(nombre: string, consulta: string): ReactNode {
+  const trozos = normalizar(consulta.trim()).split(/\s+/).filter(Boolean);
+  if (trozos.length === 0) return nombre;
+  return nombre.split(/(\s+)/).map((palabra, i) => {
+    const largo = Math.max(0, ...trozos.filter((t) => normalizar(palabra).startsWith(t)).map((t) => t.length));
+    if (largo === 0) return palabra;
     return (
       <span key={i}>
-        <mark>{trozo.slice(0, q.length)}</mark>
-        {trozo.slice(q.length)}
+        <mark>{palabra.slice(0, largo)}</mark>
+        {palabra.slice(largo)}
       </span>
     );
   });
-
-  return <>{partes}</>;
 }
 
-function empiezaPor(palabra: string, consulta: string): boolean {
-  const sinTildes = (t: string) =>
-    t
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .toLowerCase();
-  return sinTildes(palabra).startsWith(sinTildes(consulta));
+function Busqueda({ consulta, alCambiar }: { consulta: string; alCambiar: (v: string) => void }) {
+  return (
+    <div className="cf-field cf-cofradias-busqueda">
+      <label className="cf-oculto-visual" htmlFor="buscar-hermandad">
+        Buscar hermandad
+      </label>
+      <Icono nombre="buscar" tamano={20} />
+      <input
+        id="buscar-hermandad"
+        type="search"
+        placeholder="Buscar hermandad"
+        autoComplete="off"
+        enterKeyHint="search"
+        value={consulta}
+        onChange={(e) => alCambiar(e.target.value)}
+      />
+      {consulta ? (
+        <button type="button" className="cf-cofradias-borrar" aria-label="Borrar búsqueda" onClick={() => alCambiar("")}>
+          <Icono nombre="cerrar" tamano={20} />
+        </button>
+      ) : null}
+    </div>
+  );
 }
 
 function ChipFiltro({
@@ -218,17 +260,15 @@ function ChipFiltro({
   valor: Filtro;
   actual: Filtro;
   alPulsar: (f: Filtro) => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const activo = valor === actual;
-
   return (
     <button
       className="cf-filter"
       type="button"
       aria-pressed={activo}
-      /* Volver a pulsar el filtro puesto lo quita: es una de las cuatro
-         salidas del estado filtrado. */
+      // Volver a pulsar el filtro puesto lo quita
       onClick={() => alPulsar(activo ? "todas" : valor)}
     >
       {activo ? <Icono nombre="check" tamano={16} /> : null}
@@ -238,14 +278,8 @@ function ChipFiltro({
 }
 
 /**
- * Sin resultados.
- *
- * Dice en llano QUE ha pasado y POR QUE, y da UNA salida. La frase y el boton
- * cambian segun haya filtro puesto o no: con filtro, la causa probable es el
- * filtro y la salida es buscar en todas; sin el, borrar la busqueda.
- *
- * Sin ilustracion, sin cara triste, sin disculpa y sin sugerir a quien ir a
- * ver: esto es un directorio, no un tablero de misiones.
+ * Sin resultados: dice en llano qué ha pasado y da UNA salida. Sin
+ * ilustración, sin disculpa y sin sugerir a quién ir a ver.
  */
 function SinResultados({
   consulta,
@@ -258,23 +292,59 @@ function SinResultados({
   alQuitarFiltro: () => void;
   alBorrar: () => void;
 }) {
+  const { usuario, disponible, entrar } = useSesion();
   const q = consulta.trim();
-  const conFiltro = filtro !== "todas";
-  const ambito = filtro === "seguidas" ? "«Mis seguidas»" : "«En la calle»";
+  const verTodas = (
+    <Boton variante="secundario" onClick={alQuitarFiltro}>
+      Ver todas
+    </Boton>
+  );
 
+  if (filtro === "todas") {
+    return (
+      <Vacio titulo={`No hay ninguna hermandad que empiece por “${q}”`}>
+        <Boton variante="secundario" onClick={alBorrar}>
+          <Icono nombre="cerrar" tamano={20} />
+          Borrar búsqueda
+        </Boton>
+      </Vacio>
+    );
+  }
+  if (q) {
+    const ambito = filtro === "seguidas" ? "tus seguidas" : "las que están en la calle";
+    return (
+      <Vacio titulo={`Ninguna de ${ambito} empieza por “${q}”`}>
+        <Boton variante="secundario" onClick={alQuitarFiltro}>
+          Buscar en todas
+        </Boton>
+      </Vacio>
+    );
+  }
+  if (filtro === "en-calle") {
+    return <Vacio titulo="Ahora no hay ninguna cofradía en la calle">{verTodas}</Vacio>;
+  }
+  if (!usuario && disponible) {
+    return (
+      <Vacio titulo="Para seguir cofradías, entra con tu cuenta de Google" texto="Así las tienes en cualquier teléfono.">
+        <Boton variante="primario" onClick={() => void entrar("cofradias:seguidas")}>
+          Entrar con Google
+        </Boton>
+      </Vacio>
+    );
+  }
+  return (
+    <Vacio titulo="Aún no sigues ninguna cofradía" texto="Puedes seguirlas desde su ficha.">
+      {verTodas}
+    </Vacio>
+  );
+}
+
+function Vacio({ titulo, texto, children }: { titulo: string; texto?: string; children: ReactNode }) {
   return (
     <div className="cf-cofradias-vacio">
-      <p className="q">
-        {conFiltro
-          ? `Ninguna de las de ${ambito} se llama «${q}».`
-          : `Ninguna hermandad coincide con «${q}».`}
-      </p>
-      <p className="n">
-        {conFiltro ? `La búsqueda solo mira en ${ambito}.` : "Se busca por el nombre popular."}
-      </p>
-      <Boton variante="secundario" onClick={conFiltro ? alQuitarFiltro : alBorrar}>
-        <span>{conFiltro ? "Buscar en todas" : "Borrar búsqueda"}</span>
-      </Boton>
+      <p className="q">{titulo}</p>
+      {texto ? <p className="n">{texto}</p> : null}
+      {children}
     </div>
   );
 }

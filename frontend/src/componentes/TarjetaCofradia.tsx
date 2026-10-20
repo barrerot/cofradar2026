@@ -55,6 +55,11 @@ export type DatosCofradia = {
    * hueco, ni invitacion a conceder permisos.
    */
   proximidad?: string;
+  /**
+   * Escudo de reserva del directorio (4-cofradias): las iniciales del nombre
+   * popular sin artículo, «GP», «ET». Mientras no haya escudos de verdad.
+   */
+  iniciales?: string;
 };
 
 /**
@@ -95,6 +100,7 @@ export function TarjetaCofradia({
     hora,
     horaEstimada = false,
     proximidad,
+    iniciales,
   } = cofradia;
 
   /* Compacta = nombre + estado + una linea de datos. Proximidad y accion solo
@@ -110,6 +116,11 @@ export function TarjetaCofradia({
     <article className="cf-card" data-densidad={densidad}>
       <div className="cf-card__head">
         <div className="cf-ident">
+          {iniciales ? (
+            <span className="cf-escudo" aria-hidden="true">
+              {iniciales}
+            </span>
+          ) : null}
           {/* El hueco existe siempre, con marca o sin ella: es lo que alinea
               los nombres de toda la lista. */}
           <HuecoRelacion>

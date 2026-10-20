@@ -29,6 +29,13 @@ for (const dir of dirs) {
    mismo que usa el export: su arrows-clockwise-bold es identico a
    `sincronizar`). */
 const EXTRA = {
+  /** Navegación «Cofradías» (1-marco/armazon-*, vigente): article y
+      article-fill, peso regular como el resto de la barra. El export antiguo
+      traía users-three, que el armazón aprobado ya no usa. */
+  cofradias:
+    "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z",
+  cofradiasRelleno:
+    "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM176,168H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Z",
   /** Introducción (P-02; 8-acceso/acceso-2): «Dar fe». eye-bold, en contorno:
       «vista» es el ojo relleno de la marca de relación. */
   ojo:
@@ -73,8 +80,6 @@ const mapa = {
   inicio:            "M219.31,108.68l-80-8",
   inicioRelleno:     "M224,120v96a8,8,0,0,",
   mapa:              "M228.92,49.69a8,8,0,",
-  cofradias:         "M244.8,150.4a8,8,0,0",
-  cofradiasRelleno:  "M64.12,147.8a4,4,0,0",
   agenda:            "M208,32H184V24a8,8,0",
   miCofradar:        "M128,24A104,104,0,1,",
   miCofradarRelleno: "M172,120a44,44,0,1,1",
