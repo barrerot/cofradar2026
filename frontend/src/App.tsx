@@ -37,7 +37,7 @@ export function App() {
       <Route path="/mapa" element={<Mapa estado={estado} />} />
       <Route path="/cofradias" element={<Cofradias estado={estado} />} />
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
-      <Route path="/cofradias/:id/recorrido" element={<Recorrido />} />
+      <Route path="/cofradias/:id/recorrido" element={<Recorrido estado={estado} />} />
       <Route path="/agenda" element={<Agenda estado={estado} />} />
       <Route path="/mi-cofradar" element={<MiCofradar />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />

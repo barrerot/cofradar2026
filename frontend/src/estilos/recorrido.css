@@ -1,0 +1,115 @@
+/* ==========================================================================
+   COFRADAR · RECORRIDO Y HORARIOS (P-12, 4-cofradias/recorrido-3)
+   La tabla va a todo el ancho (sangrado «lista»), con su margen por celda.
+   Namespace: cf-recorrido*.
+   ========================================================================== */
+
+.cf-recorrido {
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-recorrido-resumen {
+  margin: var(--cf-space-4);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-recorrido-resumen p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-recorrido-resumen .n,
+.cf-recorrido-vacio {
+  margin-top: var(--cf-space-1);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-body);
+  color: var(--cf-text-secondary);
+}
+
+.cf-recorrido-vacio {
+  padding: var(--cf-space-8) var(--cf-space-4);
+}
+
+.cf-recorrido-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.cf-recorrido-tabla th,
+.cf-recorrido-tabla td {
+  padding: var(--cf-space-3) var(--cf-space-2);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.cf-recorrido-tabla :is(th, td):first-child {
+  padding-left: var(--cf-space-4);
+}
+
+.cf-recorrido-tabla :is(th, td):last-child {
+  padding-right: var(--cf-space-4);
+}
+
+/* Punto ancho; las dos horas, lo justo */
+.cf-recorrido-tabla thead th:first-child {
+  width: 46%;
+}
+
+.cf-recorrido-tabla thead th {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-recorrido-nota td {
+  padding-block: var(--cf-space-2);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-recorrido-tabla tbody th {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+  overflow-wrap: anywhere;
+}
+
+.cf-recorrido-tabla tbody th .n {
+  display: block;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-body);
+  color: var(--cf-text-secondary);
+}
+
+.cf-recorrido-tabla tbody td {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+  white-space: nowrap;
+}
+
+/* El rótulo del tramo: «Carrera oficial» */
+.cf-recorrido-tramo th {
+  padding-block: var(--cf-space-2);
+  background: var(--cf-surface-sunken);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-critical);
+}
+
+/* Las filas de la carrera oficial llevan un filete a la izquierda: se ve
+   dónde empieza y dónde acaba sin depender del color */
+.cf-recorrido-tabla tr[data-carrera] th {
+  box-shadow: inset 4px 0 0 var(--cf-border-strong);
+}
