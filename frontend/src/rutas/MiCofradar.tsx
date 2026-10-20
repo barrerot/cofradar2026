@@ -48,7 +48,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           <Fila icono="seguida" marca a="/mi-cofradar/seguidas" valor={cifra(relaciones.seguidas)}>
             Seguidas
           </Fila>
-          <Fila icono="vista" marca a="/mi-cofradar/coleccion" valor={cifra(relaciones.vistas)}>
+          <Fila icono="vista" marca a="/mi-cofradar/coleccion" valor={cifra(relaciones.coleccion)}>
             Mi colección
           </Fila>
           <Fila icono="darFeNoVerificable" a="/mi-cofradar/aportaciones" nota="Tus aportaciones aparecerán aquí cuando des fe.">

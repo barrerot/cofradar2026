@@ -10,8 +10,9 @@ import { hermandadesYEdicion } from "./cofradias.js";
  *   GET    /api/yo/relaciones        { anio, seguidas: [id], vistas: [{ id, anio }] }
  *   PUT    /api/yo/seguidas/:id      seguir  (se puede repetir: no duplica)
  *   DELETE /api/yo/seguidas/:id      dejar de seguir
- *   PUT    /api/yo/vistas/:id        «La he visto» en la edición actual
- *   DELETE /api/yo/vistas/:id        quitarla de la edición actual
+ *   PUT    /api/yo/vistas/:id        «La he visto» en la edición actual, o en `?anio=` (Mi colección:
+ *                                    «Añadir una que vi» de un año anterior)
+ *   DELETE /api/yo/vistas/:id        quitarla de la edición actual, o de `?anio=`
  *
  * `:id` es el de la cofradía en la API («la-macarena»). En la base va el id de la hermandad.
  */
@@ -62,7 +63,15 @@ function relacion(tabla: "seguida" | "vista") {
         return;
       }
       const fila: Record<string, string | number> = { usuario_id: usuario.id, hermandad_id };
-      if (tabla === "vista") fila.anio = anio;
+      if (tabla === "vista") {
+        const pedido = peticion.query.anio === undefined ? anio : Number(peticion.query.anio);
+        // Desde 1950 hasta la edición actual: no se marca como vista una salida que aún no ha ocurrido
+        if (!Number.isInteger(pedido) || pedido < 1950 || pedido > anio) {
+          respuesta.status(400).json({ error: `El año tiene que estar entre 1950 y ${anio}` });
+          return;
+        }
+        fila.anio = pedido;
+      }
       const db = supabase().from(tabla);
       const { error } = poner
         ? await db.upsert(fila, { ignoreDuplicates: true })

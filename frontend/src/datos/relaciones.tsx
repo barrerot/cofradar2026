@@ -11,8 +11,9 @@ import { cabecerasSesion, useSesion } from "./sesion";
  * servidor no lo guarda, vuelve a como estaba y `cambiar…` devuelve falso para
  * que la pantalla lo diga.
  *
- * «Vista» es de la edición actual (`anio`): Mi colección (3.8) junta las de
- * todos los años.
+ * «Vista» es de la edición actual (`anio`) en las marcas y en «La he visto».
+ * Mi colección (3.8) junta las de todos los años y puede añadir una de un año
+ * anterior (`cambiarVista(id, true, 2019)`).
  */
 type Relaciones = {
   /** La marca de la fila: la vista manda sobre la seguida, porque dice más. */
@@ -27,11 +28,20 @@ type Relaciones = {
   /** Sus ids, para Seguidas (3.7) y Mi colección (3.8). */
   idsSeguidas: readonly string[];
   idsVistas: readonly string[];
+  /** Cuántas hermandades distintas has visto, cualquier año (Mi colección). */
+  coleccion: number;
+  /** La edición actual (el año de «La he visto»). */
+  anio: number | null;
+  /** Los años en que has visto cada una, de más reciente a más antiguo. */
+  aniosVista: (id: string) => number[];
   cambiarSeguida: (id: string, poner: boolean) => Promise<boolean>;
-  cambiarVista: (id: string, poner: boolean) => Promise<boolean>;
+  /** Sin `anio`, la edición actual. */
+  cambiarVista: (id: string, poner: boolean, anio?: number) => Promise<boolean>;
 };
 
+/** `vistas` guarda «id|año». */
 type Estado = { anio: number; seguidas: Set<string>; vistas: Set<string> } | null;
+const clave = (id: string, anio: number) => `${id}|${anio}`;
 
 const Contexto = createContext<Relaciones | null>(null);
 
@@ -60,7 +70,7 @@ export function RelacionesProvider({ children }: { children: ReactNode }) {
         setEstado({
           anio: d.anio,
           seguidas: new Set(d.seguidas),
-          vistas: new Set(d.vistas.filter((v) => v.anio === d.anio).map((v) => v.id)),
+          vistas: new Set(d.vistas.map((v) => clave(v.id, v.anio))),
         });
       })
       .catch(() => {
@@ -72,48 +82,55 @@ export function RelacionesProvider({ children }: { children: ReactNode }) {
   }, [idUsuario]);
 
   const cambiar = useCallback(
-    async (lista: "seguidas" | "vistas", id: string, poner: boolean) => {
-      const tocar = (s: Estado): Estado => {
+    async (lista: "seguidas" | "vistas", id: string, poner: boolean, anio?: number) => {
+      const k = lista === "vistas" && anio !== undefined ? clave(id, anio) : id;
+      const tocar = (s: Estado, añadir: boolean): Estado => {
         if (!s) return s;
         const nueva = new Set(s[lista]);
-        if (poner) nueva.add(id);
-        else nueva.delete(id);
+        if (añadir) nueva.add(k);
+        else nueva.delete(k);
         return { ...s, [lista]: nueva };
       };
-      setEstado(tocar);
+      setEstado((s) => tocar(s, poner));
       try {
-        await pedir(poner ? "PUT" : "DELETE", `/${lista}/${encodeURIComponent(id)}`);
+        const q = lista === "vistas" && anio !== undefined ? `?anio=${anio}` : "";
+        await pedir(poner ? "PUT" : "DELETE", `/${lista}/${encodeURIComponent(id)}${q}`);
         return true;
       } catch {
-        // Vuelve a como estaba
-        setEstado((s) => {
-          if (!s) return s;
-          const nueva = new Set(s[lista]);
-          if (poner) nueva.delete(id);
-          else nueva.add(id);
-          return { ...s, [lista]: nueva };
-        });
+        setEstado((s) => tocar(s, !poner)); // vuelve a como estaba
         return false;
       }
     },
     [],
   );
 
-  const valor = useMemo<Relaciones>(
-    () => ({
-      marca: (id) => (estado?.vistas.has(id) ? "vista" : estado?.seguidas.has(id) ? "seguida" : undefined),
+  const valor = useMemo<Relaciones>(() => {
+    const esVista = (id: string) => (estado ? estado.vistas.has(clave(id, estado.anio)) : false);
+    const idsVistas = estado
+      ? [...estado.vistas].filter((k) => k.endsWith(`|${estado.anio}`)).map((k) => k.slice(0, k.lastIndexOf("|")))
+      : [];
+    return {
+      marca: (id) => (esVista(id) ? "vista" : estado?.seguidas.has(id) ? "seguida" : undefined),
       esSeguida: (id) => estado?.seguidas.has(id) ?? false,
-      esVista: (id) => estado?.vistas.has(id) ?? false,
+      esVista,
       listas: estado !== null,
       seguidas: estado?.seguidas.size ?? 0,
-      vistas: estado?.vistas.size ?? 0,
+      vistas: idsVistas.length,
       idsSeguidas: estado ? [...estado.seguidas] : [],
-      idsVistas: estado ? [...estado.vistas] : [],
+      idsVistas,
+      anio: estado?.anio ?? null,
+      coleccion: estado ? new Set([...estado.vistas].map((k) => k.slice(0, k.lastIndexOf("|")))).size : 0,
+      aniosVista: (id) =>
+        estado
+          ? [...estado.vistas]
+              .filter((k) => k.startsWith(`${id}|`))
+              .map((k) => Number(k.slice(id.length + 1)))
+              .sort((a, b) => b - a)
+          : [],
       cambiarSeguida: (id, poner) => cambiar("seguidas", id, poner),
-      cambiarVista: (id, poner) => cambiar("vistas", id, poner),
-    }),
-    [estado, cambiar],
-  );
+      cambiarVista: (id, poner, anio) => cambiar("vistas", id, poner, anio ?? estado?.anio),
+    };
+  }, [estado, cambiar]);
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

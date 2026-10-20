@@ -166,3 +166,140 @@
   font-size: var(--cf-text-lg);
   line-height: var(--cf-leading-lg);
 }
+
+/* ── Mi colección (P-21) ────────────────────────────────────────────────── */
+.cf-coleccion {
+  display: grid;
+  gap: var(--cf-space-5);
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-coleccion-cuenta p {
+  margin: 0 0 var(--cf-space-3);
+  color: var(--cf-brand);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-coleccion-cuenta .n {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-coleccion-barra {
+  height: 0.75rem;
+  border-radius: var(--cf-radius-full);
+  border: var(--cf-border-width) solid var(--cf-brand-border);
+  background: var(--cf-brand-soft);
+  overflow: hidden;
+}
+
+.cf-coleccion-barra span {
+  display: block;
+  height: 100%;
+  background: var(--cf-brand);
+}
+
+.cf-coleccion-grupo {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-coleccion-grupo h2 {
+  margin: var(--cf-space-2) 0 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-coleccion-grupo ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  overflow: hidden;
+}
+
+.cf-coleccion-grupo li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-coleccion-fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-height: var(--cf-space-12);
+  padding: var(--cf-space-3) var(--cf-space-4);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-coleccion-fila > .cf-ph {
+  color: var(--cf-text-secondary);
+}
+
+.cf-coleccion-fila[data-vista] > .cf-ph,
+.cf-coleccion-fila .anios {
+  color: var(--cf-brand);
+}
+
+.cf-coleccion-fila .nm {
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-coleccion-fila .anios {
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-coleccion-anadir {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-coleccion-anadir select {
+  height: var(--cf-touch-min);
+  border-radius: var(--cf-radius-sm);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  padding: 0 var(--cf-space-3);
+}
+
+.cf-coleccion-opciones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-coleccion-opciones button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  width: 100%;
+  min-height: var(--cf-touch-min);
+  padding: var(--cf-space-2) 0;
+  border: 0;
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-coleccion-opciones button[aria-checked="true"] {
+  color: var(--cf-brand);
+  font-weight: var(--cf-weight-emphasis);
+}
