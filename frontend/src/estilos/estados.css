@@ -161,3 +161,46 @@
 .cf-estados-ficha dd:last-child {
   border-bottom: 0;
 }
+
+/* Aviso de vuelta de Google (componentes/AvisoEntrada.tsx; 8-acceso/acceso-3b
+   y 3c): azul informativo con acento a la izquierda. Nunca rojo. */
+.cf-aviso-entrada {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  background: var(--cf-info-soft);
+  border: var(--cf-border-width) solid var(--cf-info-border);
+  border-left: 4px solid var(--cf-info);
+  border-radius: var(--cf-radius-md);
+  color: var(--cf-info-text);
+}
+
+.cf-aviso-entrada > .cf-ph {
+  margin-top: 2px;
+  color: var(--cf-info);
+}
+
+.cf-aviso-entrada p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-aviso-entrada button {
+  display: grid;
+  place-items: center;
+  width: var(--cf-touch-min);
+  height: var(--cf-touch-min);
+  margin: calc(-1 * var(--cf-space-3)) calc(-1 * var(--cf-space-3)) 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cf-aviso-entrada {
+  margin-bottom: var(--cf-space-4);
+}

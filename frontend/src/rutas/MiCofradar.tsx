@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AvisoEntrada } from "../componentes";
 import { Boton, Marco } from "../marco";
 import { cabecerasSesion, useSesion } from "../datos/sesion";
 import { CabeceraRaiz } from "./CabeceraRaiz";
@@ -20,6 +21,7 @@ import { Relleno } from "./Relleno";
 export function MiCofradar() {
   return (
     <Marco cabecera={<CabeceraRaiz />}>
+      <AvisoEntrada motivo="mi-cofradar" />
       <Relleno>Mi Cofradar · capa personal</Relleno>
       {/* Andamio hasta la portada de verdad (3.6, P-19), que lleva abajo Cuenta,
           Ajustes y Ayuda y fuentes. */}
@@ -33,7 +35,7 @@ export function MiCofradar() {
 }
 
 /**
- * Andamio de la 2.1: entrar y salir con Google y ver que el servidor reconoce
+ * Andamio de la 2.1 y 2.3: entrar y salir con Google y ver que el servidor reconoce
  * la sesión. Lo sustituyen la portada sin cuenta (P-19, «Entrar con Google»
  * como botón secundario) y Cuenta (P-23, 2.5).
  */
@@ -70,7 +72,7 @@ function CuentaProvisional() {
           </Boton>
         </>
       ) : (
-        <Boton variante="secundario" onClick={() => void entrar()}>
+        <Boton variante="secundario" onClick={() => void entrar("mi-cofradar")}>
           Entrar con Google
         </Boton>
       )}

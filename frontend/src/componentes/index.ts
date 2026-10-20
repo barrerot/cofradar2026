@@ -9,6 +9,7 @@
  * El marco (zonas, navegacion, sheet, boton, icono) vive en ../marco.
  */
 export { Aviso, type Procedencia, type TipoAviso } from "./Aviso";
+export { AvisoEntrada } from "./AvisoEntrada";
 export { BandaContexto } from "./BandaContexto";
 export { Bloque } from "./Bloque";
 export {
