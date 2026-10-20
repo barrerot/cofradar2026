@@ -106,3 +106,63 @@
   line-height: var(--cf-leading-base);
   color: var(--cf-text-secondary);
 }
+
+/* ── Seguidas (P-20) ─────────────────────────────────────────────────────
+   Agrupadas por jornada con el rótulo pegado de Cofradías (.cf-cofradias-grupo).
+   Cada fila: marca y nombre, que llevan a la ficha, y «Dejar de seguir». */
+.cf-seguidas {
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-seguidas-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-seguidas-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--cf-space-2) var(--cf-space-3);
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  background: var(--cf-surface);
+}
+
+.cf-seguidas-nombre {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  min-height: var(--cf-touch-min);
+  color: var(--cf-text);
+  text-decoration: none;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-seguidas-estado {
+  grid-column: 1 / -1;
+  padding-left: calc(1.5rem + var(--cf-space-1));
+}
+
+.cf-seguidas-vacio {
+  display: grid;
+  justify-items: center;
+  gap: var(--cf-space-4);
+  padding: var(--cf-space-16) var(--cf-space-4);
+  text-align: center;
+}
+
+.cf-seguidas-vacio > .cf-ph {
+  color: var(--cf-text-secondary);
+}
+
+.cf-seguidas-vacio p {
+  margin: 0;
+  white-space: pre-line;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
