@@ -67,11 +67,15 @@ const JORNADAS: Record<Intensidad, Jornada> = {
   "fuera-temporada": { nombre: "Domingo de Ramos", genero: "masculino" },
 };
 
-export function leerEstadoJornada(busqueda: string): EstadoJornada {
+/**
+ * `real` es la intensidad de hoy según el horario (datos/actividad.tsx). La
+ * query solo la fuerza para revisar las variantes del diseño.
+ */
+export function leerEstadoJornada(busqueda: string, real: Intensidad): EstadoJornada {
   const parametros = new URLSearchParams(busqueda);
   const pedida = parametros.get("jornada");
   const intensidad: Intensidad =
-    pedida === "sin-actividad" || pedida === "fuera-temporada" ? pedida : "activa";
+    pedida === "activa" || pedida === "sin-actividad" || pedida === "fuera-temporada" ? pedida : real;
 
   return {
     activa: intensidad === "activa",

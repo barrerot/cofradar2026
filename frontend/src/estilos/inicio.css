@@ -166,8 +166,15 @@
    -------------------------------------------------------------------------- */
 .cf-ahora-calma {
   display: grid;
-  gap: var(--cf-space-3);
-  padding-top: var(--cf-space-12);
+  gap: var(--cf-space-2);
+}
+
+/* El nombre de la cofradía, en serif como en todas partes (inicio-C) */
+.cf-ahora-calma .nm {
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-lg);
+  color: var(--cf-text);
 }
 
 .cf-ahora-calma .titular {
@@ -196,7 +203,6 @@
    -------------------------------------------------------------------------- */
 .cf-ahora[data-intensidad="fuera-temporada"] {
   gap: var(--cf-space-8);
-  padding-top: var(--cf-space-6);
 }
 
 .cf-ahora-rotulo {
@@ -247,6 +253,8 @@
 }
 
 .cf-ahora-tuyo .fila {
+  color: inherit;
+  text-decoration: none;
   display: flex;
   gap: var(--cf-space-2);
   align-items: center;
@@ -257,4 +265,64 @@
   font-weight: 600;
   font-size: var(--cf-text-lg);
   line-height: var(--cf-leading-lg);
+}
+
+/* ── La tarjeta de la intensidad baja (inicio-C, inicio-D) ─────────────── */
+.cf-ahora-tarjeta {
+  display: grid;
+  justify-items: start;
+  padding: var(--cf-space-6);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+/* La cuenta atrás: el número es el dato, en serif y grande; en días, sin
+   horas ni segundos (a cinco meses vista es la unidad que sirve) */
+.cf-ahora-dias {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: 4.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.cf-ahora-para {
+  margin: var(--cf-space-3) 0 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-ahora-fecha {
+  margin: var(--cf-space-2) 0 var(--cf-space-6);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ahora-tarjeta > .cf-btn {
+  gap: var(--cf-space-3);
+  text-decoration: none;
+}
+
+.cf-ahora-nota {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* «Ver la jornada completa →»: fila entera tocable, sin caja (inicio-C) */
+.cf-ahora-enlace {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--cf-touch-min);
+  color: var(--cf-text);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+  text-decoration: none;
 }

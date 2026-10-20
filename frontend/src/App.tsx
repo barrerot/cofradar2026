@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useActividad } from "./datos/actividad";
 import { leer } from "./datos/almacen";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
@@ -18,12 +19,13 @@ import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
  * Las cinco areas, en el orden en que viven en la barra.
  *
  * El estado de jornada baja por props desde aqui porque el marco entero
- * depende de el: decide si aparece la franja de accion (§8.3). Cuando haya
- * motor, esto sale del backend; hoy es fixture.
+ * depende de el: decide si aparece la franja de accion (§8.3). Hoy sale del
+ * horario del programa (datos/actividad.tsx); con el motor, del backend.
  */
 export function App() {
   const { search } = useLocation();
-  const estado = leerEstadoJornada(queryEfectiva(search));
+  const { intensidad } = useActividad();
+  const estado = leerEstadoJornada(queryEfectiva(search), intensidad);
 
   return (
     <Routes>

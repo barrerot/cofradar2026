@@ -12,15 +12,15 @@ const DIA_MS = 86_400_000;
 export function diaProximo(fecha: string, hoy = new Date()): Date {
   const dato = new Date(`${fecha}T12:00`);
   const desfase = Math.round((dato.getTime() - pascua(dato.getFullYear()).getTime()) / DIA_MS);
-  let anio = hoy.getFullYear();
-  // Pasado el Domingo de Resurrección, la próxima es la del año que viene
-  if (hoy.getTime() > pascua(anio).getTime() + DIA_MS) anio += 1;
+  const anio = anioProximo(hoy);
   return new Date(pascua(anio).getTime() + desfase * DIA_MS);
 }
 
-/** El año de la próxima Semana Santa. */
+/** El año de la próxima Semana Santa: pasado el Domingo de Resurrección (todo él), la del año que viene. */
 export function anioProximo(hoy = new Date()): number {
-  return hoy.getTime() > pascua(hoy.getFullYear()).getTime() + DIA_MS ? hoy.getFullYear() + 1 : hoy.getFullYear();
+  const fin = pascua(hoy.getFullYear());
+  fin.setHours(23, 59, 59, 999);
+  return hoy.getTime() > fin.getTime() ? hoy.getFullYear() + 1 : hoy.getFullYear();
 }
 
 /** Domingo de Pascua (algoritmo de Meeus), a mediodía. */

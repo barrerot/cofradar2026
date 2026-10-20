@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { App } from "./App";
+import { ActividadProvider } from "./datos/actividad";
 import { JornadaProvider } from "./datos/jornada";
 import { RelacionesProvider } from "./datos/relaciones";
 import { SesionProvider } from "./datos/sesion";
@@ -52,9 +53,11 @@ createRoot(raiz).render(
       <RelacionesProvider>
         <SincronizacionProvider>
           <JornadaProvider>
-            <Router>
-              <App />
-            </Router>
+            <ActividadProvider>
+              <Router>
+                <App />
+              </Router>
+            </ActividadProvider>
           </JornadaProvider>
         </SincronizacionProvider>
       </RelacionesProvider>
