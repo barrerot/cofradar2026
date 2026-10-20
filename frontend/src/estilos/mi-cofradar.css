@@ -370,3 +370,84 @@
 .cf-cuenta-eliminar .cf-ph {
   color: var(--cf-alert);
 }
+
+/* ── Eliminar cuenta (P-24) ─────────────────────────────────────────────── */
+.cf-eliminar {
+  display: grid;
+  gap: var(--cf-space-5);
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-eliminar-caja {
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-eliminar-caja h2 {
+  margin: 0 0 var(--cf-space-3);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-eliminar-caja ul,
+.cf-eliminar-caja p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-eliminar-caja ul {
+  padding-left: var(--cf-space-6);
+  list-style: disc;
+}
+
+.cf-eliminar-copia {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-3);
+  padding-bottom: var(--cf-space-5);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-eliminar-copia p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-eliminar-confirmar {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-eliminar-confirmar .cf-btn {
+  width: 100%;
+}
+
+.cf-eliminar-casilla {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: flex-start;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  cursor: pointer;
+}
+
+.cf-eliminar-casilla input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 2px 0 0;
+  accent-color: var(--cf-text);
+}
+
+.cf-eliminar-pista {
+  min-height: var(--cf-leading-base);
+  margin: calc(var(--cf-space-2) * -1) 0 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}

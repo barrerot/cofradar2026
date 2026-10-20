@@ -69,6 +69,7 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 | `GET /api/cofradias/:id/recorrido` | La línea del recorrido (GeoJSON) |
 | `GET /api/estado-jornada` | Estado en vivo: hoy responde `sin-motor` hasta la fase 4 |
 | `GET /api/yo` | Con sesión, `{ id, email }`; sin ella, 401 |
+| `DELETE /api/yo` | Con sesión: elimina la cuenta al momento, con sus seguidas y vistas |
 | `GET /api/yo/datos` | Con sesión: todo lo tuyo en un JSON para descargar (cuenta, seguidas, vistas) |
 | `GET /api/yo/relaciones` | Con sesión: `{ anio, seguidas: [id], vistas: [{ id, anio }] }` |
 | `PUT` / `DELETE /api/yo/seguidas/:id` | Seguir o dejar de seguir una cofradía |

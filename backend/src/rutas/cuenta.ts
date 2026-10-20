@@ -9,6 +9,7 @@ import { hermandadesYEdicion } from "./cofradias.js";
  *   GET    /api/yo                   quién soy para el servidor
  *   GET    /api/yo/relaciones        { anio, seguidas: [id], vistas: [{ id, anio }] }
  *   GET    /api/yo/datos             todo lo tuyo, para descargarlo (P-23, RGPD art. 15 y 20)
+ *   DELETE /api/yo                   eliminar la cuenta, al momento y sin vuelta atrás (P-24)
  *   PUT    /api/yo/seguidas/:id      seguir  (se puede repetir: no duplica)
  *   DELETE /api/yo/seguidas/:id      dejar de seguir
  *   PUT    /api/yo/vistas/:id        «La he visto» en la edición actual, o en `?anio=` (Mi colección:
@@ -23,6 +24,29 @@ routerCuenta.get("/yo", exigirSesion, (_peticion, respuesta) => {
   const usuario: Usuario = respuesta.locals.usuario;
   respuesta.json(usuario);
 });
+
+/**
+ * Eliminar la cuenta (P-24). Borra el usuario de Supabase Auth, y con él, por `on delete cascade`, sus
+ * seguidas y vistas (supabase/esquema.sql). Es inmediato: no hay papelera ni plazo de gracia.
+ *
+ * Cuando haya aportaciones («Dar fe», fase 4), el hecho observado se conserva sin vínculo con la persona
+ * (BUL-223, pendiente de revisión legal antes del lanzamiento): habrá que desligarlas aquí antes de borrar.
+ */
+routerCuenta.delete(
+  "/yo",
+  exigirSesion,
+  async (_peticion, respuesta) => {
+    const usuario: Usuario = respuesta.locals.usuario;
+    try {
+      const { error } = await supabase().auth.admin.deleteUser(usuario.id);
+      if (error) throw error;
+      respuesta.status(204).end();
+    } catch (e) {
+      console.error(e);
+      respuesta.status(500).json({ error: "No se ha podido eliminar la cuenta" });
+    }
+  },
+);
 
 const ruta =
   (fn: (peticion: Request, respuesta: Response, usuario: Usuario) => Promise<void>) =>

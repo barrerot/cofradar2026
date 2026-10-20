@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, Cabecera, Icono, Marco, type NombreTrazo } from "../marco";
 import { useRelaciones } from "../datos/relaciones";
@@ -26,6 +26,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
   const { usuario, disponible, entrar } = useSesion();
   const relaciones = useRelaciones();
   const con = !!usuario;
+  const eliminada = (useLocation().state as { cuentaEliminada?: boolean } | null)?.cuentaEliminada;
 
   // Solo cuenta lo que ya ha llegado del servidor: nunca un 0 que no es
   const cifra = (n: number) => (con && relaciones.listas ? String(n) : undefined);
@@ -38,6 +39,12 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
     >
       <div className="cf-mi">
         <AvisoEntrada motivo="mi-cofradar" />
+        {eliminada && !con ? (
+          <div className="cf-aviso-entrada" role="status">
+            <Icono nombre="informativo" tamano={20} />
+            <p>Tu cuenta se ha eliminado.</p>
+          </div>
+        ) : null}
 
         <p className="cf-mi-progreso">
           <Icono nombre="darFeNoVerificable" tamano={24} />

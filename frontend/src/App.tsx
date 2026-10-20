@@ -14,6 +14,7 @@ import { Introduccion } from "./rutas/Introduccion";
 import { Mapa } from "./rutas/Mapa";
 import { MiCofradar } from "./rutas/MiCofradar";
 import { Cuenta } from "./rutas/Cuenta";
+import { EliminarCuenta } from "./rutas/EliminarCuenta";
 import { Pendiente } from "./rutas/Pendiente";
 import { Seguidas } from "./rutas/Seguidas";
 import { Coleccion } from "./rutas/Coleccion";
@@ -50,7 +51,7 @@ export function App() {
       <Route path="/mi-cofradar/coleccion" element={<Coleccion estado={estado} />} />
       <Route path="/mi-cofradar/aportaciones" element={<Pendiente titulo="Mis aportaciones" llega="4.14" />} />
       <Route path="/mi-cofradar/cuenta" element={<Cuenta />} />
-      <Route path="/mi-cofradar/cuenta/eliminar" element={<Pendiente titulo="Eliminar cuenta" llega="2.6" />} />
+      <Route path="/mi-cofradar/cuenta/eliminar" element={<EliminarCuenta />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />
       <Route path="/mi-cofradar/ajustes/privacidad" element={<Privacidad desde="ajustes" />} />
       <Route path="/mi-cofradar/ayuda" element={<Ayuda estado={estado} />} />

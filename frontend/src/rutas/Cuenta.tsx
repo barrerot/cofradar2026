@@ -2,7 +2,8 @@ import { useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, HojaDecision, Icono, PantallaSecundaria, type NombreTrazo } from "../marco";
-import { cabecerasSesion, useSesion } from "../datos/sesion";
+import { useDescargarDatos } from "../datos/descarga";
+import { useSesion } from "../datos/sesion";
 
 /**
  * P-23 Cuenta (7-mi-cofradar/cuenta).
@@ -22,7 +23,7 @@ export function Cuenta() {
   const { usuario, entrar, salir } = useSesion();
   const navegar = useNavigate();
   const [cambiando, setCambiando] = useState(false);
-  const [descarga, setDescarga] = useState<"lista" | "bajando" | "fallo">("lista");
+  const { estado: descarga, descargar } = useDescargarDatos();
 
   const cerrar = async () => {
     await salir();
@@ -33,23 +34,6 @@ export function Cuenta() {
     setCambiando(false);
     await salir();
     await entrar("cuenta", "/mi-cofradar/cuenta");
-  };
-
-  const descargar = async () => {
-    setDescarga("bajando");
-    try {
-      const r = await fetch("/api/yo/datos", { headers: await cabecerasSesion() });
-      if (!r.ok) throw new Error(String(r.status));
-      const url = URL.createObjectURL(await r.blob());
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cofradar-mis-datos.json";
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 10_000);
-      setDescarga("lista");
-    } catch {
-      setDescarga("fallo");
-    }
   };
 
   return (
