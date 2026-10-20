@@ -23,6 +23,7 @@ export function MiCofradar() {
           Ajustes y Ayuda y fuentes. */}
       <nav className="cf-lista-provisional" aria-label="Más" style={{ marginTop: "var(--cf-space-4)" }}>
         <Link to="/mi-cofradar/ajustes">Ajustes</Link>
+        <Link to="/mi-cofradar/ayuda">Ayuda y fuentes</Link>
       </nav>
     </Marco>
   );

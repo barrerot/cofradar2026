@@ -1,0 +1,76 @@
+/* P-26 Ayuda y fuentes (rutas/Ayuda.tsx, 7-mi-cofradar/ayuda-y-fuentes).
+   Reutiliza los grupos y filas de Ajustes (ajustes.css); aqui solo lo propio:
+   el titulo de seccion, la muestra de la leyenda y la hora con contorno. */
+
+.cf-ayuda-seccion {
+  margin: 0;
+  padding: var(--cf-space-6) var(--cf-space-4) var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  color: var(--cf-text);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-700);
+}
+
+.cf-ayuda-leyenda {
+  padding-block: var(--cf-space-3);
+}
+
+.cf-ayuda-leyenda > p {
+  margin: var(--cf-space-2) 0 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+/* Subtitulos de la leyenda («Cuánto fiarse de una hora»): sobre la superficie,
+   pegados a sus filas, sin separador propio. */
+.cf-ayuda-seccion ~ .cf-ajustes-titulo {
+  padding: var(--cf-space-4) var(--cf-space-4) 0;
+  border-bottom: 0;
+  background: var(--cf-surface);
+}
+
+.cf-ayuda-leyenda strong {
+  font-weight: var(--cf-weight-700);
+}
+
+.cf-ayuda-muestra {
+  display: flex;
+}
+
+/* La hora de la leyenda: el mismo contorno .cf-outline que los chips, en
+   neutro. Continuo si es confirmada; discontinuo si es estimada o vieja. */
+.cf-ayuda-hora {
+  --line: var(--cf-text);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  min-height: 2.5rem;
+  padding: 0 var(--cf-space-3);
+  color: var(--cf-text);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-ayuda-coletilla {
+  font-weight: var(--cf-weight-data);
+}
+
+/* No hay fase ni alteracion azul: la familia informativa es la de los avisos. */
+.cf-chip[data-leyenda="informacion"] {
+  --soft: var(--cf-info-soft);
+  --line: var(--cf-info);
+  --txt: var(--cf-info-text);
+}
+
+.cf-ayuda-fuentes {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-ayuda-fuentes + .cf-ajustes-texto a {
+  color: inherit;
+}

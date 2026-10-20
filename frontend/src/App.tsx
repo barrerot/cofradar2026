@@ -3,6 +3,7 @@ import { leer } from "./datos/almacen";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
 import { Ajustes } from "./rutas/Ajustes";
+import { Ayuda } from "./rutas/Ayuda";
 import { Cofradias } from "./rutas/Cofradias";
 import { Estados } from "./rutas/Estados";
 import { FichaCofradia } from "./rutas/FichaCofradia";
@@ -10,7 +11,7 @@ import { Inicio } from "./rutas/Inicio";
 import { Introduccion } from "./rutas/Introduccion";
 import { Mapa } from "./rutas/Mapa";
 import { MiCofradar } from "./rutas/MiCofradar";
-import { Privacidad } from "./rutas/Privacidad";
+import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 
 /**
  * Las cinco areas, en el orden en que viven en la barra.
@@ -38,7 +39,10 @@ export function App() {
       <Route path="/agenda" element={<Agenda estado={estado} />} />
       <Route path="/mi-cofradar" element={<MiCofradar />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />
-      <Route path="/mi-cofradar/ajustes/privacidad" element={<Privacidad />} />
+      <Route path="/mi-cofradar/ajustes/privacidad" element={<Privacidad desde="ajustes" />} />
+      <Route path="/mi-cofradar/ayuda" element={<Ayuda estado={estado} />} />
+      <Route path="/mi-cofradar/ayuda/privacidad" element={<Privacidad desde="ayuda" />} />
+      <Route path="/mi-cofradar/ayuda/aviso-legal" element={<AvisoLegal />} />
       {/* Andamio de revisión: los ocho estados (issue 1.4). */}
       <Route path="/estados" element={<Estados />} />
     </Routes>
