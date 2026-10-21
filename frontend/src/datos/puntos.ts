@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { alCambiarCola } from "./darFe";
 import { cabecerasSesion, useSesion } from "./sesion";
 
 /**
@@ -40,7 +41,11 @@ export type MiAportacion = {
   id: string;
   clienteId: string;
   cofradia: string | null;
+  nombre: string | null;
+  jornada: string | null;
   elemento: number | null;
+  /** «Cruz de guía», «Primer paso», «La cofradía». */
+  etiqueta: string;
   observada: string;
   puntos: number;
   bonus: number;
@@ -65,9 +70,12 @@ export function useMisAportaciones(): { puntos: number; aportaciones: MiAportaci
     };
     void pedir();
     const id = window.setInterval(() => void pedir(), 60_000);
+    // Cuando sale una de la cola de pendientes, ya está en el servidor
+    const dejar = alCambiarCola(() => void pedir());
     return () => {
       vigente = false;
       window.clearInterval(id);
+      dejar();
     };
   }, [usuario?.id]);
   return datos;

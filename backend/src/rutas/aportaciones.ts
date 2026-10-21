@@ -5,7 +5,7 @@ import { juzgar, PUNTOS_BASE, type Hecho } from "../motor/plausibilidad.js";
 import { ahoraEnPrograma, aReal } from "../motor/tiempo.js";
 import { exigirSesion, type Usuario } from "../sesion.js";
 import { supabase } from "../supabase.js";
-import { cofradiaMapa, hermandadesYEdicion, type CofradiaMapa } from "./cofradias.js";
+import { cofradiaMapa, hermandadesYEdicion, nombresDeHermandades, type CofradiaMapa } from "./cofradias.js";
 import { salidaMotor } from "./estado.js";
 
 /**
@@ -156,7 +156,7 @@ routerAportaciones.get(
   "/yo/aportaciones",
   exigirSesion,
   ruta(async (_peticion, respuesta, usuario) => {
-    const { porId } = await hermandadesYEdicion();
+    const [{ porId }, nombres] = await Promise.all([hermandadesYEdicion(), nombresDeHermandades()]);
     const { data, error } = await supabase()
       .from("aportacion")
       .select("id, cliente_id, hermandad_id, elemento, observada, puntos_base, bonus, resultado")
@@ -171,7 +171,16 @@ routerAportaciones.get(
         id: f.id,
         clienteId: f.cliente_id,
         cofradia: porId.get(f.hermandad_id) ?? null,
+        nombre: nombres.get(f.hermandad_id)?.nombre ?? null,
+        jornada: nombres.get(f.hermandad_id)?.jornada ?? null,
         elemento: f.elemento,
+        // «Cruz de guía», «Primer paso»… o «La cofradía» para «Estoy viendo la cofradía»
+        etiqueta:
+          f.elemento === null
+            ? "La cofradía"
+            : f.elemento === 0
+              ? "Cruz de guía"
+              : (nombres.get(f.hermandad_id)?.pasos[f.elemento - 1] ?? `Paso ${f.elemento}`),
         observada: f.observada,
         puntos: f.puntos_base,
         bonus: f.bonus,

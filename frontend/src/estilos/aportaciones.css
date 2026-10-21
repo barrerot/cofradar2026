@@ -1,0 +1,110 @@
+/* ── P-22 Mis aportaciones (7-mi-cofradar/aportaciones) ───────────────────── */
+.cf-aportaciones {
+  display: grid;
+  gap: var(--cf-space-6);
+}
+
+.cf-aportaciones-grupo {
+  display: grid;
+  gap: var(--cf-space-1);
+}
+
+.cf-aportaciones-grupo h2,
+.cf-aportaciones-como h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: 600;
+}
+
+.cf-aportaciones-cuenta {
+  margin: 0 0 var(--cf-space-3);
+  color: var(--cf-text-secondary);
+}
+
+.cf-aportaciones-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-aportaciones-lista li {
+  display: grid;
+  grid-template-columns: 3.5rem 1.5rem minmax(0, 1fr);
+  gap: var(--cf-space-3);
+  align-items: start;
+  padding: var(--cf-space-4);
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-aportaciones-lista li:first-child {
+  border-top: 0;
+}
+
+.cf-aportaciones-lista .hr {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-aportaciones-lista .ico {
+  display: flex;
+  height: var(--cf-leading-xl);
+  align-items: center;
+  color: var(--cf-brand);
+}
+
+.cf-aportaciones-lista .que {
+  display: grid;
+  gap: var(--cf-space-1);
+  min-width: 0;
+}
+
+.cf-aportaciones-lista .cf-name {
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-aportaciones-lista .el {
+  color: var(--cf-text-secondary);
+}
+
+.cf-aportaciones-lista .marca {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-1);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+/* Lo bueno, en granate: es tuyo */
+.cf-aportaciones-lista .marca[data-tipo="contribuyo"] {
+  color: var(--cf-brand);
+}
+
+.cf-aportaciones-como {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface-sunken);
+}
+
+.cf-aportaciones-como p,
+.cf-aportaciones-vacio p,
+p.cf-aportaciones-vacio {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-aportaciones-vacio {
+  display: grid;
+  gap: var(--cf-space-4);
+  justify-items: start;
+}

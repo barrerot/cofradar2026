@@ -131,6 +131,17 @@ export async function hermandadesYEdicion(): Promise<{ porSlug: Map<string, numb
   return { porSlug, porId: new Map([...porSlug].map(([k, v]) => [v, k])), anio: lista[0]?.edicion.anio ?? new Date().getFullYear() };
 }
 
+/** Para «Mis aportaciones»: de cada hermandad, su nombre, su jornada y sus pasos en orden. */
+export async function nombresDeHermandades(): Promise<Map<number, { nombre: string; jornada: string; pasos: string[] }>> {
+  const lista = await salidas();
+  return new Map(
+    lista.map((s) => [
+      s.hermandad.id,
+      { nombre: s.hermandad.nombre, jornada: s.jornada.nombre, pasos: [...s.hermandad.paso].sort((a, b) => a.orden - b.orden).map((p) => p.nombre) },
+    ]),
+  );
+}
+
 function anioPedido(peticion: Request): number | undefined {
   const a = Number(peticion.query.anio);
   return Number.isInteger(a) && a > 0 ? a : undefined;

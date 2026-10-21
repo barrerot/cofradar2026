@@ -25,6 +25,7 @@ import "./estilos/estados.css";
 import "./estilos/ajustes.css";
 import "./estilos/ayuda.css";
 import "./estilos/dar-fe.css";
+import "./estilos/aportaciones.css";
 import "./estilos/logo-animado.css";
 import "./estilos/introduccion.css";
 import "./estilos/ficha.css";
