@@ -5,7 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { Alteraciones, ChipEstado, MarcaRelacion, usePedirUbicacion } from "../componentes";
 import { Boton, Icono } from "../marco";
 import { leer, guardar } from "../datos/almacen";
-import { alCambiarCola, enviar, nuevoClienteId, pendientes, vaciarCola, type Envio } from "../datos/darFe";
+import { alCambiarCola, bonusNuevos, enviar, hayBonusPorAvisar, nuevoClienteId, pendientes, vaciarCola, type Envio } from "../datos/darFe";
 import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
 import { useJornada } from "../datos/jornada";
 import type { CofradiaMapa, EstadoCofradia } from "../datos/mapa";
@@ -120,6 +120,19 @@ export function DarFeProvider({ children }: { children: ReactNode }) {
     };
   }, [sesion.usuario?.id]);
 
+  // El bonus llega después, cuando otros corroboran: se pregunta cada minuto mientras quede alguna
+  const [bonus, setBonus] = useState<{ nombre: string; bonus: number } | null>(null);
+  useEffect(() => {
+    if (!sesion.usuario) return;
+    const mirar = async () => {
+      if (!hayBonusPorAvisar() || document.hidden) return;
+      const [primero] = await bonusNuevos();
+      if (primero) setBonus(primero);
+    };
+    const id = window.setInterval(() => void mirar(), 60_000);
+    return () => window.clearInterval(id);
+  }, [sesion.usuario]);
+
   // Vuelta de Google con un «Dar fe» a medias: se sigue en «¿Das fe de esto?» con todo igual
   const { entrada, olvidarEntrada } = sesion;
   useEffect(() => {
@@ -162,6 +175,7 @@ export function DarFeProvider({ children }: { children: ReactNode }) {
         />
       ) : null}
       {hecho ? <PanelHecho hecho={hecho} alCerrar={() => setHecho(null)} /> : null}
+      {bonus && !hecho && !paso ? <AvisoBonus {...bonus} alCerrar={() => setBonus(null)} /> : null}
     </Contexto.Provider>
   );
 }
@@ -559,6 +573,32 @@ function PanelHecho({ hecho, alCerrar }: { hecho: Hecho; alCerrar: () => void })
           <p className="cf-darfe-puntos cf-num">+{puntos} puntos</p>
         ) : null}
       </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ── El bonus (4.13, 6-dar-fe/dar-fe-5c): aviso breve sobre la franja, como buena noticia ────────────
+function AvisoBonus({ nombre, bonus, alCerrar }: { nombre: string; bonus: number; alCerrar: () => void }) {
+  useEffect(() => {
+    const id = window.setTimeout(alCerrar, 8000);
+    return () => window.clearTimeout(id);
+  }, [alCerrar]);
+  // Justo encima de la franja de «Dar fe» (o de la navegación, si no hay franja)
+  const encima = document.querySelector(".cf-actionbar") ?? document.querySelector("nav");
+  const bottom = encima ? window.innerHeight - encima.getBoundingClientRect().top + 8 : 96;
+  return createPortal(
+    <div className="cf-darfe-bonus" role="status" style={{ bottom }}>
+      <span className="cf-darfe-sello" aria-hidden="true">
+        <Icono nombre="darFeVerificada" tamano={20} />
+      </span>
+      <p>
+        Tu aportación ayudó a situar a <span className="cf-name">{nombre}</span>
+        <span className="cf-darfe-puntos cf-num">+{bonus}</span>
+      </p>
+      <Boton variante="terciario" tamano="44" aria-label="Cerrar" onClick={alCerrar}>
+        <Icono nombre="cerrar" tamano={20} />
+      </Boton>
     </div>,
     document.body,
   );

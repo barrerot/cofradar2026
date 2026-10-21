@@ -93,6 +93,7 @@ async function mandar(e: Envio): Promise<Resultado | "fallo"> {
 
 /** Envía; si no hay conexión o el servidor no contesta, a la cola. */
 export async function enviar(e: Envio): Promise<Resultado> {
+  recordar(e);
   if (typeof navigator !== "undefined" && !navigator.onLine) {
     ponerEnCola(e);
     return { tipo: "pendiente" };
@@ -123,4 +124,45 @@ export async function vaciarCola(): Promise<number> {
     vaciando = false;
   }
   return enviadas;
+}
+
+// ── El bonus, que llega después (4.13) ─────────────────────────────────────────────────────────────
+/**
+ * Las aportaciones de las dos últimas horas cuyo bonus aún no se ha avisado. El bonus lo da el motor
+ * cuando otras personas corroboran lo mismo, a veces minutos después: se pregunta de vez en cuando
+ * mientras quede alguna por avisar, y se avisa una sola vez, como buena noticia.
+ */
+type Reciente = { clienteId: string; nombre: string; enviada: number };
+const RECIENTES = "dar-fe:recientes";
+const ESPERA_BONUS = 2 * 60 * 60_000;
+
+function recientes(): Reciente[] {
+  return (leer<Reciente[]>(RECIENTES) ?? []).filter((r) => Date.now() - r.enviada < ESPERA_BONUS);
+}
+
+function recordar(e: Envio) {
+  guardar(RECIENTES, [...recientes().filter((r) => r.clienteId !== e.clienteId), { clienteId: e.clienteId, nombre: e.nombre, enviada: Date.now() }]);
+}
+
+export const hayBonusPorAvisar = () => recientes().length > 0;
+
+/** Las que acaban de recibir bonus. Las devuelve una sola vez. */
+export async function bonusNuevos(): Promise<{ nombre: string; bonus: number }[]> {
+  const esperando = recientes();
+  guardar(RECIENTES, esperando);
+  if (!esperando.length) return [];
+  try {
+    const r = await fetch("/api/yo/aportaciones", { headers: { Accept: "application/json", ...(await cabecerasSesion()) } });
+    if (!r.ok) return [];
+    const d = (await r.json()) as { aportaciones: { clienteId: string; bonus: number; contribuyo: boolean }[] };
+    const con = new Map(d.aportaciones.filter((a) => a.contribuyo && a.bonus > 0).map((a) => [a.clienteId, a.bonus]));
+    const nuevos = esperando.filter((x) => con.has(x.clienteId));
+    guardar(
+      RECIENTES,
+      recientes().filter((x) => !con.has(x.clienteId)),
+    );
+    return nuevos.map((x) => ({ nombre: x.nombre, bonus: con.get(x.clienteId)! }));
+  } catch {
+    return [];
+  }
 }

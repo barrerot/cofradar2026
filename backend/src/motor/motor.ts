@@ -108,8 +108,10 @@ export type EstadoCofradia = {
   progreso: { m: number; total: number } | null;
   /** Solo los que están en la calle ahora. */
   elementos: ElementoEstado[];
-  /** Qué ha hecho el motor con cada aportación: para el bonus de puntos (BUL-220), nunca para mostrar. */
+  /** Qué ha hecho el motor con cada aportación: interno, nunca para mostrar (F-27). */
   resultados: Record<string, Resultado>;
+  /** El bonus de las que consolidan (ver BONUS). */
+  bonus: Record<string, number>;
 };
 
 // ── El horario de cada elemento ─────────────────────────────────────────────────────────────────────
@@ -195,21 +197,52 @@ const mediana = (xs: number[]) => {
 type Ancla = { retraso: number; t: number };
 
 /**
- * El retraso consolidado de un elemento: el grupo MÁS RECIENTE de aportaciones de personas distintas,
- * hechas casi a la vez y que dicen lo mismo. Las de ese rato que no casan con el grupo quedan
- * contradichas; las demás, sin resolver.
+ * El bonus de las aportaciones que consolidan (BUL-220, 4.13). Los puntos base no cambian nunca; el bonus
+ * premia la utilidad, y vale más cuanto menos sabía Cofradar de ese elemento justo antes:
+ *
+ *   BONUS.base      consolida: ayudó a situarlo                                          +5
+ *   BONUS.escasez   además, nadie lo había situado en la última media hora               +10
+ *   BONUS.obsoleta  además, la estimación de antes se había quedado vieja: el retraso
+ *                   cambia 10 minutos o más («detectar que una estimación se ha quedado
+ *                   obsoleta es la aportación más valiosa que existe», PRD)               +20
+ *
+ * Lo de «antes» se mira con las aportaciones anteriores al grupo, nunca con las posteriores: el bonus
+ * no baja porque luego llegue más gente.
  */
-function consolidar(obs: Observacion[], resultados: Record<string, Resultado>): Ancla | null {
+export const BONUS = { base: 5, escasez: 10, obsoleta: 20 };
+
+/** El grupo MÁS RECIENTE de aportaciones de personas distintas, hechas casi a la vez y que dicen lo mismo. */
+function grupoMasReciente(obs: Observacion[]): Observacion[] | null {
   const recientes = [...obs].sort((x, y) => y.a.t - x.a.t);
   for (const o of recientes) {
     const grupo = recientes.filter((p) => Math.abs(p.a.t - o.a.t) <= SIMULTANEAS && Math.abs(p.retraso - o.retraso) <= TOLERANCIA);
-    if (new Set(grupo.map((p) => p.a.usuario)).size < MINIMO_INDEPENDIENTES) continue;
-    for (const p of grupo) resultados[p.a.id] = "consolidada";
-    const t = Math.max(...grupo.map((p) => p.a.t));
-    for (const p of recientes) if (!resultados[p.a.id] && Math.abs(p.a.t - t) <= SIMULTANEAS) resultados[p.a.id] = "contradicha";
-    return { retraso: mediana(grupo.map((p) => p.retraso)), t };
+    if (new Set(grupo.map((p) => p.a.usuario)).size >= MINIMO_INDEPENDIENTES) return grupo;
   }
   return null;
+}
+
+const anclaDe = (grupo: Observacion[]): Ancla => ({ retraso: mediana(grupo.map((p) => p.retraso)), t: Math.max(...grupo.map((p) => p.a.t)) });
+
+/**
+ * El retraso consolidado de un elemento (el grupo más reciente). Las de ese rato que no casan con el
+ * grupo quedan contradichas; las demás, sin resolver. Y el bonus de las del grupo.
+ */
+function consolidar(obs: Observacion[], resultados: Record<string, Resultado>, bonus: Record<string, number>): Ancla | null {
+  const grupo = grupoMasReciente(obs);
+  if (!grupo) return null;
+  const ancla = anclaDe(grupo);
+  for (const p of grupo) resultados[p.a.id] = "consolidada";
+  for (const p of obs) if (!resultados[p.a.id] && Math.abs(p.a.t - ancla.t) <= SIMULTANEAS) resultados[p.a.id] = "contradicha";
+
+  // Qué se sabía justo antes de este grupo
+  const desde = Math.min(...grupo.map((p) => p.a.t));
+  const previo = grupoMasReciente(obs.filter((p) => p.a.t < desde));
+  const antes = previo ? anclaDe(previo) : null;
+  let valor = BONUS.base;
+  if (!antes || desde - antes.t > DESACTUALIZADO) valor = BONUS.escasez;
+  if (Math.abs(ancla.retraso - (antes?.retraso ?? 0)) >= ALTERACION_MINIMA) valor = BONUS.obsoleta;
+  for (const p of grupo) bonus[p.a.id] = valor;
+  return ancla;
 }
 
 function confianzaPorEdad(edad: number): Confianza {
@@ -220,13 +253,14 @@ function confianzaPorEdad(edad: number): Confianza {
 export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora: number): EstadoCofradia {
   const c = cortejo(s);
   const resultados: Record<string, Resultado> = {};
+  const bonus: Record<string, number> = {};
   const vivas = aportaciones.filter((a) => a.t <= ahora && ahora - a.t <= MEMORIA);
   const { obs, fuera } = observaciones(c, vivas);
   for (const a of fuera) resultados[a.id] = "fuera_del_calculo";
 
   // 1. El retraso de cada elemento: el suyo, si consolida; si no, el de los de alrededor
   const anclas: (Ancla | null)[] = [];
-  for (let k = 0; k <= c.n; k++) anclas.push(consolidar(obs.filter((o) => o.k === k), resultados));
+  for (let k = 0; k <= c.n; k++) anclas.push(consolidar(obs.filter((o) => o.k === k), resultados, bonus));
   for (const o of obs) resultados[o.a.id] ??= "sin_resolver";
   const retrasos = anclas.map((a, k) => {
     if (a) return a.retraso;
@@ -303,5 +337,5 @@ export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora
     progreso = { m: Math.round(cabeza), total: Math.round(c.total) };
   }
 
-  return { id: s.id, fase, sale, entra, alteraciones, progreso, elementos, resultados };
+  return { id: s.id, fase, sale, entra, alteraciones, progreso, elementos, resultados, bonus };
 }

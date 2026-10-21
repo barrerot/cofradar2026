@@ -186,3 +186,29 @@ describe("el reloj", () => {
     assert.ok(ahoraEnPrograma(new Date("2026-10-21T18:00:00Z"), 2026) < msPrograma("2026-03-27T00:00"));
   });
 });
+
+describe("bonus de las que consolidan", () => {
+  it("las primeras en ver que va 20 minutos tarde: la estimación se había quedado vieja, el máximo", () => {
+    const [a, b] = [fe("ana", 49, 0, 590), fe("benito", 50, 0, 600)];
+    const e = estadoCofradia(salida(), [a, b], 50 * MIN);
+    assert.equal(e.bonus[a.id], 20);
+    assert.equal(e.bonus[b.id], 20);
+  });
+
+  it("las primeras en situarla, si va a su hora: había poca información", () => {
+    const [a, b] = [fe("ana", 50, 0, 1000), fe("benito", 50, 0, 1000)];
+    assert.equal(estadoCofradia(salida(), [a, b], 50 * MIN).bonus[a.id], 10);
+  });
+
+  it("las que confirman lo que ya se sabía hace un rato: el bonus base", () => {
+    const antes = [fe("ana", 30, 0, 200), fe("benito", 30, 0, 200)]; // ya iba 20 min tarde
+    const [c, d] = [fe("carmen", 50, 0, 600), fe("david", 50, 0, 600)];
+    const e = estadoCofradia(salida(), [...antes, c, d], 50 * MIN);
+    assert.equal(e.bonus[c.id], 5);
+  });
+
+  it("una sola, sin bonus (todavía)", () => {
+    const a = fe("ana", 50, 0, 600);
+    assert.equal(estadoCofradia(salida(), [a], 50 * MIN).bonus[a.id], undefined);
+  });
+});

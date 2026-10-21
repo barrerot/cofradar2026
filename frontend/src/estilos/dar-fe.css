@@ -336,3 +336,58 @@
   display: inline;
   font-size: inherit;
 }
+
+/* ── El bonus que llega después (6-dar-fe/dar-fe-5c): tarjeta breve sobre la franja ── */
+.cf-darfe-bonus {
+  position: fixed;
+  left: var(--cf-space-4);
+  right: var(--cf-space-4);
+  z-index: var(--cf-z-toast);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-3) var(--cf-space-2) var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface-raised);
+  box-shadow: var(--cf-elev-3);
+  animation: cf-marco-aparecer var(--cf-dur-base) var(--cf-ease-out);
+}
+
+@media (min-width: 40rem) {
+  .cf-darfe-bonus {
+    left: 50%;
+    right: auto;
+    width: min(100% - 2rem, 28rem);
+    transform: translateX(-50%);
+  }
+}
+
+.cf-darfe-bonus p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-darfe-bonus .cf-name {
+  display: inline;
+  font-size: inherit;
+}
+
+.cf-darfe-bonus .cf-darfe-sello {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.cf-darfe-bonus .cf-darfe-puntos {
+  display: block;
+  margin-top: var(--cf-space-1);
+  font-size: var(--cf-text-xl);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-darfe-bonus {
+    animation: none;
+  }
+}

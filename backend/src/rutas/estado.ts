@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { cuenta } from "../motor/reputacion.js";
 import { estadoCofradia, MEMORIA, type Aportacion, type Resultado, type SalidaMotor } from "../motor/motor.js";
 import { supabase } from "../supabase.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "../motor/tiempo.js";
@@ -52,10 +53,12 @@ async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: b
   const { data, error } = await consulta;
   if (error) throw error;
   const anio = new Map(lista.map((c) => [c.id, c.anio]));
+  const fiables = await quienesCuentan([...new Set((data ?? []).map((f) => f.usuario_id as string))]);
   const res = new Map<string, Aportacion[]>();
   for (const f of data ?? []) {
     const id = porId.get(f.hermandad_id);
-    if (!id) continue;
+    // Quien tiene un patrón de aportaciones contradichas no cuenta para consolidar (reputacion.ts)
+    if (!id || !fiables.has(f.usuario_id)) continue;
     const fiable = f.latitud !== null && f.longitud !== null && (f.precision_m ?? 0) <= PRECISION_MAXIMA;
     const lista_ = res.get(id) ?? [];
     lista_.push({
@@ -70,13 +73,46 @@ async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: b
   return res;
 }
 
+/** Reputación de cada persona, a partir de su historial; se recalcula cada 5 minutos como mucho. */
+const reputaciones = new Map<string, { hasta: number; cuenta: boolean }>();
+async function quienesCuentan(usuarios: string[]): Promise<Set<string>> {
+  const ahora = Date.now();
+  const faltan = usuarios.filter((u) => (reputaciones.get(u)?.hasta ?? 0) < ahora);
+  if (faltan.length) {
+    const { data, error } = await supabase()
+      .from("aportacion")
+      .select("usuario_id, resultado")
+      .in("usuario_id", faltan)
+      .in("resultado", ["consolidada", "contradicha"]);
+    if (error) throw error;
+    const historial = new Map(faltan.map((u) => [u, { consolidadas: 0, contradichas: 0 }]));
+    for (const f of data ?? []) {
+      const h = historial.get(f.usuario_id)!;
+      if (f.resultado === "consolidada") h.consolidadas++;
+      else h.contradichas++;
+    }
+    for (const [u, h] of historial) reputaciones.set(u, { hasta: ahora + 5 * 60_000, cuenta: cuenta(h) });
+  }
+  return new Set(usuarios.filter((u) => reputaciones.get(u)?.cuenta !== false));
+}
+
 /**
- * Lo que el motor ha hecho con cada aportación se apunta en ella, para el bonus (4.13) y para «contribuyó
- * a la posición» en Mis aportaciones. «Consolidada» ya no se quita: lo que ayudó, ayudó.
+ * Lo que el motor ha hecho con cada aportación se apunta en ella: el resultado (para «contribuyó a la
+ * posición» y la reputación) y el bonus (4.13). «Consolidada» ya no se quita y el bonus no baja: lo que
+ * ayudó, ayudó.
  */
 const anotados = new Map<string, Resultado>();
-async function anotarResultados(resultados: Record<string, Resultado>) {
+const bonusAnotado = new Map<string, number>();
+async function anotarResultados(resultados: Record<string, Resultado>, bonus: Record<string, number>) {
   if (anotados.size > 50_000) anotados.clear();
+  if (bonusAnotado.size > 50_000) bonusAnotado.clear();
+  // El bonus solo sube: si ya tenía más, se queda
+  for (const [id, valor] of Object.entries(bonus)) {
+    if ((bonusAnotado.get(id) ?? 0) >= valor) continue;
+    bonusAnotado.set(id, valor);
+    const { error } = await supabase().from("aportacion").update({ bonus: valor }).eq("id", id).lt("bonus", valor);
+    if (error) console.error(error);
+  }
   const cambios = Object.entries(resultados).filter(([id, r]) => anotados.get(id) !== r && anotados.get(id) !== "consolidada");
   for (const [id, r] of cambios) {
     anotados.set(id, r);
@@ -110,7 +146,7 @@ async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
   const cofradias = lista.map((c) => {
     const ahora = ahoraEnPrograma(instante, c.anio);
     const e = estadoCofradia(salidaMotor(c), porCofradia.get(c.id) ?? [], ahora);
-    void anotarResultados(e.resultados);
+    void anotarResultados(e.resultados, e.bonus);
     const real = (t: number | null) => (t === null ? null : aReal(t, ahora, instante).toISOString());
     // `resultados` es interno (para los puntos): no sale
     return {

@@ -290,7 +290,7 @@ Código en `backend/src/motor/` y pruebas en `motor.test.ts` (`npm test -w backe
 - **Confianza:** confirmado hasta 10 min desde la última aportación que consolidó, desactualizado hasta 30 min y estimado después.
 - **Alteraciones:** retraso o adelanto a partir de 10 min, redondeado a 5.
 - **Todas las cifras son candidatas a calibrar.**
-- **Falta:** inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`, y la reputación.
+- **Falta:** inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`.
 
 ### Aportaciones (21/10/2026)
 
@@ -307,3 +307,16 @@ Tabla `aportacion` en `backend/supabase/esquema.sql`, aprobada por Carlos. Cada 
 - **El motor solo usa las plausibles.** Si la ubicación tiene más de 100 m de margen, solo cuenta como presencia.
 - **Al borrar la cuenta se borran sus aportaciones**, y salen en «Descargar mis datos». Guardar la ubicación entra en la consulta legal de BUL-223.
 - **`de_prueba`** marca las hechas con el reloj de prueba (`?ahora=`). Se borran antes del lanzamiento.
+
+### Bonus y reputación (4.13, 21/10/2026)
+
+- **Bonus** (`motor.ts`, `BONUS`). Solo para las aportaciones que consolidan, y vale más cuanto menos sabía Cofradar justo antes:
+  - **+5** si consolida;
+  - **+10** si nadie había situado ese elemento en la última media hora;
+  - **+20** si el retraso cambia 10 minutos o más respecto a lo que se creía: la estimación se había quedado vieja.
+
+  Lo de «antes» se mira solo con las aportaciones anteriores. El bonus nunca baja y los puntos base no cambian. La app lo avisa una vez, sobre la franja: «Tu aportación ayudó a situar a La Macarena · +20».
+- **Reputación** (`reputacion.ts`). Interna, sin número visible y sin guardarse: sale del historial de cada persona.
+  - Empieza en 0,5 y sube despacio con cada aportación que consolida.
+  - Solo baja ante un patrón: al menos 8 aportaciones juzgadas y la mayoría contradichas por otras personas, con inercia para quien tiene buen historial. Discrepar de la estimación no cuenta.
+  - Por debajo de 0,2, esa persona no cuenta para que un dato consolide. Sus aportaciones se guardan igual y siguen dando puntos base.
