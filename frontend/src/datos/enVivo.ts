@@ -166,3 +166,21 @@ export function partirRecorrido(v: EnVivo): { hecho: [number, number][]; pendien
   const corte: [number, number] = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
   return { hecho: [...linea.slice(0, i), corte], pendiente: [corte, ...linea.slice(i)] };
 }
+
+/**
+ * La hora que acompaña a «dónde va» un elemento: si está EN un lugar, la hora a la que está allí (la del
+ * programa con su retraso); si va de camino, la de llegada al siguiente. Los pasos de en medio, sin hora
+ * propia mientras nadie los vea: null.
+ */
+export function horaDelElemento(c: CofradiaMapa, el: ElementoEstado, jornada: Jornada): Date | null {
+  const intermedio = el.orden > 0 && el.orden < Math.max(1, c.pasos);
+  if (intermedio && el.confianza === "estimado") return null;
+  const donde = dondeVa(c, el);
+  const actual = donde.startsWith("en ") ? referencia(c, el).find((h) => `en ${h.lugar}` === donde) : undefined;
+  return actual ? horaEstimada(actual.hora, jornada, el.retrasoMin) : (siguienteLugar(c, el, jornada)?.hora ?? null);
+}
+
+/** «Cruz de guía», «Primer paso»… */
+export function nombreElemento(c: CofradiaMapa, orden: number): string {
+  return orden === 0 ? "Cruz de guía" : (c.nombresPasos[orden - 1] ?? `Paso ${orden}`);
+}

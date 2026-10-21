@@ -278,3 +278,75 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ── P-09 Detalle de un elemento (3-mapa/mapa-3) ─────────────────────────── */
+/* La marca tocada crece un poco: se ve cuál es sin depender del color */
+.cf-mapa-marca[data-elegido] svg {
+  transform: scale(1.3);
+}
+
+.cf-mapa-elemento p {
+  margin: 0;
+}
+
+.cf-mapa-elemento-donde {
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-mapa-elemento .hr[data-confianza] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+.cf-mapa-elemento .hr.cf-num {
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-mapa-elemento .hr:is([data-confianza="estimado"], [data-confianza="desactualizado"]) {
+  text-decoration-style: dashed;
+}
+
+/* «según horario» va subrayado discontinuo; el punto que lo separa, no */
+.cf-mapa-elemento span.hr[data-confianza="estimado"]:not(.cf-num) {
+  color: var(--cf-text-secondary);
+}
+
+.cf-mapa-elemento-visto,
+.cf-mapa-elemento-distancia {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-mapa-elemento-distancia {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+.cf-mapa-elemento h3 {
+  margin: var(--cf-space-2) 0 var(--cf-space-2);
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-mapa-elemento-resto {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-mapa-elemento-resto li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--cf-space-3);
+  align-items: start;
+  padding: var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-mapa-elemento-resto li:first-child {
+  border-top: 0;
+}

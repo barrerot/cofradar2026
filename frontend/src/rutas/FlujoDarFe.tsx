@@ -39,8 +39,12 @@ type Hecho = { envio: Envio; puntos: number | null };
 type Posicion = { latitud: number; longitud: number; precision: number };
 
 type ContextoDarFe = {
-  /** Abre el flujo; con `cofradia`, directamente en «¿Qué tienes delante?». */
-  abrir: (cofradia?: string) => void;
+  /**
+   * Abre el flujo; con `cofradia`, directamente en «¿Qué tienes delante?». Con `elemento` también (el que
+   * la persona ha tocado en el mapa, no uno que proponga Cofradar), en «¿Das fe de esto?»: con «Atrás»
+   * puede cambiarlo.
+   */
+  abrir: (cofradia?: string, elemento?: number) => void;
   /** Cuántas esperan conexión en el teléfono. */
   pendientes: number;
 };
@@ -150,10 +154,16 @@ export function DarFeProvider({ children }: { children: ReactNode }) {
     }
   }, [entrada, sesion.usuario, olvidarEntrada]);
 
-  const abrir = useCallback((cofradia?: string) => {
+  const abrir = useCallback((cofradia?: string, elemento?: number) => {
     setHecho(null);
-    setBorrador({ cofradia, desdeCofradia: !!cofradia });
-    setPaso(leer<boolean>(GUIA_VISTA) ? (cofradia ? "elemento" : "cofradia") : "guia");
+    const conElemento = cofradia && elemento !== undefined;
+    setBorrador({
+      cofradia,
+      desdeCofradia: !!cofradia,
+      ...(conElemento ? { elemento, observada: relojAhora().toISOString() } : {}),
+    });
+    const siguiente: Paso = conElemento ? "confirmar" : cofradia ? "elemento" : "cofradia";
+    setPaso(leer<boolean>(GUIA_VISTA) ? siguiente : "guia");
   }, []);
 
   const valor = useMemo(() => ({ abrir, pendientes: enCola }), [abrir, enCola]);
@@ -297,7 +307,7 @@ function Flujo({
       <Guia
         alEntender={() => {
           guardar(GUIA_VISTA, true);
-          irA(borrador.cofradia ? "elemento" : "cofradia");
+          irA(borrador.cofradia ? (borrador.elemento !== undefined ? "confirmar" : "elemento") : "cofradia");
         }}
       />
     );

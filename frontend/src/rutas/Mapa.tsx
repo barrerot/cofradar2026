@@ -4,9 +4,10 @@ import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Alteraciones, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
-import { BottomSheet, Cabecera, Icono, Marco, TRAZOS } from "../marco";
+import { BottomSheet, Boton, Cabecera, Icono, Marco, TRAZOS } from "../marco";
 import { useJornada, type Jornada } from "../datos/jornada";
-import { dondeVa, hitosDe, partirRecorrido, siguienteLugar } from "../datos/enVivo";
+import { distancia, distanciaEnLlano, dondeVa, hitosDe, horaDelElemento, nombreElemento, partirRecorrido, siguienteLugar } from "../datos/enVivo";
+import { usePosicion } from "../datos/ubicacion";
 import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
 import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia } from "../datos/mapa";
 import { useRelaciones } from "../datos/relaciones";
@@ -48,6 +49,12 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   // «Ver en el mapa» desde la ficha llega con ?cofradia=la-macarena: se abre con ella elegida y encuadrada
   const [params] = useSearchParams();
   const [seleccion, setSeleccion] = useState<string | null>(() => params.get("cofradia"));
+  // El elemento tocado de la elegida (P-09, 4.6): 0 la cruz, 1..n los pasos; null, la cofradía entera
+  const [elemento, setElemento] = useState<number | null>(null);
+  const elegir = (id: string | null, orden: number | null = null) => {
+    setSeleccion(id);
+    setElemento(orden);
+  };
   const [sinTeselas, setSinTeselas] = useState(false);
   const caja = useRef<HTMLDivElement>(null);
   const mapa = useRef<Mapa_ | null>(null);
@@ -146,7 +153,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
 
     marcas.current.forEach((x) => x.remove());
     marcas.current = [
-      ...situaciones.flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), () => setSeleccion(c.id))),
+      ...situaciones.flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), c.id === seleccion ? elemento : null, (orden) => elegir(c.id, orden))),
       ...(elegida_ && jornada ? crearHitos(elegida_.c, elegida_.s, jornada) : []),
     ].map((el) => el.addTo(m));
 
@@ -161,7 +168,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
         m.fitBounds(b, { padding: { top: 72, bottom: 72, left: 48, right: 160 }, maxZoom: 16, duration: 0 });
       }
     }
-  }, [situaciones, relaciones, seleccion, jornada]);
+  }, [situaciones, relaciones, seleccion, elemento, jornada]);
 
   // Al elegir una cofradía, se encuadra su recorrido entero, dejando sitio abajo a la hoja
   const encuadrada = useRef<string | null>(null);
@@ -177,6 +184,15 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   useEffect(() => {
     if (!seleccion) encuadrada.current = null;
   }, [seleccion]);
+
+  // Al tocar un elemento, se centra en él, por encima de la hoja (que sube a media altura)
+  useEffect(() => {
+    const m = mapa.current;
+    const punto = elemento === null ? undefined : situaciones.find(({ c }) => c.id === seleccion)?.s.elementos.find((e) => e.orden === elemento)?.punto;
+    if (m && punto) m.easeTo({ center: punto, offset: [0, -Math.round(window.innerHeight * 0.25)], zoom: Math.max(m.getZoom(), 16), duration: 500 });
+    // Solo al tocarlo, no cada vez que el motor lo mueve
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seleccion, elemento]);
 
   const centrar = () =>
     solicitar(() =>
@@ -199,15 +215,28 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
 
   const conCentrar = (ubicacion.estado === "no-permitida" && !ubicacion.rechazada) || ubicacion.estado === "permitida";
   const elegida = situaciones.find((x) => x.c.id === seleccion);
+  const elementoElegido = elemento === null ? undefined : elegida?.s.elementos.find((e) => e.orden === elemento);
 
   return (
     <Marco
       sangrado="completo"
       cabecera={<Cabecera principal={<SelectorJornada />} />}
-      accion={estado.activa ? <DarFe cofradia={elegida?.c.id} /> : undefined}
+      accion={estado.activa ? <DarFe cofradia={elegida?.c.id} elemento={elementoElegido?.orden} /> : undefined}
       sheet={
-        <BottomSheet abierto={!!elegida} titulo={elegida?.c.nombre ?? ""} modo="convive" alturaInicial="asomado" alCerrar={() => setSeleccion(null)}>
-          {elegida && jornada ? <VistaCofradia c={elegida.c} s={elegida.s} jornada={jornada} /> : null}
+        <BottomSheet
+          abierto={!!elegida}
+          titulo={elegida ? (elementoElegido ? `${nombreElemento(elegida.c, elementoElegido.orden)} de ${elegida.c.nombre}` : elegida.c.nombre) : ""}
+          modo="convive"
+          alturaInicial={elementoElegido ? "medio" : "asomado"}
+          alCerrar={() => elegir(null)}
+        >
+          {elegida && jornada ? (
+            elementoElegido ? (
+              <DetalleElemento c={elegida.c} s={elegida.s} el={elementoElegido} jornada={jornada} alVolver={() => setElemento(null)} />
+            ) : (
+              <VistaCofradia c={elegida.c} s={elegida.s} jornada={jornada} />
+            )
+          ) : null}
         </BottomSheet>
       }
     >
@@ -264,17 +293,24 @@ function token(nombre: string): string {
 }
 
 /** Una marca (círculo con el icono) y, junto a la cruz, el nombre. Mismo marcado que el sistema (.cf-map .mk). */
-function crearMarcas(c: CofradiaMapa, s: EstadoCofradia, relacion: string | undefined, alTocar: () => void): maplibregl.Marker[] {
+function crearMarcas(
+  c: CofradiaMapa,
+  s: EstadoCofradia,
+  relacion: string | undefined,
+  elegido: number | null,
+  alTocar: (orden: number | null) => void,
+): maplibregl.Marker[] {
   const res: maplibregl.Marker[] = [];
-  const marca = (punto: [number, number], icono: string, fase: string, confianza: string, etiqueta: string) => {
+  const marca = (punto: [number, number], icono: string, fase: string, confianza: string, etiqueta: string, orden: number | null) => {
     const el = document.createElement("button");
     el.type = "button";
     el.className = "cf-mapa-marca cf-map";
     el.setAttribute("aria-label", etiqueta);
+    if (orden !== null && orden === elegido) el.dataset.elegido = "";
     el.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><g class="mk" data-fase="${fase}" data-confianza="${confianza}"><circle class="h" cx="20" cy="20" r="16"/><circle class="b" cx="20" cy="20" r="16"/><svg x="12" y="12" width="16" height="16" class="ico" viewBox="0 0 256 256" fill="currentColor"><path d="${icono}"/></svg></g></svg>`;
     el.addEventListener("click", (e) => {
       e.stopPropagation();
-      alTocar();
+      alTocar(orden);
     });
     res.push(new maplibregl.Marker({ element: el }).setLngLat(punto));
   };
@@ -284,18 +320,18 @@ function crearMarcas(c: CofradiaMapa, s: EstadoCofradia, relacion: string | unde
     el.innerHTML = `${relacion ? `<span class="cf-mapa-rel" data-relacion="${relacion}"></span>` : ""}<span class="nm"></span>${extra ? `<span class="ex"></span>` : ""}`;
     el.querySelector(".nm")!.textContent = c.nombre;
     if (extra) el.querySelector(".ex")!.textContent = extra;
-    el.addEventListener("click", alTocar);
+    el.addEventListener("click", () => alTocar(null));
     res.push(new maplibregl.Marker({ element: el, anchor: "left", offset: [24, 0] }).setLngLat(punto));
   };
 
   if (s.fase.valor === "inminente" && s.sale) {
     const sale = `sale a las ${hora(s.sale)}`;
-    marca(c.linea[0]!, TRAZOS.cruzGuia, "inminente", s.fase.confianza, `${c.nombre}: ${sale}`);
+    marca(c.linea[0]!, TRAZOS.cruzGuia, "inminente", s.fase.confianza, `${c.nombre}: ${sale}`, null);
     nombre(c.linea[0]!, sale);
   } else {
     for (const e of s.elementos) {
       const icono = e.tipo === "cruz" ? TRAZOS.cruzGuia : TRAZOS.misterio;
-      marca(e.punto, icono, "en_calle", e.confianza, `${c.nombre}, ${e.nombre}, ${comoSeSabe(e)}`);
+      marca(e.punto, icono, "en_calle", e.confianza, `${c.nombre}, ${e.nombre}, ${comoSeSabe(e)}`, e.orden);
     }
     const cabeza = s.elementos[0];
     if (cabeza) nombre(cabeza.punto, alteracion(s));
@@ -402,6 +438,83 @@ function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; 
         </Link>
         <Link className="cf-btn" data-variant="secundario" to={`/cofradias/${c.id}/recorrido`}>
           Recorrido y horarios
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * P-09 Detalle de un elemento (3-mapa/mapa-3 y 11-6): dónde va y a qué hora, cuándo se vio por última
+ * vez o que nadie lo ha visto todavía (en llano, sin culpa), a cuánto te queda si hay ubicación, y el
+ * resto del cortejo en su orden. «Dar fe» de la franja empieza por este elemento.
+ */
+function DetalleElemento({ c, s, el, jornada, alVolver }: { c: CofradiaMapa; s: EstadoCofradia; el: ElementoEstado; jornada: Jornada; alVolver: () => void }) {
+  const posicion = usePosicion();
+  const hhmm = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const linea = (e: ElementoEstado, mayuscula = false) => {
+    const h = horaDelElemento(c, e, jornada);
+    const donde = dondeVa(c, e);
+    return (
+      <>
+        {mayuscula ? donde[0]!.toUpperCase() + donde.slice(1) : donde}
+        {" · "}
+        {h ? (
+          <span className="hr cf-num" data-confianza={e.confianza}>
+            {hhmm(h)}
+          </span>
+        ) : null}
+        {h && e.confianza === "estimado" ? " · " : null}
+        {e.confianza === "estimado" ? (
+          <span className="hr" data-confianza="estimado">
+            según horario
+          </span>
+        ) : null}
+      </>
+    );
+  };
+  const nombre = nombreElemento(c, el.orden).toLowerCase();
+  const de = el.orden === 0 ? `de la ${nombre}` : `del ${nombre}`;
+  const d = posicion ? distancia(posicion, { estado: { ...s, elementos: [el] }, mapa: c }) : null;
+  const resto = s.elementos.filter((e) => e.orden !== el.orden);
+  return (
+    <div className="cf-mapa-rapida cf-mapa-elemento">
+      <p className="cf-mapa-elemento-donde">{linea(el, true)}</p>
+      <p className="cf-mapa-elemento-visto">
+        {el.confianza === "confirmado"
+          ? el.haceMin
+            ? `Visto hace ${el.haceMin} min.`
+            : "Visto ahora mismo."
+          : el.confianza === "desactualizado"
+            ? `Último dato hace ${el.haceMin} min.`
+            : `Nadie ha dado fe ${de} todavía.`}
+      </p>
+      {d !== null ? (
+        <p className="cf-mapa-elemento-distancia">
+          <Icono nombre="ubicacion" tamano={20} /> {distanciaEnLlano(d)}
+        </p>
+      ) : null}
+      {resto.length ? (
+        <section aria-labelledby="resto-cortejo">
+          <h3 id="resto-cortejo">El resto de la cofradía</h3>
+          <ul className="cf-mapa-elemento-resto">
+            {resto.map((e) => (
+              <li key={e.orden}>
+                <Icono nombre={e.tipo === "cruz" ? "cruzGuia" : "misterio"} tamano={20} />
+                <span>
+                  <strong>{nombreElemento(c, e.orden)}</strong> · {linea(e)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      <div className="cf-mapa-rapida-enlaces">
+        <Boton variante="secundario" onClick={alVolver}>
+          Toda la cofradía
+        </Boton>
+        <Link className="cf-btn" data-variant="secundario" to={`/cofradias/${c.id}`}>
+          Ver ficha
         </Link>
       </div>
     </div>

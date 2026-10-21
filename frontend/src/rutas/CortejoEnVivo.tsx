@@ -1,6 +1,6 @@
 import { Alteraciones, ChipEstado } from "../componentes";
 import { useActividad } from "../datos/actividad";
-import { dondeVa, enLaCalle, horaEstimada, retrasoDe, siguienteLugar, useEnVivo, type EnVivo } from "../datos/enVivo";
+import { dondeVa, enLaCalle, horaDelElemento, horaEstimada, retrasoDe, useEnVivo, type EnVivo } from "../datos/enVivo";
 import { useJornada, type Jornada } from "../datos/jornada";
 import type { ElementoEstado } from "../datos/mapa";
 
@@ -83,10 +83,7 @@ function DondeVa({ v, el, jornada, intermedio }: { v: EnVivo; el: ElementoEstado
       </>
     );
   }
-  // «en La Campana» lleva la hora a la que está allí (ahora mismo, con su retraso); «camino de…», la de llegada
-  const siguiente = siguienteLugar(v.mapa, el, jornada);
-  const lugarActual = donde.startsWith("en ") ? v.mapa[el.orden === 0 ? "cruzGuia" : "ultimoPaso"].find((h) => `en ${h.lugar}` === donde) : undefined;
-  const hora = lugarActual ? horaEstimada(lugarActual.hora, jornada, el.retrasoMin) : (siguiente?.hora ?? null);
+  const hora = horaDelElemento(v.mapa, el, jornada);
   return (
     <>
       <p className="cf-ficha-donde">{donde}</p>
