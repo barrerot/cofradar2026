@@ -3,9 +3,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { SinCartografia, usePedirUbicacion } from "../componentes";
+import { Alteraciones, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Cabecera, Icono, Marco, TRAZOS } from "../marco";
-import { useJornada } from "../datos/jornada";
+import { useJornada, type Jornada } from "../datos/jornada";
+import { dondeVa, hitosDe, partirRecorrido, siguienteLugar } from "../datos/enVivo";
 import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
 import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia } from "../datos/mapa";
 import { useRelaciones } from "../datos/relaciones";
@@ -31,7 +32,10 @@ import { SelectorJornada } from "./SelectorJornada";
  *               permiso, centra el mapa en ti con un punto. Nunca al abrirlo.
  *   Sin mapa    si no cargan las teselas (sin conexión), las marcas siguen
  *               ahí sobre el fondo liso y se avisa (estado 7).
- *   Tocar       una marca abre la vista rápida de su cofradía (4.6 la amplía).
+ *   Tocar       una marca elige su cofradía (P-08, 4.5): se encuadra su recorrido
+ *               entero, partido en hecho y pendiente, con su salida y su próximo
+ *               lugar rotulados, y la hoja trae su estado, tres hitos con la
+ *               hora prevista y la estimada, y cuánto lleva. 4.6 lo amplía.
  */
 const SEVILLA: [number, number] = [-5.9925, 37.3891];
 
@@ -51,6 +55,8 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   const yo = useRef<maplibregl.Marker | null>(null);
   const encuadrado = useRef(false);
   const tramos = useRef<GeoJSON.FeatureCollection>({ type: "FeatureCollection", features: [] });
+  // El recorrido entero de la elegida (4.5): lo hecho y lo que le queda
+  const recorrido = useRef<GeoJSON.FeatureCollection>({ type: "FeatureCollection", features: [] });
   const { ubicacion, solicitar, hoja } = usePedirUbicacion({
     nota: "Tu posición no sale de tu teléfono para dibujar el mapa.",
   });
@@ -91,7 +97,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     mapa.current = m;
 
     // Los cortejos se ponen encima cada vez que se carga un estilo (el primero y los de cambio de tema)
-    m.on("style.load", () => pintarCortejos(m, tramos.current));
+    m.on("style.load", () => pintarCortejos(m, tramos.current, recorrido.current));
 
     // Claro, oscuro y máximo contraste: se vuelve a pintar con los tokens del momento, solo si cambian
     let tema = `${document.documentElement.dataset.theme}|${document.documentElement.dataset.contrast}`;
@@ -124,12 +130,25 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
           : [];
       }),
     };
+    const elegida_ = situaciones.find(({ c }) => c.id === seleccion);
+    const partes = elegida_ ? partirRecorrido({ estado: elegida_.s, mapa: elegida_.c }) : null;
+    recorrido.current = {
+      type: "FeatureCollection",
+      features: partes
+        ? (["hecho", "pendiente"] as const).flatMap((tipo) =>
+            partes[tipo].length > 1 ? [{ type: "Feature" as const, properties: { tipo }, geometry: { type: "LineString" as const, coordinates: partes[tipo] } }] : [],
+          )
+        : [],
+    };
     // Si el estilo aún está cargando (teselas, cambio de tema), en cuanto el mapa se quede quieto
-    if (m.isStyleLoaded()) pintarCortejos(m, tramos.current);
-    else m.once("idle", () => pintarCortejos(m, tramos.current));
+    if (m.isStyleLoaded()) pintarCortejos(m, tramos.current, recorrido.current);
+    else m.once("idle", () => pintarCortejos(m, tramos.current, recorrido.current));
 
     marcas.current.forEach((x) => x.remove());
-    marcas.current = situaciones.flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), () => setSeleccion(c.id)).map((el) => el.addTo(m)));
+    marcas.current = [
+      ...situaciones.flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), () => setSeleccion(c.id))),
+      ...(elegida_ && jornada ? crearHitos(elegida_.c, elegida_.s, jornada) : []),
+    ].map((el) => el.addTo(m));
 
     // La primera vez con cofradías en la calle, se encuadran todas
     if (!encuadrado.current && situaciones.length) {
@@ -142,7 +161,22 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
         m.fitBounds(b, { padding: { top: 72, bottom: 72, left: 48, right: 160 }, maxZoom: 16, duration: 0 });
       }
     }
-  }, [situaciones, relaciones]);
+  }, [situaciones, relaciones, seleccion, jornada]);
+
+  // Al elegir una cofradía, se encuadra su recorrido entero, dejando sitio abajo a la hoja
+  const encuadrada = useRef<string | null>(null);
+  useEffect(() => {
+    const m = mapa.current;
+    const sit = situaciones.find(({ c }) => c.id === seleccion);
+    if (!m || !sit || encuadrada.current === seleccion) return;
+    encuadrada.current = seleccion;
+    const linea = sit.c.linea;
+    const b = linea.reduce((acc, p) => acc.extend(p), new maplibregl.LngLatBounds(linea[0]!, linea[0]!));
+    m.fitBounds(b, { padding: { top: 56, bottom: Math.round(window.innerHeight * 0.3), left: 32, right: 32 }, maxZoom: 16.5, duration: 600 });
+  }, [seleccion, situaciones]);
+  useEffect(() => {
+    if (!seleccion) encuadrada.current = null;
+  }, [seleccion]);
 
   const centrar = () =>
     solicitar(() =>
@@ -173,7 +207,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
       accion={estado.activa ? <DarFe cofradia={elegida?.c.id} /> : undefined}
       sheet={
         <BottomSheet abierto={!!elegida} titulo={elegida?.c.nombre ?? ""} modo="convive" alturaInicial="asomado" alCerrar={() => setSeleccion(null)}>
-          {elegida ? <VistaRapida c={elegida.c} s={elegida.s} /> : null}
+          {elegida && jornada ? <VistaCofradia c={elegida.c} s={elegida.s} jornada={jornada} /> : null}
         </BottomSheet>
       }
     >
@@ -200,8 +234,19 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   );
 }
 
-/** El tramo que ocupa cada cofradía, entre su cabeza y su cola: continuo si está confirmado, discontinuo si no. */
-function pintarCortejos(m: Mapa_, datos: GeoJSON.FeatureCollection) {
+/**
+ * El tramo que ocupa cada cofradía, entre su cabeza y su cola: continuo si está confirmado, discontinuo si
+ * no. Debajo, el recorrido entero de la elegida (mapa-2): lo hecho, continuo en verde; lo que le queda,
+ * discontinuo y neutro.
+ */
+function pintarCortejos(m: Mapa_, datos: GeoJSON.FeatureCollection, recorrido: GeoJSON.FeatureCollection) {
+  const fuenteRecorrido = m.getSource("recorrido") as GeoJSONSource | undefined;
+  if (fuenteRecorrido) fuenteRecorrido.setData(recorrido);
+  else {
+    m.addSource("recorrido", { type: "geojson", data: recorrido });
+    m.addLayer({ id: "recorrido-pendiente", type: "line", source: "recorrido", filter: ["==", ["get", "tipo"], "pendiente"], paint: { "line-color": token("--cf-text-secondary"), "line-width": 3, "line-dasharray": [1.5, 1.5] } });
+    m.addLayer({ id: "recorrido-hecho", type: "line", source: "recorrido", filter: ["==", ["get", "tipo"], "hecho"], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": token("--cf-live"), "line-width": 3 } });
+  }
   const fuente = m.getSource("cortejos") as GeoJSONSource | undefined;
   if (fuente) {
     fuente.setData(datos);
@@ -276,33 +321,80 @@ function alteracion(s: EstadoCofradia): string {
   return a ? `${a.minutos} min de ${a.tipo}` : "";
 }
 
-/** La fase en una frase, con su confianza (PRD, «Fase»). */
-function estadoEnLlano(s: EstadoCofradia): string {
-  const { valor, confianza, haceMin } = s.fase;
-  const cola = confianza === "estimado" ? ", según el horario" : confianza === "desactualizado" ? ` (último dato hace ${haceMin} min)` : "";
-  if (valor === "inminente") return `Sale a las ${s.sale ? hora(s.sale) : "—"}${cola}.`;
-  if (valor === "proxima_entrada") return `De regreso, entra a las ${s.entra ? hora(s.entra) : "—"}${cola}.`;
-  return `En la calle${cola}.`;
+/**
+ * Las etiquetas de la elegida sobre el mapa (mapa-2): de dónde sale y a qué hora, y el próximo lugar por
+ * el que pasará su cruz de guía, con su hora.
+ */
+function crearHitos(c: CofradiaMapa, s: EstadoCofradia, jornada: Jornada): maplibregl.Marker[] {
+  const etiqueta = (punto: [number, number], texto: string, estimado: boolean) => {
+    const el = document.createElement("div");
+    el.className = "cf-mapa-hito";
+    el.dataset.confianza = estimado ? "estimado" : "confirmado";
+    el.innerHTML = `<span class="pt"></span><span class="tx"></span>`;
+    el.querySelector(".tx")!.textContent = texto;
+    return new maplibregl.Marker({ element: el, anchor: "left", offset: [-6, 0] }).setLngLat(punto);
+  };
+  const res: maplibregl.Marker[] = [];
+  const salida = c.cruzGuia[0];
+  if (salida && c.linea[0]) res.push(etiqueta(c.linea[0], `${salida.lugar} · salida ${salida.hora.slice(11, 16)}`, false));
+  const cruz = s.elementos.find((e) => e.orden === 0);
+  const sig = cruz ? siguienteLugar(c, cruz, jornada) : null;
+  const situado = sig ? c.cruzGuia.find((h) => h.lugar === sig.lugar && h.m !== null) : undefined;
+  if (sig && situado) {
+    const acum = [0];
+    for (let i = 1; i < c.linea.length; i++) {
+      const [a, b] = [c.linea[i - 1]!, c.linea[i]!];
+      acum.push(acum[i - 1]! + Math.hypot((b[0] - a[0]) * 88_450, (b[1] - a[1]) * 110_540));
+    }
+    const i = Math.max(0, acum.findIndex((x) => x >= situado.m!));
+    const estimado = cruz?.confianza !== "confirmado";
+    res.push(etiqueta(c.linea[i]!, `${sig.lugar} · ${hora(sig.hora.toISOString())}${estimado ? " · según horario" : ""}`, estimado));
+  }
+  return res;
 }
 
-/** Vista rápida de una cofradía (la amplía 4.6): qué es lo que se ve y adónde ir. */
-function VistaRapida({ c, s }: { c: CofradiaMapa; s: EstadoCofradia }) {
-  const alt = alteracion(s);
+/**
+ * El mapa de una cofradía (P-08, 3-mapa/mapa-2 y 06): en la hoja, su estado, tres hitos con la hora
+ * prevista y la real o estimada, y cuánto lleva de recorrido. Lo amplía 4.6 al tocar un elemento.
+ */
+function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; jornada: Jornada }) {
+  const v = { estado: s, mapa: c };
+  const hitos = hitosDe(v, jornada);
+  const cruz = s.elementos.find((e) => e.orden === 0);
+  const pc = s.progreso && s.progreso.total ? Math.round((100 * s.progreso.m) / s.progreso.total) : null;
+  const hhmm = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
   return (
     <div className="cf-mapa-rapida">
-      <p className="cf-mapa-rapida-estado">
-        {estadoEnLlano(s)}
-        {alt ? ` Lleva ${alt}.` : ""}
-      </p>
-      {s.elementos.length ? (
-        <ul>
-          {s.elementos.map((e) => (
-            <li key={`${e.tipo}-${e.orden}`}>
-              <Icono nombre={e.tipo === "cruz" ? "cruzGuia" : "misterio"} tamano={20} />
-              {e.nombre} · {comoSeSabe(e)}
-            </li>
+      <div className="cf-mapa-rapida-chips">
+        <ChipEstado fase={s.fase.valor} confianza={s.fase.confianza} antiguedad={s.fase.haceMin !== null ? `hace ${s.fase.haceMin} min` : undefined} />
+        <Alteraciones alteraciones={s.alteraciones} densidad="estandar" confianza={s.fase.confianza} />
+      </div>
+      {s.fase.valor === "inminente" && s.sale ? <p className="cf-mapa-rapida-estado">Sale a las {hora(s.sale)}.</p> : null}
+      {hitos.length ? (
+        <dl className="cf-mapa-hitos">
+          {hitos.map((h) => (
+            <div key={h.titulo}>
+              <dt>{h.titulo}</dt>
+              <dd className="prevista cf-num">Prevista {hhmm(h.prevista)}</dd>
+              <dd className="real" data-confianza={h.confianza}>
+                {h.retrasoMin !== 0 || h.confianza !== "estimado" ? (
+                  <>
+                    <span className="hr cf-num">{hhmm(h.estimada)}</span>
+                    {h.retrasoMin !== 0 ? <span className="dif cf-num"> {h.retrasoMin > 0 ? `+${h.retrasoMin}` : `−${-h.retrasoMin}`} min</span> : null}
+                  </>
+                ) : (
+                  <span className="hr">según horario</span>
+                )}
+              </dd>
+            </div>
           ))}
-        </ul>
+        </dl>
+      ) : null}
+      {cruz && pc !== null ? (
+        <p className="cf-mapa-rapida-progreso">
+          Cruz de guía {dondeVa(c, cruz)}
+          <span className="cf-num">{pc} % del recorrido</span>
+        </p>
       ) : null}
       <div className="cf-mapa-rapida-enlaces">
         <Link className="cf-btn" data-variant="secundario" to={`/cofradias/${c.id}`}>

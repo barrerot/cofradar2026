@@ -173,3 +173,108 @@
 .cf-mapa-marca .mk .ico {
   color: var(--cf-text);
 }
+
+/* ── El mapa de una cofradía (P-08, 3-mapa/mapa-2) ──────────────────────── */
+/* Rótulo de un lugar de su recorrido: un punto sobre la línea y el texto al lado */
+.cf-mapa-hito {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  pointer-events: none;
+}
+
+.cf-mapa-hito .pt {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--cf-radius-full);
+  border: 2px solid var(--cf-text);
+  background: var(--cf-surface);
+}
+
+.cf-mapa-hito .tx {
+  padding: 2px var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-raised);
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+  white-space: nowrap;
+}
+
+/* Estimado: borde discontinuo, como todo lo que sale del horario */
+.cf-mapa-hito[data-confianza="estimado"] .tx {
+  border-style: dashed;
+}
+
+.cf-mapa-rapida-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2);
+}
+
+.cf-mapa-rapida-chips .cf-alts {
+  display: contents;
+}
+
+.cf-mapa-hitos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+  gap: var(--cf-space-3);
+  margin: 0;
+}
+
+.cf-mapa-hitos dt {
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-mapa-hitos dd {
+  margin: 0;
+}
+
+.cf-mapa-hitos .prevista {
+  color: var(--cf-text-secondary);
+}
+
+.cf-mapa-hitos .real .hr {
+  font-size: var(--cf-text-xl);
+  font-weight: var(--cf-weight-critical);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+.cf-mapa-hitos .real:is([data-confianza="estimado"], [data-confianza="desactualizado"]) .hr {
+  text-decoration-style: dashed;
+  font-weight: var(--cf-weight-body);
+}
+
+.cf-mapa-hitos .real .dif {
+  color: var(--cf-warn-text);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-mapa-rapida-progreso {
+  display: grid;
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-mapa-rapida-progreso .cf-num {
+  font-weight: var(--cf-weight-body);
+}
+
+.cf-mapa-hitos .real .dif {
+  white-space: nowrap;
+  font-size: var(--cf-text-sm);
+}
+
+/* Un nombre de templo largo no se sale de la pantalla */
+.cf-mapa-hito .tx {
+  max-width: 60vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

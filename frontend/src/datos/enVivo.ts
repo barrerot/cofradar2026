@@ -120,3 +120,49 @@ export function proximoPunto(v: EnVivo, jornada: Jornada, ahora: Date, posicion:
   const elegido = posicion ? candidatos.reduce((a, b) => (metros(posicion, enLinea(b.m)) < metros(posicion, enLinea(a.m)) ? b : a)) : candidatos[0]!;
   return { lugar: elegido.lugar, hora: elegido.hora };
 }
+
+// ── El mapa de una cofradía (4.5) ───────────────────────────────────────────────────────────────────
+export type Hito = { titulo: string; prevista: Date; estimada: Date; retrasoMin: number; confianza: ElementoEstado["confianza"] };
+
+/**
+ * Los tres hitos de la hoja del mapa de una cofradía (3-mapa/mapa-2): por dónde va o adónde llega
+ * ahora la cruz de guía, la Catedral (el final de la carrera oficial) si aún le queda, y la entrada del
+ * último paso. Cada uno con la hora prevista y, debajo, la real o la estimada.
+ */
+export function hitosDe(v: EnVivo, jornada: Jornada): Hito[] {
+  const res: Hito[] = [];
+  const hito = (titulo: string, hora: string, el: ElementoEstado | undefined, orden: number) => {
+    const prevista = aHoy(hora, jornada);
+    const retraso = el?.retrasoMin ?? retrasoDe(v.estado, orden);
+    if (prevista) res.push({ titulo, prevista, estimada: new Date(prevista.getTime() + retraso * 60_000), retrasoMin: retraso, confianza: el?.confianza ?? "estimado" });
+  };
+  const cruz = v.estado.elementos.find((x) => x.orden === 0);
+  if (cruz) {
+    const puntos = referencia(v.mapa, cruz);
+    const actual = puntos.find((h) => Math.abs(h.m! - cruz.m) <= EN_EL_LUGAR) ?? puntos.find((h) => h.m! > cruz.m);
+    if (actual) hito(actual.lugar, actual.hora, cruz, 0);
+    // Si ya va por la Catedral, no se repite
+    const catedral = actual && /^Catedral/.test(actual.lugar) ? undefined : puntos.find((h) => /^Catedral/.test(h.lugar) && h.m! > cruz.m + EN_EL_LUGAR);
+    if (catedral) hito("Catedral", catedral.hora, cruz, 0);
+  }
+  const n = Math.max(1, v.mapa.pasos);
+  const entrada = v.mapa.ultimoPaso[v.mapa.ultimoPaso.length - 1];
+  if (entrada) hito("Entrada", entrada.hora, v.estado.elementos.find((x) => x.orden === n), n);
+  return res;
+}
+
+/** El recorrido partido por la cabeza del cortejo: lo hecho (hasta la cruz) y lo que le queda. */
+export function partirRecorrido(v: EnVivo): { hecho: [number, number][]; pendiente: [number, number][] } {
+  const linea = v.mapa.linea;
+  if (linea.length < 2) return { hecho: [], pendiente: [] };
+  const acum = [0];
+  for (let i = 1; i < linea.length; i++) acum.push(acum[i - 1]! + metros({ latitud: linea[i - 1]![1], longitud: linea[i - 1]![0], precision: 0 }, linea[i]!));
+  const total = acum[acum.length - 1]!;
+  const cabeza = enLaCalle(v.estado) ? Math.min(v.estado.progreso?.m ?? 0, total) : v.estado.fase.valor === "finalizada" ? total : 0;
+  const i = acum.findIndex((x) => x >= cabeza);
+  if (i <= 0) return cabeza <= 0 ? { hecho: [], pendiente: linea } : { hecho: linea, pendiente: [] };
+  const [a, b] = [linea[i - 1]!, linea[i]!];
+  const t = acum[i] === acum[i - 1] ? 0 : (cabeza - acum[i - 1]!) / (acum[i]! - acum[i - 1]!);
+  const corte: [number, number] = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  return { hecho: [...linea.slice(0, i), corte], pendiente: [corte, ...linea.slice(i)] };
+}
