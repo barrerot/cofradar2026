@@ -35,3 +35,8 @@ export function ahora(): Date {
 export function relojDePrueba(): boolean {
   return leerDesfase() !== 0;
 }
+
+/** Cuánto va adelantado o atrasado el reloj de prueba, en ms (0 con la hora real). Lo usa el motor del servidor. */
+export function desfaseReloj(): number {
+  return leerDesfase();
+}

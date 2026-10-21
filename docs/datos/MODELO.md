@@ -140,7 +140,7 @@ Los puntos sin coordenadas no son error: durante el inventario se cuentan aparte
 
 ## GPS social · concepto
 
-**Estado: en diseño. No hay nada implementado.** «GPS social» es el nombre interno del sistema que estima dónde va cada elemento del cortejo a partir de lo que ven los usuarios, sin dispositivos en los pasos. Para el usuario, la acción es **«Dar fe»** (`design.md`, D20); en la interfaz no se habla de «check-in».
+**Estado (21/10/2026): el motor está hecho y funciona solo con el horario; las aportaciones todavía no se guardan** (ver «Motor» al final). «GPS social» es el nombre interno del sistema que estima dónde va cada elemento del cortejo a partir de lo que ven los usuarios, sin dispositivos en los pasos. Para el usuario, la acción es **«Dar fe»** (`design.md`, D20); en la interfaz no se habla de «check-in».
 
 ### Principio
 
@@ -277,3 +277,17 @@ BUL-169 (el recorrido de cada cofradía sobre el callejero) se da por hecha con 
 6. **Cuándo varias observaciones son «independientes»** y cuántas hacen falta para corregir una estimación.
 7. **Dónde se guardan aportaciones y posiciones estimadas.** El PRD ya nombra la Aportación, que guarda por separado el registro personal y el valor colaborativo. Su estructura se propondrá cuando se defina el motor, con un caso de uso concreto y pidiendo aprobación antes de crear ninguna entidad.
 8. **«Cómo se calcula la posición» del PRD.** Sigue hablando de «punto de control» y de «la línea del itinerario». Se revisará cuando se resuelva el punto 3.
+
+### Motor (4.1 a 4.3, 21/10/2026)
+
+Código en `backend/src/motor/` y pruebas en `motor.test.ts` (`npm test -w backend`). Lo sirve `GET /api/jornadas/:id/estado`, que se calcula una vez cada 30 segundos.
+
+- **Todo es un retraso por elemento.** El horario dice dónde debería ir cada elemento a cada hora. Si dos personas distintas ven el segundo paso de La Macarena a las 03:30 en el sitio donde el programa lo ponía a las 02:50, ese paso va 40 minutos tarde. A partir de ahí avanza al ritmo del programa con esos 40 minutos de desfase, aunque nadie diga nada más.
+- **Un elemento sin aportaciones** toma el retraso de los de alrededor. Un paso nunca adelanta al de delante.
+- **Consolidar** pide 2 personas distintas, con menos de 15 minutos entre una y otra y que impliquen el mismo retraso (±8 min). Una sola aportación queda «sin resolver» y no mueve nada. Las que chocan con un grupo que ya ha consolidado quedan «contradichas».
+- **Ubicación:** a más de 60 m del recorrido, la aportación queda fuera del cálculo de la posición, pero sigue contando como presencia. Si la calle se recorre dos veces, se elige la pasada que el programa pone más cerca de esa hora.
+- **Fase:** la lleva el horario, con el retraso que se sepa. Si dos personas la están viendo, está en la calle aunque el horario diga otra cosa.
+- **Confianza:** confirmado hasta 10 min desde la última aportación que consolidó, desactualizado hasta 30 min y estimado después.
+- **Alteraciones:** retraso o adelanto a partir de 10 min, redondeado a 5.
+- **Todas las cifras son candidatas a calibrar.**
+- **Falta:** guardar las aportaciones (se propone la tabla antes de crearla, como dice el punto 7 de «Abierto»), inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`, y la reputación.

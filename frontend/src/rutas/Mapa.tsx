@@ -5,9 +5,9 @@ import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Cabecera, Icono, Marco, TRAZOS } from "../marco";
-import { useActividad } from "../datos/actividad";
 import { useJornada } from "../datos/jornada";
-import { situar, type CofradiaMapa, type Situacion } from "../datos/mapa";
+import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia, type EstadoJornadaMotor } from "../datos/mapa";
+import { desfaseReloj } from "../datos/reloj";
 import { useRelaciones } from "../datos/relaciones";
 import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
@@ -19,14 +19,14 @@ import { SelectorJornada } from "./SelectorJornada";
 /**
  * P-07 Mapa general (3-mapa/mapa-1*), sobre OpenStreetMap con MapLibre (D36).
  *
- * Una marca por elemento del cortejo (cruz de guía y cada paso), donde DEBERÍA
- * ir según el horario del programa (datos/mapa.ts): borde discontinuo, porque
- * es estimado. Entre la cruz y el último paso, el tramo del recorrido que ocupa
- * la cofradía. Las que salen en los próximos 30 minutos, en su templo, en ámbar.
- * El nombre va junto a la cruz, con tu marca si la sigues o la has visto.
- *
- * Lo que de verdad ve la gente, la confianza y la antigüedad llegan con el
- * motor (4.1-4.3): entonces las marcas pasan a continuas o a «hace X min».
+ * Una marca por elemento del cortejo (cruz de guía y cada paso), donde la pone
+ * el motor del servidor (4.1-4.3), que se pide cada 30 segundos. El borde dice
+ * cuánto fiarse: continuo si la gente lo acaba de ver (confirmado), discontinuo
+ * si sale del horario (estimado) o si el último dato tiene más de 10 minutos
+ * (desactualizado, con «hace X min»). Entre la cabeza y la cola, el tramo del
+ * recorrido que ocupa la cofradía. Las que salen en los próximos 30 minutos,
+ * en su templo, en ámbar. El nombre va junto a la cruz, con tu marca si la
+ * sigues o la has visto, y el retraso si lo hay.
  *
  *   Ubicación   «Centrar en mi ubicación» la pide en contexto (P-04) y, con
  *               permiso, centra el mapa en ti con un punto. Nunca al abrirlo.
@@ -40,7 +40,8 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   const { hoy, consultada } = useJornada();
   const jornada = hoy ?? consultada;
   const datos = useDato<CofradiaMapa[]>(jornada ? `/jornadas/${jornada.id}/mapa` : "/jornadas/0/mapa", { cadaMs: 600_000 });
-  const { ahora } = useActividad();
+  const desfase = desfaseReloj();
+  const motor = useDato<EstadoJornadaMotor>(`/jornadas/${jornada?.id ?? 0}/estado${desfase ? `?desfase=${desfase}` : ""}`, { cadaMs: 30_000 });
   const relaciones = useRelaciones();
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [sinTeselas, setSinTeselas] = useState(false);
@@ -55,9 +56,15 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   });
 
   const situaciones = useMemo(() => {
-    if (!jornada || !datos.datos) return [];
-    return datos.datos.map((c) => ({ c, s: situar(c, jornada, ahora) })).filter((x) => x.s.fase !== "fuera");
-  }, [datos.datos, jornada, ahora]);
+    if (!datos.datos || !motor.datos) return [];
+    const porId = new Map(datos.datos.map((c) => [c.id, c]));
+    return motor.datos.cofradias
+      .filter((s) => VISIBLES.includes(s.fase.valor))
+      .flatMap((s) => {
+        const c = porId.get(s.id);
+        return c && c.linea.length > 1 ? [{ c, s }] : [];
+      });
+  }, [datos.datos, motor.datos]);
 
   // El mapa, una vez
   useEffect(() => {
@@ -109,11 +116,13 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     if (!m) return;
     tramos.current = {
       type: "FeatureCollection",
-      features: situaciones.flatMap(({ c, s }) =>
-        s.fase === "en_calle" && s.tramo.length > 1
-          ? [{ type: "Feature" as const, properties: { id: c.id }, geometry: { type: "LineString" as const, coordinates: s.tramo } }]
-          : [],
-      ),
+      features: situaciones.flatMap(({ c, s }) => {
+        const tramo = tramoCortejo(c, s);
+        const confirmado = s.elementos.some((e) => e.confianza === "confirmado");
+        return tramo.length > 1
+          ? [{ type: "Feature" as const, properties: { id: c.id, confirmado }, geometry: { type: "LineString" as const, coordinates: tramo } }]
+          : [];
+      }),
     };
     // Si el estilo aún está cargando (teselas, cambio de tema), en cuanto el mapa se quede quieto
     if (m.isStyleLoaded()) pintarCortejos(m, tramos.current);
@@ -125,7 +134,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     // La primera vez con cofradías en la calle, se encuadran todas
     if (!encuadrado.current && situaciones.length) {
       encuadrado.current = true;
-      const puntos = situaciones.flatMap(({ s }) => (s.fase === "en_calle" ? s.elementos.map((e) => e.punto) : s.fase === "inminente" ? [s.punto] : []));
+      const puntos = situaciones.flatMap(({ c, s }) => (s.fase.valor === "inminente" ? [c.linea[0]!] : s.elementos.map((e) => e.punto)));
       if (puntos.length) {
         const b = puntos.reduce((acc, p) => acc.extend(p), new maplibregl.LngLatBounds(puntos[0]!, puntos[0]!));
         // Más margen a la derecha: ahí van los nombres
@@ -174,9 +183,9 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
             <SinCartografia />
           </div>
         ) : null}
-        {datos.datos && !situaciones.length ? (
+        {datos.datos && motor.datos && !situaciones.length ? (
           <p className="cf-mapa-vacio" role="status">
-            Según el horario, ahora no hay ninguna cofradía en la calle.
+            Ahora no hay ninguna cofradía en la calle.
           </p>
         ) : null}
         {conCentrar ? (
@@ -190,7 +199,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   );
 }
 
-/** El tramo que ocupa cada cofradía, entre su cruz y su último paso: borde y discontinuo (estimado). */
+/** El tramo que ocupa cada cofradía, entre su cabeza y su cola: continuo si está confirmado, discontinuo si no. */
 function pintarCortejos(m: Mapa_, datos: GeoJSON.FeatureCollection) {
   const fuente = m.getSource("cortejos") as GeoJSONSource | undefined;
   if (fuente) {
@@ -199,7 +208,9 @@ function pintarCortejos(m: Mapa_, datos: GeoJSON.FeatureCollection) {
   }
   m.addSource("cortejos", { type: "geojson", data: datos });
   m.addLayer({ id: "cortejos-borde", type: "line", source: "cortejos", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": token("--cf-map-casing"), "line-width": 8 } });
-  m.addLayer({ id: "cortejos", type: "line", source: "cortejos", paint: { "line-color": token("--cf-live"), "line-width": 4, "line-dasharray": [2, 1.2] } });
+  // El trazo discontinuo no puede depender de cada línea en MapLibre: van en dos capas
+  m.addLayer({ id: "cortejos", type: "line", source: "cortejos", filter: ["!", ["get", "confirmado"]], paint: { "line-color": token("--cf-live"), "line-width": 4, "line-dasharray": [2, 1.2] } });
+  m.addLayer({ id: "cortejos-confirmados", type: "line", source: "cortejos", filter: ["get", "confirmado"], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": token("--cf-live"), "line-width": 4 } });
 }
 
 function token(nombre: string): string {
@@ -207,14 +218,14 @@ function token(nombre: string): string {
 }
 
 /** Una marca (círculo con el icono) y, junto a la cruz, el nombre. Mismo marcado que el sistema (.cf-map .mk). */
-function crearMarcas(c: CofradiaMapa, s: Situacion, relacion: string | undefined, alTocar: () => void): maplibregl.Marker[] {
+function crearMarcas(c: CofradiaMapa, s: EstadoCofradia, relacion: string | undefined, alTocar: () => void): maplibregl.Marker[] {
   const res: maplibregl.Marker[] = [];
-  const marca = (punto: [number, number], icono: string, fase: string, etiqueta: string) => {
+  const marca = (punto: [number, number], icono: string, fase: string, confianza: string, etiqueta: string) => {
     const el = document.createElement("button");
     el.type = "button";
     el.className = "cf-mapa-marca cf-map";
     el.setAttribute("aria-label", etiqueta);
-    el.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><g class="mk" data-fase="${fase}" data-confianza="estimado"><circle class="h" cx="20" cy="20" r="16"/><circle class="b" cx="20" cy="20" r="16"/><svg x="12" y="12" width="16" height="16" class="ico" viewBox="0 0 256 256" fill="currentColor"><path d="${icono}"/></svg></g></svg>`;
+    el.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><g class="mk" data-fase="${fase}" data-confianza="${confianza}"><circle class="h" cx="20" cy="20" r="16"/><circle class="b" cx="20" cy="20" r="16"/><svg x="12" y="12" width="16" height="16" class="ico" viewBox="0 0 256 256" fill="currentColor"><path d="${icono}"/></svg></g></svg>`;
     el.addEventListener("click", (e) => {
       e.stopPropagation();
       alTocar();
@@ -231,35 +242,63 @@ function crearMarcas(c: CofradiaMapa, s: Situacion, relacion: string | undefined
     res.push(new maplibregl.Marker({ element: el, anchor: "left", offset: [24, 0] }).setLngLat(punto));
   };
 
-  if (s.fase === "inminente") {
-    marca(s.punto, TRAZOS.cruzGuia, "inminente", `${c.nombre}: sale a las ${hora(s.sale)}`);
-    nombre(s.punto, `sale a las ${hora(s.sale)}`);
-  } else if (s.fase === "en_calle") {
+  if (s.fase.valor === "inminente" && s.sale) {
+    const sale = `sale a las ${hora(s.sale)}`;
+    marca(c.linea[0]!, TRAZOS.cruzGuia, "inminente", s.fase.confianza, `${c.nombre}: ${sale}`);
+    nombre(c.linea[0]!, sale);
+  } else {
     for (const e of s.elementos) {
       const icono = e.tipo === "cruz" ? TRAZOS.cruzGuia : TRAZOS.misterio;
-      marca(e.punto, icono, "en_calle", `${c.nombre}, ${e.nombre}, según horario`);
+      marca(e.punto, icono, "en_calle", e.confianza, `${c.nombre}, ${e.nombre}, ${comoSeSabe(e)}`);
     }
     const cabeza = s.elementos[0];
-    if (cabeza) nombre(cabeza.punto, "");
+    if (cabeza) nombre(cabeza.punto, alteracion(s));
   }
   return res;
 }
 
-const hora = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+/** Las fases que se ven en el mapa. */
+const VISIBLES = ["inminente", "en_calle", "proxima_entrada"];
+
+const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+
+/** «visto hace 3 min», «según horario»: de dónde sale la posición de un elemento. */
+function comoSeSabe(e: ElementoEstado): string {
+  if (e.confianza === "confirmado") return e.haceMin ? `visto hace ${e.haceMin} min` : "visto ahora";
+  if (e.confianza === "desactualizado") return `último dato hace ${e.haceMin} min`;
+  return "según horario";
+}
+
+/** «20 min de retraso», o nada. */
+function alteracion(s: EstadoCofradia): string {
+  const a = s.alteraciones[0];
+  return a ? `${a.minutos} min de ${a.tipo}` : "";
+}
+
+/** La fase en una frase, con su confianza (PRD, «Fase»). */
+function estadoEnLlano(s: EstadoCofradia): string {
+  const { valor, confianza, haceMin } = s.fase;
+  const cola = confianza === "estimado" ? ", según el horario" : confianza === "desactualizado" ? ` (último dato hace ${haceMin} min)` : "";
+  if (valor === "inminente") return `Sale a las ${s.sale ? hora(s.sale) : "—"}${cola}.`;
+  if (valor === "proxima_entrada") return `De regreso, entra a las ${s.entra ? hora(s.entra) : "—"}${cola}.`;
+  return `En la calle${cola}.`;
+}
 
 /** Vista rápida de una cofradía (la amplía 4.6): qué es lo que se ve y adónde ir. */
-function VistaRapida({ c, s }: { c: CofradiaMapa; s: Situacion }) {
+function VistaRapida({ c, s }: { c: CofradiaMapa; s: EstadoCofradia }) {
+  const alt = alteracion(s);
   return (
     <div className="cf-mapa-rapida">
       <p className="cf-mapa-rapida-estado">
-        {s.fase === "inminente" ? `Sale a las ${hora(s.sale)}, según el horario.` : "En la calle, según el horario."}
+        {estadoEnLlano(s)}
+        {alt ? ` Lleva ${alt}.` : ""}
       </p>
-      {s.fase === "en_calle" ? (
+      {s.elementos.length ? (
         <ul>
           {s.elementos.map((e) => (
             <li key={`${e.tipo}-${e.orden}`}>
               <Icono nombre={e.tipo === "cruz" ? "cruzGuia" : "misterio"} tamano={20} />
-              {e.nombre}
+              {e.nombre} · {comoSeSabe(e)}
             </li>
           ))}
         </ul>

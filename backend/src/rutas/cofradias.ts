@@ -157,7 +157,7 @@ async function buscar(peticion: Request, respuesta: Response): Promise<Salida | 
 }
 
 /** Envuelve una ruta para que un fallo de Supabase dé 500 con mensaje, en vez de dejar la petición colgada. */
-const ruta =
+export const ruta =
   (fn: (peticion: Request, respuesta: Response) => Promise<void>) => (peticion: Request, respuesta: Response) =>
     fn(peticion, respuesta).catch((e: unknown) => {
       console.error(e);
@@ -287,6 +287,9 @@ async function mapaDeJornada(jornada: number, anio?: number) {
         id: slug(s.hermandad.nombre),
         nombre: s.hermandad.nombre,
         pasos: s.hermandad.paso.length,
+        nombresPasos: [...s.hermandad.paso].sort((a, b) => a.orden - b.orden).map((p) => p.nombre),
+        estado: s.estado,
+        anio: s.edicion.anio,
         metros: Math.round(acum[acum.length - 1] ?? 0),
         provisional: rec?.provisional ?? true,
         linea,
@@ -297,18 +300,23 @@ async function mapaDeJornada(jornada: number, anio?: number) {
     .sort((a, b) => (a.cruzGuia[0]?.hora ?? "").localeCompare(b.cruzGuia[0]?.hora ?? ""));
 }
 
+export type CofradiaMapa = Awaited<ReturnType<typeof mapaDeJornada>>[number];
+
+/** El mapa de una jornada, desde la memoria si está. Lo usa también el motor (rutas/estado.ts). */
+export function mapa(jornada: number, anio?: number): Promise<CofradiaMapa[]> {
+  const clave = `${jornada}|${anio ?? "ultima"}`;
+  let guardado = memoriaMapa.get(clave);
+  if (!guardado || guardado.hasta < Date.now()) {
+    guardado = { hasta: Date.now() + MEMORIA_MS, datos: mapaDeJornada(jornada, anio) };
+    memoriaMapa.set(clave, guardado);
+    guardado.datos.catch(() => memoriaMapa.delete(clave));
+  }
+  return guardado.datos as Promise<CofradiaMapa[]>;
+}
+
 routerCofradias.get(
   "/jornadas/:id/mapa",
   ruta(async (peticion, respuesta) => {
-    const jornada = Number(peticion.params.id);
-    const anio = anioPedido(peticion);
-    const clave = `${jornada}|${anio ?? "ultima"}`;
-    let guardado = memoriaMapa.get(clave);
-    if (!guardado || guardado.hasta < Date.now()) {
-      guardado = { hasta: Date.now() + MEMORIA_MS, datos: mapaDeJornada(jornada, anio) };
-      memoriaMapa.set(clave, guardado);
-      guardado.datos.catch(() => memoriaMapa.delete(clave));
-    }
-    respuesta.json(await guardado.datos);
+    respuesta.json(await mapa(Number(peticion.params.id), anioPedido(peticion)));
   }),
 );

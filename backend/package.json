@@ -9,7 +9,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "cargar:datos": "tsx scripts/cargar-supabase.ts"
+    "cargar:datos": "tsx scripts/cargar-supabase.ts",
+    "test": "tsx --test src/motor/*.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",

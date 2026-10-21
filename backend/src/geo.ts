@@ -105,3 +105,34 @@ export function situarEnOrden(linea: Coord[], lugares: (Coord | null)[], fraccio
   }
   return res;
 }
+
+/** El punto de la línea a `m` metros del principio. */
+export function puntoEn(linea: Coord[], acum: number[], m: number): Coord {
+  if (linea.length === 0) throw new Error("Línea vacía");
+  if (m <= 0) return linea[0]!;
+  const i = acum.findIndex((x) => x >= m);
+  if (i <= 0) return linea[linea.length - 1]!;
+  const [a, b] = [linea[i - 1]!, linea[i]!];
+  const tramo = acum[i]! - acum[i - 1]!;
+  const t = tramo === 0 ? 0 : (m - acum[i - 1]!) / tramo;
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+}
+
+/**
+ * Las veces que la línea pasa cerca de un punto (metros desde el principio y distancia), de la más
+ * cercana a la más lejana. Una calle que se recorre a la ida y a la vuelta da dos pasadas.
+ *
+ * Cada tramo cercano da una candidata; las que caen a menos de `2 · hasta` metros de recorrido una de
+ * otra son la misma pasada (una calle partida en varios tramos) y se queda la más cercana.
+ */
+export function pasadas(linea: Coord[], acum: number[], punto: Coord, hasta: number): { m: number; d: number }[] {
+  const cerca = sobreTramos(linea, acum, punto).filter((t) => t.d <= hasta);
+  const res: { m: number; d: number }[] = [];
+  for (const t of cerca) {
+    const ultima = res[res.length - 1];
+    if (ultima && t.m - ultima.m < 2 * hasta) {
+      if (t.d < ultima.d) res[res.length - 1] = t;
+    } else res.push(t);
+  }
+  return res.sort((a, b) => a.d - b.d);
+}
