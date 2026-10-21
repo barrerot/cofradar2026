@@ -33,6 +33,8 @@ export type ElementoEstado = {
   punto: [number, number];
   confianza: Confianza;
   haceMin: number | null;
+  /** Minutos de retraso respecto al programa (negativo: adelanto). */
+  retrasoMin: number;
 };
 
 export type EstadoCofradia = {

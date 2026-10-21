@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { Bloque, MarcaRelacion, TarjetaCofradia } from "../componentes";
+import { Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
 import { Icono, Marco } from "../marco";
 import { useActividad, type SalidaDeHoy } from "../datos/actividad";
-import { useJornada } from "../datos/jornada";
+import { distancia, distanciaEnLlano, enLaCalle, proximoPunto, useEnVivo, type EnVivo } from "../datos/enVivo";
+import { useJornada, type Jornada } from "../datos/jornada";
+import { usePosicion, type Posicion } from "../datos/ubicacion";
 import { useRelaciones } from "../datos/relaciones";
 import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
@@ -10,7 +12,7 @@ import { CabeceraRaiz } from "./CabeceraRaiz";
 import { DarFe } from "./DarFe";
 
 /**
- * P-05 Inicio · «¿Qué puedo ver ahora?» (2-inicio/inicio-*), sin motor (3.5).
+ * P-05 Inicio · «¿Qué puedo ver ahora?» (2-inicio/inicio-*), con el motor (4.16).
  *
  * Tres intensidades que NO son grados de lo mismo (§8.3). Salen de la hora y
  * del horario del programa (datos/actividad.tsx), no de un fixture:
@@ -18,10 +20,11 @@ import { DarFe } from "./DarFe";
  *   fuera-temporada  cuenta atrás al Domingo de Ramos (inicio-D) y tus cofradías
  *   sin-actividad    «Ninguna cofradía en la calle ahora» y la primera salida
  *                    (inicio-C), o que ya entraron todas
- *   activa           SEGÚN HORARIO: las que deberían estar en la calle, con su
- *                    chip «según horario» (confianza estimada), y las que faltan
- *                    por salir. Lo que de verdad pasa, lo cerca, las incidencias
- *                    y las novedades llegan con el motor (4.16).
+ *   activa           lo que dice el motor (EnVivoAhora): cerca de ti, en la
+ *                    calle y a punto de salir, cada una con su fase, su
+ *                    confianza («según horario», «hace 23 min»), su retraso y
+ *                    el próximo punto con su hora (BUL-221). Mientras llega el
+ *                    primer dato del motor, el horario del programa.
  *
  * Reglas que siguen valiendo: una cofradía aparece una sola vez, las ya
  * entradas no salen, y un bloque vacío no se pinta.
@@ -31,14 +34,130 @@ export function Inicio({ estado }: { estado: EstadoJornada }) {
 
   return (
     <Marco cabecera={<CabeceraRaiz />} accion={estado.activa ? <DarFe /> : undefined}>
-      {intensidad === "activa" ? <SegunHorario /> : intensidad === "sin-actividad" ? <SinActividad /> : <FueraDeTemporada />}
+      {intensidad === "activa" ? <Activa /> : intensidad === "sin-actividad" ? <SinActividad /> : <FueraDeTemporada />}
     </Marco>
   );
 }
 
 const hora = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 
-/** Jornada en curso según el horario: en la calle y por salir. */
+function Activa() {
+  const { hoy } = useJornada();
+  const { cofradias } = useEnVivo(hoy);
+  return hoy && cofradias ? <EnVivoAhora jornada={hoy} cofradias={cofradias} /> : <SegunHorario />;
+}
+
+/** Hasta aquí, «cerca»: más lejos ya no es «qué puedo ver ahora» (candidata a calibrar). */
+const CERCA = 1500;
+
+/**
+ * La jornada en curso con el motor (2-inicio/01). Bloques, en este orden y sin repetir cofradía:
+ * Cerca (solo con ubicación; la primera es el sujeto de la pantalla) → En la calle → A punto de salir.
+ * Lluvia e incidencias, cuando la administración las publique (fase 5). Un bloque vacío no se pinta.
+ */
+function EnVivoAhora({ jornada, cofradias }: { jornada: Jornada; cofradias: EnVivo[] }) {
+  const { ahora } = useActividad();
+  const posicion = usePosicion();
+  const sale = (v: EnVivo) => (v.estado.sale ? Date.parse(v.estado.sale) : Infinity);
+  const calle = cofradias.filter((v) => enLaCalle(v.estado)).sort((a, b) => sale(a) - sale(b));
+  const conDistancia = posicion ? calle.map((v) => ({ v, d: distancia(posicion, v) })) : [];
+  const cerca = conDistancia
+    .filter((x): x is { v: EnVivo; d: number } => x.d !== null && x.d <= CERCA)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 3);
+  const enCerca = new Set(cerca.map((x) => x.v.estado.id));
+  const resto = calle.filter((v) => !enCerca.has(v.estado.id));
+  const aPuntoDeSalir = cofradias.filter((v) => v.estado.fase.valor === "inminente").sort((a, b) => sale(a) - sale(b));
+  const nadieHaDadoFe = calle.every((v) => v.estado.fase.confianza === "estimado");
+
+  return (
+    <div className="cf-ahora">
+      {nadieHaDadoFe && calle.length ? <p className="cf-ahora-nota">Según el horario del programa: nadie ha dado fe todavía.</p> : null}
+      {cerca.length ? (
+        <Bloque titulo="Cerca de ti">
+          <div className="cf-lista">
+            {cerca.map(({ v, d }, i) =>
+              i === 0 ? (
+                <div className="cf-ahora-sujeto" key={v.estado.id}>
+                  <FilaEnVivo v={v} jornada={jornada} ahora={ahora} posicion={posicion} densidad="estandar" proximidad={distanciaEnLlano(d)} />
+                </div>
+              ) : (
+                <FilaEnVivo key={v.estado.id} v={v} jornada={jornada} ahora={ahora} posicion={posicion} />
+              ),
+            )}
+          </div>
+        </Bloque>
+      ) : null}
+      {resto.length ? (
+        <Bloque titulo="En la calle">
+          <div className="cf-lista">
+            {resto.map((v) => (
+              <FilaEnVivo key={v.estado.id} v={v} jornada={jornada} ahora={ahora} posicion={posicion} />
+            ))}
+          </div>
+        </Bloque>
+      ) : null}
+      {aPuntoDeSalir.length ? (
+        <Bloque titulo="A punto de salir">
+          <div className="cf-lista">
+            {aPuntoDeSalir.map((v) => (
+              <FilaEnVivo key={v.estado.id} v={v} jornada={jornada} ahora={ahora} posicion={posicion} />
+            ))}
+          </div>
+        </Bloque>
+      ) : null}
+      {!calle.length && !aPuntoDeSalir.length ? <SinActividad /> : <VerJornada />}
+    </div>
+  );
+}
+
+function FilaEnVivo({
+  v,
+  jornada,
+  ahora,
+  posicion,
+  densidad = "compacta",
+  proximidad,
+}: {
+  v: EnVivo;
+  jornada: Jornada;
+  ahora: Date;
+  posicion: Posicion | null;
+  densidad?: "compacta" | "estandar";
+  proximidad?: string;
+}) {
+  const relaciones = useRelaciones();
+  const e = v.estado;
+  const decision: Pick<DatosCofradia, "punto" | "hora" | "horaEstimada"> =
+    e.fase.valor === "inminente"
+      ? { punto: "Sale", hora: e.sale ? hora(new Date(e.sale)) : undefined }
+      : (() => {
+          const p = proximoPunto(v, jornada, ahora, posicion);
+          return p
+            ? { punto: p.lugar, hora: hora(p.hora), horaEstimada: true }
+            : { punto: "Entra", hora: e.entra ? hora(new Date(e.entra)) : undefined, horaEstimada: true };
+        })();
+  return (
+    <Link className="cf-lista-enlace" to={`/cofradias/${e.id}`}>
+      <TarjetaCofradia
+        densidad={densidad}
+        cofradia={{
+          id: e.id,
+          nombre: e.nombre,
+          relacion: relaciones.marca(e.id),
+          fase: e.fase.valor,
+          confianza: e.fase.confianza,
+          antiguedad: e.fase.haceMin !== null ? `hace ${e.fase.haceMin} min` : undefined,
+          alteraciones: e.alteraciones,
+          proximidad,
+          ...decision,
+        }}
+      />
+    </Link>
+  );
+}
+
+/** Jornada en curso según el horario: en la calle y por salir. Mientras llega el primer dato del motor. */
 function SegunHorario() {
   const { salidas, ahora } = useActividad();
   const t = ahora.getTime();

@@ -10,6 +10,7 @@ import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
 import { iniciales } from "./Cofradias";
+import { ChipsEnVivo, CortejoEnVivo, useEnVivoDe } from "./CortejoEnVivo";
 
 /**
  * P-11 Ficha de cofradía (4-cofradias/ficha-2*), registro EDITORIAL (§3).
@@ -22,8 +23,9 @@ import { iniciales } from "./Cofradias";
  *   La hermandad  sede, salida y entrada, pasos, cifras, fundación y web, y su
  *               historia. Lo que no tenemos, «Dato pendiente» (estado 4).
  *
- * «Dónde va cada parte del cortejo», los chips de estado y «Dar fe» desde la
- * ficha son del motor (4.16): fuera de jornada la ficha es la de ficha-2F.
+ * El día que sale, el motor añade los chips de estado bajo el nombre y «Dónde va
+ * cada parte del cortejo» (CortejoEnVivo.tsx, 4.16). Fuera de su jornada la
+ * ficha es la de ficha-2F.
  */
 type Lugar = { nombre: string };
 type Ficha = {
@@ -71,6 +73,7 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
   const marca = relaciones.marca(f.id);
   const dia = useDiaDeSalida(f.salida?.jornada.id ?? null);
   const sinArticulo = f.nombre.replace(/^(El|La|Los|Las) /, "");
+  const vivo = useEnVivoDe(f.id, f.salida?.jornada.id);
 
   return (
     <article className="cf-ficha">
@@ -101,7 +104,10 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
             {dia ? ` · ${dia}` : null}
           </p>
         ) : null}
+        {vivo ? <ChipsEnVivo v={vivo.v} /> : null}
       </header>
+
+      {vivo ? <CortejoEnVivo v={vivo.v} jornada={vivo.jornada} /> : null}
 
       <Acciones ficha={f} />
 
@@ -190,6 +196,10 @@ function Acciones({ ficha: f }: { ficha: Ficha }) {
   return (
     <>
       <div className="cf-ficha-acciones">
+        <Link className="cf-btn" data-variant="secundario" to={`/mapa?cofradia=${f.id}`}>
+          <Icono nombre="mapa" tamano={20} />
+          Ver en el mapa
+        </Link>
         <Link className="cf-btn" data-variant="secundario" to={`/cofradias/${f.id}/recorrido`}>
           <Icono nombre="enCalle" tamano={20} />
           Recorrido y horarios

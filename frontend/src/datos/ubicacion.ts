@@ -116,3 +116,30 @@ export function useUbicacion(): Ubicacion {
 
   return { estado, rechazada, pidiendo, pedir };
 }
+
+export type Posicion = { latitud: number; longitud: number; precision: number };
+
+/**
+ * Dónde estás, SOLO si ya diste permiso: nunca lo pide (eso es de P-04, en contexto). Se refresca cada
+ * minuto mientras la pantalla está abierta. Sin permiso, `null` y la pantalla hace como si no la hubiera.
+ */
+export function usePosicion(): Posicion | null {
+  const { estado } = useUbicacion();
+  const [posicion, setPosicion] = useState<Posicion | null>(null);
+  useEffect(() => {
+    if (estado !== "permitida") {
+      setPosicion(null);
+      return;
+    }
+    const tomar = () =>
+      navigator.geolocation.getCurrentPosition(
+        (p) => setPosicion({ latitud: p.coords.latitude, longitud: p.coords.longitude, precision: Math.round(p.coords.accuracy) }),
+        () => {},
+        { maximumAge: 30_000, timeout: 15_000 },
+      );
+    tomar();
+    const id = window.setInterval(tomar, 60_000);
+    return () => window.clearInterval(id);
+  }, [estado]);
+  return posicion;
+}

@@ -179,3 +179,71 @@
   line-height: var(--cf-leading-lg);
   max-width: 38rem;
 }
+
+/* ── El estado en vivo (4.16, ficha-2A) ──────────────────────────────────── */
+.cf-ficha-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-3);
+}
+
+.cf-ficha-chips .cf-alts {
+  display: contents;
+}
+
+/* Una tarjeta por parte del cortejo, en el orden en que pasan */
+.cf-ficha-cortejo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-ficha-cortejo li {
+  display: grid;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-4);
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-ficha-cortejo li:first-child {
+  border-top: 0;
+}
+
+.cf-ficha-cortejo p {
+  margin: 0;
+}
+
+.cf-ficha-elemento {
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-ficha-donde {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+/* La hora: subrayado continuo si es confirmada; discontinuo si es estimada (§confianza) */
+.cf-ficha-hora .hr {
+  font-size: var(--cf-data-md, var(--cf-text-2xl));
+  font-weight: var(--cf-weight-critical);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+}
+
+.cf-ficha-hora[data-confianza="estimado"] .hr,
+.cf-ficha-hora[data-confianza="desactualizado"] .hr {
+  text-decoration-style: dashed;
+}
+
+.cf-ficha-hora .cola {
+  color: var(--cf-text-secondary);
+}
+
+.cf-ficha-sale strong {
+  font-size: var(--cf-text-xl);
+}

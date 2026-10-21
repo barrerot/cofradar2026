@@ -96,6 +96,9 @@ export type ElementoEstado = {
   confianza: Confianza;
   /** Minutos desde la última aportación consolidada de este elemento (null si nunca la hubo). */
   haceMin: number | null;
+  /** Cuánto va tarde (negativo: adelantado) respecto al programa, en minutos: con esto se estima la
+   *  hora a la que pasará por cada lugar que le queda. */
+  retrasoMin: number;
 };
 
 export type EstadoCofradia = {
@@ -306,7 +309,7 @@ export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora
   // 3. Las alteraciones: el retraso o adelanto del dato consolidado más reciente
   const alteraciones: EstadoCofradia["alteraciones"] = [];
   if (masReciente && Math.abs(masReciente.a.retraso) >= ALTERACION_MINIMA && ahora - masReciente.a.t <= DESACTUALIZADO) {
-    const minutos = Math.round(Math.abs(masReciente.a.retraso) / (5 * MIN)) * 5;
+    const minutos = Math.round(Math.abs(masReciente.a.retraso) / MIN);
     alteraciones.push({ tipo: masReciente.a.retraso > 0 ? "retraso" : "adelanto", minutos });
   }
 
@@ -331,6 +334,7 @@ export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora
         punto: puntoEn(s.linea, c.acum, m),
         confianza: edad === null ? "estimado" : confianzaPorEdad(edad),
         haceMin: edad === null ? null : Math.round(edad / MIN),
+        retrasoMin: Math.round(retrasos[k]! / MIN),
       });
     }
     const cabeza = Math.min(horarioDe(c, 0, ahora - retrasos[0]!), c.total);

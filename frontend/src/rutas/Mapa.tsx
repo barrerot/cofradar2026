@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -41,7 +41,9 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   const datos = useMapaJornada(jornada?.id);
   const motor = useEstadoJornada(jornada?.id);
   const relaciones = useRelaciones();
-  const [seleccion, setSeleccion] = useState<string | null>(null);
+  // «Ver en el mapa» desde la ficha llega con ?cofradia=la-macarena: se abre con ella elegida y encuadrada
+  const [params] = useSearchParams();
+  const [seleccion, setSeleccion] = useState<string | null>(() => params.get("cofradia"));
   const [sinTeselas, setSinTeselas] = useState(false);
   const caja = useRef<HTMLDivElement>(null);
   const mapa = useRef<Mapa_ | null>(null);
@@ -132,7 +134,8 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     // La primera vez con cofradías en la calle, se encuadran todas
     if (!encuadrado.current && situaciones.length) {
       encuadrado.current = true;
-      const puntos = situaciones.flatMap(({ c, s }) => (s.fase.valor === "inminente" ? [c.linea[0]!] : s.elementos.map((e) => e.punto)));
+      const pedida = situaciones.filter(({ c }) => c.id === seleccion);
+      const puntos = (pedida.length ? pedida : situaciones).flatMap(({ c, s }) => (s.fase.valor === "inminente" ? [c.linea[0]!] : s.elementos.map((e) => e.punto)));
       if (puntos.length) {
         const b = puntos.reduce((acc, p) => acc.extend(p), new maplibregl.LngLatBounds(puntos[0]!, puntos[0]!));
         // Más margen a la derecha: ahí van los nombres

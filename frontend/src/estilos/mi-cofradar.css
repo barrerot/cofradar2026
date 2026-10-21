@@ -451,3 +451,64 @@
   line-height: var(--cf-leading-base);
   color: var(--cf-text-secondary);
 }
+
+/* ── Tu progreso (portada-A, 4.16): puntos y nivel, en granate porque es lo tuyo ── */
+.cf-mi-nivel {
+  display: grid;
+  gap: var(--cf-space-2);
+}
+
+.cf-mi-nivel p {
+  margin: 0;
+}
+
+.cf-mi-nivel .rotulo {
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-mi-nivel .puntos {
+  color: var(--cf-brand);
+  font-size: var(--cf-text-2xl);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-mi-nivel .puntos .cf-num {
+  font-size: var(--cf-text-4xl);
+  line-height: 1;
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-mi-nivel .nivel {
+  color: var(--cf-brand);
+  font-size: var(--cf-text-xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-mi-nivel .nivel .en {
+  font-weight: var(--cf-weight-body);
+}
+
+.cf-mi-nivel .barra {
+  height: 0.75rem;
+  margin-top: var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-brand-border);
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-brand-soft);
+  overflow: hidden;
+}
+
+.cf-mi-nivel .barra span {
+  display: block;
+  height: 100%;
+  background: var(--cf-brand);
+}
+
+.cf-mi-nivel .hacia {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--cf-space-2);
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}

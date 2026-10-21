@@ -288,7 +288,7 @@ Código en `backend/src/motor/` y pruebas en `motor.test.ts` (`npm test -w backe
 - **Ubicación:** a más de 60 m del recorrido, la aportación queda fuera del cálculo de la posición, pero sigue contando como presencia. Si la calle se recorre dos veces, se elige la pasada que el programa pone más cerca de esa hora.
 - **Fase:** la lleva el horario, con el retraso que se sepa. Si dos personas la están viendo, está en la calle aunque el horario diga otra cosa.
 - **Confianza:** confirmado hasta 10 min desde la última aportación que consolidó, desactualizado hasta 30 min y estimado después.
-- **Alteraciones:** retraso o adelanto a partir de 10 min, redondeado a 5.
+- **Alteraciones:** retraso o adelanto a partir de 10 min, al minuto (el mismo que se usa para las horas estimadas).
 - **Todas las cifras son candidatas a calibrar.**
 - **Falta:** inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`.
 

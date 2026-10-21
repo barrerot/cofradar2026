@@ -113,3 +113,78 @@
 .cf-recorrido-tabla tr[data-carrera] th {
   box-shadow: inset 4px 0 0 var(--cf-border-strong);
 }
+
+/* ── El estado en vivo (4.16, recorrido-3) ───────────────────────────────── */
+.cf-recorrido-progreso {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0 var(--cf-space-4);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-recorrido-progreso p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+/* Lo hecho, lleno; lo que falta, discontinuo */
+.cf-recorrido-progreso .barra {
+  height: 6px;
+  border-radius: var(--cf-radius-full);
+  background: repeating-linear-gradient(90deg, var(--cf-border-strong) 0 6px, transparent 6px 10px);
+  overflow: hidden;
+}
+
+.cf-recorrido-progreso .barra span {
+  display: block;
+  height: 100%;
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-live);
+}
+
+.cf-recorrido-progreso .barra span[data-confianza="estimado"] {
+  background: repeating-linear-gradient(90deg, var(--cf-live) 0 10px, transparent 10px 13px);
+}
+
+.cf-recorrido-aqui {
+  display: block;
+  margin-top: var(--cf-space-1);
+}
+
+.cf-recorrido-real {
+  display: grid;
+  justify-items: start;
+}
+
+.cf-recorrido-real .hr {
+  font-weight: var(--cf-weight-critical);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+.cf-recorrido-real[data-confianza="estimado"] .hr,
+.cf-recorrido-real[data-confianza="desactualizado"] .hr {
+  text-decoration-style: dashed;
+}
+
+.cf-recorrido-real[data-desfase="si"] .hr,
+.cf-recorrido-real .dif {
+  color: var(--cf-warn-text);
+}
+
+.cf-recorrido-real .dif {
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-recorrido-real .cola {
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+  text-decoration: underline dashed;
+  text-underline-offset: 0.3em;
+}

@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { AvisoEntrada, Esqueleto, SegunDato, TarjetaCofradia } from "../componentes";
 import { Boton, Cabecera, Icono, Marco } from "../marco";
+import { enLaCalle, useEnVivo } from "../datos/enVivo";
 import { useJornada, type Jornada } from "../datos/jornada";
 import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
@@ -20,12 +21,13 @@ import { SelectorJornada } from "./SelectorJornada";
  *   Datos       las 72 de GET /api/cofradias, agrupadas por jornada: primero
  *               la consultada en la cabecera («· hoy» si es la de hoy) y luego
  *               las demás en el orden de la semana. Dentro, por hora de salida.
- *   Filas       escudo de reserva (iniciales), marca de relación y nombre. Sin
- *               chip: la fase llega con el motor (fase 4, 4.16); hasta entonces
- *               el listado es el de fuera de temporada (cofradias-1D).
+ *   Filas       escudo de reserva (iniciales), marca de relación y nombre. Las
+ *               de la jornada de HOY llevan además el chip del motor (4.16):
+ *               fase, confianza y alteraciones. Las demás, sin chip: «Prevista»
+ *               setenta veces sería ruido (cofradias-1D).
  *   Búsqueda    por el comienzo de cualquier palabra del nombre popular, sin
  *               tildes: «g» trae «Los Gitanos» y «El Gran Poder».
- *   Filtros     «En la calle» (vacío hasta el motor) y «Mis seguidas», que es
+ *   Filtros     «En la calle» (según el motor) y «Mis seguidas», que es
  *               de la cuenta (decisión del 20/10/2026): sin sesión invita a
  *               entrar con Google en el momento de pedirlas.
  *
@@ -122,16 +124,21 @@ function Directorio({
 }) {
   const { jornadas, consultada, hoy } = useJornada();
   const relaciones = useRelaciones();
+  const { cofradias: vivas } = useEnVivo(hoy);
+  const estadoDe = useMemo(() => new Map((vivas ?? []).map((v) => [v.estado.id, v.estado])), [vivas]);
 
   const grupos = useMemo(
     () => agrupar(lista, jornadas.datos ?? [], consultada),
     [lista, jornadas.datos, consultada],
   );
 
-  // «En la calle» no deja pasar ninguna: sin motor no se sabe, y no se finge (fase 4)
-  const pasa = (c: CofradiaApi) =>
-    coincide(c.nombre, consulta) &&
-    (filtro === "todas" || (filtro === "seguidas" && relaciones.esSeguida(c.id)));
+  const pasa = (c: CofradiaApi) => {
+    const e = estadoDe.get(c.id);
+    return (
+      coincide(c.nombre, consulta) &&
+      (filtro === "todas" || (filtro === "seguidas" && relaciones.esSeguida(c.id)) || (filtro === "en-calle" && !!e && enLaCalle(e)))
+    );
+  };
 
   const visibles = grupos.map((g) => ({ ...g, cofradias: g.cofradias.filter(pasa) }));
   if (!visibles.some((g) => g.cofradias.length > 0)) {
@@ -145,15 +152,31 @@ function Directorio({
           <section key={g.id} className="cf-cofradias-grupo" aria-labelledby={`jornada-${g.id}`}>
             <h2 id={`jornada-${g.id}`}>{g.id === hoy?.id ? `${g.nombre} · hoy` : g.nombre}</h2>
             <div className="cf-lista">
-              {g.cofradias.map((c) => (
+              {g.cofradias.map((c) => {
+                const e = estadoDe.get(c.id);
+                return (
                 <Link key={c.id} className="cf-lista-enlace" to={`/cofradias/${c.id}`}>
                   <TarjetaCofradia
-                    cofradia={{ id: c.id, nombre: c.nombre, iniciales: iniciales(c.orden), relacion: relaciones.marca(c.id) }}
+                    cofradia={{
+                      id: c.id,
+                      nombre: c.nombre,
+                      iniciales: iniciales(c.orden),
+                      relacion: relaciones.marca(c.id),
+                      ...(e
+                        ? {
+                            fase: e.fase.valor,
+                            confianza: e.fase.confianza,
+                            antiguedad: e.fase.haceMin !== null ? `hace ${e.fase.haceMin} min` : undefined,
+                            alteraciones: e.alteraciones,
+                          }
+                        : {}),
+                    }}
                     densidad="compacta"
                     nombreResaltado={resaltar(c.nombre, consulta)}
                   />
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </section>
         ),
