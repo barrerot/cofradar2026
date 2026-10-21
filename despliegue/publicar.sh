@@ -29,7 +29,8 @@ fi
 
 echo "· Arrancando en 127.0.0.1:$PUERTO"
 cd "$RAIZ/backend"
-SERVIR_WEB=1 HOST=127.0.0.1 PORT=$PUERTO nohup node dist/index.js >>"$ESTADO/web.log" 2>&1 &
+# RELOJ_DE_PRUEBA=1: se puede dar fe con ?ahora= (marcadas de_prueba). QUITAR ANTES DEL LANZAMIENTO
+RELOJ_DE_PRUEBA=1 SERVIR_WEB=1 HOST=127.0.0.1 PORT=$PUERTO nohup node dist/index.js >>"$ESTADO/web.log" 2>&1 &
 echo $! >"$ESTADO/web.pid"
 
 for _ in $(seq 20); do

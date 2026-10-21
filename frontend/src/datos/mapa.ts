@@ -15,6 +15,8 @@ export type CofradiaMapa = {
   pasos: number;
   metros: number;
   provisional: boolean;
+  /** Los nombres de los pasos, en el orden del cortejo («Primer paso», «Paso»…). */
+  nombresPasos: string[];
   linea: [number, number][];
   cruzGuia: HoraSituada[];
   ultimoPaso: HoraSituada[];

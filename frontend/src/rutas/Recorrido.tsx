@@ -46,7 +46,7 @@ export function Recorrido({ estado }: { estado: EstadoJornada }) {
     <PantallaSecundaria
       titulo="Recorrido y horarios"
       vuelta={{ etiqueta: ficha.datos?.nombre ?? "Ficha", ruta: `/cofradias/${id}` }}
-      accion={estado.activa ? <DarFe /> : undefined}
+      accion={estado.activa ? <DarFe cofradia={id} /> : undefined}
       sangrado="lista"
     >
       <SegunDato dato={ficha} esqueleto={<Esqueleto forma="lista" />}>

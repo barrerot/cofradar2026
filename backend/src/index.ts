@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import express from "express";
+import { routerAportaciones } from "./rutas/aportaciones.js";
 import { routerCofradias } from "./rutas/cofradias.js";
 import { routerCuenta } from "./rutas/cuenta.js";
 import { routerEstado } from "./rutas/estado.js";
@@ -10,8 +11,8 @@ import { leerSesion } from "./sesion.js";
  * API de Cofradar.
  *
  * Los datos base (jornadas, cofradías, horarios del programa y recorridos) se
- * leen de Supabase. El motor de estado en vivo llega en la fase 4; hasta
- * entonces /api/estado-jornada responde «sin-motor».
+ * leen de Supabase. El estado en vivo lo calcula el motor (motor/, rutas/estado.ts) con el
+ * horario y los «Dar fe» (rutas/aportaciones.ts).
  *
  * Con SERVIR_WEB=1 sirve también la web compilada (frontend/dist), para
  * publicarla con un solo proceso detrás de Apache (ver despliegue/). En
@@ -30,6 +31,7 @@ app.use("/api", leerSesion);
 app.use("/api", routerEstado);
 app.use("/api", routerCofradias);
 app.use("/api", routerCuenta);
+app.use("/api", routerAportaciones);
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

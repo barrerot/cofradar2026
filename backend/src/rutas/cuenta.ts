@@ -27,10 +27,8 @@ routerCuenta.get("/yo", exigirSesion, (_peticion, respuesta) => {
 
 /**
  * Eliminar la cuenta (P-24). Borra el usuario de Supabase Auth, y con él, por `on delete cascade`, sus
- * seguidas y vistas (supabase/esquema.sql). Es inmediato: no hay papelera ni plazo de gracia.
- *
- * Cuando haya aportaciones («Dar fe», fase 4), el hecho observado se conserva sin vínculo con la persona
- * (BUL-223, pendiente de revisión legal antes del lanzamiento): habrá que desligarlas aquí antes de borrar.
+ * seguidas, vistas y aportaciones (supabase/esquema.sql; lo de las aportaciones, decidido por Carlos el
+ * 21/10/2026, a revisar en la consulta legal de BUL-223). Es inmediato: no hay papelera ni plazo de gracia.
  */
 routerCuenta.delete(
   "/yo",
@@ -79,8 +77,7 @@ routerCuenta.get(
 
 /**
  * «Descargar mis datos»: TODO lo que Cofradar guarda de la persona, legible y en un solo fichero JSON.
- * Hoy: la cuenta (de Supabase Auth), las seguidas y las vistas, cada una con cuándo se guardó. Cuando haya
- * aportaciones («Dar fe», fase 4) se añaden aquí.
+ * La cuenta (de Supabase Auth), las seguidas, las vistas y las aportaciones de «Dar fe», con su ubicación.
  */
 routerCuenta.get(
   "/yo/datos",
@@ -88,13 +85,18 @@ routerCuenta.get(
   ruta(async (_peticion, respuesta, usuario) => {
     const { porId } = await hermandadesYEdicion();
     const db = supabase();
-    const [cuenta, seguidas, vistas, nombres] = await Promise.all([
+    const [cuenta, seguidas, vistas, nombres, aportaciones] = await Promise.all([
       db.auth.admin.getUserById(usuario.id),
       db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
       db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
       db.from("hermandad").select("id, nombre"),
+      db
+        .from("aportacion")
+        .select("hermandad_id, elemento, latitud, longitud, precision_m, observada, recibida, puntos_base, bonus")
+        .eq("usuario_id", usuario.id)
+        .order("observada"),
     ]);
-    for (const r of [seguidas, vistas, nombres]) if (r.error) throw r.error;
+    for (const r of [seguidas, vistas, nombres, aportaciones]) if (r.error) throw r.error;
     if (cuenta.error) throw cuenta.error;
     const nombre = new Map((nombres.data ?? []).map((h) => [h.id as number, h.nombre as string]));
     const u = cuenta.data.user;
@@ -105,7 +107,7 @@ routerCuenta.get(
       .json({
         descargado: new Date().toISOString(),
         explicacion:
-          "Todo lo que Cofradar guarda de ti. La cuenta la da Google al entrar; seguidas y vistas, lo que tú has marcado.",
+          "Todo lo que Cofradar guarda de ti. La cuenta la da Google al entrar; seguidas y vistas, lo que tú has marcado; y cada vez que diste fe, con dónde estabas si tu teléfono lo sabía.",
         cuenta: {
           id: u.id,
           correo: u.email ?? null,
@@ -116,6 +118,15 @@ routerCuenta.get(
         },
         seguidas: (seguidas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), desde: f.creada })),
         vistas: (vistas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), anio: f.anio, guardada: f.creada })),
+        dar_fe: (aportaciones.data ?? []).map((f) => ({
+          ...cofradia(f.hermandad_id),
+          // 0 la cruz de guía, 1, 2, 3 los pasos; null, «Estoy viendo la cofradía»
+          elemento: f.elemento,
+          vista: f.observada,
+          recibida: f.recibida,
+          ubicacion: f.latitud === null ? null : { latitud: Number(f.latitud), longitud: Number(f.longitud), precision_m: f.precision_m },
+          puntos: f.puntos_base + f.bonus,
+        })),
       });
   }),
 );

@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { estadoCofradia, type Aportacion } from "../motor/motor.js";
+import { estadoCofradia, MEMORIA, type Aportacion, type Resultado, type SalidaMotor } from "../motor/motor.js";
+import { supabase } from "../supabase.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "../motor/tiempo.js";
-import { mapa, ruta, type CofradiaMapa } from "./cofradias.js";
+import { hermandadesYEdicion, mapa, ruta, type CofradiaMapa } from "./cofradias.js";
 
 /**
  * Estado de la jornada.
@@ -29,40 +30,87 @@ routerEstado.get("/estado-jornada", (_peticion, respuesta) => {
   });
 });
 
+/** Más imprecisa que esto, la ubicación del teléfono no sirve para situar un elemento (sí como presencia). */
+const PRECISION_MAXIMA = 100;
+
 /**
- * Las aportaciones de «Dar fe» de esas salidas.
- *
- * TODAVÍA NO SE GUARDAN: la tabla de aportaciones es una entidad nueva y, como dice MODELO.md
- * («Abierto», 7), se propone a Carlos con su caso de uso antes de crearla. Hasta entonces el motor
- * funciona solo con el horario: todo sale `estimado`.
+ * Las aportaciones de «Dar fe» de esas cofradías que le sirven al motor: las plausibles de las dos
+ * últimas horas, con su hora llevada al programa (tiempo.ts). Las hechas con el reloj de prueba solo
+ * cuentan cuando se mira con el reloj de prueba.
  */
-async function aportaciones(_salidas: CofradiaMapa[]): Promise<Map<string, Aportacion[]>> {
-  return new Map();
+async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: boolean): Promise<Map<string, Aportacion[]>> {
+  const { porSlug, porId } = await hermandadesYEdicion();
+  const ids = lista.map((c) => porSlug.get(c.id)).filter((x): x is number => x !== undefined);
+  let consulta = supabase()
+    .from("aportacion")
+    .select("id, usuario_id, hermandad_id, elemento, latitud, longitud, precision_m, observada")
+    .in("hermandad_id", ids)
+    .eq("plausible", true)
+    .gte("observada", new Date(instante.getTime() - MEMORIA).toISOString())
+    .lte("observada", instante.toISOString());
+  if (!conPruebas) consulta = consulta.eq("de_prueba", false);
+  const { data, error } = await consulta;
+  if (error) throw error;
+  const anio = new Map(lista.map((c) => [c.id, c.anio]));
+  const res = new Map<string, Aportacion[]>();
+  for (const f of data ?? []) {
+    const id = porId.get(f.hermandad_id);
+    if (!id) continue;
+    const fiable = f.latitud !== null && f.longitud !== null && (f.precision_m ?? 0) <= PRECISION_MAXIMA;
+    const lista_ = res.get(id) ?? [];
+    lista_.push({
+      id: f.id,
+      usuario: f.usuario_id,
+      t: ahoraEnPrograma(new Date(f.observada), anio.get(id)!),
+      elemento: f.elemento,
+      punto: fiable ? [Number(f.longitud), Number(f.latitud)] : null,
+    });
+    res.set(id, lista_);
+  }
+  return res;
+}
+
+/**
+ * Lo que el motor ha hecho con cada aportación se apunta en ella, para el bonus (4.13) y para «contribuyó
+ * a la posición» en Mis aportaciones. «Consolidada» ya no se quita: lo que ayudó, ayudó.
+ */
+const anotados = new Map<string, Resultado>();
+async function anotarResultados(resultados: Record<string, Resultado>) {
+  if (anotados.size > 50_000) anotados.clear();
+  const cambios = Object.entries(resultados).filter(([id, r]) => anotados.get(id) !== r && anotados.get(id) !== "consolidada");
+  for (const [id, r] of cambios) {
+    anotados.set(id, r);
+    const consulta = supabase().from("aportacion").update({ resultado: r }).eq("id", id);
+    const { error } = await (r === "consolidada" ? consulta : consulta.or("resultado.is.null,resultado.neq.consolidada"));
+    if (error) console.error(error);
+  }
 }
 
 const CADA_MS = 30_000;
 const memoria = new Map<string, { hasta: number; datos: Promise<unknown> }>();
 
-async function calcular(jornada: number, instante: Date) {
+/** Una cofradía del mapa, como la quiere el motor (horas del programa). */
+export function salidaMotor(c: CofradiaMapa): SalidaMotor {
+  const situadas = (hs: CofradiaMapa["cruzGuia"]) => hs.filter((h) => h.m !== null).map((h) => ({ t: msPrograma(h.hora), m: h.m! }));
+  return {
+    id: c.id,
+    pasos: c.nombresPasos,
+    linea: c.linea,
+    cruz: situadas(c.cruzGuia),
+    ultimo: situadas(c.ultimoPaso),
+    salida: c.cruzGuia[0] ? msPrograma(c.cruzGuia[0].hora) : null,
+    entrada: c.ultimoPaso.length ? msPrograma(c.ultimoPaso[c.ultimoPaso.length - 1]!.hora) : null,
+    estadoAdmin: c.estado,
+  };
+}
+
+async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
   const lista = await mapa(jornada);
-  const porCofradia = await aportaciones(lista);
+  const porCofradia = await aportaciones(lista, instante, conPruebas);
   const cofradias = lista.map((c) => {
     const ahora = ahoraEnPrograma(instante, c.anio);
-    const situadas = (hs: CofradiaMapa["cruzGuia"]) => hs.filter((h) => h.m !== null).map((h) => ({ t: msPrograma(h.hora), m: h.m! }));
-    const e = estadoCofradia(
-      {
-        id: c.id,
-        pasos: c.nombresPasos,
-        linea: c.linea,
-        cruz: situadas(c.cruzGuia),
-        ultimo: situadas(c.ultimoPaso),
-        salida: c.cruzGuia[0] ? msPrograma(c.cruzGuia[0].hora) : null,
-        entrada: c.ultimoPaso.length ? msPrograma(c.ultimoPaso[c.ultimoPaso.length - 1]!.hora) : null,
-        estadoAdmin: c.estado,
-      },
-      porCofradia.get(c.id) ?? [],
-      ahora,
-    );
+    const e = estadoCofradia(salidaMotor(c), porCofradia.get(c.id) ?? [], ahora);
+    void anotarResultados(e.resultados);
     const real = (t: number | null) => (t === null ? null : aReal(t, ahora, instante).toISOString());
     // `resultados` es interno (para los puntos): no sale
     return {
@@ -98,11 +146,12 @@ routerEstado.get(
     }
     // Todos los que piden en los mismos 30 segundos comparten el cálculo
     const instante = new Date(Math.floor(pedido.getTime() / CADA_MS) * CADA_MS);
-    const clave = `${jornada}|${instante.getTime()}`;
+    const conPruebas = peticion.query.ahora !== undefined || peticion.query.desfase !== undefined;
+    const clave = `${jornada}|${instante.getTime()}|${conPruebas}`;
     let guardado = memoria.get(clave);
     if (!guardado || guardado.hasta < Date.now()) {
       for (const [k, v] of memoria) if (v.hasta < Date.now()) memoria.delete(k);
-      guardado = { hasta: Date.now() + CADA_MS, datos: calcular(jornada, instante) };
+      guardado = { hasta: Date.now() + CADA_MS, datos: calcular(jornada, instante, conPruebas) };
       memoria.set(clave, guardado);
       guardado.datos.catch(() => memoria.delete(clave));
     }

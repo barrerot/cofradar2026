@@ -6,10 +6,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Cabecera, Icono, Marco, TRAZOS } from "../marco";
 import { useJornada } from "../datos/jornada";
-import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia, type EstadoJornadaMotor } from "../datos/mapa";
-import { desfaseReloj } from "../datos/reloj";
+import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
+import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia } from "../datos/mapa";
 import { useRelaciones } from "../datos/relaciones";
-import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
 import { estiloCofradar } from "../mapa/estilo";
 import "../mapa/worker";
@@ -39,9 +38,8 @@ const SEVILLA: [number, number] = [-5.9925, 37.3891];
 export function Mapa({ estado }: { estado: EstadoJornada }) {
   const { hoy, consultada } = useJornada();
   const jornada = hoy ?? consultada;
-  const datos = useDato<CofradiaMapa[]>(jornada ? `/jornadas/${jornada.id}/mapa` : "/jornadas/0/mapa", { cadaMs: 600_000 });
-  const desfase = desfaseReloj();
-  const motor = useDato<EstadoJornadaMotor>(`/jornadas/${jornada?.id ?? 0}/estado${desfase ? `?desfase=${desfase}` : ""}`, { cadaMs: 30_000 });
+  const datos = useMapaJornada(jornada?.id);
+  const motor = useEstadoJornada(jornada?.id);
   const relaciones = useRelaciones();
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [sinTeselas, setSinTeselas] = useState(false);
@@ -169,7 +167,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     <Marco
       sangrado="completo"
       cabecera={<Cabecera principal={<SelectorJornada />} />}
-      accion={estado.activa ? <DarFe /> : undefined}
+      accion={estado.activa ? <DarFe cofradia={elegida?.c.id} /> : undefined}
       sheet={
         <BottomSheet abierto={!!elegida} titulo={elegida?.c.nombre ?? ""} modo="convive" alturaInicial="asomado" alCerrar={() => setSeleccion(null)}>
           {elegida ? <VistaRapida c={elegida.c} s={elegida.s} /> : null}

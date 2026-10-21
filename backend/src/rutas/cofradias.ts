@@ -314,6 +314,12 @@ export function mapa(jornada: number, anio?: number): Promise<CofradiaMapa[]> {
   return guardado.datos as Promise<CofradiaMapa[]>;
 }
 
+/** Lo mismo, de una sola cofradía (por su id público), buscando antes su jornada. */
+export async function cofradiaMapa(id: string): Promise<CofradiaMapa | undefined> {
+  const s = (await salidas()).find((x) => slug(x.hermandad.nombre) === id);
+  return s ? (await mapa(s.jornada.id)).find((c) => c.id === id) : undefined;
+}
+
 routerCofradias.get(
   "/jornadas/:id/mapa",
   ruta(async (peticion, respuesta) => {

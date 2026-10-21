@@ -1,0 +1,338 @@
+/* ── «Dar fe» (P-14 a P-18; 6-dar-fe/) ────────────────────────────────────
+   Hoja alta sobre la pantalla en la que se está (la base es .cf-hoja-decision):
+   la pregunta arriba y las opciones abajo, al alcance del pulgar. */
+
+.cf-darfe {
+  display: flex;
+  flex-direction: column;
+  min-height: min(85dvh, 46rem);
+}
+
+.cf-darfe .cf-handle {
+  margin-bottom: var(--cf-space-2);
+}
+
+.cf-darfe-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 calc(-1 * var(--cf-space-2)) var(--cf-space-3);
+}
+
+.cf-darfe h2 {
+  margin: 0;
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-darfe h2:focus {
+  outline: none;
+}
+
+.cf-darfe-cofradia {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin: 0 0 var(--cf-space-1);
+  font-size: var(--cf-text-xl);
+}
+
+/* Las opciones bajan al fondo de la hoja, donde llega el pulgar */
+.cf-darfe-opciones {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin-top: auto;
+  padding-top: var(--cf-space-8);
+}
+
+.cf-darfe-opciones > .cf-btn {
+  width: 100%;
+}
+
+.cf-darfe-seccion {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-darfe-lista {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-darfe-opcion {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--cf-space-2) var(--cf-space-3);
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-darfe-opcion:active {
+  background: var(--cf-surface-sunken);
+}
+
+.cf-darfe-opcion:focus-visible {
+  outline: var(--cf-focus-ring-width, 3px) solid var(--cf-focus, var(--cf-text));
+  outline-offset: 2px;
+}
+
+.cf-darfe-opcion > .cf-icon,
+.cf-darfe-opcion > svg {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+/* P-15: marca · nombre · distancia, y debajo los chips */
+.cf-darfe-opcion-cab {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr auto;
+  align-items: baseline;
+  gap: var(--cf-space-2);
+}
+
+.cf-darfe-opcion-cab .cf-name {
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-darfe-marca {
+  align-self: center;
+  display: flex;
+}
+
+.cf-darfe-dist {
+  font-size: var(--cf-text-base);
+  white-space: nowrap;
+}
+
+.cf-darfe-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2);
+  padding-left: calc(1.5rem + var(--cf-space-2));
+}
+
+.cf-darfe-chips .cf-alts {
+  display: contents;
+}
+
+/* P-16: en llano y, debajo, el término cofrade en cursiva */
+.cf-darfe-opcion-texto {
+  display: grid;
+  gap: var(--cf-space-1);
+}
+
+.cf-darfe-llano {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-darfe-cofrade {
+  font-style: italic;
+  color: var(--cf-text-secondary);
+}
+
+.cf-darfe-todas {
+  justify-self: start;
+  min-height: 3rem;
+  padding: 0 var(--cf-space-2);
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+/* P-17 */
+.cf-darfe-resumen {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-darfe-resumen-que {
+  margin: 0;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-darfe-minimapa {
+  height: 10rem;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+  overflow: hidden;
+  background: var(--cf-map-land, var(--cf-surface-sunken));
+}
+
+.cf-darfe-sin-ubicacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-2);
+  padding: var(--cf-space-3);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+}
+
+.cf-darfe-sin-ubicacion p {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin: 0;
+}
+
+.cf-darfe .cf-darfe-nota {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+/* P-14 */
+.cf-darfe .cf-darfe-guia-lema {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-darfe-guia {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding-left: var(--cf-space-6);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+/* ── P-18 Hecho: panel compacto, NO pantalla completa. Sin capa oscura: la
+   pantalla de debajo sigue a la vista y se puede usar. Registro editorial. */
+.cf-darfe-hecho {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--cf-z-toast);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--cf-space-4);
+  align-items: start;
+  padding: var(--cf-space-6) var(--cf-space-4) calc(var(--cf-space-8) + env(safe-area-inset-bottom, 0px));
+  background: var(--cf-bg);
+  animation: cf-marco-subir var(--cf-dur-sheet) var(--cf-ease-out);
+}
+
+@media (min-width: 40rem) {
+  .cf-darfe-hecho {
+    left: 50%;
+    right: auto;
+    width: min(100%, 30rem);
+    transform: translateX(-50%);
+    animation-name: cf-marco-aparecer;
+  }
+}
+
+.cf-darfe-hecho > .cf-btn {
+  position: absolute;
+  top: var(--cf-space-2);
+  right: var(--cf-space-2);
+}
+
+.cf-darfe-sello {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-brand);
+  color: var(--cf-text-inverse);
+  animation: cf-darfe-sello var(--cf-dur-sheet) var(--cf-ease-out) both;
+  animation-delay: 120ms;
+}
+
+.cf-darfe-sello[data-pendiente="si"] {
+  background: var(--cf-surface-sunken);
+  color: var(--cf-text);
+  animation: none;
+}
+
+@keyframes cf-darfe-sello {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.cf-darfe-hecho p {
+  margin: 0;
+}
+
+.cf-darfe-hecho-titulo {
+  padding-right: var(--cf-space-8);
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-3xl);
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.cf-darfe-hecho-que {
+  margin-top: var(--cf-space-2) !important;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-darfe-puntos {
+  margin-top: var(--cf-space-3) !important;
+  color: var(--cf-brand);
+  font-size: var(--cf-text-2xl);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-darfe-hecho-nota {
+  margin-top: var(--cf-space-2) !important;
+  color: var(--cf-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-darfe-hecho,
+  .cf-darfe-sello {
+    animation: none;
+  }
+}
+
+/* El nombre va en la misma línea que el resto («La Macarena · Cruz de guía · 02:40») */
+.cf-darfe-resumen-que .cf-name,
+.cf-darfe-hecho-que .cf-name {
+  display: inline;
+  font-size: inherit;
+}

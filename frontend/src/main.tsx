@@ -6,6 +6,7 @@ import { ActividadProvider } from "./datos/actividad";
 import { JornadaProvider } from "./datos/jornada";
 import { RelacionesProvider } from "./datos/relaciones";
 import { SesionProvider } from "./datos/sesion";
+import { DarFeProvider } from "./rutas/FlujoDarFe";
 import { SincronizacionProvider } from "./datos/sincronizacion";
 import { registrarServiceWorker } from "./pwa";
 import { iniciarTema } from "./tema";
@@ -23,6 +24,7 @@ import "./estilos/relleno.css";
 import "./estilos/estados.css";
 import "./estilos/ajustes.css";
 import "./estilos/ayuda.css";
+import "./estilos/dar-fe.css";
 import "./estilos/logo-animado.css";
 import "./estilos/introduccion.css";
 import "./estilos/ficha.css";
@@ -57,7 +59,9 @@ createRoot(raiz).render(
           <JornadaProvider>
             <ActividadProvider>
               <Router>
-                <App />
+                <DarFeProvider>
+                  <App />
+                </DarFeProvider>
               </Router>
             </ActividadProvider>
           </JornadaProvider>

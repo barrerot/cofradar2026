@@ -140,7 +140,7 @@ Los puntos sin coordenadas no son error: durante el inventario se cuentan aparte
 
 ## GPS social · concepto
 
-**Estado (21/10/2026): el motor está hecho y funciona solo con el horario; las aportaciones todavía no se guardan** (ver «Motor» al final). «GPS social» es el nombre interno del sistema que estima dónde va cada elemento del cortejo a partir de lo que ven los usuarios, sin dispositivos en los pasos. Para el usuario, la acción es **«Dar fe»** (`design.md`, D20); en la interfaz no se habla de «check-in».
+**Estado (21/10/2026): el motor está hecho y ya recibe los «Dar fe»** (ver «Motor» y «Aportaciones» al final). «GPS social» es el nombre interno del sistema que estima dónde va cada elemento del cortejo a partir de lo que ven los usuarios, sin dispositivos en los pasos. Para el usuario, la acción es **«Dar fe»** (`design.md`, D20); en la interfaz no se habla de «check-in».
 
 ### Principio
 
@@ -253,7 +253,7 @@ BUL-169 (el recorrido de cada cofradía sobre el callejero) se da por hecha con 
 
 ### Aprobado
 
-- Siguen las **ocho entidades**. No hay tablas nuevas de aportaciones, posiciones estimadas ni geometrías.
+- Siguen las **ocho entidades** de la transcripción. La única tabla nueva es `aportacion` (aprobada el 21/10/2026, ver «Aportaciones»). Las posiciones estimadas no se guardan: el motor las calcula cada vez.
 - Cada salida tiene su recorrido como una sola línea continua, ordenada y orientada, en un GeoJSON aparte (`docs/datos/itinerarios/<año>/`). Las horas siguen en `punto_itinerario`.
 - Cada `PUNTO_GEOGRAFICO` tiene su geometría en GeoJSON, en el archivo aparte `punto_geografico.geojson` enlazado por `id`. `latitud` y `longitud` siguen en el CSV como punto representativo.
 - Un registro por lugar. La geometría sale de OpenStreetMap, con revisión manual de las coincidencias ambiguas.
@@ -275,7 +275,7 @@ BUL-169 (el recorrido de cada cofradía sobre el callejero) se da por hecha con 
 4. **Fiabilidad de la hora diferida.** Falta decidir cómo se juzga una hora de observación que no se da por fiable automáticamente.
 5. **Evidencia sin ubicación.** Falta decidir cómo pesa en la fase y en la presencia una aportación sin coordenadas fiables, o una genérica «Estoy viendo la cofradía».
 6. **Cuándo varias observaciones son «independientes»** y cuántas hacen falta para corregir una estimación.
-7. **Dónde se guardan aportaciones y posiciones estimadas.** El PRD ya nombra la Aportación, que guarda por separado el registro personal y el valor colaborativo. Su estructura se propondrá cuando se defina el motor, con un caso de uso concreto y pidiendo aprobación antes de crear ninguna entidad.
+7. **Dónde se guardan aportaciones y posiciones estimadas.** *Resuelto el 21/10/2026:* tabla `aportacion` (ver «Aportaciones»). Las posiciones no se guardan.
 8. **«Cómo se calcula la posición» del PRD.** Sigue hablando de «punto de control» y de «la línea del itinerario». Se revisará cuando se resuelva el punto 3.
 
 ### Motor (4.1 a 4.3, 21/10/2026)
@@ -290,4 +290,20 @@ Código en `backend/src/motor/` y pruebas en `motor.test.ts` (`npm test -w backe
 - **Confianza:** confirmado hasta 10 min desde la última aportación que consolidó, desactualizado hasta 30 min y estimado después.
 - **Alteraciones:** retraso o adelanto a partir de 10 min, redondeado a 5.
 - **Todas las cifras son candidatas a calibrar.**
-- **Falta:** guardar las aportaciones (se propone la tabla antes de crearla, como dice el punto 7 de «Abierto»), inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`, y la reputación.
+- **Falta:** inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`, y la reputación.
+
+### Aportaciones (21/10/2026)
+
+Tabla `aportacion` en `backend/supabase/esquema.sql`, aprobada por Carlos. Cada «Dar fe» es una fila.
+
+- **Registro personal:**
+  - quién, qué cofradía y qué elemento (0 la cruz, 1 a 3 los pasos; vacío es «Estoy viendo la cofradía»);
+  - dónde estaba, si el teléfono lo sabía, y con qué precisión;
+  - cuándo lo vio y cuándo llegó al servidor;
+  - los puntos base.
+- **Valor colaborativo:** `resultado` (consolidada, sin resolver, contradicha o fuera del cálculo) y `bonus`. Lo escribe el motor y nunca se enseña como «rechazada».
+- **Ejemplo:** «Ana, a las 03:30, da fe del segundo paso de La Macarena desde la calle Sierpes».
+- **Se guarda siempre.** Los cuatro controles del momento (`backend/src/motor/plausibilidad.ts`: repetición, teletransporte, ritmo y ventana de la jornada) solo deciden si da los 10 puntos base y si el motor la usa.
+- **El motor solo usa las plausibles.** Si la ubicación tiene más de 100 m de margen, solo cuenta como presencia.
+- **Al borrar la cuenta se borran sus aportaciones**, y salen en «Descargar mis datos». Guardar la ubicación entra en la consulta legal de BUL-223.
+- **`de_prueba`** marca las hechas con el reloj de prueba (`?ahora=`). Se borran antes del lanzamiento.

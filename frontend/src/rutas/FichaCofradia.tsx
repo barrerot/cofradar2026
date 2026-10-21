@@ -57,7 +57,7 @@ export function FichaCofradia({ estado }: { estado: EstadoJornada }) {
     <PantallaSecundaria
       registro="editorial"
       vuelta={{ etiqueta: "Cofradías", ruta: "/cofradias" }}
-      accion={estado.activa ? <DarFe /> : undefined}
+      accion={estado.activa ? <DarFe cofradia={id} /> : undefined}
     >
       <SegunDato dato={ficha} esqueleto={<Esqueleto forma="lista" />}>
         {(f) => <Contenido ficha={f} />}

@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "cargar:datos": "tsx scripts/cargar-supabase.ts",
-    "test": "tsx --test src/motor/*.test.ts"
+    "test": "tsx --test src/motor/*.test.ts",
+    "esquema": "tsx scripts/aplicar-esquema.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",

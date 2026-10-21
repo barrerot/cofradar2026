@@ -126,3 +126,39 @@ create table if not exists vista (
 
 alter table seguida enable row level security;
 alter table vista   enable row level security;
+
+-- ── Las aportaciones de «Dar fe» (aprobada por Carlos el 21/10/2026; MODELO.md, «Abierto», 7) ──
+-- Una fila por cada vez que alguien da fe. Guarda por separado el REGISTRO PERSONAL (quién, qué, cuándo,
+-- desde dónde, y sus puntos base, que no cambian nunca) y el VALOR COLABORATIVO que le da el motor
+-- (`resultado` y `bonus`), que se calcula después y nunca se enseña como «rechazada».
+-- Como `seguida` y `vista`: sin clave ajena a `hermandad` y borrada con la cuenta.
+create table if not exists aportacion (
+  id            uuid primary key default gen_random_uuid(),
+  usuario_id    uuid not null references auth.users (id) on delete cascade,
+  -- El id que le pone el teléfono: si la reenvía (sin conexión, reintentos), no se duplica
+  cliente_id    text not null,
+  hermandad_id  integer not null,
+  -- 0 la cruz de guía, 1..3 los pasos en el orden del cortejo; null es «Estoy viendo la cofradía»
+  elemento      smallint check (elemento between 0 and 3),
+  -- Dónde estaba quien dio fe, si el teléfono lo sabía, y con qué precisión (metros)
+  latitud       numeric(8, 5),
+  longitud      numeric(8, 5),
+  precision_m   integer,
+  -- Cuándo lo vio (lo dice el teléfono, no se da por fiable sin más) y cuándo llegó aquí
+  observada     timestamptz not null,
+  recibida      timestamptz not null default now(),
+  -- Los cuatro controles del momento (BUL-186): si los supera, puntos base
+  plausible     boolean not null,
+  puntos_base   integer not null default 0,
+  -- Lo que hizo el motor con ella: consolidada, sin_resolver, contradicha o fuera_del_calculo
+  resultado     text,
+  bonus         integer not null default 0,
+  -- Hecha con el reloj de prueba (?ahora=): se borra antes del lanzamiento
+  de_prueba     boolean not null default false,
+  unique (usuario_id, cliente_id)
+);
+
+create index if not exists aportacion_hermandad on aportacion (hermandad_id, observada);
+create index if not exists aportacion_usuario on aportacion (usuario_id, observada);
+
+alter table aportacion enable row level security;
