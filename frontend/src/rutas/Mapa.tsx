@@ -13,6 +13,7 @@ import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofrad
 import { useRelaciones } from "../datos/relaciones";
 import type { EstadoJornada } from "../fixture";
 import { estiloCofradar } from "../mapa/estilo";
+import { agrupar, alBorde, rumbo } from "../mapa/agrupar";
 import "../mapa/worker";
 import { DarFe } from "./DarFe";
 import { SelectorJornada } from "./SelectorJornada";
@@ -51,9 +52,14 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   const [seleccion, setSeleccion] = useState<string | null>(() => params.get("cofradia"));
   // El elemento tocado de la elegida (P-09, 4.6): 0 la cruz, 1..n los pasos; null, la cofradía entera
   const [elemento, setElemento] = useState<number | null>(null);
+  // Un grupo de marcas que se pisaban, tocado: la hoja lista sus cofradías para elegir
+  const [grupo, setGrupo] = useState<string[] | null>(null);
+  // Las tuyas (seguidas, vistas) que no caben en pantalla, con su etiqueta en el borde
+  const [fuera, setFuera] = useState<Fuera[]>([]);
   const elegir = (id: string | null, orden: number | null = null) => {
     setSeleccion(id);
     setElemento(orden);
+    setGrupo(null);
   };
   const [sinTeselas, setSinTeselas] = useState(false);
   const caja = useRef<HTMLDivElement>(null);
@@ -103,6 +109,9 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     });
     mapa.current = m;
 
+    // Lo que se pisa y lo que no cabe depende de dónde se mira: se recalcula al terminar cada movimiento
+    m.on("moveend", () => pintarMarcas.current());
+
     // Los cortejos se ponen encima cada vez que se carga un estilo (el primero y los de cambio de tema)
     m.on("style.load", () => pintarCortejos(m, tramos.current, recorrido.current));
 
@@ -151,11 +160,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     if (m.isStyleLoaded()) pintarCortejos(m, tramos.current, recorrido.current);
     else m.once("idle", () => pintarCortejos(m, tramos.current, recorrido.current));
 
-    marcas.current.forEach((x) => x.remove());
-    marcas.current = [
-      ...situaciones.flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), c.id === seleccion ? elemento : null, (orden) => elegir(c.id, orden))),
-      ...(elegida_ && jornada ? crearHitos(elegida_.c, elegida_.s, jornada) : []),
-    ].map((el) => el.addTo(m));
+    pintarMarcas.current();
 
     // La primera vez con cofradías en la calle, se encuadran todas
     if (!encuadrado.current && situaciones.length) {
@@ -168,7 +173,69 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
         m.fitBounds(b, { padding: { top: 72, bottom: 72, left: 48, right: 160 }, maxZoom: 16, duration: 0 });
       }
     }
-  }, [situaciones, relaciones, seleccion, elemento, jornada]);
+  }, [situaciones, relaciones, seleccion, elemento, jornada, grupo]);
+
+  /**
+   * Las marcas, con lo que se pisa agrupado (07-4, 08-4): las cofradías cuyas cabezas caen a menos de
+   * un dedo en pantalla se juntan en un círculo con cuántas son y su alteración más grave. La elegida
+   * nunca se agrupa. Y las tuyas que no caben en pantalla, como etiqueta en el borde («al noreste»).
+   * Va en una referencia porque la llama también el mapa al terminar de moverse.
+   */
+  const pintarMarcas = useRef<() => void>(() => {});
+  pintarMarcas.current = () => {
+    const m = mapa.current;
+    if (!m) return;
+    const cabeza = ({ c, s }: (typeof situaciones)[number]) => (s.fase.valor === "inminente" ? c.linea[0] : s.elementos[0]?.punto);
+    const sueltas = situaciones.filter((x) => x.c.id !== seleccion && cabeza(x));
+    const grupos = agrupar(
+      sueltas.map((x) => {
+        const p = m.project(cabeza(x)!);
+        return { id: x.c.id, x: p.x, y: p.y };
+      }),
+      RADIO_GRUPO,
+    ).filter((g) => g.length > 1);
+    const agrupadas = new Set(grupos.flat().map((p) => p.id));
+    const elegida_ = situaciones.find(({ c }) => c.id === seleccion);
+
+    marcas.current.forEach((x) => x.remove());
+    marcas.current = [
+      ...situaciones
+        .filter(({ c }) => !agrupadas.has(c.id))
+        .flatMap(({ c, s }) => crearMarcas(c, s, relaciones.marca(c.id), c.id === seleccion ? elemento : null, (orden) => elegir(c.id, orden))),
+      ...grupos.map((g) => {
+        const miembros = g.map((p) => situaciones.find(({ c }) => c.id === p.id)!);
+        const centro = m.unproject([g.reduce((a, p) => a + p.x, 0) / g.length, g.reduce((a, p) => a + p.y, 0) / g.length]);
+        return crearGrupo(miembros, [centro.lng, centro.lat], () => {
+          const puntos = miembros.flatMap(({ c, s }) => (s.elementos.length ? s.elementos.map((e) => e.punto) : [c.linea[0]!]));
+          const b = puntos.reduce((acc, p) => acc.extend(p), new maplibregl.LngLatBounds(puntos[0]!, puntos[0]!));
+          m.fitBounds(b, { padding: { top: 64, bottom: Math.round(window.innerHeight * 0.35), left: 48, right: 48 }, maxZoom: 18, duration: 500 });
+          setSeleccion(null);
+          setElemento(null);
+          setGrupo(miembros.map(({ c }) => c.id));
+        });
+      }),
+      ...(elegida_ && jornada ? crearHitos(elegida_.c, elegida_.s, jornada) : []),
+    ].map((el) => el.addTo(m));
+
+    // Fuera del mapa: solo las tuyas, para no llenar los bordes de nombres
+    const lienzo = m.getCanvas();
+    const [ancho, alto] = [lienzo.clientWidth, lienzo.clientHeight];
+    const hoja = seleccion || grupo ? alto * 0.3 : 24;
+    setFuera(
+      situaciones.flatMap((x) => {
+        const punto = cabeza(x);
+        if (!punto || x.c.id === seleccion || !relaciones.marca(x.c.id)) return [];
+        const p = m.project(punto);
+        if (p.x >= 0 && p.x <= ancho && p.y >= 0 && p.y <= alto - hoja) return [];
+        const [dx, dy] = [p.x - ancho / 2, p.y - alto / 2];
+        const pos = alBorde(dx, dy, ancho, alto, { arriba: 24, abajo: hoja + 24, lados: 16 });
+        const cuando = x.s.fase.valor === "inminente" && x.s.sale ? hora(x.s.sale) : "en la calle";
+        // La etiqueta se apoya en el lado hacia el que queda: a la derecha, crece hacia dentro desde el borde
+        const lado = dx > ancho / 6 ? "derecha" : dx < -ancho / 6 ? "izquierda" : "centro";
+        return [{ id: x.c.id, texto: `${x.c.nombre} · ${cuando} · ${rumbo(dx, dy)}`, x: lado === "derecha" ? ancho - 16 : lado === "izquierda" ? 16 : pos.x, y: pos.y, relacion: relaciones.marca(x.c.id)!, lado }];
+      }),
+    );
+  };
 
   // Al elegir una cofradía, se encuadra su recorrido entero, dejando sitio abajo a la hoja
   const encuadrada = useRef<string | null>(null);
@@ -224,13 +291,21 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
       accion={estado.activa ? <DarFe cofradia={elegida?.c.id} elemento={elementoElegido?.orden} /> : undefined}
       sheet={
         <BottomSheet
-          abierto={!!elegida}
-          titulo={elegida ? (elementoElegido ? `${nombreElemento(elegida.c, elementoElegido.orden)} de ${elegida.c.nombre}` : elegida.c.nombre) : ""}
+          abierto={!!elegida || !!grupo}
+          titulo={
+            elegida
+              ? elementoElegido
+                ? `${nombreElemento(elegida.c, elementoElegido.orden)} de ${elegida.c.nombre}`
+                : elegida.c.nombre
+              : `${grupo?.length ?? 0} cofradías aquí`
+          }
           modo="convive"
-          alturaInicial={elementoElegido ? "medio" : "asomado"}
+          alturaInicial={elementoElegido || grupo ? "medio" : "asomado"}
           alCerrar={() => elegir(null)}
         >
-          {elegida && jornada ? (
+          {!elegida && grupo ? (
+            <ListaGrupo situaciones={situaciones.filter(({ c }) => grupo.includes(c.id))} alElegir={(id) => elegir(id)} />
+          ) : elegida && jornada ? (
             elementoElegido ? (
               <DetalleElemento c={elegida.c} s={elegida.s} el={elementoElegido} jornada={jornada} alVolver={() => setElemento(null)} />
             ) : (
@@ -252,6 +327,19 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
             Ahora no hay ninguna cofradía en la calle.
           </p>
         ) : null}
+        {fuera.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            className="cf-mapa-fuera"
+            style={{ left: f.x, top: f.y }}
+            data-lado={f.lado}
+            onClick={() => elegir(f.id)}
+          >
+            <span className="cf-mapa-rel" data-relacion={f.relacion} />
+            {f.texto}
+          </button>
+        ))}
         {conCentrar ? (
           <button type="button" className="cf-locate" aria-label="Centrar en mi ubicación" onClick={centrar}>
             <Icono nombre="centrar" tamano={24} />
@@ -337,6 +425,60 @@ function crearMarcas(
     if (cabeza) nombre(cabeza.punto, alteracion(s));
   }
   return res;
+}
+
+type Fuera = { id: string; texto: string; x: number; y: number; relacion: string; lado: "izquierda" | "centro" | "derecha" };
+
+/** Un dedo: a menos de esto en pantalla, dos marcas se pisan. */
+const RADIO_GRUPO = 44;
+
+/** Una alteración, de más a menos grave, para el distintivo del grupo (la más grave manda). */
+const GRAVEDAD = ["interrumpida", "incidencia", "regreso_anticipado", "cambio_recorrido", "retraso", "adelanto"];
+
+/** El círculo de un grupo: cuántas son y, si alguna lleva alteración, la más grave. */
+function crearGrupo(miembros: { c: CofradiaMapa; s: EstadoCofradia }[], centro: [number, number], alTocar: () => void): maplibregl.Marker {
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "cf-mapa-grupo";
+  el.setAttribute("aria-label", `${miembros.length} cofradías juntas: ${miembros.map(({ c }) => c.nombre).join(", ")}`);
+  const alteraciones = miembros.flatMap(({ s }) => s.alteraciones.map((a) => a.tipo as string));
+  const grave = GRAVEDAD.find((g) => alteraciones.includes(g));
+  const trazo = grave ? (TRAZOS as Record<string, string>)[grave === "regreso_anticipado" ? "regresoAnticipado" : grave === "cambio_recorrido" ? "cambioRecorrido" : grave] : undefined;
+  el.innerHTML = `<span class="n"></span>${trazo ? `<span class="alt" data-alteracion="${grave}"><svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="${trazo}"/></svg></span>` : ""}`;
+  el.querySelector(".n")!.textContent = String(miembros.length);
+  el.addEventListener("click", (e) => {
+    e.stopPropagation();
+    alTocar();
+  });
+  return new maplibregl.Marker({ element: el }).setLngLat(centro);
+}
+
+/** La hoja de un grupo (08-4): sus cofradías, en el orden de su próxima hora, para elegir una. */
+function ListaGrupo({ situaciones, alElegir }: { situaciones: { c: CofradiaMapa; s: EstadoCofradia }[]; alElegir: (id: string) => void }) {
+  const relaciones = useRelaciones();
+  const orden = [...situaciones].sort((a, b) => Date.parse(a.s.entra ?? "") - Date.parse(b.s.entra ?? ""));
+  return (
+    <ul className="cf-mapa-grupo-lista">
+      {orden.map(({ c, s }) => {
+        const m = relaciones.marca(c.id);
+        return (
+          <li key={c.id}>
+            <button type="button" onClick={() => alElegir(c.id)}>
+              <span className="cab">
+                {m ? <span className="cf-mapa-rel" data-relacion={m} /> : null}
+                <span className="cf-name">{c.nombre}</span>
+              </span>
+              <span className="chips">
+                <ChipEstado fase={s.fase.valor} confianza={s.fase.confianza} antiguedad={s.fase.haceMin !== null ? `hace ${s.fase.haceMin} min` : undefined} tamano="24" />
+                <Alteraciones alteraciones={s.alteraciones} densidad="compacta" confianza={s.fase.confianza} />
+              </span>
+              <Icono nombre="chevronDerecha" tamano={20} />
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 /** Las fases que se ven en el mapa. */
