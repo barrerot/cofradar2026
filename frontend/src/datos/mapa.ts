@@ -8,7 +8,8 @@
  *
  * Aquí no se calcula ninguna posición: solo se dibuja el trozo de recorrido entre la cabeza y la cola.
  */
-export type HoraSituada = { hora: string; publicada: boolean; lugar: string; m: number | null };
+/** `carrera`: el lugar es de la carrera oficial (hitos de la ciudad, 5.4). */
+export type HoraSituada = { hora: string; publicada: boolean; lugar: string; carrera: boolean; m: number | null };
 export type CofradiaMapa = {
   id: string;
   nombre: string;
@@ -17,6 +18,8 @@ export type CofradiaMapa = {
   provisional: boolean;
   /** Los nombres de los pasos, en el orden del cortejo («Primer paso», «Paso»…). */
   nombresPasos: string[];
+  /** Cada paso en llano según su tipo («El paso de la Virgen»), o null mientras no se sepa. */
+  llanoPasos: (string | null)[];
   linea: [number, number][];
   cruzGuia: HoraSituada[];
   ultimoPaso: HoraSituada[];

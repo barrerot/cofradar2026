@@ -900,3 +900,127 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.cf-admin-paso {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: var(--cf-space-3);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+}
+
+.cf-admin-paso legend {
+  padding: 0 var(--cf-space-1);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+/* ── P-30 · Taxonomías ───────────────────────────────────────────────────── */
+.cf-admin-taxonomias {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  align-items: start;
+  gap: var(--cf-space-6);
+}
+
+.cf-admin-dos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--cf-space-6);
+}
+
+.cf-admin-dos > div > .cf-admin-nota {
+  margin: var(--cf-space-1) 0 var(--cf-space-3);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-admin-taxo {
+  margin: var(--cf-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-admin-taxo > li {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-taxo > li > form {
+  flex: 1;
+}
+
+.cf-admin-taxo-texto {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.cf-admin-taxo-texto p {
+  margin: 0;
+}
+
+.cf-admin-taxo-n {
+  width: 1.5rem;
+  color: var(--cf-text-secondary);
+  font-weight: var(--cf-weight-emphasis);
+  text-align: center;
+}
+
+.cf-admin-flechas {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.cf-admin-flechas button {
+  width: 2rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cf-admin-flechas button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cf-admin-taxo-form {
+  padding: var(--cf-space-3);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+}
+
+.cf-admin-taxo-linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+.cf-admin-taxo-linea input {
+  flex: 1;
+  min-width: 10rem;
+  min-height: 2.5rem;
+  padding: var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+  font: inherit;
+}
+
+/* Los templos son muchos (67): la lista se desplaza sola */
+.cf-admin-dos ul.cf-admin-taxo {
+  max-height: 40rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 72rem) {
+  .cf-admin-taxonomias {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

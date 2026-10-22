@@ -12,7 +12,7 @@ import { Boton } from "../../marco";
  * Tres pestañas, como el diseño: Cofradías (tabla y, al elegir una, su ficha con el itinerario sobre el
  * mapa y «Editar»), Jornadas y Horarios (los puntos del programa de la cofradía elegida).
  */
-type Lugar = { id: number; nombre: string; tipo: string; latitud: number | null; longitud: number | null };
+export type Lugar = { id: number; nombre: string; tipo: string; latitud: number | null; longitud: number | null };
 type Horario = { id: number; referencia: "cruz_guia" | "ultimo_paso"; orden: number; lugar: number; hora: string; publicada: boolean };
 type Cofradia = {
   id: string;
@@ -25,23 +25,27 @@ type Cofradia = {
   templo: number;
   jornada: number;
   estado: string | null;
-  pasos: { id: number; orden: number; nombre: string }[];
+  pasos: { id: number; orden: number; nombre: string; elemento_id: number | null }[];
   horarios: Horario[];
   itinerario: boolean;
 };
-type Datos = {
+export type Elemento = { id: number; nombre: string; llano: string; orden: number; clave: string | null };
+export type Hito = { id: number; lugar: number; orden: number; carreraOficial: boolean };
+export type Datos = {
   anio: number;
   jornadas: { id: number; nombre: string; orden: number }[];
   templos: { id: number; nombre: string }[];
   lugares: Lugar[];
+  elementos: Elemento[];
+  hitos: Hito[];
   cofradias: Cofradia[];
 };
 
-async function guardar(que: string, id: number, cambio: Record<string, unknown>) {
-  const r = await fetch(`/api/admin/datos/${que}/${id}`, {
-    method: "PUT",
+export async function guardar(que: string, id: number | null, cambio: Record<string, unknown> | null, metodo: "PUT" | "POST" | "DELETE" = "PUT") {
+  const r = await fetch(`/api/admin/datos/${que}${id === null ? "" : `/${id}`}`, {
+    method: metodo,
     headers: { "Content-Type": "application/json", Accept: "application/json", ...(await cabecerasSesion()) },
-    body: JSON.stringify(cambio),
+    body: cambio ? JSON.stringify(cambio) : undefined,
   });
   if (!r.ok) {
     const d = (await r.json().catch(() => ({}))) as { error?: string };
@@ -53,12 +57,10 @@ const hhmm = (hora: string) => hora.slice(11, 16);
 
 type Pestana = "cofradias" | "jornadas" | "horarios";
 
-export function DatosBase() {
+/** Los datos de las pantallas de Datos base y Taxonomías (GET /api/admin/datos), con su recarga. */
+export function useDatosBase() {
   const [datos, setDatos] = useState<Datos | null>(null);
   const [error, setError] = useState(false);
-  const [pestana, setPestana] = useState<Pestana>("cofradias");
-  const [elegida, setElegida] = useState<string | null>(null);
-
   const cargar = useCallback(async () => {
     try {
       const r = await fetch("/api/admin/datos", { headers: { Accept: "application/json", ...(await cabecerasSesion()) } });
@@ -69,10 +71,16 @@ export function DatosBase() {
       setError(true);
     }
   }, []);
-
   useEffect(() => {
     void cargar();
   }, [cargar]);
+  return { datos, error, cargar };
+}
+
+export function DatosBase() {
+  const { datos, error, cargar } = useDatosBase();
+  const [pestana, setPestana] = useState<Pestana>("cofradias");
+  const [elegida, setElegida] = useState<string | null>(null);
 
   const cofradia = datos?.cofradias.find((c) => c.id === elegida) ?? null;
 
@@ -223,6 +231,7 @@ function FichaCofradia({ c, datos, recargar, verHorarios }: { c: Cofradia; datos
               {c.pasos.map((p) => (
                 <span key={p.id} className="cf-admin-linea">
                   {p.nombre}
+                  <span className="cf-admin-quien"> · {datos.elementos.find((e) => e.id === p.elemento_id)?.nombre ?? "tipo sin indicar"}</span>
                 </span>
               ))}
             </dd>
@@ -276,6 +285,7 @@ function EditarCofradia({ c, datos, cerrar, recargar }: { c: Cofradia; datos: Da
     jornada: c.jornada,
     noProcesiona: c.estado === "no_procesiona",
     pasos: c.pasos.map((p) => p.nombre),
+    tipos: c.pasos.map((p) => p.elemento_id),
   });
   const [guardando, setGuardando] = useState(false);
   const [fallo, setFallo] = useState<string | null>(null);
@@ -290,7 +300,8 @@ function EditarCofradia({ c, datos, cerrar, recargar }: { c: Cofradia; datos: Da
         await guardar("hermandad", c.hermandadId, h);
       const estado = f.noProcesiona ? "no_procesiona" : null;
       if (f.jornada !== c.jornada || estado !== c.estado) await guardar("salida", c.salidaId, { jornada_id: f.jornada, estado });
-      for (const [i, p] of c.pasos.entries()) if (f.pasos[i] !== p.nombre) await guardar("paso", p.id, { nombre: f.pasos[i] });
+      for (const [i, p] of c.pasos.entries())
+        if (f.pasos[i] !== p.nombre || f.tipos[i] !== p.elemento_id) await guardar("paso", p.id, { nombre: f.pasos[i], elemento_id: f.tipos[i] ?? null });
       await recargar();
       cerrar();
     } catch (e) {
@@ -315,12 +326,26 @@ function EditarCofradia({ c, datos, cerrar, recargar }: { c: Cofradia; datos: Da
         <input type="checkbox" checked={f.noProcesiona} onChange={(e) => cambia("noProcesiona", e.target.checked)} /> No procesiona este año (no es su día)
       </label>
       {c.pasos.map((p, i) => (
-        <Texto
-          key={p.id}
-          etiqueta={`Paso ${p.orden}`}
-          valor={f.pasos[i] ?? ""}
-          cambiar={(v) => cambia("pasos", f.pasos.map((x, k) => (k === i ? v : x)))}
-        />
+        <fieldset key={p.id} className="cf-admin-paso">
+          <legend>Paso {p.orden}</legend>
+          <Texto etiqueta="Titulares" valor={f.pasos[i] ?? ""} cambiar={(v) => cambia("pasos", f.pasos.map((x, k) => (k === i ? v : x)))} />
+          <label className="cf-admin-campo">
+            <span className="cf-admin-campo-titulo">Tipo</span>
+            <select
+              value={f.tipos[i] ?? ""}
+              onChange={(e) => cambia("tipos", f.tipos.map((x, k) => (k === i ? (e.target.value ? Number(e.target.value) : null) : x)))}
+            >
+              <option value="">Sin indicar</option>
+              {datos.elementos
+                .filter((e) => e.clave !== "cruz_guia")
+                .map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.nombre}
+                  </option>
+                ))}
+            </select>
+          </label>
+        </fieldset>
       ))}
       <Texto etiqueta="Web" valor={f.web} cambiar={(v) => cambia("web", v)} opcional />
       <Texto etiqueta="Fundación" valor={f.fundacion} cambiar={(v) => cambia("fundacion", v)} opcional />

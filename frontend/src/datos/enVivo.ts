@@ -131,7 +131,7 @@ export type Hito = { titulo: string; prevista: Date; estimada: Date; retrasoMin:
 
 /**
  * Los tres hitos de la hoja del mapa de una cofradía (3-mapa/mapa-2): por dónde va o adónde llega
- * ahora la cruz de guía, la Catedral (el final de la carrera oficial) si aún le queda, y la entrada del
+ * ahora la cruz de guía, el final de la carrera oficial (la Catedral) si aún le queda, y la entrada del
  * último paso. Cada uno con la hora prevista y, debajo, la real o la estimada.
  */
 export function hitosDe(v: EnVivo, jornada: Jornada): Hito[] {
@@ -146,9 +146,11 @@ export function hitosDe(v: EnVivo, jornada: Jornada): Hito[] {
     const puntos = referencia(v.mapa, cruz);
     const actual = puntos.find((h) => Math.abs(h.m! - cruz.m) <= EN_EL_LUGAR) ?? puntos.find((h) => h.m! > cruz.m);
     if (actual) hito(actual.lugar, actual.hora, cruz, 0);
-    // Si ya va por la Catedral, no se repite
-    const catedral = actual && /^Catedral/.test(actual.lugar) ? undefined : puntos.find((h) => /^Catedral/.test(h.lugar) && h.m! > cruz.m + EN_EL_LUGAR);
-    if (catedral) hito("Catedral", catedral.hora, cruz, 0);
+    // El final de la carrera oficial: su último lugar en el recorrido (hitos de la ciudad, 5.4). Se nombra
+    // por el sitio («Catedral», de «Catedral · Puerta de los Palos»), y si ya va por él no se repite
+    const sitio = (lugar: string) => lugar.split(" · ")[0]!;
+    const fin = puntos.filter((h) => h.carrera).at(-1);
+    if (fin && fin.m! > cruz.m + EN_EL_LUGAR && !(actual && sitio(actual.lugar) === sitio(fin.lugar))) hito(sitio(fin.lugar), fin.hora, cruz, 0);
   }
   const n = Math.max(1, v.mapa.pasos);
   const entrada = v.mapa.ultimoPaso[v.mapa.ultimoPaso.length - 1];

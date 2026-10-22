@@ -37,11 +37,7 @@ type Ficha = {
 };
 
 
-/**
- * Los lugares de la carrera oficial de Sevilla. Es de la ciudad, no de cada
- * cofradía: cuando los hitos sean configurables (5.4) saldrá de los datos.
- */
-const CARRERA = /^(La Campana|Sierpes|Plaza de San Francisco|Avenida de la Constitución|Catedral)/;
+/** Los lugares de la carrera oficial los marca el servidor (`lugar.carrera`), de los hitos de la ciudad (5.4). */
 
 export function Recorrido({ estado }: { estado: EstadoJornada }) {
   const { id = "" } = useParams();
@@ -63,7 +59,7 @@ export function Recorrido({ estado }: { estado: EstadoJornada }) {
 
 function Tabla({ id, salida }: { id: string; salida: NonNullable<Ficha["salida"]> }) {
   const filas = coser(salida.cruzGuia, salida.ultimoPaso);
-  const primeraCarrera = filas.findIndex((f) => CARRERA.test(f.lugar.nombre));
+  const primeraCarrera = filas.findIndex((f) => f.lugar.carrera);
   const metros = salida.recorrido?.metros;
   const encontrada = useEnVivoDe(id, salida.jornada.id);
   const vivo = encontrada && enLaCalle(encontrada.v.estado) ? encontrada : null;
@@ -106,7 +102,7 @@ function Tabla({ id, salida }: { id: string; salida: NonNullable<Ficha["salida"]
                   </th>
                 </tr>
               ) : null}
-              <tr data-carrera={CARRERA.test(f.lugar.nombre) ? "" : undefined}>
+              <tr data-carrera={f.lugar.carrera ? "" : undefined}>
                 <th scope="row">
                   {f.lugar.nombre}
                   {i === 0 ? <span className="n">salida</span> : i === filas.length - 1 ? <span className="n">entrada</span> : null}

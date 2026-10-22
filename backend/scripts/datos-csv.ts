@@ -21,14 +21,18 @@ export type Tipo = "texto" | "entero" | "decimal" | "fecha" | "sino";
 // Tablas en orden de carga (cada una después de aquellas a las que apunta) y el tipo de cada columna
 export const TABLAS: [string, Record<string, Tipo>][] = [
   ["punto_geografico", { id: "entero", nombre: "texto", tipo: "texto", latitud: "decimal", longitud: "decimal" }],
+  // Los lugares de la ciudad que importan, en orden (5.4): la carrera oficial y otros
+  ["hito", { id: "entero", punto_geografico_id: "entero", orden: "entero", carrera_oficial: "sino" }],
   ["templo", { id: "entero", nombre: "texto", direccion: "texto", punto_geografico_id: "entero" }],
   ["hermandad", {
     id: "entero", nombre: "texto", nombre_oficial: "texto", templo_id: "entero", escudo: "texto", web: "texto",
     historia: "texto", fundacion: "texto", numero_hermanos: "entero", numero_nazarenos: "entero", duracion_cortejo: "entero",
   }],
+  // Los tipos de elemento del cortejo, con su nombre cofrade y en llano (5.4)
+  ["elemento", { id: "entero", nombre: "texto", llano: "texto", orden: "entero", clave: "texto" }],
   ["paso", {
     id: "entero", hermandad_id: "entero", nombre: "texto", orden: "entero", autor: "texto", capataz: "texto",
-    musica: "texto", fotografia: "texto",
+    musica: "texto", fotografia: "texto", elemento_id: "entero",
   }],
   ["edicion", { id: "entero", anio: "entero" }],
   ["jornada", { id: "entero", nombre: "texto", orden: "entero" }],

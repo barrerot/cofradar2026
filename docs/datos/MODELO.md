@@ -1,6 +1,6 @@
 # Modelo de datos · base de trabajo
 
-Modelo entidad-relación de ocho entidades, definido por Carlos el 15 de octubre de 2026. Es la base para transcribir los datos reales del hito **1 · Datos**. Se mantiene sencillo: solo cambia cuando haya un caso de uso concreto que lo pida.
+Modelo entidad-relación de ocho entidades, definido por Carlos el 15 de octubre de 2026, más `elemento` e `hito`, aprobadas por Carlos el 22 de octubre de 2026 (taxonomías, ver «Taxonomías (5.4)» al final). Es la base para transcribir los datos reales del hito **1 · Datos**. Se mantiene sencillo: solo cambia cuando haya un caso de uso concreto que lo pida.
 
 Cada entidad es un CSV de esta carpeta, con el mismo nombre en minúsculas. Las claves son números enteros; las relaciones se rellenan con el `id` de la otra tabla.
 
@@ -359,3 +359,14 @@ Qué se puede corregir desde el panel:
 - el nombre de cada jornada.
 
 Los recorridos (GeoJSON) no se editan en el panel: se ven sobre el mapa.
+
+### Taxonomías (5.4, 22/10/2026)
+
+Aprobado por Carlos el 22/10/2026. Lo que antes estaba escrito en el código pasa a los datos y se corrige en el panel (`/admin/taxonomias`). Como el resto, se exporta a esta carpeta.
+
+- **`elemento.csv`** (`id, nombre, llano, orden, clave`): los tipos de elemento del cortejo, en orden, con su nombre cofrade y en llano. Por ejemplo, «Palio · El paso de la Virgen». `clave = cruz_guia` marca la cruz de guía, que la app necesita reconocer y no se puede quitar.
+- **`paso.elemento_id`**: de qué tipo es cada paso. Va vacío mientras no se sepa, y se rellena en Datos base. Si el paso aún tiene el nombre genérico («Primer paso»), la app lo nombra por su tipo («Palio»). «Dar fe» lo pregunta en llano: «El paso de la Virgen».
+- **`hito.csv`** (`id, punto_geografico_id, orden, carrera_oficial`): los lugares de la ciudad que importan, en orden. Para qué sirven los de carrera oficial:
+  - marcan la carrera en el recorrido;
+  - el primero (La Campana) da la hora de la Agenda;
+  - el último por el que pasa cada cofradía es el «final de la carrera» del mapa.

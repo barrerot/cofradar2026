@@ -36,6 +36,26 @@ create table if not exists hermandad (
   duracion_cortejo  integer
 );
 
+-- Los tipos de elemento del cortejo (5.4, aprobada por Carlos el 22/10/2026): «Cruz de guía · La cruz que
+-- abre el cortejo», «Palio · El paso de la Virgen». `clave` marca los que la app necesita reconocer
+-- ('cruz_guia'). Se corrigen en el panel (Taxonomías) y se exportan a docs/datos/elemento.csv.
+create table if not exists elemento (
+  id      integer primary key,
+  nombre  text not null,
+  llano   text not null,
+  orden   integer not null,
+  clave   text unique
+);
+
+-- Los lugares de la ciudad que importan, en orden (5.4, aprobada el 22/10/2026): la carrera oficial
+-- (La Campana… Catedral) y otros como la Plaza del Duque. Antes estaban escritos en el código.
+create table if not exists hito (
+  id                   integer primary key,
+  punto_geografico_id  integer not null unique references punto_geografico (id),
+  orden                integer not null,
+  carrera_oficial      boolean not null default false
+);
+
 create table if not exists paso (
   id            integer primary key,
   hermandad_id  integer not null references hermandad (id),
@@ -86,6 +106,9 @@ create table if not exists recorrido (
   provisional            boolean not null default true
 );
 
+-- De qué tipo es cada paso (5.4): misterio, palio… Vacío mientras no se sepa.
+alter table paso add column if not exists elemento_id integer references elemento (id);
+
 create index if not exists paso_hermandad on paso (hermandad_id);
 create index if not exists salida_jornada on salida_procesional (edicion_id, jornada_id);
 create index if not exists salida_hermandad on salida_procesional (hermandad_id);
@@ -100,6 +123,8 @@ alter table jornada            enable row level security;
 alter table salida_procesional enable row level security;
 alter table punto_itinerario   enable row level security;
 alter table recorrido          enable row level security;
+alter table elemento           enable row level security;
+alter table hito               enable row level security;
 
 -- ── Lo personal de cada cuenta (decisión del 20/10/2026: seguir y marcar vista piden cuenta) ──
 -- No son datos base: la carga (cargar-supabase.ts) no las toca nunca. Por eso NO llevan clave ajena a

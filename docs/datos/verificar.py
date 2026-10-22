@@ -18,10 +18,12 @@ BASE = sys.argv[1] if len(sys.argv) > 1 else os.path.dirname(os.path.abspath(__f
 # Columnas de cada tabla, en el orden de MODELO.md
 TABLAS = {
     "punto_geografico": ["id", "nombre", "tipo", "latitud", "longitud"],
+    "hito": ["id", "punto_geografico_id", "orden", "carrera_oficial"],
     "templo": ["id", "nombre", "direccion", "punto_geografico_id"],
     "hermandad": ["id", "nombre", "nombre_oficial", "templo_id", "escudo", "web", "historia",
                   "fundacion", "numero_hermanos", "numero_nazarenos", "duracion_cortejo"],
-    "paso": ["id", "hermandad_id", "nombre", "orden", "autor", "capataz", "musica", "fotografia"],
+    "elemento": ["id", "nombre", "llano", "orden", "clave"],
+    "paso": ["id", "hermandad_id", "nombre", "orden", "autor", "capataz", "musica", "fotografia", "elemento_id"],
     "edicion": ["id", "anio"],
     "jornada": ["id", "nombre", "orden"],
     "salida_procesional": ["id", "hermandad_id", "edicion_id", "jornada_id", "estado"],
@@ -32,7 +34,8 @@ TABLAS = {
 RELACIONES = {
     "templo": {"punto_geografico_id": "punto_geografico"},
     "hermandad": {"templo_id": "templo"},
-    "paso": {"hermandad_id": "hermandad"},
+    "hito": {"punto_geografico_id": "punto_geografico"},
+    "paso": {"hermandad_id": "hermandad", "elemento_id": "elemento"},
     "salida_procesional": {"hermandad_id": "hermandad", "edicion_id": "edicion", "jornada_id": "jornada"},
     "punto_itinerario": {"salida_procesional_id": "salida_procesional",
                          "punto_geografico_id": "punto_geografico"},
@@ -41,6 +44,8 @@ OBLIGATORIAS = {
     "punto_geografico": ["nombre", "tipo"],
     "templo": ["nombre", "punto_geografico_id"],
     "hermandad": ["nombre", "nombre_oficial", "templo_id"],
+    "hito": ["punto_geografico_id", "orden", "carrera_oficial"],
+    "elemento": ["nombre", "llano", "orden"],
     "paso": ["hermandad_id", "nombre", "orden"],
     "edicion": ["anio"],
     "jornada": ["nombre", "orden"],
@@ -50,12 +55,13 @@ OBLIGATORIAS = {
 }
 ENTEROS = {
     "hermandad": ["numero_hermanos", "numero_nazarenos", "duracion_cortejo"],
-    "paso": ["orden"], "edicion": ["anio"], "jornada": ["orden"], "punto_itinerario": ["orden"],
+    "paso": ["orden"], "hito": ["orden"], "elemento": ["orden"], "edicion": ["anio"], "jornada": ["orden"], "punto_itinerario": ["orden"],
 }
 VALORES = {
     ("punto_geografico", "tipo"): {"calle", "plaza", "templo", "puente", "otro"},
     ("punto_itinerario", "referencia"): {"cruz_guia", "ultimo_paso"},
     ("punto_itinerario", "hora_publicada"): {"si", "no"},
+    ("hito", "carrera_oficial"): {"si", "no"},
 }
 # Caja amplia alrededor de Sevilla capital
 LAT, LON = (37.30, 37.45), (-6.06, -5.86)   # hasta Torreblanca, por el este

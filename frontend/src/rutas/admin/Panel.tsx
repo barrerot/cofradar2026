@@ -4,6 +4,7 @@ import { cabecerasSesion, useSesion } from "../../datos/sesion";
 import { Boton, Icono, type NombreTrazo } from "../../marco";
 import { DatosBase } from "./DatosBase";
 import { JornadaEnCurso } from "./JornadaEnCurso";
+import { Taxonomias } from "./Taxonomias";
 
 /**
  * El panel de administración (fase 5, 9-admin/). Herramienta interna: vive en /admin, fuera del marco de
@@ -141,7 +142,8 @@ function Dentro({ email, salir }: { email: string; salir: () => Promise<void> })
           <Route index element={<Navigate to="jornada" replace />} />
           <Route path="jornada" element={<JornadaEnCurso />} />
           <Route path="datos" element={<DatosBase />} />
-          {SECCIONES.slice(2).map((s) => (
+          <Route path="taxonomias" element={<Taxonomias />} />
+          {SECCIONES.slice(3).map((s) => (
             <Route key={s.ruta} path={s.ruta} element={<PorHacer nombre={s.nombre} issue={s.issue} />} />
           ))}
           <Route path="*" element={<Navigate to="jornada" replace />} />

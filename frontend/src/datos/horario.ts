@@ -2,9 +2,10 @@
  * El horario de una salida, tal como lo da /api/cofradias/:id: un punto por
  * lugar con la hora prevista de la cruz de guía o del último paso.
  */
-export type Punto = { orden: number; lugar: { id: number; nombre: string }; hora: string; publicada: boolean };
+/** `carrera`: el lugar es de la carrera oficial (hitos de la ciudad, 5.4). */
+export type Punto = { orden: number; lugar: { id: number; nombre: string; carrera?: boolean }; hora: string; publicada: boolean };
 
-export type Fila = { lugar: { id: number; nombre: string }; cruz?: Punto; paso?: Punto };
+export type Fila = { lugar: Punto["lugar"]; cruz?: Punto; paso?: Punto };
 
 /*
  * La cruz y el último paso no siempre pasan por los mismos sitios (La

@@ -8,6 +8,7 @@ import { leer, guardar } from "../datos/almacen";
 import { alCambiarCola, bonusNuevos, enviar, hayBonusPorAvisar, nuevoClienteId, pendientes, vaciarCola, type Envio } from "../datos/darFe";
 import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
 import { useJornada } from "../datos/jornada";
+import { useDato } from "../datos/useDato";
 import type { CofradiaMapa, EstadoCofradia } from "../datos/mapa";
 import { useRelaciones } from "../datos/relaciones";
 import { ahora as relojAhora } from "../datos/reloj";
@@ -71,14 +72,22 @@ function etiquetaElemento(c: CofradiaMapa, elemento: number | null): string {
 
 const ORDINAL = ["primer", "segundo", "tercer"];
 
+/** La cruz de guía tal como la nombran las taxonomías (5.4); mientras llegan, la de siempre. */
+type Cruz = { nombre: string; llano: string };
+const CRUZ: Cruz = { nombre: "Cruz de guía", llano: "La cruz que abre el cortejo" };
+function useCruz(): Cruz {
+  const t = useDato<{ elementos: { nombre: string; llano: string; clave: string | null }[] }>("/taxonomias", { cadaMs: 3_600_000 });
+  return t.datos?.elementos.find((e) => e.clave === "cruz_guia") ?? CRUZ;
+}
+
 /** Las opciones de P-16: en llano y, debajo, el término cofrade. */
-function opcionesDe(c: CofradiaMapa): { elemento: number | null; llano: string; cofrade: string }[] {
+function opcionesDe(c: CofradiaMapa, cruz: Cruz): { elemento: number | null; llano: string; cofrade: string }[] {
   const pasos = c.nombresPasos.length ? c.nombresPasos : ["Paso"];
   return [
-    { elemento: 0, llano: "La cruz que abre el cortejo", cofrade: "Cruz de guía" },
+    { elemento: 0, llano: cruz.llano, cofrade: cruz.nombre },
     ...pasos.map((nombre, i) => {
-      // Hasta que los datos digan cuál es el del Cristo y cuál el palio, por su orden
-      const llano = pasos.length === 1 ? "El paso" : `El ${ORDINAL[i] ?? `${i + 1}.º`} paso`;
+      // Por su tipo («El paso de la Virgen») si se sabe (5.4); si no, por su orden
+      const llano = c.llanoPasos?.[i] ?? (pasos.length === 1 ? "El paso" : `El ${ORDINAL[i] ?? `${i + 1}.º`} paso`);
       const generico = /^(paso|primer paso|segundo paso|tercer paso)$/i.test(nombre);
       return { elemento: i + 1, llano, cofrade: generico ? (pasos.length === 1 ? "Paso" : `Paso ${i + 1} de ${pasos.length}`) : nombre };
     }),
@@ -521,9 +530,10 @@ function QueCofradia({
 
 // ── P-16 ────────────────────────────────────────────────────────────────────────────────────────────
 function QueTienesDelante({ c, alElegir }: { c: CofradiaMapa; alElegir: (elemento: number | null) => void }) {
+  const cruz = useCruz();
   return (
     <ul className="cf-darfe-lista">
-      {opcionesDe(c).map((o) => (
+      {opcionesDe(c, cruz).map((o) => (
         <li key={String(o.elemento)}>
           <button type="button" className="cf-darfe-opcion" onClick={() => alElegir(o.elemento)}>
             <span className="cf-darfe-opcion-texto">

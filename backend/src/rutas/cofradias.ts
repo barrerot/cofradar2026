@@ -34,7 +34,15 @@ type Hermandad = {
   numero_nazarenos: number | null;
   duracion_cortejo: number | null;
   templo: Templo;
-  paso: { orden: number; nombre: string; autor: string | null; capataz: string | null; musica: string | null; fotografia: string | null }[];
+  paso: {
+    orden: number;
+    nombre: string;
+    autor: string | null;
+    capataz: string | null;
+    musica: string | null;
+    fotografia: string | null;
+    elemento: { nombre: string; llano: string } | null;
+  }[];
 };
 type Salida = {
   id: number;
@@ -61,8 +69,27 @@ function nombreOrden(nombre: string): string {
 
 const hora = (fecha: string) => fecha.slice(0, 16);
 
+/**
+ * Los hitos de la ciudad (tabla `hito`, 5.4): qué lugares son carrera oficial, y cuál la abre (La
+ * Campana). Se leen junto con las salidas (leerSalidas) y se olvidan con ellas.
+ */
+let carreraOficial = new Set<number>();
+let inicioCarrera: number | null = null;
+
 function lugar(l: Lugar) {
-  return { id: l.id, nombre: l.nombre, tipo: l.tipo, latitud: l.latitud, longitud: l.longitud };
+  return { id: l.id, nombre: l.nombre, tipo: l.tipo, latitud: l.latitud, longitud: l.longitud, carrera: carreraOficial.has(l.id) };
+}
+
+/** Los pasos en orden, con su tipo (5.4). Mientras el nombre sea el genérico («Primer paso»), se nombra por su tipo («Palio»). */
+const GENERICO = /^((primer|segundo|tercer|cuarto) )?paso( \d+)?$/i;
+function pasos(h: Hermandad) {
+  return [...h.paso]
+    .sort((a, b) => a.orden - b.orden)
+    .map(({ elemento, ...p }) => ({
+      ...p,
+      nombre: elemento && GENERICO.test(p.nombre.trim()) ? elemento.nombre : p.nombre,
+      tipo: elemento,
+    }));
 }
 
 function templo(t: Templo) {
@@ -87,7 +114,7 @@ const SELECT_SALIDA = `
   id, estado, edicion!inner(anio), jornada(id, nombre, orden),
   hermandad(id, nombre, nombre_oficial, escudo, web, historia, fundacion, numero_hermanos, numero_nazarenos,
             duracion_cortejo, templo(nombre, direccion, punto_geografico(id, nombre, tipo, latitud, longitud)),
-            paso(orden, nombre, autor, capataz, musica, fotografia)),
+            paso(orden, nombre, autor, capataz, musica, fotografia, elemento(nombre, llano))),
   punto_itinerario(referencia, orden, fecha_hora, hora_publicada, punto_geografico(id, nombre, tipo, latitud, longitud))`;
 
 /**
@@ -123,8 +150,15 @@ async function leerSalidas(anio?: number): Promise<Salida[]> {
     if (error) throw error;
     anio = data.anio as number;
   }
-  const { data, error } = await db.from("salida_procesional").select(SELECT_SALIDA).eq("edicion.anio", anio);
+  const [{ data, error }, hitos] = await Promise.all([
+    db.from("salida_procesional").select(SELECT_SALIDA).eq("edicion.anio", anio),
+    db.from("hito").select("punto_geografico_id, orden, carrera_oficial").order("orden"),
+  ]);
   if (error) throw error;
+  if (hitos.error) throw hitos.error;
+  const carrera = (hitos.data ?? []).filter((x) => x.carrera_oficial);
+  carreraOficial = new Set(carrera.map((x) => x.punto_geografico_id as number));
+  inicioCarrera = (carrera[0]?.punto_geografico_id as number | undefined) ?? null;
   return data as unknown as Salida[];
 }
 
@@ -163,8 +197,8 @@ function directorio(s: Salida) {
     jornadaId: s.jornada.id,
     templo: s.hermandad.templo.nombre,
     ...salidaYEntrada(s.punto_itinerario),
-    // Para la Agenda: cuándo llega la cruz de guía a La Campana, el comienzo de la carrera oficial
-    horaCampana: horario(s.punto_itinerario, "cruz_guia").find((p) => p.lugar.nombre === "La Campana")?.hora ?? null,
+    // Para la Agenda: cuándo llega la cruz de guía al primer hito de la carrera oficial (La Campana)
+    horaCampana: horario(s.punto_itinerario, "cruz_guia").find((p) => p.lugar.id === inicioCarrera)?.hora ?? null,
   };
 }
 
@@ -234,7 +268,7 @@ routerCofradias.get(
       nazarenos: h.numero_nazarenos,
       duracionCortejo: h.duracion_cortejo,
       sede: templo(h.templo),
-      pasos: [...h.paso].sort((a, b) => a.orden - b.orden),
+      pasos: pasos(h),
       salida: {
         id: s.id,
         anio: s.edicion.anio,
@@ -246,6 +280,28 @@ routerCofradias.get(
         ultimoPaso: horario(s.punto_itinerario, "ultimo_paso"),
         recorrido: rec ? { metros: rec.metros, provisional: rec.provisional } : null,
       },
+    });
+  }),
+);
+
+/**
+ * Las taxonomías (5.4): los tipos de elemento del cortejo, con su nombre cofrade y en llano, y los hitos
+ * de la ciudad. Cambian poco: se pueden guardar una hora.
+ */
+routerCofradias.get(
+  "/taxonomias",
+  ruta(async (_peticion, respuesta) => {
+    const db = supabase();
+    const [elementos, hitos] = await Promise.all([
+      db.from("elemento").select("id, nombre, llano, orden, clave").order("orden"),
+      db.from("hito").select("orden, carrera_oficial, punto_geografico(id, nombre, latitud, longitud)").order("orden"),
+    ]);
+    if (elementos.error) throw elementos.error;
+    if (hitos.error) throw hitos.error;
+    respuesta.setHeader("Cache-Control", "public, max-age=300");
+    respuesta.json({
+      elementos: elementos.data,
+      hitos: (hitos.data ?? []).map((h) => ({ ...(h.punto_geografico as unknown as Lugar), orden: h.orden, carreraOficial: h.carrera_oficial })),
     });
   }),
 );
@@ -299,13 +355,21 @@ async function mapaDeJornada(jornada: number, anio?: number) {
           puntos.map((p) => (p.lugar.latitud !== null && p.lugar.longitud !== null ? [Number(p.lugar.longitud), Number(p.lugar.latitud)] : null)),
           t.map((x) => (t1 > t0 ? (x - t0) / (t1 - t0) : 0)),
         );
-        return puntos.map((p, i) => ({ hora: p.hora, publicada: p.publicada, lugar: p.lugar.nombre, m: ms[i] === null ? null : Math.round(ms[i]!) }));
+        return puntos.map((p, i) => ({
+          hora: p.hora,
+          publicada: p.publicada,
+          lugar: p.lugar.nombre,
+          carrera: p.lugar.carrera,
+          m: ms[i] === null ? null : Math.round(ms[i]!),
+        }));
       };
       return {
         id: slug(s.hermandad.nombre),
         nombre: s.hermandad.nombre,
         pasos: s.hermandad.paso.length,
-        nombresPasos: [...s.hermandad.paso].sort((a, b) => a.orden - b.orden).map((p) => p.nombre),
+        nombresPasos: pasos(s.hermandad).map((p) => p.nombre),
+        // «El paso de la Virgen»: para «Dar fe» (P-16); null mientras no se sepa de qué tipo es
+        llanoPasos: pasos(s.hermandad).map((p) => p.tipo?.llano ?? null),
         estado: s.estado,
         anio: s.edicion.anio,
         metros: Math.round(acum[acum.length - 1] ?? 0),
