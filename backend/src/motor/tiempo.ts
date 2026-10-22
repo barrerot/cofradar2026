@@ -62,7 +62,17 @@ export function ahoraEnPrograma(instante: Date, anioEdicion: number): number {
   return pared - (pascua(anioProximo(pared)) - pascua(anioEdicion));
 }
 
-/** Y de vuelta: el instante real de una hora del programa, sabiendo cuánto vale «ahora» en los dos relojes. */
+/**
+ * Y de vuelta: el instante real de una hora del programa, sabiendo cuánto vale «ahora» en los dos relojes.
+ *
+ * No basta con sumar la diferencia: entre «ahora» y esa hora puede haber un cambio de hora. En octubre
+ * (UTC+2), las 00:00 de la Madrugá de marzo (UTC+1) saldrían a las 23:00. Por eso se calcula la hora de
+ * pared de Sevilla que toca y se pasa a instante con la zona de ese día.
+ */
 export function aReal(programa: number, ahoraPrograma: number, instante: Date): Date {
-  return new Date(instante.getTime() + (programa - ahoraPrograma));
+  const pared = programa + (paredSevilla(instante) - ahoraPrograma);
+  // El desfase de Sevilla con UTC en ese momento (dos vueltas, por si cae justo en el cambio)
+  let t = pared - (paredSevilla(new Date(pared)) - pared);
+  t = pared - (paredSevilla(new Date(t)) - t);
+  return new Date(t);
 }

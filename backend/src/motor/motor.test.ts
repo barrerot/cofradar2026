@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
 import { estadoCofradia, type Aportacion, type SalidaMotor } from "./motor.js";
-import { ahoraEnPrograma, msPrograma } from "./tiempo.js";
+import { ahoraEnPrograma, aReal, msPrograma } from "./tiempo.js";
 
 /**
  * Un recorrido de prueba: 2 km en línea recta hacia el este. La cruz sale a las 00:00 y entra a las
@@ -180,6 +180,16 @@ describe("el reloj", () => {
   it("la Madrugá de 2027 es la del programa de 2026", () => {
     // 26 de marzo de 2027, 02:40 en Sevilla (aún es horario de invierno, UTC+1)
     assert.equal(ahoraEnPrograma(new Date("2027-03-26T01:40:00Z"), 2026), msPrograma("2026-04-03T02:40"));
+  });
+
+  it("de vuelta a hora real, aunque haya un cambio de hora por medio", () => {
+    // Desde octubre (UTC+2), las 00:00 de la Madrugá de 2027 (UTC+1) son las 23:00 UTC del 25
+    const instante = new Date("2026-10-22T12:00:00Z");
+    const ahora = ahoraEnPrograma(instante, 2026);
+    assert.equal(aReal(msPrograma("2026-04-03T00:00"), ahora, instante).toISOString(), "2027-03-25T23:00:00.000Z");
+    // Y en plena Madrugá, sin cambio de hora, igual que antes
+    const enLaMadruga = new Date("2027-03-26T01:40:00Z");
+    assert.equal(aReal(msPrograma("2026-04-03T03:00"), ahoraEnPrograma(enLaMadruga, 2026), enLaMadruga).toISOString(), "2027-03-26T02:00:00.000Z");
   });
 
   it("fuera de temporada, «ahora» cae antes de todas las salidas", () => {

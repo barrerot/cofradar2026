@@ -42,13 +42,20 @@ import { SelectorJornada } from "./SelectorJornada";
 const SEVILLA: [number, number] = [-5.9925, 37.3891];
 
 export function Mapa({ estado }: { estado: EstadoJornada }) {
-  const { hoy, consultada } = useJornada();
-  const jornada = hoy ?? consultada;
+  const { hoy, consultada, jornadas, elegir: elegirJornada } = useJornada();
+  // «Ver en el mapa» desde la ficha llega con ?cofradia=la-macarena&jornada=8: se abre en SU jornada, con
+  // ella elegida y encuadrada, aunque hoy sea otro día o esté fuera de temporada
+  const [params] = useSearchParams();
+  const idPedida = Number(params.get("jornada")) || null;
+  const jornadaPedida = (idPedida && jornadas.datos?.find((j) => j.id === idPedida)) || null;
+  const jornada = jornadaPedida ?? hoy ?? consultada;
+  // Fuera de temporada, la cabecera pasa también a esa jornada
+  useEffect(() => {
+    if (jornadaPedida && !hoy && consultada?.id !== jornadaPedida.id) elegirJornada(jornadaPedida.id);
+  }, [jornadaPedida, hoy, consultada, elegirJornada]);
   const datos = useMapaJornada(jornada?.id);
   const motor = useEstadoJornada(jornada?.id);
   const relaciones = useRelaciones();
-  // «Ver en el mapa» desde la ficha llega con ?cofradia=la-macarena: se abre con ella elegida y encuadrada
-  const [params] = useSearchParams();
   const [seleccion, setSeleccion] = useState<string | null>(() => params.get("cofradia"));
   // El elemento tocado de la elegida (P-09, 4.6): 0 la cruz, 1..n los pasos; null, la cofradía entera
   const [elemento, setElemento] = useState<number | null>(null);
@@ -77,13 +84,14 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
   const situaciones = useMemo(() => {
     if (!datos.datos || !motor.datos) return [];
     const porId = new Map(datos.datos.map((c) => [c.id, c]));
+    // Las que están en la calle y, aunque no lo esté, la elegida: así se ve su recorrido entero
     return motor.datos.cofradias
-      .filter((s) => VISIBLES.includes(s.fase.valor))
+      .filter((s) => VISIBLES.includes(s.fase.valor) || s.id === seleccion)
       .flatMap((s) => {
         const c = porId.get(s.id);
         return c && c.linea.length > 1 ? [{ c, s }] : [];
       });
-  }, [datos.datos, motor.datos]);
+  }, [datos.datos, motor.datos, seleccion]);
 
   // El mapa, una vez
   useEffect(() => {
@@ -175,7 +183,10 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     if (!encuadrado.current && situaciones.length) {
       encuadrado.current = true;
       const pedida = situaciones.filter(({ c }) => c.id === seleccion);
-      const puntos = (pedida.length ? pedida : situaciones).flatMap(({ c, s }) => (s.fase.valor === "inminente" ? [c.linea[0]!] : s.elementos.map((e) => e.punto)));
+      // Si la elegida no está en la calle, su recorrido entero
+      const puntos = (pedida.length ? pedida : situaciones).flatMap(({ c, s }) =>
+        s.fase.valor === "inminente" ? [c.linea[0]!] : s.elementos.length ? s.elementos.map((e) => e.punto) : VISIBLES.includes(s.fase.valor) ? [] : c.linea,
+      );
       if (puntos.length) {
         const b = puntos.reduce((acc, p) => acc.extend(p), new maplibregl.LngLatBounds(puntos[0]!, puntos[0]!));
         // Más margen a la derecha: ahí van los nombres
@@ -562,7 +573,7 @@ function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; 
         <ChipEstado fase={s.fase.valor} confianza={s.fase.confianza} antiguedad={s.fase.haceMin !== null ? `hace ${s.fase.haceMin} min` : undefined} />
         <Alteraciones alteraciones={s.alteraciones} densidad="estandar" confianza={s.fase.confianza} />
       </div>
-      {s.fase.valor === "inminente" && s.sale ? <p className="cf-mapa-rapida-estado">Sale a las {hora(s.sale)}.</p> : null}
+      {(s.fase.valor === "inminente" || s.fase.valor === "prevista") && s.sale ? <p className="cf-mapa-rapida-estado">Sale a las {hora(s.sale)}.</p> : null}
       {cambioDe(s) ? (
         <p className="cf-mapa-rapida-estado">
           La han visto {cambioDe(s)!.detalle ?? "fuera del recorrido"}. En gris claro, lo previsto, sin confirmar.

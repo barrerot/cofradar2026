@@ -203,7 +203,7 @@ function Acciones({ ficha: f }: { ficha: Ficha }) {
   return (
     <>
       <div className="cf-ficha-acciones">
-        <Link className="cf-btn" data-variant="secundario" to={`/mapa?cofradia=${f.id}`}>
+        <Link className="cf-btn" data-variant="secundario" to={`/mapa?cofradia=${f.id}${f.salida ? `&jornada=${f.salida.jornada.id}` : ""}`}>
           <Icono nombre="mapa" tamano={20} />
           Ver en el mapa
         </Link>
