@@ -382,3 +382,12 @@ Aprobado por Carlos el 22/10/2026. Lo que antes estaba escrito en el código pas
   - marcan la carrera en el recorrido;
   - el primero (La Campana) da la hora de la Agenda;
   - el último por el que pasa cada cofradía es el «final de la carrera» del mapa.
+
+### Escudos (BUL-171, 22/10/2026)
+
+**Provisionales, solo para desarrollar** (decisión de Carlos del 22/10/2026). Mientras Cofradar no tenga usuarios y la web siga tras contraseña, los escudos salen de las páginas por jornada de la web del Consejo (hermandades-de-sevilla.org). Antes del lanzamiento se cambian por los dibujos de Carlos o por el permiso que den el Consejo y las hermandades (BUL-225).
+
+- **Las imágenes nunca van al repositorio, que es público.** Viven en el servidor, en `~/.cofradar/escudos/` (o en `ESCUDOS_DIR`): una de 192 px en WebP por hermandad, con los originales en `originales/`.
+- `hermandad.escudo` guarda solo el nombre del archivo («el-gran-poder.webp»). La API lo sirve en `/api/escudos/<archivo>`.
+- Sin la carpeta (otro servidor, un clon del repositorio), o si una imagen no carga, la app enseña las iniciales de siempre.
+- La Borriquita y El Amor comparten escudo porque son la misma hermandad.

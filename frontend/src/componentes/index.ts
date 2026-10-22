@@ -11,6 +11,7 @@
 export { Aviso, type Procedencia, type TipoAviso } from "./Aviso";
 export { AvisoEntrada } from "./AvisoEntrada";
 export { BandaContexto } from "./BandaContexto";
+export { Escudo } from "./Escudo";
 export { Bloque } from "./Bloque";
 export {
   Alteraciones,

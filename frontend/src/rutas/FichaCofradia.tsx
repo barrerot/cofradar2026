@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { AvisoEntrada, DatoPendiente, Esqueleto, SegunDato } from "../componentes";
+import { AvisoEntrada, DatoPendiente, Escudo, Esqueleto, SegunDato } from "../componentes";
 import { Icono, PantallaSecundaria } from "../marco";
 import { diaProximo } from "../datos/fechas";
 import { useJornada } from "../datos/jornada";
@@ -15,7 +15,7 @@ import { AlteracionesDe, ChipsEnVivo, CortejoEnVivo, HistorialDe, IncidenciasDe,
 /**
  * P-11 Ficha de cofradía (4-cofradias/ficha-2*), registro EDITORIAL (§3).
  *
- *   Cabecera    escudo de reserva (iniciales), «La has visto» / «La sigues»,
+ *   Cabecera    escudo (o, sin él, las iniciales), «La has visto» / «La sigues»,
  *               nombre popular y oficial, y qué día sale.
  *   Acciones    «Recorrido y horarios» (P-12), «Seguir» y «La he visto». Las dos
  *               últimas son de la cuenta: sin sesión piden entrar con Google y,
@@ -32,6 +32,8 @@ type Ficha = {
   id: string;
   nombre: string;
   nombreOficial: string;
+  /** La imagen del escudo, si la hay (BUL-171). */
+  escudo: string | null;
   web: string | null;
   fundacion: string | null;
   historia: string | null;
@@ -87,9 +89,7 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
       />
 
       <header className="cf-ficha-cabecera">
-        <span className="cf-ficha-escudo" aria-hidden="true">
-          {iniciales(sinArticulo)}
-        </span>
+        <Escudo className="cf-ficha-escudo" url={f.escudo} iniciales={iniciales(sinArticulo)} />
         {marca ? (
           <p className="cf-ficha-relacion">
             <Icono nombre={marca === "vista" ? "vista" : "seguida"} tamano={16} />

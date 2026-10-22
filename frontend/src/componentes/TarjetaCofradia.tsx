@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Boton } from "../marco";
 import { Alteraciones, type DatoAlteracion } from "./ChipAlteracion";
 import { ChipEstado, type Confianza, type Fase } from "./ChipEstado";
+import { Escudo } from "./Escudo";
 import {
   HuecoRelacion,
   MarcaRelacion,
@@ -57,9 +58,11 @@ export type DatosCofradia = {
   proximidad?: string;
   /**
    * Escudo de reserva del directorio (4-cofradias): las iniciales del nombre
-   * popular sin artículo, «GP», «ET». Mientras no haya escudos de verdad.
+   * popular sin artículo, «GP», «ET». Se ven si no hay `escudo` o no carga.
    */
   iniciales?: string;
+  /** La imagen del escudo (BUL-171), si la hay. */
+  escudo?: string | null;
 };
 
 /**
@@ -101,6 +104,7 @@ export function TarjetaCofradia({
     horaEstimada = false,
     proximidad,
     iniciales,
+    escudo,
   } = cofradia;
 
   /* Compacta = nombre + estado + una linea de datos. Proximidad y accion solo
@@ -116,11 +120,7 @@ export function TarjetaCofradia({
     <article className="cf-card" data-densidad={densidad}>
       <div className="cf-card__head">
         <div className="cf-ident">
-          {iniciales ? (
-            <span className="cf-escudo" aria-hidden="true">
-              {iniciales}
-            </span>
-          ) : null}
+          {iniciales ? <Escudo className="cf-escudo" url={escudo} iniciales={iniciales} /> : null}
           {/* El hueco existe siempre, con marca o sin ella: es lo que alinea
               los nombres de toda la lista. */}
           <HuecoRelacion>

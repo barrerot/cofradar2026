@@ -1,4 +1,6 @@
 import { existsSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import { routerAdmin } from "./rutas/admin.js";
@@ -36,6 +38,14 @@ app.use("/api", routerCuenta);
 app.use("/api", routerAportaciones);
 app.use("/api", routerAdmin);
 app.use("/api", routerDatosBase);
+
+/**
+ * Los escudos (BUL-171). Provisionales, sacados de la web del Consejo solo para desarrollar: viven en el
+ * servidor (ESCUDOS_DIR, por defecto ~/.cofradar/escudos) y NUNCA en el repositorio, que es público.
+ * `hermandad.escudo` guarda solo el nombre del archivo. Sin la carpeta, la app se queda con las iniciales.
+ */
+const escudos = process.env.ESCUDOS_DIR ?? join(homedir(), ".cofradar", "escudos");
+app.use("/api/escudos", express.static(escudos, { index: false, dotfiles: "ignore", maxAge: "1d", fallthrough: true }));
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

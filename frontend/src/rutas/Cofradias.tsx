@@ -21,7 +21,7 @@ import { SelectorJornada } from "./SelectorJornada";
  *   Datos       las 72 de GET /api/cofradias, agrupadas por jornada: primero
  *               la consultada en la cabecera («· hoy» si es la de hoy) y luego
  *               las demás en el orden de la semana. Dentro, por hora de salida.
- *   Filas       escudo de reserva (iniciales), marca de relación y nombre. Las
+ *   Filas       escudo (o, sin él, las iniciales), marca de relación y nombre. Las
  *               de la jornada de HOY llevan además el chip del motor (4.16):
  *               fase, confianza y alteraciones. Las demás, sin chip: «Prevista»
  *               setenta veces sería ruido (cofradias-1D).
@@ -42,6 +42,8 @@ type CofradiaApi = {
   jornada: string;
   jornadaId: number;
   templo: string | null;
+  /** La imagen del escudo, si la hay (BUL-171). */
+  escudo: string | null;
   horaSalida: string | null;
   horaEntrada: string | null;
 };
@@ -161,6 +163,7 @@ function Directorio({
                       id: c.id,
                       nombre: c.nombre,
                       iniciales: iniciales(c.orden),
+                      escudo: c.escudo,
                       relacion: relaciones.marca(c.id),
                       ...(e
                         ? {

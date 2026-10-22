@@ -86,7 +86,7 @@
   border-top: 0;
 }
 
-/* Escudo de reserva: las iniciales en un círculo, mientras no haya escudos */
+/* Escudo: la imagen o, sin ella, las iniciales en un círculo */
 .cf-escudo {
   flex: none;
   display: inline-flex;
@@ -168,4 +168,18 @@
   font-size: var(--cf-text-base);
   line-height: var(--cf-leading-base);
   color: var(--cf-text-secondary);
+}
+
+/* Con imagen (BUL-171): fondo blanco, como el de los propios escudos, también en tema oscuro */
+.cf-escudo[data-imagen],
+.cf-ficha-escudo[data-imagen] {
+  overflow: hidden;
+  padding: 2px;
+  background: #fff;
+}
+.cf-escudo[data-imagen] > img,
+.cf-ficha-escudo[data-imagen] > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }

@@ -188,6 +188,9 @@ function anioPedido(peticion: Request): number | undefined {
   return Number.isInteger(a) && a > 0 ? a : undefined;
 }
 
+/** Dónde pide la app el escudo (index.ts, /api/escudos): `hermandad.escudo` es solo el nombre del archivo. */
+const escudoUrl = (archivo: string | null) => (archivo ? `/api/escudos/${encodeURIComponent(archivo)}` : null);
+
 function directorio(s: Salida) {
   return {
     id: slug(s.hermandad.nombre),
@@ -196,6 +199,7 @@ function directorio(s: Salida) {
     jornada: s.jornada.nombre,
     jornadaId: s.jornada.id,
     templo: s.hermandad.templo.nombre,
+    escudo: escudoUrl(s.hermandad.escudo),
     ...salidaYEntrada(s.punto_itinerario),
     // Para la Agenda: cuándo llega la cruz de guía al primer hito de la carrera oficial (La Campana)
     horaCampana: horario(s.punto_itinerario, "cruz_guia").find((p) => p.lugar.id === inicioCarrera)?.hora ?? null,
@@ -260,7 +264,7 @@ routerCofradias.get(
       id: slug(h.nombre),
       nombre: h.nombre,
       nombreOficial: h.nombre_oficial,
-      escudo: h.escudo,
+      escudo: escudoUrl(h.escudo),
       web: h.web,
       fundacion: h.fundacion,
       historia: h.historia,
