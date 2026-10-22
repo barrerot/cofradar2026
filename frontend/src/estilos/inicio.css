@@ -326,3 +326,111 @@
   font-weight: var(--cf-weight-emphasis);
   text-decoration: none;
 }
+
+/* ── La portada de la marca, entre temporadas (22/10/2026) ────────────────
+   Logotipo vertical en tinta, el lema en serif y, debajo, la cuenta atrás y
+   las tres ideas de la Introducción. En escritorio, la cuenta atrás y las
+   ideas se reparten en dos columnas para no dejar media pantalla vacía.
+   -------------------------------------------------------------------------- */
+.cf-portada {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: var(--cf-space-2) 0 0;
+  color: var(--cf-text);
+}
+
+.cf-portada-lema {
+  margin: var(--cf-space-4) 0 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  text-wrap: balance;
+}
+
+.cf-portada-sub {
+  margin: var(--cf-space-1) 0 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  letter-spacing: var(--cf-tracking-caps);
+  text-transform: uppercase;
+  color: var(--cf-text-secondary);
+}
+
+.cf-portada-cuenta {
+  justify-items: center;
+  text-align: center;
+}
+
+.cf-portada-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--cf-space-3);
+}
+
+.cf-portada-botones > .cf-btn {
+  gap: var(--cf-space-3);
+  text-decoration: none;
+}
+
+.cf-portada-ideas {
+  display: grid;
+  gap: var(--cf-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-portada-ideas li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: var(--cf-space-3);
+  align-items: start;
+}
+
+.cf-portada-ideas svg {
+  box-sizing: content-box;
+  width: 1.375rem;
+  height: 1.375rem;
+  padding: 0.5rem;
+  background: var(--cf-surface);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: 10px;
+  color: var(--cf-text);
+}
+
+.cf-portada-ideas h2 {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-portada-ideas p {
+  margin: 2px 0 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+@media (min-width: 64rem) {
+  .cf-ahora[data-intensidad="fuera-temporada"] {
+    max-width: 60rem;
+  }
+
+  .cf-portada {
+    padding-top: var(--cf-space-8);
+  }
+
+  .cf-portada-lema {
+    font-size: var(--cf-text-3xl);
+    line-height: var(--cf-leading-3xl);
+  }
+
+  .cf-portada-ideas {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--cf-space-6);
+  }
+}

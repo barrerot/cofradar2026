@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { BandaContexto, Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
-import { Icono, Marco } from "../marco";
+import { Icono, Logo, Marco } from "../marco";
 import { useActividad, type SalidaDeHoy } from "../datos/actividad";
 import { distancia, distanciaEnLlano, enLaCalle, proximoPunto, useEnVivo, type EnVivo } from "../datos/enVivo";
 import { useJornada, type Jornada } from "../datos/jornada";
@@ -12,6 +12,7 @@ import type { EstadoJornadaMotor } from "../datos/mapa";
 import { CabeceraRaiz } from "./CabeceraRaiz";
 import { DarFe } from "./DarFe";
 import { IncidenciasDe } from "./CortejoEnVivo";
+import { IDEAS } from "./Introduccion";
 
 /**
  * P-05 Inicio · «¿Qué puedo ver ahora?» (2-inicio/inicio-*), con el motor (4.16).
@@ -249,7 +250,10 @@ function VerJornada() {
   );
 }
 
-/** Entre temporadas: cuánto falta, consultar las cofradías y lo tuyo. */
+/**
+ * Entre temporadas: la portada de la marca (22/10/2026). Qué es Cofradar, cuánto falta, las tres
+ * ideas de la Introducción, consultar las cofradías o la agenda, y lo tuyo.
+ */
 function FueraDeTemporada() {
   const { jornadas } = useJornada();
   const { ahora } = useActividad();
@@ -260,7 +264,12 @@ function FueraDeTemporada() {
 
   return (
     <div className="cf-ahora" data-intensidad="fuera-temporada">
-      <div className="cf-ahora-tarjeta">
+      <header className="cf-portada" data-register="editorial">
+        <Logo variante="vertical" alto={80} titulo="Cofradar" />
+        <p className="cf-portada-lema">Por dónde va de verdad cada cofradía</p>
+        <p className="cf-portada-sub">Semana Santa de Sevilla{dia ? ` ${dia.getFullYear()}` : ""}</p>
+      </header>
+      <div className="cf-ahora-tarjeta cf-portada-cuenta">
         {dia && dias !== null ? (
           <>
             <p className="cf-ahora-dias cf-num">{dias}</p>
@@ -270,11 +279,29 @@ function FueraDeTemporada() {
         ) : (
           <p className="cf-ahora-para">Domingo de Ramos</p>
         )}
-        <Link className="cf-btn" data-variant="secundario" to="/cofradias">
-          Consultar las cofradías
-          <Icono nombre="flechaDerecha" tamano={20} />
-        </Link>
+        <div className="cf-portada-botones">
+          <Link className="cf-btn" data-variant="primario" to="/cofradias">
+            Consultar las cofradías
+            <Icono nombre="flechaDerecha" tamano={20} />
+          </Link>
+          <Link className="cf-btn" data-variant="secundario" to="/agenda">
+            Ver la agenda
+          </Link>
+        </div>
       </div>
+      <ul className="cf-portada-ideas">
+        {IDEAS.map((idea) => (
+          <li key={idea.titulo}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {idea.icono}
+            </svg>
+            <div>
+              <h2>{idea.titulo}</h2>
+              <p>{idea.texto}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
       <LoTuyo />
     </div>
   );

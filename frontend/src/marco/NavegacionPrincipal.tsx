@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { DESTINOS, RELLENO_EN_DESTINO_ACTIVO, type Destino } from "./destinos";
 import { Icono } from "./Icono";
+import { Logo } from "./Logo";
 
 /**
  * Navegacion principal (§9.11, §8.2).
@@ -16,6 +17,12 @@ import { Icono } from "./Icono";
 export function NavegacionPrincipal({ anclaje = "barra" }: { anclaje?: "barra" | "rail" }) {
   return (
     <nav className={anclaje === "rail" ? "cf-rail" : "cf-nav"} aria-label="Principal">
+      {/* En el rail, el logotipo arriba (22/10/2026): en movil lo lleva la cabecera */}
+      {anclaje === "rail" ? (
+        <Link to="/" className="cf-rail-marca" aria-label="Cofradar, ir a Inicio">
+          <Logo variante="vertical" alto={58} />
+        </Link>
+      ) : null}
       {DESTINOS.map((destino) => (
         <Enlace key={destino.id} destino={destino} />
       ))}

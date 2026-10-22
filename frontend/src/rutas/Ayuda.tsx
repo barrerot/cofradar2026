@@ -100,6 +100,14 @@ export function Ayuda({ estado }: { estado: EstadoJornada }) {
         </div>
       </section>
 
+      <section className="cf-ajustes-grupo" aria-label="Introducción">
+        <Link to="/introduccion" className="cf-ajustes-fila cf-ajustes-enlace">
+          <Icono nombre="informativo" tamano={24} />
+          <span>Ver la introducción otra vez</span>
+          <Icono nombre="chevronDerecha" tamano={20} />
+        </Link>
+      </section>
+
       <section className="cf-ajustes-grupo" aria-label="Información legal">
         <Link to="/mi-cofradar/ayuda/privacidad" className="cf-ajustes-fila cf-ajustes-enlace">
           <Icono nombre="documento" tamano={24} />

@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useActividad } from "./datos/actividad";
-import { leer } from "./datos/almacen";
+import { tocaIntroduccion } from "./datos/introduccion";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
 import { Ajustes } from "./rutas/Ajustes";
@@ -35,11 +35,12 @@ export function App() {
 
   return (
     <Routes>
-      {/* La primera vez que se entra por la portada, el arranque (P-01) da paso a
-          la Introducción (P-02). Un enlace directo a una cofradía no la impone. */}
+      {/* En cada visita nueva por la portada, el arranque (P-01) da paso a la
+          Introducción (P-02), salvo «No volver a mostrar» (datos/introduccion.ts).
+          Un enlace directo a una cofradía no la impone. */}
       <Route
         path="/"
-        element={leer("introduccion-vista") ? <Inicio estado={estado} /> : <Navigate to="/introduccion" replace />}
+        element={!tocaIntroduccion() ? <Inicio estado={estado} /> : <Navigate to="/introduccion" replace />}
       />
       <Route path="/introduccion" element={<Introduccion />} />
       <Route path="/mapa" element={<Mapa estado={estado} />} />

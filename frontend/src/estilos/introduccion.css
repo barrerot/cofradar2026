@@ -137,3 +137,57 @@
   outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
   outline-offset: var(--cf-focus-ring-offset);
 }
+
+/* «No volver a mostrar» (22/10/2026): bajo «Empezar», discreto pero tocable */
+.cf-introduccion-no-mostrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--cf-touch-min);
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--cf-text-secondary);
+  cursor: pointer;
+}
+
+.cf-introduccion-no-mostrar input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--cf-text);
+}
+
+/* «Empezar» y «No volver a mostrar» siempre a la vista en pantallas bajas:
+   el pie se queda pegado abajo, sobre el fondo de la intro */
+.cf-introduccion-pie {
+  position: sticky;
+  bottom: 0;
+  background: var(--cf-bg);
+}
+
+/* En escritorio, una columna centrada como en el móvil: ni ideas pegadas a
+   la izquierda ni un botón de 1.400 px */
+@media (min-width: 48rem) {
+  .cf-introduccion {
+    justify-content: center;
+  }
+
+  .cf-introduccion-cuerpo,
+  .cf-introduccion-pie {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .cf-introduccion-cuerpo {
+    flex: none;
+  }
+
+  .cf-introduccion-pie {
+    position: static;
+    padding-top: 32px;
+  }
+}

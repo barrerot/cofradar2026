@@ -50,6 +50,7 @@ export function PantallaSecundaria({
       cabecera={
         <Cabecera
           etiqueta="Cabecera de pantalla secundaria"
+          marca={false}
           titulo={titulo}
           acciones={acciones}
           principal={

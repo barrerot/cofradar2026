@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { guardar } from "../datos/almacen";
+import { cerrarIntroduccion, noMostrarIntroduccion } from "../datos/introduccion";
 import { quitarArranque } from "../datos/arranque";
 import { SimboloAnimado } from "../marco";
 
@@ -8,9 +8,10 @@ import { SimboloAnimado } from "../marco";
  * P-02 Introducción (logotipo D, docs/design/intro_logos/cofradar-logotipo-d/
  * intro-animada/intro.html y pantallas/2-introduccion-*). F-02.
  *
- * Solo la primera vez que se abre Cofradar por la portada: App.tsx manda aquí
- * mientras no esté guardado `introduccion-vista`. Un enlace directo a una
- * cofradía no la impone. No pide nada: ni cuenta ni ubicación.
+ * Sale en cada visita nueva por la portada hasta que se marca «No volver a
+ * mostrar» (datos/introduccion.ts). Un enlace directo a una cofradía no la
+ * impone, y desde Ayuda se puede volver a ver. No pide nada: ni cuenta ni
+ * ubicación.
  *
  * La primera vez el arranque (P-01) solo se ve mientras llega el JavaScript:
  * al montar esta pantalla se quita, porque empieza con la misma animación.
@@ -24,7 +25,7 @@ import { SimboloAnimado } from "../marco";
 /** Leyenda del logotipo. PENDIENTE DE DECIDIR: el texto se cambia aquí. */
 const LEYENDA = { confirmado: "Confirmado", previsto: "Según horario", ahora: "Ahora" };
 
-const IDEAS: { icono: ReactNode; titulo: string; texto: string }[] = [
+export const IDEAS: { icono: ReactNode; titulo: string; texto: string }[] = [
   {
     icono: (
       <>
@@ -67,6 +68,7 @@ export function Introduccion() {
   const navegar = useNavigate();
   const [animando, setAnimando] = useState(true);
   const [saltada, setSaltada] = useState(false);
+  const [noMostrar, setNoMostrar] = useState(noMostrarIntroduccion);
 
   useEffect(() => {
     // La introducción empieza con la misma animación del logotipo: el arranque
@@ -136,12 +138,16 @@ export function Introduccion() {
           type="button"
           className="cf-introduccion-empezar"
           onClick={() => {
-            guardar("introduccion-vista", true);
+            cerrarIntroduccion(noMostrar);
             navegar("/", { replace: true });
           }}
         >
           Empezar
         </button>
+        <label className="cf-introduccion-no-mostrar">
+          <input type="checkbox" checked={noMostrar} onChange={(e) => setNoMostrar(e.target.checked)} />
+          No volver a mostrar
+        </label>
       </div>
     </main>
   );

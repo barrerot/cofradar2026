@@ -97,6 +97,26 @@
   box-shadow: var(--cf-elev-1);
 }
 
+/* La marca: el simbolo de Cofradar, en tinta (cera en oscuro) como manda el
+   LEEME del logotipo. Su espacio libre es el propio hueco de la cabecera. */
+.cf-marco-marca {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  min-height: var(--cf-touch-min);
+  margin-inline-end: var(--cf-space-1);
+  color: var(--cf-text);
+  border-radius: var(--cf-radius-sm);
+}
+
+.cf-marco-marca:focus-visible,
+.cf-rail-marca:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
 /* Lo que compone cada ruta a la izquierda. Se come el espacio libre. */
 .cf-marco-cabecera-slot {
   flex: 1;
@@ -357,6 +377,21 @@
 
   .cf-marco-rail .cf-rail {
     flex: 1;
+  }
+
+  /* En escritorio la marca va arriba del rail, no en la cabecera */
+  .cf-marco-marca {
+    display: none;
+  }
+
+  .cf-rail .cf-rail-marca {
+    display: flex;
+    justify-content: center;
+    padding: var(--cf-space-2) 0 var(--cf-space-4);
+    margin-bottom: var(--cf-space-2);
+    border-bottom: var(--cf-border-width) solid var(--cf-border);
+    color: var(--cf-text);
+    min-height: 0;
   }
 
   .cf-marco-contenido {
