@@ -1024,3 +1024,36 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ── P-31 · Permisos y configuración ─────────────────────────────────────── */
+.cf-admin-permisos {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.cf-admin-ajustes {
+  margin-top: var(--cf-space-5);
+}
+
+.cf-admin-ajustes dl {
+  margin: var(--cf-space-2) 0 0;
+}
+
+.cf-admin-ajustes dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--cf-space-1) var(--cf-space-4);
+  padding: var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-ajustes dd {
+  margin: 0;
+  font-weight: var(--cf-weight-emphasis);
+}
+
+@media (max-width: 72rem) {
+  .cf-admin-permisos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

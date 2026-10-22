@@ -1,5 +1,7 @@
 import { Router, type Request, type Response } from "express";
-import { exigirAdmin } from "../admin.js";
+import { exigirAdmin, ponerAdmin, todasLasCuentas } from "../admin.js";
+import { ALTERACION_MINIMA, BONUS, DESACTUALIZADO, MEMORIA, MINIMO_INDEPENDIENTES, SIMULTANEAS, TOLERANCIA, VENTANA_INMINENTE, VIGENTE } from "../motor/motor.js";
+import { PUNTOS_BASE } from "../motor/plausibilidad.js";
 import { registro, vigente, type TipoRegistro } from "../panel.js";
 import type { Usuario } from "../sesion.js";
 import { supabase } from "../supabase.js";
@@ -15,6 +17,9 @@ import { estadoDe, olvidarEstado } from "./estado.js";
  *                                           publicado, los avisos de jornada y el registro de hoy
  *   POST /api/admin/jornadas/:id/registro   publicar: { tipo, cofradia?, clase?, detalle?, texto }
  *   POST /api/admin/registro/:id/retirar    retirar algo publicado: { motivo }
+ *   GET    /api/admin/permisos              P-31: quién entra al panel y los ajustes del motor (solo lectura)
+ *   POST   /api/admin/permisos              dar acceso: { email } de una cuenta que ya ha entrado en Cofradar
+ *   DELETE /api/admin/permisos/:id          quitarlo (a uno mismo, no: el panel se quedaría sin nadie)
  *
  * Nada se borra ni se sobrescribe: publicar añade una fila a `registro_panel` y retirar la cierra con
  * quién, cuándo y por qué (panel.ts). Lo publicado se ve en la app en el siguiente refresco.
@@ -166,6 +171,78 @@ routerAdmin.post(
     if (error) throw error;
     if (!data?.length) return void respuesta.status(409).json({ error: "Ya estaba retirado" });
     olvidarEstado();
+    respuesta.status(204).end();
+  }),
+);
+
+// ── P-31 · Permisos y configuración (5.5) ─────────────────────────────────────────────────────────
+const min = (ms: number) => Math.round(ms / MIN);
+
+/**
+ * Los ajustes generales se ENSEÑAN pero no se cambian aquí (decisión de Carlos del 22/10/2026): mueven el
+ * motor, y se cambian en el código, con sus pruebas (motor/*.test.ts). Salen de las mismas constantes que
+ * usa el motor, así que lo que se ve es lo que hay.
+ */
+function ajustes() {
+  return [
+    {
+      grupo: "Posición estimada",
+      valores: [
+        { nombre: "Vigente", valor: `menos de ${min(VIGENTE)} min` },
+        { nombre: "Desactualizada («hace X min»)", valor: `de ${min(VIGENTE)} a ${min(DESACTUALIZADO)} min` },
+        { nombre: "Deja de afirmarse (vuelve a «según horario»)", valor: `a partir de ${min(DESACTUALIZADO)} min` },
+      ],
+    },
+    {
+      grupo: "Fases y alteraciones",
+      valores: [
+        { nombre: "«Sale pronto»", valor: `${min(VENTANA_INMINENTE)} min antes de la salida` },
+        { nombre: "Retraso o adelanto", valor: `a partir de ${min(ALTERACION_MINIMA)} min` },
+      ],
+    },
+    {
+      grupo: "«Dar fe»",
+      valores: [
+        { nombre: "Para mover la posición", valor: `${MINIMO_INDEPENDIENTES} personas en ${min(SIMULTANEAS)} min, que coincidan en ${min(TOLERANCIA)} min` },
+        { nombre: "Cuánto cuenta una aportación", valor: `${min(MEMORIA) / 60} h` },
+        { nombre: "Puntos", valor: `${PUNTOS_BASE} al dar fe; bonus de ${BONUS.base}, ${BONUS.escasez} o ${BONUS.obsoleta}` },
+      ],
+    },
+  ];
+}
+
+routerAdmin.get(
+  "/admin/permisos",
+  ruta(async (_peticion, respuesta, usuario) => {
+    const personas = (await todasLasCuentas())
+      .filter((u) => u.app_metadata?.cofradar_admin === true)
+      .map((u) => ({ id: u.id, email: u.email ?? u.id, yo: u.id === usuario.id }))
+      .sort((a, b) => a.email.localeCompare(b.email));
+    respuesta.setHeader("Cache-Control", "no-store");
+    respuesta.json({ personas, ajustes: ajustes() });
+  }),
+);
+
+routerAdmin.post(
+  "/admin/permisos",
+  ruta(async (peticion, respuesta) => {
+    const email = texto((peticion.body ?? {}).email).toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+$/.test(email)) return void respuesta.status(400).json({ error: "Escribe un correo" });
+    const cuenta = (await todasLasCuentas()).find((u) => u.email?.toLowerCase() === email);
+    if (!cuenta)
+      return void respuesta.status(404).json({ error: "Esa cuenta no ha entrado nunca en Cofradar. Que entre una vez con Google y vuelve a añadirla." });
+    await ponerAdmin(cuenta.id, cuenta.app_metadata, true);
+    respuesta.status(204).end();
+  }),
+);
+
+routerAdmin.delete(
+  "/admin/permisos/:id",
+  ruta(async (peticion, respuesta, usuario) => {
+    if (peticion.params.id === usuario.id) return void respuesta.status(409).json({ error: "No puedes quitarte el acceso a ti mismo" });
+    const { data, error } = await supabase().auth.admin.getUserById(peticion.params.id!);
+    if (error || !data.user) return void respuesta.status(404).json({ error: "Esa cuenta no existe" });
+    await ponerAdmin(data.user.id, data.user.app_metadata, false);
     respuesta.status(204).end();
   }),
 );

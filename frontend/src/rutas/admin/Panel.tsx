@@ -4,6 +4,7 @@ import { cabecerasSesion, useSesion } from "../../datos/sesion";
 import { Boton, Icono, type NombreTrazo } from "../../marco";
 import { DatosBase } from "./DatosBase";
 import { JornadaEnCurso } from "./JornadaEnCurso";
+import { Permisos } from "./Permisos";
 import { Taxonomias } from "./Taxonomias";
 
 /**
@@ -105,11 +106,11 @@ function PantallaAcceso({ children }: { children: ReactNode }) {
   );
 }
 
-const SECCIONES: { ruta: string; nombre: string; icono: NombreTrazo; issue: string }[] = [
-  { ruta: "jornada", nombre: "Jornada en curso", icono: "agenda", issue: "5.2" },
-  { ruta: "datos", nombre: "Datos base", icono: "documento", issue: "5.3" },
-  { ruta: "taxonomias", nombre: "Taxonomías", icono: "cofradias", issue: "5.4" },
-  { ruta: "permisos", nombre: "Permisos y configuración", icono: "usuario", issue: "5.5" },
+const SECCIONES: { ruta: string; nombre: string; icono: NombreTrazo }[] = [
+  { ruta: "jornada", nombre: "Jornada en curso", icono: "agenda" },
+  { ruta: "datos", nombre: "Datos base", icono: "documento" },
+  { ruta: "taxonomias", nombre: "Taxonomías", icono: "cofradias" },
+  { ruta: "permisos", nombre: "Permisos y configuración", icono: "usuario" },
 ];
 
 function Dentro({ email, salir }: { email: string; salir: () => Promise<void> }) {
@@ -143,26 +144,10 @@ function Dentro({ email, salir }: { email: string; salir: () => Promise<void> })
           <Route path="jornada" element={<JornadaEnCurso />} />
           <Route path="datos" element={<DatosBase />} />
           <Route path="taxonomias" element={<Taxonomias />} />
-          {SECCIONES.slice(3).map((s) => (
-            <Route key={s.ruta} path={s.ruta} element={<PorHacer nombre={s.nombre} issue={s.issue} />} />
-          ))}
+          <Route path="permisos" element={<Permisos />} />
           <Route path="*" element={<Navigate to="jornada" replace />} />
         </Routes>
       </div>
     </div>
-  );
-}
-
-/** Andamio: la sección aún no está construida. Se va quitando según se hace cada issue. */
-function PorHacer({ nombre, issue }: { nombre: string; issue: string }) {
-  return (
-    <>
-      <header className="cf-admin-cab">
-        <h1>{nombre}</h1>
-      </header>
-      <div className="cf-admin-cuerpo">
-        <p className="cf-relleno">{issue} · por construir</p>
-      </div>
-    </>
   );
 }

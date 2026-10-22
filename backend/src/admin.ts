@@ -26,6 +26,24 @@ export async function esAdmin(id: string): Promise<boolean> {
   return admin;
 }
 
+/** Todas las cuentas de Supabase Auth (de mil en mil). */
+export async function todasLasCuentas() {
+  const cuentas = [];
+  for (let pagina = 1; ; pagina++) {
+    const { data, error } = await supabase().auth.admin.listUsers({ page: pagina, perPage: 1000 });
+    if (error) throw error;
+    cuentas.push(...data.users);
+    if (data.users.length < 1000) return cuentas;
+  }
+}
+
+/** Dar o quitar el permiso a una cuenta, sin tocar el resto de su `app_metadata`. */
+export async function ponerAdmin(id: string, app: Record<string, unknown> | undefined, admin: boolean) {
+  const { error } = await supabase().auth.admin.updateUserById(id, { app_metadata: { ...app, cofradar_admin: admin } });
+  if (error) throw error;
+  olvidarAdmin(id);
+}
+
 /** Al dar o quitar el permiso desde el panel, que se note en la siguiente petición. */
 export function olvidarAdmin(id: string) {
   recordados.delete(id);
