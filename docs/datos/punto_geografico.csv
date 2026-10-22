@@ -2,12 +2,12 @@ id,nombre,tipo,latitud,longitud
 1,Parroquia de Jesús Obrero,templo,37.35907,-5.96990
 2,Parroquia de San Isidro Labrador,templo,37.42350,-5.96352
 3,Parroquia de San Antonio María Claret,templo,37.35682,-5.98471
-4,Parroquia del Sagrado Corazón de Jesús,templo,,
+4,Parroquia del Sagrado Corazón de Jesús,templo,37.32456,-5.96753
 5,Parroquia de San Juan Bosco,templo,37.38058,-6.00765
 6,Parroquia de Nuestra Señora del Buen Aire,templo,,
 7,Parroquia del Sagrario,templo,37.38634,-5.99384
 8,Parroquia del Buen Pastor y San Juan de la Cruz (Palmete-Padre Pío),templo,37.37201,-5.94081
-9,Parroquia de San Antonio de Padua,templo,,
+9,Parroquia de San Antonio de Padua,templo,37.38326,-5.89921
 10,Iglesia de la Beata Ana María,templo,37.41041,-5.91895
 11,Parroquia de San José Obrero,templo,37.39756,-5.97535
 12,Parroquia de la Milagrosa,templo,37.37698,-5.96697
@@ -29,7 +29,7 @@ id,nombre,tipo,latitud,longitud
 28,Parroquia de San Vicente Martir,templo,37.39440,-5.99925
 29,Capilla de Ntra. Señora del Rosario,templo,37.38454,-5.99642
 30,Capilla de la Expiración (Capilla del Museo),templo,37.39290,-6.00000
-31,Parroquia Nuestra Señora de los Dolores. Cerro del Águila,templo,,
+31,Parroquia Nuestra Señora de los Dolores. Cerro del Águila,templo,37.37173,-5.95735
 32,Iglesia de San Esteban,templo,37.38989,-5.98613
 33,Parroquia de San Nicolás de Bari,templo,37.38866,-5.98933
 34,Parroquia de San Benito de Abad,templo,37.38773,-5.97935
