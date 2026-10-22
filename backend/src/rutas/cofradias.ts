@@ -91,11 +91,18 @@ const SELECT_SALIDA = `
   punto_itinerario(referencia, orden, fecha_hora, hora_publicada, punto_geografico(id, nombre, tipo, latitud, longitud))`;
 
 /**
- * Los datos base cambian solo al recargar Supabase (npm run cargar:datos), y leer las salidas con sus
- * horarios cuesta: se guardan 5 minutos en memoria. Una recarga se ve, como mucho, 5 minutos después.
+ * Los datos base cambian al recargar Supabase (npm run cargar:datos) o al corregirlos en el panel (5.3),
+ * y leer las salidas con sus horarios cuesta: se guardan 5 minutos en memoria. Lo corregido en el panel
+ * se ve al momento (olvidarDatosBase); una recarga, como mucho, 5 minutos después.
  */
 const MEMORIA_MS = 5 * 60_000;
 const memoria = new Map<string, { hasta: number; salidas: Promise<Salida[]> }>();
+
+/** Tras corregir algo en el panel (rutas/datosBase.ts): que la siguiente petición lo lea ya de Supabase. */
+export function olvidarDatosBase() {
+  memoria.clear();
+  memoriaMapa.clear();
+}
 
 /** Las salidas de una edición (la última si no se pide año), con todo lo necesario para las rutas. */
 async function salidas(anio?: number): Promise<Salida[]> {

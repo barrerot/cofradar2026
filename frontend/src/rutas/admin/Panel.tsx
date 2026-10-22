@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { cabecerasSesion, useSesion } from "../../datos/sesion";
 import { Boton, Icono, type NombreTrazo } from "../../marco";
+import { DatosBase } from "./DatosBase";
 import { JornadaEnCurso } from "./JornadaEnCurso";
 
 /**
@@ -139,7 +140,8 @@ function Dentro({ email, salir }: { email: string; salir: () => Promise<void> })
         <Routes>
           <Route index element={<Navigate to="jornada" replace />} />
           <Route path="jornada" element={<JornadaEnCurso />} />
-          {SECCIONES.slice(1).map((s) => (
+          <Route path="datos" element={<DatosBase />} />
+          {SECCIONES.slice(2).map((s) => (
             <Route key={s.ruta} path={s.ruta} element={<PorHacer nombre={s.nombre} issue={s.issue} />} />
           ))}
           <Route path="*" element={<Navigate to="jornada" replace />} />

@@ -342,3 +342,20 @@ Reglas:
 - **Cuándo se ve en la app:** en el siguiente refresco, a los 30 segundos como mucho.
 
 El permiso para entrar al panel no es una tabla: es `app_metadata.cofradar_admin` en Supabase Auth (5.1).
+
+### Manda Supabase (5.3, 22/10/2026)
+
+Decisión de Carlos del 22/10/2026: desde ahora los datos base se corrigen en el panel (`/admin/datos`) y Supabase es la fuente. Los ocho CSV de esta carpeta son su copia en el repositorio:
+
+- `npm run exportar:datos -w backend` los escribe desde Supabase con el mismo formato. Sin cambios en Supabase no hay ninguna diferencia.
+- `npm run cargar:datos -w backend` se niega si Supabase tiene algo que no está en los CSV. Con `-- --pisar` carga igualmente, por ejemplo para empezar 2027.
+
+Qué se puede corregir desde el panel:
+
+- de la cofradía: nombre popular y nombre completo, templo, web y fundación;
+- su jornada, y si no procesiona ese año;
+- el nombre de cada paso;
+- en los horarios, el lugar, la hora y si es publicada;
+- el nombre de cada jornada.
+
+Los recorridos (GeoJSON) no se editan en el panel: se ven sobre el mapa.

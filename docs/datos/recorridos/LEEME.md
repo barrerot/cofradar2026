@@ -115,8 +115,11 @@ Después se enlaza cada recorrido con su salida y se cargan los datos en Supabas
 
 ```bash
 python3 -I ../enlazar_itinerarios.py ../../itinerarios/2026 ../.. 2026   # dentro de trabajo/
-npm run cargar:datos -w backend                                          # en la raíz del repositorio
+npm run exportar:datos -w backend                                        # en la raíz: guarda antes lo corregido en el panel
+npm run cargar:datos -w backend -- --pisar                               # y carga el año nuevo encima
 ```
+
+Desde el 22/10/2026 manda Supabase: lo corregido en el panel (5.3) solo está allí hasta que se exporta. Por eso se exporta primero y se sube; la carga normal se niega a pisarlo, y con `--pisar` se carga encima.
 
 `enlazar_itinerarios.py` escribe en cada GeoJSON el `salida_procesional_id` de su salida y el nombre de la hermandad del modelo («Vera Cruz», no el «Vera+Cruz» abreviado del programa). Casa por columna del programa: las salidas de una edición van en `salida_procesional.csv` en el mismo orden. La carga vacía las tablas de Supabase y las vuelve a llenar con los CSV y los recorridos, y cuenta las filas al final.
 

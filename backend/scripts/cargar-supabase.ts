@@ -5,56 +5,22 @@
  * tablas y las vuelve a llenar: se puede repetir cada vez que cambien los CSV. Si algo falla, no se
  * cambia nada. Al final cuenta las filas de cada tabla y las compara con los CSV.
  *
- * Uso: npm run cargar:datos -w backend   (lee SUPABASE_DB_URL de backend/.env)
+ * Desde el 22/10/2026 (5.3) manda Supabase: los datos se corrigen en el panel y los CSV son su copia
+ * (exportar-supabase.ts). Por eso, si Supabase tiene algo que no está en los CSV (una corrección hecha
+ * en el panel y no exportada), la carga se niega: se perdería. Para cargar igualmente (empezar un año
+ * nuevo, por ejemplo), `-- --pisar`.
+ *
+ * Uso: npm run cargar:datos -w backend [-- --pisar]   (lee SUPABASE_DB_URL de backend/.env)
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { parse } from "csv-parse/sync";
+import { join } from "node:path";
 import pg from "pg";
+import { datos, exportar, leerCsv, raiz, TABLAS, valor } from "./datos-csv.js";
 
-const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
-const datos = join(raiz, "..", "docs", "datos");
 process.loadEnvFile(join(raiz, ".env"));
 const url = process.env.SUPABASE_DB_URL;
 if (!url) throw new Error("Falta SUPABASE_DB_URL en backend/.env");
-
-type Fila = Record<string, string>;
-type Tipo = "texto" | "entero" | "decimal" | "fecha" | "sino";
-
-// Tablas en orden de carga (cada una después de aquellas a las que apunta) y el tipo de cada columna
-const TABLAS: [string, Record<string, Tipo>][] = [
-  ["punto_geografico", { id: "entero", nombre: "texto", tipo: "texto", latitud: "decimal", longitud: "decimal" }],
-  ["templo", { id: "entero", nombre: "texto", direccion: "texto", punto_geografico_id: "entero" }],
-  ["hermandad", {
-    id: "entero", nombre: "texto", nombre_oficial: "texto", templo_id: "entero", escudo: "texto", web: "texto",
-    historia: "texto", fundacion: "texto", numero_hermanos: "entero", numero_nazarenos: "entero", duracion_cortejo: "entero",
-  }],
-  ["paso", {
-    id: "entero", hermandad_id: "entero", nombre: "texto", orden: "entero", autor: "texto", capataz: "texto",
-    musica: "texto", fotografia: "texto",
-  }],
-  ["edicion", { id: "entero", anio: "entero" }],
-  ["jornada", { id: "entero", nombre: "texto", orden: "entero" }],
-  ["salida_procesional", { id: "entero", hermandad_id: "entero", edicion_id: "entero", jornada_id: "entero", estado: "texto" }],
-  ["punto_itinerario", {
-    id: "entero", salida_procesional_id: "entero", punto_geografico_id: "entero", referencia: "texto",
-    fecha_hora: "fecha", hora_publicada: "sino", orden: "entero",
-  }],
-];
-
-function valor(v: string | undefined, tipo: Tipo): string | number | boolean | null {
-  const t = (v ?? "").trim();
-  if (t === "") return null;
-  if (tipo === "entero") return Number.parseInt(t, 10);
-  if (tipo === "decimal") return Number.parseFloat(t);
-  if (tipo === "sino") return t === "si";
-  return t;
-}
-
-function leerCsv(tabla: string): Fila[] {
-  return parse(readFileSync(join(datos, `${tabla}.csv`), "utf-8"), { columns: true, skip_empty_lines: true });
-}
+const pisar = process.argv.includes("--pisar");
 
 async function insertar(db: pg.Client, tabla: string, columnas: string[], filas: unknown[][]) {
   // Por bloques, para no pasar del límite de parámetros de Postgres
@@ -84,6 +50,22 @@ const db = new pg.Client({ connectionString: url, ssl: { rejectUnauthorized: fal
 await db.connect();
 try {
   await db.query(readFileSync(join(raiz, "supabase", "esquema.sql"), "utf-8"));
+
+  // ¿Hay en Supabase algo que no está en los CSV? Con las tablas vacías (primera carga), nada que perder
+  const { rows: hay } = await db.query<{ n: string }>("select count(*) as n from hermandad");
+  if (Number(hay[0]?.n) > 0 && !pisar) {
+    const distintas = [...(await exportar(db))].filter(([tabla, texto]) => readFileSync(join(datos, `${tabla}.csv`), "utf-8") !== texto);
+    if (distintas.length) {
+      console.error(
+        `Supabase tiene cambios que no están en los CSV (${distintas.map(([t]) => t).join(", ")}).\n` +
+          "Probablemente son correcciones hechas en el panel: cargar los CSV las borraría.\n" +
+          "· Para guardarlas: npm run exportar:datos -w backend, revisar con git diff docs/datos y subirlas.\n" +
+          "· Para cargar los CSV igualmente y perderlas: npm run cargar:datos -w backend -- --pisar",
+      );
+      process.exitCode = 1;
+      throw new Error("Carga cancelada: no se ha cambiado nada");
+    }
+  }
 
   const esperado: Record<string, number> = {};
   await db.query("begin");

@@ -685,3 +685,218 @@
     animation: none;
   }
 }
+
+/* ── P-29 · Datos base ───────────────────────────────────────────────────── */
+.cf-admin-datos {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-admin-copia code,
+.cf-admin-datos code {
+  font-size: 0.9em;
+}
+
+.cf-admin-pestanas {
+  display: flex;
+  gap: var(--cf-space-4);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  overflow-x: auto;
+}
+
+.cf-admin-pestanas button {
+  min-height: 2.75rem;
+  padding: 0 var(--cf-space-1);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--cf-text-secondary);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  cursor: pointer;
+}
+
+.cf-admin-pestanas button[aria-selected="true"] {
+  border-bottom-color: var(--cf-text);
+  color: var(--cf-text);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-datos-cofradias {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 1fr);
+  align-items: start;
+  gap: var(--cf-space-6);
+}
+
+.cf-admin-datos-tabla {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-admin-desliza {
+  overflow-x: auto;
+}
+
+.cf-admin-datos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cf-admin-datos th {
+  padding: var(--cf-space-2) var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-sm);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cf-admin-datos td {
+  padding: var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  vertical-align: top;
+}
+
+.cf-admin-datos-tabla tbody tr {
+  cursor: pointer;
+}
+
+.cf-admin-datos-tabla tbody tr:hover,
+.cf-admin-datos-tabla tbody tr[aria-selected="true"] {
+  background: var(--cf-surface-sunken);
+}
+
+.cf-admin-enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-weight: var(--cf-weight-emphasis);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-admin-insignias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-1);
+  margin-top: var(--cf-space-2);
+}
+
+.cf-admin-insignia {
+  padding: 2px var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+  font-size: var(--cf-text-sm);
+  white-space: nowrap;
+}
+
+.cf-admin-ficha {
+  position: sticky;
+  top: var(--cf-space-4);
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-admin-ficha dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--cf-space-2) var(--cf-space-4);
+  margin: 0;
+}
+
+.cf-admin-ficha dt {
+  color: var(--cf-text-secondary);
+}
+
+.cf-admin-ficha dd {
+  margin: 0;
+}
+
+.cf-admin-linea {
+  display: block;
+}
+
+.cf-admin-partir {
+  overflow-wrap: anywhere;
+}
+
+.cf-admin-ficha h3 {
+  margin: var(--cf-space-2) 0 0;
+}
+
+.cf-admin-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-3);
+}
+
+.cf-admin-minimapa {
+  height: 22rem;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+  overflow: hidden;
+  background: var(--cf-surface-sunken);
+}
+
+.cf-admin-form {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-admin-campo input:not([type="checkbox"]),
+.cf-admin-campo select,
+.cf-admin-datos td input:not([type="checkbox"]),
+.cf-admin-datos td select {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+}
+
+.cf-admin-datos td select {
+  min-width: 12rem;
+}
+
+.cf-admin-datos input[type="checkbox"],
+.cf-admin-marca input {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.cf-admin-marca {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+.cf-admin-error {
+  display: block;
+  margin-top: var(--cf-space-1);
+  color: var(--cf-alert-text);
+  font-size: var(--cf-text-sm);
+}
+
+@media (max-width: 64rem) {
+  .cf-admin-datos-cofradias {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cf-admin-ficha {
+    position: static;
+  }
+}
+
+.cf-admin-minimapa .cf-mapa-hito .tx {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

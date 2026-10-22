@@ -5,6 +5,7 @@ import { routerAdmin } from "./rutas/admin.js";
 import { routerAportaciones } from "./rutas/aportaciones.js";
 import { routerCofradias } from "./rutas/cofradias.js";
 import { routerCuenta } from "./rutas/cuenta.js";
+import { routerDatosBase } from "./rutas/datosBase.js";
 import { routerEstado } from "./rutas/estado.js";
 import { leerSesion } from "./sesion.js";
 
@@ -34,6 +35,7 @@ app.use("/api", routerCofradias);
 app.use("/api", routerCuenta);
 app.use("/api", routerAportaciones);
 app.use("/api", routerAdmin);
+app.use("/api", routerDatosBase);
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

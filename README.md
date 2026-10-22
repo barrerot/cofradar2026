@@ -51,13 +51,20 @@ SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 
 La URL y la clave **publicable** las usa también la web para entrar con Google: `vite.config.ts` las pasa al navegador, solo esas dos. La secreta y la de la base de datos nunca salen del servidor.
 
-**Cargar o recargar los datos** después de cambiar los CSV de `docs/datos/` o los recorridos:
+**Manda Supabase** (decisión del 22/10/2026). Los datos se corrigen en el panel (`/admin/datos`) y los CSV de `docs/datos/` son su copia en el repositorio. Para ponerlos al día, se exporta y luego se revisa con `git diff docs/datos` antes de subirlos:
 
 ```bash
-npm run cargar:datos -w backend
+npm run exportar:datos -w backend
 ```
 
-Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a llenar todo en una sola transacción y cuenta las filas al final. Se puede repetir sin miedo.
+**Cargar los CSV en Supabase.** Se hace en la primera carga o al empezar un año nuevo con el programa de 2027:
+
+```bash
+npm run cargar:datos -w backend              # se niega si Supabase tiene cambios sin exportar
+npm run cargar:datos -w backend -- --pisar   # carga igualmente y los pierde
+```
+
+Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a llenar todo en una sola transacción y cuenta las filas al final.
 
 **Rutas.** Las horas son las del programa, hora de Sevilla sin zona (`2026-03-29T15:35`). El `id` de una cofradía es su nombre en minúsculas y con guiones (`la-borriquita`). Todas aceptan `?anio=2026`; sin él, la última edición.
 
