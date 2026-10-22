@@ -44,6 +44,9 @@ erDiagram
         string capataz
         string musica
         string fotografia
+        string titulares
+        string autor_imagen
+        string anio_imagen
     }
 
     EDICION {
@@ -378,6 +381,7 @@ Aprobado por Carlos el 22/10/2026. Lo que antes estaba escrito en el código pas
 
 - **`elemento.csv`** (`id, nombre, llano, orden, clave`): los tipos de elemento del cortejo, en orden, con su nombre cofrade y en llano. Por ejemplo, «Palio · El paso de la Virgen». `clave = cruz_guia` marca la cruz de guía, que la app necesita reconocer y no se puede quitar.
 - **`paso.elemento_id`**: de qué tipo es cada paso. Va vacío mientras no se sepa, y se rellena en Datos base. Si el paso aún tiene el nombre genérico («Primer paso»), la app lo nombra por su tipo («Palio»). «Dar fe» lo pregunta en llano: «El paso de la Virgen».
+- **`paso.titulares`, `paso.autor_imagen` y `paso.anio_imagen`** (22/10/2026): las imágenes titulares del paso, su autor y su año, cortos («José de Arce» · «1655»). Salen de `recorridos/aportes/semana_santa_sevilla_2025.csv`, de Carlos: 46 hermandades y 91 pasos, 16 de ellos nuevos (las 9 hermandades que no tenían). Un paso con varias imágenes las separa con « / ». `autor` sigue siendo la explicación larga. La música se completó solo donde estaba vacía o abreviada («CC», «A.M»): la nuestra es de 2026 y la del archivo, de 2025.
 - **`hito.csv`** (`id, punto_geografico_id, orden, carrera_oficial`): los lugares de la ciudad que importan, en orden. Para qué sirven los de carrera oficial:
   - marcan la carrera en el recorrido;
   - el primero (La Campana) da la hora de la Agenda;

@@ -42,7 +42,14 @@ type Ficha = {
   /** Minutos que tarda el cortejo en pasar por un punto. */
   duracionCortejo: number | null;
   sede: Lugar;
-  pasos: { orden: number; nombre: string }[];
+  pasos: {
+    orden: number;
+    nombre: string;
+    titulares: string | null;
+    autor_imagen: string | null;
+    anio_imagen: string | null;
+    musica: string | null;
+  }[];
   salida: {
     anio: number;
     jornada: { id: number; nombre: string };
@@ -136,7 +143,15 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
               ? null
               : f.pasos.map((p) => (
                   <span key={p.orden} className="cf-ficha-paso">
-                    {f.pasos.length === 1 ? "Un solo paso" : p.nombre} · <DatoPendiente />
+                    <strong>{f.pasos.length === 1 ? "Un solo paso" : p.nombre}</strong>
+                    {p.titulares ? <> · {p.titulares}</> : <> · <DatoPendiente /></>}
+                    {p.autor_imagen || p.musica ? (
+                      <span className="cf-ficha-nota">
+                        {[p.autor_imagen && (p.anio_imagen ? `${p.autor_imagen}, ${p.anio_imagen}` : p.autor_imagen), p.musica && `Música: ${p.musica}`]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
                   </span>
                 ))}
           </Dato>

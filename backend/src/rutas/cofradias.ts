@@ -41,6 +41,9 @@ type Hermandad = {
     capataz: string | null;
     musica: string | null;
     fotografia: string | null;
+    titulares: string | null;
+    autor_imagen: string | null;
+    anio_imagen: string | null;
     elemento: { nombre: string; llano: string } | null;
   }[];
 };
@@ -114,7 +117,7 @@ const SELECT_SALIDA = `
   id, estado, edicion!inner(anio), jornada(id, nombre, orden),
   hermandad(id, nombre, nombre_oficial, escudo, web, historia, fundacion, numero_hermanos, numero_nazarenos,
             duracion_cortejo, templo(nombre, direccion, punto_geografico(id, nombre, tipo, latitud, longitud)),
-            paso(orden, nombre, autor, capataz, musica, fotografia, elemento(nombre, llano))),
+            paso(orden, nombre, autor, capataz, musica, fotografia, titulares, autor_imagen, anio_imagen, elemento(nombre, llano))),
   punto_itinerario(referencia, orden, fecha_hora, hora_publicada, punto_geografico(id, nombre, tipo, latitud, longitud))`;
 
 /**

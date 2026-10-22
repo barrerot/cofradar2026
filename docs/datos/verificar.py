@@ -23,7 +23,7 @@ TABLAS = {
     "hermandad": ["id", "nombre", "nombre_oficial", "templo_id", "escudo", "web", "historia",
                   "fundacion", "numero_hermanos", "numero_nazarenos", "duracion_cortejo"],
     "elemento": ["id", "nombre", "llano", "orden", "clave"],
-    "paso": ["id", "hermandad_id", "nombre", "orden", "autor", "capataz", "musica", "fotografia", "elemento_id"],
+    "paso": ["id", "hermandad_id", "nombre", "orden", "autor", "capataz", "musica", "fotografia", "elemento_id", "titulares", "autor_imagen", "anio_imagen"],
     "edicion": ["id", "anio"],
     "jornada": ["id", "nombre", "orden"],
     "salida_procesional": ["id", "hermandad_id", "edicion_id", "jornada_id", "estado"],

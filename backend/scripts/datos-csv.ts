@@ -32,7 +32,7 @@ export const TABLAS: [string, Record<string, Tipo>][] = [
   ["elemento", { id: "entero", nombre: "texto", llano: "texto", orden: "entero", clave: "texto" }],
   ["paso", {
     id: "entero", hermandad_id: "entero", nombre: "texto", orden: "entero", autor: "texto", capataz: "texto",
-    musica: "texto", fotografia: "texto", elemento_id: "entero",
+    musica: "texto", fotografia: "texto", elemento_id: "entero", titulares: "texto", autor_imagen: "texto", anio_imagen: "texto",
   }],
   ["edicion", { id: "entero", anio: "entero" }],
   ["jornada", { id: "entero", nombre: "texto", orden: "entero" }],

@@ -109,6 +109,14 @@ create table if not exists recorrido (
 -- De qué tipo es cada paso (5.4): misterio, palio… Vacío mientras no se sepa.
 alter table paso add column if not exists elemento_id integer references elemento (id);
 
+-- Las imágenes titulares de cada paso, su autor y su año (22/10/2026, del archivo de Carlos
+-- semana_santa_sevilla_2025.csv). Texto libre: un paso con varias imágenes las separa con « / »
+-- («Bonilla Cornejo (Cristo) / Miguel Láinez Capote (Virgen)») y el año admite «1994 (remodelado
+-- en 2002)». `autor` se queda como la explicación larga.
+alter table paso add column if not exists titulares    text;
+alter table paso add column if not exists autor_imagen text;
+alter table paso add column if not exists anio_imagen  text;
+
 create index if not exists paso_hermandad on paso (hermandad_id);
 create index if not exists salida_jornada on salida_procesional (edicion_id, jornada_id);
 create index if not exists salida_hermandad on salida_procesional (hermandad_id);

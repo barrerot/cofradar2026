@@ -172,6 +172,11 @@
   color: var(--cf-text-secondary);
 }
 
+/* Cada paso con sus titulares; el autor, el año y la música debajo, en pequeño */
+.cf-ficha-paso + .cf-ficha-paso {
+  margin-top: var(--cf-space-2);
+}
+
 .cf-ficha-historia {
   margin: 0;
   font-family: var(--cf-font-serif);
