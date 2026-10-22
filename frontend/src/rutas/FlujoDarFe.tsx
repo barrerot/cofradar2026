@@ -83,11 +83,21 @@ function useCruz(): Cruz {
 /** Las opciones de P-16: en llano y, debajo, el término cofrade. */
 function opcionesDe(c: CofradiaMapa, cruz: Cruz): { elemento: number | null; llano: string; cofrade: string }[] {
   const pasos = c.nombresPasos.length ? c.nombresPasos : ["Paso"];
+  const tipos = pasos.map((_, i) => c.llanoPasos?.[i] ?? null);
   return [
     { elemento: 0, llano: cruz.llano, cofrade: cruz.nombre },
     ...pasos.map((nombre, i) => {
-      // Por su tipo («El paso de la Virgen») si se sabe (5.4); si no, por su orden
-      const llano = c.llanoPasos?.[i] ?? (pasos.length === 1 ? "El paso" : `El ${ORDINAL[i] ?? `${i + 1}.º`} paso`);
+      // Por su tipo («La Virgen bajo palio») si se sabe (5.4); si no, por su orden. Dos del mismo tipo
+      // (El Valle lleva dos misterios) se distinguen por su orden entre ellos: «(1 de 2)»
+      const tipo = tipos[i];
+      const iguales = tipos.filter((t) => t !== null && t === tipo).length;
+      const llano = tipo
+        ? iguales > 1
+          ? `${tipo} (${tipos.slice(0, i + 1).filter((t) => t === tipo).length} de ${iguales})`
+          : tipo
+        : pasos.length === 1
+          ? "El paso"
+          : `El ${ORDINAL[i] ?? `${i + 1}.º`} paso`;
       const generico = /^(paso|primer paso|segundo paso|tercer paso)$/i.test(nombre);
       return { elemento: i + 1, llano, cofrade: generico ? (pasos.length === 1 ? "Paso" : `Paso ${i + 1} de ${pasos.length}`) : nombre };
     }),

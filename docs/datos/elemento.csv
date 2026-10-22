@@ -1,4 +1,7 @@
 id,nombre,llano,orden,clave
 1,Cruz de guía,La cruz que abre el cortejo,1,cruz_guia
-2,Paso de Cristo o de misterio,El paso del Cristo,2,
-3,Palio,El paso de la Virgen,3,
+2,Misterio,La escena con varias figuras,2,
+3,Palio,La Virgen bajo palio,4,
+4,Cristo,"El Cristo solo, sin escena",3,
+5,Virgen,La Virgen sin palio,5,
+6,Alegórico,La figura alegórica,6,
