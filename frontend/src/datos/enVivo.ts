@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { aHoy } from "./actividad";
 import { useEstadoJornada, useMapaJornada } from "./estadoJornada";
 import type { Jornada } from "./jornada";
-import type { CofradiaMapa, ElementoEstado, EstadoCofradia, HoraSituada } from "./mapa";
+import type { CofradiaMapa, ElementoEstado, EstadoCofradia, EstadoJornadaMotor, HoraSituada } from "./mapa";
 import type { Posicion } from "./ubicacion";
 
 /**
@@ -18,7 +18,12 @@ import type { Posicion } from "./ubicacion";
  */
 export type EnVivo = { estado: EstadoCofradia; mapa: CofradiaMapa };
 
-export function useEnVivo(jornada: Jornada | null | undefined): { cofradias: EnVivo[] | null; instante: Date | null } {
+export function useEnVivo(jornada: Jornada | null | undefined): {
+  cofradias: EnVivo[] | null;
+  instante: Date | null;
+  /** Avisos de toda la jornada (lluvia…), publicados desde el panel. */
+  contexto: EstadoJornadaMotor["contexto"];
+} {
   const estado = useEstadoJornada(jornada?.id);
   const mapa = useMapaJornada(jornada?.id);
   const cofradias = useMemo(() => {
@@ -29,7 +34,7 @@ export function useEnVivo(jornada: Jornada | null | undefined): { cofradias: EnV
       return m ? [{ estado: e, mapa: m }] : [];
     });
   }, [jornada, estado.datos, mapa.datos]);
-  return { cofradias, instante: estado.instante };
+  return { cofradias, instante: estado.instante, contexto: (jornada && estado.datos?.contexto) || [] };
 }
 
 /** Si está en la calle (o entrando): lo que se puede ir a ver. */
@@ -39,8 +44,8 @@ export const enLaCalle = (e: EstadoCofradia) => e.fase.valor === "en_calle" || e
 export function retrasoDe(e: EstadoCofradia, orden?: number): number {
   const el = orden === undefined ? undefined : e.elementos.find((x) => x.orden === orden);
   if (el) return el.retrasoMin;
-  const a = e.alteraciones[0];
-  return a ? (a.tipo === "retraso" ? a.minutos : -a.minutos) : 0;
+  const a = e.alteraciones.find((x) => x.tipo !== "incidencia");
+  return a?.minutos === undefined ? 0 : a.tipo === "retraso" ? a.minutos : -a.minutos;
 }
 
 /** La hora a la que se espera que pase por un lugar: la del programa, hoy, más el retraso. */

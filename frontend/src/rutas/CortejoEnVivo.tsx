@@ -1,4 +1,4 @@
-import { Alteraciones, ChipEstado } from "../componentes";
+import { Alteraciones, Aviso, ChipEstado } from "../componentes";
 import { useActividad } from "../datos/actividad";
 import { dondeVa, enLaCalle, horaDelElemento, horaEstimada, retrasoDe, useEnVivo, type EnVivo } from "../datos/enVivo";
 import { useJornada, type Jornada } from "../datos/jornada";
@@ -19,6 +19,25 @@ export function useEnVivoDe(id: string, jornadaId: number | null | undefined): {
 }
 
 const hhmm = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+
+/**
+ * Las incidencias que ha publicado el equipo (panel, 5.2), con su texto: qué ha pasado. Avisos críticos,
+ * que no se descartan mientras sigan publicadas.
+ */
+export function IncidenciasDe({ v, conNombre = false }: { v: EnVivo; conNombre?: boolean }) {
+  return (
+    <>
+      {v.estado.incidencias.map((i) => (
+        <Aviso
+          key={i.id}
+          tipo="critico"
+          titulo={conNombre ? `${v.estado.nombre} · Incidencia` : "Incidencia"}
+          cuerpo={`${i.texto} (${hhmm(new Date(i.publicada))})`}
+        />
+      ))}
+    </>
+  );
+}
 
 /** Fase con su confianza y las alteraciones, como chips. */
 export function ChipsEnVivo({ v }: { v: EnVivo }) {

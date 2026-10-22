@@ -495,8 +495,8 @@ function comoSeSabe(e: ElementoEstado): string {
 
 /** «20 min de retraso», o nada. */
 function alteracion(s: EstadoCofradia): string {
-  const a = s.alteraciones[0];
-  return a ? `${a.minutos} min de ${a.tipo}` : "";
+  const a = s.alteraciones.find((x) => x.tipo !== "incidencia");
+  return a?.minutos !== undefined ? `${a.minutos} min de ${a.tipo}` : "";
 }
 
 /**

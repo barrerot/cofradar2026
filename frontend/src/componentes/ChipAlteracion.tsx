@@ -121,7 +121,8 @@ export function Alteraciones({
         <ChipAlteracion
           key={a.tipo}
           alteracion={a}
-          confianza={confianza}
+          /* La incidencia la publica el equipo: nunca es una estimación */
+          confianza={a.tipo === "incidencia" ? "confirmado" : confianza}
           resto={resto || undefined}
         />
       ))}

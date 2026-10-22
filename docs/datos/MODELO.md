@@ -320,3 +320,25 @@ Tabla `aportacion` en `backend/supabase/esquema.sql`, aprobada por Carlos. Cada 
   - Empieza en 0,5 y sube despacio con cada aportación que consolida.
   - Solo baja ante un patrón: al menos 8 aportaciones juzgadas y la mayoría contradichas por otras personas, con inercia para quien tiene buen historial. Discrepar de la estimación no cuenta.
   - Por debajo de 0,2, esa persona no cuenta para que un dato consolide. Sus aportaciones se guardan igual y siguen dando puntos base.
+
+### Registro del panel (5.2, 22/10/2026)
+
+Tabla `registro_panel`, aprobada por Carlos el 22/10/2026. Guarda las excepciones de la jornada que publica el equipo desde el panel y que el motor no puede deducir. Hay cuatro tipos:
+
+- **`aviso_jornada`**: afecta a toda la jornada; su clase es `lluvia` u `otro`. Ejemplo: «Lluvia · Las hermandades están valorando su salida».
+- **`incidencia`**: de una cofradía, en texto. Ejemplo: «La Macarena · El palio vuelve a su templo por el camino más corto».
+- **`cancelada`**: la cofradía no sale. Solo se puede marcar antes de que salga y lleva una nota obligatoria.
+- **`retirar_alteracion`**: esconde una alteración que publicó el motor, como «Retraso 12 min», y lleva un motivo obligatorio.
+
+Reglas:
+
+- **Nada se borra.** Retirar algo es rellenar `retirada`, con quién y por qué.
+- **Aparte de `salida_procesional`.** La carga de los CSV vacía las tablas base, y así queda además quién lo hizo y cuándo.
+- **Cómo lo aplica el estado de la jornada** (`/api/jornadas/:id/estado`):
+  - una cofradía cancelada pasa a «cancelada»;
+  - una alteración retirada deja de publicarse mientras la retirada siga en pie;
+  - una incidencia va como alteración `incidencia`, la más grave, con su texto en `incidencias`;
+  - los avisos de jornada van en `contexto`.
+- **Cuándo se ve en la app:** en el siguiente refresco, a los 30 segundos como mucho.
+
+El permiso para entrar al panel no es una tabla: es `app_metadata.cofradar_admin` en Supabase Auth (5.1).

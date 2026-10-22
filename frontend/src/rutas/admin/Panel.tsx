@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { cabecerasSesion, useSesion } from "../../datos/sesion";
 import { Boton, Icono, type NombreTrazo } from "../../marco";
+import { JornadaEnCurso } from "./JornadaEnCurso";
 
 /**
  * El panel de administración (fase 5, 9-admin/). Herramienta interna: vive en /admin, fuera del marco de
@@ -137,7 +138,8 @@ function Dentro({ email, salir }: { email: string; salir: () => Promise<void> })
       <div className="cf-admin-contenido">
         <Routes>
           <Route index element={<Navigate to="jornada" replace />} />
-          {SECCIONES.map((s) => (
+          <Route path="jornada" element={<JornadaEnCurso />} />
+          {SECCIONES.slice(1).map((s) => (
             <Route key={s.ruta} path={s.ruta} element={<PorHacer nombre={s.nombre} issue={s.issue} />} />
           ))}
           <Route path="*" element={<Navigate to="jornada" replace />} />

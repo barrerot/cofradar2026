@@ -3,6 +3,7 @@ import { cuenta } from "../motor/reputacion.js";
 import { estadoCofradia, MEMORIA, type Aportacion, type Resultado, type SalidaMotor } from "../motor/motor.js";
 import { supabase } from "../supabase.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "../motor/tiempo.js";
+import { registro, vigente } from "../panel.js";
 import { hermandadesYEdicion, mapa, ruta, type CofradiaMapa } from "./cofradias.js";
 
 /**
@@ -123,7 +124,7 @@ async function anotarResultados(resultados: Record<string, Resultado>, bonus: Re
 }
 
 const CADA_MS = 30_000;
-const memoria = new Map<string, { hasta: number; datos: Promise<unknown> }>();
+const memoria = new Map<string, { hasta: number; datos: Promise<EstadoJornada> }>();
 
 /** Una cofradía del mapa, como la quiere el motor (horas del programa). */
 export function salidaMotor(c: CofradiaMapa): SalidaMotor {
@@ -140,14 +141,27 @@ export function salidaMotor(c: CofradiaMapa): SalidaMotor {
   };
 }
 
+/**
+ * Lo que publica el equipo desde el panel (panel.ts) se aplica aquí, encima del motor:
+ * - una cofradía cancelada pasa a «cancelada» (el motor ya no la sitúa);
+ * - una alteración retirada deja de publicarse mientras la retirada siga en pie;
+ * - las incidencias van con su cofradía y los avisos de jornada (lluvia), en `contexto`.
+ */
 async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
   const lista = await mapa(jornada);
-  const porCofradia = await aportaciones(lista, instante, conPruebas);
+  const anio = lista[0]?.anio ?? (await hermandadesYEdicion()).anio;
+  const [porCofradia, anotaciones] = await Promise.all([aportaciones(lista, instante, conPruebas), registro(jornada, anio, conPruebas)]);
+  const panel = vigente(anotaciones);
+  const publicada = (a: { id: string; texto: string; creada: string }) => ({ id: a.id, texto: a.texto, publicada: a.creada });
   const cofradias = lista.map((c) => {
     const ahora = ahoraEnPrograma(instante, c.anio);
-    const e = estadoCofradia(salidaMotor(c), porCofradia.get(c.id) ?? [], ahora);
+    const s = salidaMotor(c);
+    if (panel.canceladas.has(c.id)) s.estadoAdmin = "cancelada";
+    const e = estadoCofradia(s, porCofradia.get(c.id) ?? [], ahora);
     void anotarResultados(e.resultados, e.bonus);
     const real = (t: number | null) => (t === null ? null : aReal(t, ahora, instante).toISOString());
+    const suprimidas = panel.suprimidas.get(c.id);
+    const incidencias = (panel.incidencias.get(c.id) ?? []).map(publicada);
     // `resultados` es interno (para los puntos): no sale
     return {
       id: e.id,
@@ -155,19 +169,47 @@ async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
       fase: e.fase,
       sale: real(e.sale),
       entra: real(e.entra),
-      alteraciones: e.alteraciones,
+      // La incidencia va también como alteración, la más grave, para que la vean todas las pantallas
+      alteraciones: [
+        ...(incidencias.length ? [{ tipo: "incidencia" as const }] : []),
+        ...(suprimidas ? e.alteraciones.filter((a) => !suprimidas.has(a.tipo)) : e.alteraciones),
+      ],
+      incidencias,
       progreso: e.progreso,
       elementos: e.elementos,
     };
   });
   return {
     jornada,
+    anio,
     sincronizacion: instante.toISOString(),
     procedencia: "motor",
-    // Lluvia e incidencias: las publica la administración (fase 5)
-    contexto: [],
+    // Lo que afecta a toda la jornada (lluvia u otro aviso), publicado desde el panel
+    contexto: panel.avisos.map((a) => ({ ...publicada(a), clase: a.clase as "lluvia" | "otro" })),
     cofradias,
   };
+}
+
+export type EstadoJornada = Awaited<ReturnType<typeof calcular>>;
+
+/** Todos los que piden en los mismos 30 segundos comparten el cálculo. */
+export function estadoDe(jornada: number, pedido: Date, conPruebas: boolean): Promise<EstadoJornada> {
+  const instante = new Date(Math.floor(pedido.getTime() / CADA_MS) * CADA_MS);
+  const clave = `${jornada}|${instante.getTime()}|${conPruebas}`;
+  let guardado = memoria.get(clave);
+  if (!guardado || guardado.hasta < Date.now()) {
+    for (const [k, v] of memoria) if (v.hasta < Date.now()) memoria.delete(k);
+    guardado = { hasta: Date.now() + CADA_MS, datos: calcular(jornada, instante, conPruebas) };
+    memoria.set(clave, guardado);
+    const k = clave;
+    guardado.datos.catch(() => memoria.delete(k));
+  }
+  return guardado.datos;
+}
+
+/** Tras publicar o retirar algo en el panel: el siguiente refresco de la app ya lo ve. */
+export function olvidarEstado() {
+  memoria.clear();
 }
 
 routerEstado.get(
@@ -180,18 +222,9 @@ routerEstado.get(
       respuesta.status(400).json({ error: "?ahora= o ?desfase= no valen" });
       return;
     }
-    // Todos los que piden en los mismos 30 segundos comparten el cálculo
-    const instante = new Date(Math.floor(pedido.getTime() / CADA_MS) * CADA_MS);
     const conPruebas = peticion.query.ahora !== undefined || peticion.query.desfase !== undefined;
-    const clave = `${jornada}|${instante.getTime()}|${conPruebas}`;
-    let guardado = memoria.get(clave);
-    if (!guardado || guardado.hasta < Date.now()) {
-      for (const [k, v] of memoria) if (v.hasta < Date.now()) memoria.delete(k);
-      guardado = { hasta: Date.now() + CADA_MS, datos: calcular(jornada, instante, conPruebas) };
-      memoria.set(clave, guardado);
-      guardado.datos.catch(() => memoria.delete(clave));
-    }
+    const datos = await estadoDe(jornada, pedido, conPruebas);
     respuesta.setHeader("Cache-Control", "public, max-age=30");
-    respuesta.json(await guardado.datos);
+    respuesta.json(datos);
   }),
 );

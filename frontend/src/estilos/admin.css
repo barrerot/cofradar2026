@@ -205,3 +205,483 @@
     padding-inline: var(--cf-space-4);
   }
 }
+
+/* ── P-28 · Jornada en curso ─────────────────────────────────────────────── */
+.cf-admin-cab-sub {
+  margin: var(--cf-space-1) 0 0;
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-lg);
+}
+
+.cf-admin-cab-lado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-3) var(--cf-space-5);
+}
+
+.cf-admin-elegir {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  color: var(--cf-text-secondary);
+}
+
+.cf-admin-elegir select {
+  min-height: 2.5rem;
+  padding: 0 var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+}
+
+.cf-admin-refresco,
+.cf-admin-ver-registro {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cf-admin-refresco[aria-busy="true"] .cf-ph {
+  animation: cf-admin-girar 1s linear infinite;
+}
+
+@keyframes cf-admin-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cf-admin-ver-registro {
+  display: none;
+  color: var(--cf-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.cf-admin-nota {
+  margin: 0;
+  color: var(--cf-text-secondary);
+}
+
+.cf-admin-quien {
+  margin: var(--cf-space-1) 0 0;
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+}
+
+.cf-admin-jornada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  align-items: start;
+  gap: var(--cf-space-6);
+}
+
+.cf-admin-principal {
+  display: grid;
+  gap: var(--cf-space-6);
+  min-width: 0;
+}
+
+.cf-admin-caja {
+  padding: var(--cf-space-5);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-admin-caja h2 {
+  margin: 0;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-admin-caja-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+  margin-bottom: var(--cf-space-4);
+}
+
+/* El aviso de jornada, en el azul de la banda de contexto */
+.cf-admin-banda {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-info-border, var(--cf-border));
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-info-soft, var(--cf-surface-sunken));
+  color: var(--cf-info, var(--cf-text));
+}
+
+.cf-admin-banda + .cf-admin-banda {
+  margin-top: var(--cf-space-3);
+}
+
+.cf-admin-banda p {
+  margin: 0;
+  color: var(--cf-text);
+}
+
+.cf-admin-banda strong {
+  color: var(--cf-info, var(--cf-text));
+}
+
+/* La tabla de cofradías: filas en rejilla; en el móvil, tarjetas */
+.cf-admin-tabla {
+  padding: 0 var(--cf-space-3);
+  overflow-x: auto;
+}
+
+.cf-admin-tabla ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-admin-fila {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 14.5rem minmax(10rem, 1.4fr) 12rem;
+  gap: var(--cf-space-4);
+  align-items: start;
+  padding: var(--cf-space-4) var(--cf-space-2);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-tabla li:last-child {
+  border-bottom: 0;
+}
+
+.cf-admin-fila-cab {
+  padding-block: var(--cf-space-3);
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-nombre {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-admin-solo-movil {
+  display: none;
+}
+
+.cf-admin-alteraciones {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-admin-publicado {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-1);
+}
+
+.cf-admin-publicado-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-2) var(--cf-space-3);
+}
+
+.cf-admin-publicado-pie .cf-admin-quien {
+  margin: 0;
+}
+
+.cf-admin-publicado-texto {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.cf-admin-retirada {
+  color: var(--cf-text-secondary);
+  text-decoration: line-through;
+}
+
+.cf-admin-acciones .cf-btn {
+  width: 100%;
+}
+
+/* Retirar y cancelar: en contorno rojo (admin-2), el relleno rojo queda para confirmar en el diálogo */
+.cf-admin-rojo {
+  display: contents;
+}
+
+.cf-admin-rojo > .cf-btn {
+  border-color: var(--cf-alert);
+  color: var(--cf-alert-text);
+}
+
+/* Registro de hoy */
+.cf-admin-registro {
+  position: sticky;
+  top: var(--cf-space-4);
+}
+
+.cf-admin-registro > .cf-admin-nota {
+  margin: var(--cf-space-1) 0 var(--cf-space-3);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-admin-registro ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-admin-registro li {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-registro li > .cf-num {
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-registro li p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.cf-admin-registro li .cf-admin-publicado-texto {
+  color: var(--cf-text-secondary);
+}
+
+/* Diálogos */
+.cf-admin-dialogo {
+  width: min(100% - 2rem, 34rem);
+  max-height: calc(100dvh - 2rem);
+  padding: var(--cf-space-6);
+  border: 0;
+  border-radius: var(--cf-radius-lg, var(--cf-radius-md));
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  box-shadow: var(--cf-elev-3);
+}
+
+.cf-admin-dialogo::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.cf-admin-dialogo form {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-admin-dialogo h2 {
+  margin: 0;
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-admin-dialogo p {
+  margin: 0;
+}
+
+.cf-admin-campo {
+  display: grid;
+  gap: var(--cf-space-2);
+}
+
+.cf-admin-campo-titulo {
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-obligatorio {
+  color: var(--cf-text-secondary);
+  font-weight: normal;
+}
+
+.cf-admin-campo textarea {
+  width: 100%;
+  padding: var(--cf-space-3);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.cf-admin-fijo {
+  padding: var(--cf-space-3);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+}
+
+.cf-admin-clase {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2) var(--cf-space-5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cf-admin-clase legend {
+  margin-bottom: var(--cf-space-2);
+  padding: 0;
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-clase label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  min-height: 2.75rem;
+}
+
+.cf-admin-previa {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-2);
+  padding: var(--cf-space-4);
+  border-left: 3px solid var(--cf-alert);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-alert-soft);
+}
+
+.cf-admin-previa-nombre {
+  color: var(--cf-alert);
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-dialogo-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--cf-space-3);
+}
+
+@media (max-width: 80rem) {
+  .cf-admin-fila {
+    grid-template-columns: minmax(8rem, 1fr) 14.5rem minmax(10rem, 1.3fr);
+  }
+
+  .cf-admin-fila > .cf-admin-acciones {
+    grid-column: 1 / -1;
+  }
+
+  .cf-admin-acciones .cf-btn {
+    width: auto;
+  }
+
+  .cf-admin-fila-cab > span:last-child {
+    display: none;
+  }
+}
+
+/* En pantallas medianas y en el móvil, el registro va aparte: «Registro de hoy» en la cabecera */
+@media (max-width: 64rem) {
+  .cf-admin-jornada {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cf-admin-ver-registro {
+    display: inline-flex;
+  }
+
+  .cf-admin-jornada[data-ver="cofradias"] > .cf-admin-registro,
+  .cf-admin-jornada[data-ver="registro"] > .cf-admin-principal {
+    display: none;
+  }
+
+  .cf-admin-registro {
+    position: static;
+  }
+}
+
+@media (max-width: 52rem) {
+  .cf-admin-tabla {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .cf-admin-fila-cab {
+    display: none;
+  }
+
+  .cf-admin-tabla ul {
+    display: grid;
+    gap: var(--cf-space-4);
+  }
+
+  .cf-admin-fila {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--cf-space-3);
+    padding: var(--cf-space-4);
+    border: var(--cf-border-width) solid var(--cf-border);
+    border-radius: var(--cf-radius-md);
+    background: var(--cf-surface);
+  }
+
+  .cf-admin-tabla li:last-child {
+    border-bottom: var(--cf-border-width) solid var(--cf-border);
+  }
+
+  /* En la tarjeta, la última observación va al final, como en admin-2e */
+  .cf-admin-fila > div:first-child {
+    display: contents;
+  }
+
+  .cf-admin-fila > div:first-child > .cf-admin-quien {
+    order: 3;
+  }
+
+  .cf-admin-fila > div:nth-child(2) {
+    order: 1;
+  }
+
+  .cf-admin-alteraciones {
+    order: 2;
+  }
+
+  .cf-admin-acciones {
+    order: 4;
+  }
+
+  .cf-admin-acciones .cf-btn {
+    width: 100%;
+  }
+
+  .cf-admin-solo-movil {
+    display: inline;
+  }
+
+  .cf-admin-banda {
+    grid-template-columns: auto 1fr;
+  }
+
+  .cf-admin-banda > .cf-btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-admin-refresco[aria-busy="true"] .cf-ph {
+    animation: none;
+  }
+}

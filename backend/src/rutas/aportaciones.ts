@@ -45,7 +45,7 @@ const ruta =
       respuesta.status(500).json({ error: "No se ha podido guardar" });
     });
 
-function desfaseDe(peticion: Request): number {
+export function desfaseDe(peticion: Request): number {
   if (process.env.RELOJ_DE_PRUEBA !== "1") return 0;
   const d = Number(peticion.get("X-Reloj-Desfase") ?? 0);
   return Number.isFinite(d) ? d : 0;

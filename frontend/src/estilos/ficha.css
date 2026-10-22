@@ -247,3 +247,10 @@
 .cf-ficha-sale strong {
   font-size: var(--cf-text-xl);
 }
+
+/* Las incidencias publicadas desde el panel (5.2), encima del cortejo */
+.cf-ficha-incidencias {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin-block: var(--cf-space-4);
+}

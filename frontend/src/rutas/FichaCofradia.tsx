@@ -10,7 +10,7 @@ import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
 import { iniciales } from "./Cofradias";
-import { ChipsEnVivo, CortejoEnVivo, useEnVivoDe } from "./CortejoEnVivo";
+import { ChipsEnVivo, CortejoEnVivo, IncidenciasDe, useEnVivoDe } from "./CortejoEnVivo";
 
 /**
  * P-11 Ficha de cofradía (4-cofradias/ficha-2*), registro EDITORIAL (§3).
@@ -107,6 +107,11 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
         {vivo ? <ChipsEnVivo v={vivo.v} /> : null}
       </header>
 
+      {vivo?.v.estado.incidencias.length ? (
+        <div className="cf-ficha-incidencias">
+          <IncidenciasDe v={vivo.v} />
+        </div>
+      ) : null}
       {vivo ? <CortejoEnVivo v={vivo.v} jornada={vivo.jornada} /> : null}
 
       <Acciones ficha={f} />

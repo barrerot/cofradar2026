@@ -43,16 +43,22 @@ export type EstadoCofradia = {
   fase: { valor: Fase; confianza: Confianza; haceMin: number | null };
   sale: string | null;
   entra: string | null;
-  alteraciones: { tipo: "retraso" | "adelanto"; minutos: number }[];
+  /** Las del motor y, primero, «incidencia» si la administración ha publicado alguna (su texto, en `incidencias`). */
+  alteraciones: ({ tipo: "retraso" | "adelanto"; minutos: number } | { tipo: "incidencia"; minutos?: undefined })[];
+  incidencias: Publicado[];
   progreso: { m: number; total: number } | null;
   elementos: ElementoEstado[];
 };
+
+/** Lo que publica el equipo desde el panel (5.2): una incidencia o un aviso de jornada. */
+export type Publicado = { id: string; texto: string; publicada: string };
 
 export type EstadoJornadaMotor = {
   jornada: number;
   sincronizacion: string;
   procedencia: "motor";
-  contexto: unknown[];
+  /** Avisos de toda la jornada (lluvia u otro), publicados desde el panel. */
+  contexto: (Publicado & { clase: "lluvia" | "otro" })[];
   cofradias: EstadoCofradia[];
 };
 

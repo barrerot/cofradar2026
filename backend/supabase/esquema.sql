@@ -162,3 +162,39 @@ create index if not exists aportacion_hermandad on aportacion (hermandad_id, obs
 create index if not exists aportacion_usuario on aportacion (usuario_id, observada);
 
 alter table aportacion enable row level security;
+
+-- ── El registro del panel de administración (aprobada por Carlos el 22/10/2026; 5.2, F-39, F-40) ──
+-- Las excepciones que el motor no puede deducir, una fila por cada cosa que se publica desde el panel:
+--   aviso_jornada       afecta a toda la jornada; `clase` 'lluvia' u 'otro'          («Lluvia · Las hermandades están valorando su salida»)
+--   incidencia          de una cofradía, en texto                                  («La Macarena · El palio vuelve a su templo por la Campana»)
+--   cancelada           una cofradía que no sale; `texto` es la nota               («Los Gitanos · decisión del cabildo por la lluvia»)
+--   retirar_alteracion  esconde una alteración que publicó el motor; `clase` es su tipo, `detalle` como se
+--                       veía («Retraso 12 min») y `texto` el motivo
+-- Nada se borra: retirar es rellenar `retirada`, con quién y por qué. Va aparte de `salida_procesional`
+-- porque la carga de los CSV vacía las tablas base, y porque así queda quién lo hizo y cuándo.
+-- Sin clave ajena a `hermandad` (como `aportacion`). Al borrar la cuenta de quien publicó, la fila se
+-- queda (es el histórico del día) y conserva el correo.
+create table if not exists registro_panel (
+  id               uuid primary key default gen_random_uuid(),
+  anio             integer not null,
+  jornada_id       integer not null,
+  tipo             text not null check (tipo in ('aviso_jornada', 'incidencia', 'cancelada', 'retirar_alteracion')),
+  hermandad_id     integer,
+  clase            text,
+  detalle          text,
+  texto            text not null check (length(trim(texto)) > 0),
+  autor_id         uuid references auth.users (id) on delete set null,
+  autor_email      text not null,
+  creada           timestamptz not null default now(),
+  retirada         timestamptz,
+  retirada_email   text,
+  retirada_motivo  text,
+  -- Hecha con el reloj de prueba: se borra antes del lanzamiento (como en `aportacion`)
+  de_prueba        boolean not null default false,
+  check (tipo = 'aviso_jornada' or hermandad_id is not null),
+  check ((retirada is null) = (retirada_motivo is null))
+);
+
+create index if not exists registro_panel_jornada on registro_panel (anio, jornada_id, creada);
+
+alter table registro_panel enable row level security;

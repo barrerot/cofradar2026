@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
+import { BandaContexto, Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
 import { Icono, Marco } from "../marco";
 import { useActividad, type SalidaDeHoy } from "../datos/actividad";
 import { distancia, distanciaEnLlano, enLaCalle, proximoPunto, useEnVivo, type EnVivo } from "../datos/enVivo";
@@ -8,8 +8,10 @@ import { usePosicion, type Posicion } from "../datos/ubicacion";
 import { useRelaciones } from "../datos/relaciones";
 import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
+import type { EstadoJornadaMotor } from "../datos/mapa";
 import { CabeceraRaiz } from "./CabeceraRaiz";
 import { DarFe } from "./DarFe";
+import { IncidenciasDe } from "./CortejoEnVivo";
 
 /**
  * P-05 Inicio · «¿Qué puedo ver ahora?» (2-inicio/inicio-*), con el motor (4.16).
@@ -43,8 +45,8 @@ const hora = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minut
 
 function Activa() {
   const { hoy } = useJornada();
-  const { cofradias } = useEnVivo(hoy);
-  return hoy && cofradias ? <EnVivoAhora jornada={hoy} cofradias={cofradias} /> : <SegunHorario />;
+  const { cofradias, contexto } = useEnVivo(hoy);
+  return hoy && cofradias ? <EnVivoAhora jornada={hoy} cofradias={cofradias} contexto={contexto} /> : <SegunHorario />;
 }
 
 /** Hasta aquí, «cerca»: más lejos ya no es «qué puedo ver ahora» (candidata a calibrar). */
@@ -53,9 +55,10 @@ const CERCA = 1500;
 /**
  * La jornada en curso con el motor (2-inicio/01). Bloques, en este orden y sin repetir cofradía:
  * Cerca (solo con ubicación; la primera es el sujeto de la pantalla) → En la calle → A punto de salir.
- * Lluvia e incidencias, cuando la administración las publique (fase 5). Un bloque vacío no se pinta.
+ * Antes de todo, lo que publica el equipo desde el panel: avisos de jornada (lluvia) e incidencias.
+ * Un bloque vacío no se pinta.
  */
-function EnVivoAhora({ jornada, cofradias }: { jornada: Jornada; cofradias: EnVivo[] }) {
+function EnVivoAhora({ jornada, cofradias, contexto }: { jornada: Jornada; cofradias: EnVivo[]; contexto: EstadoJornadaMotor["contexto"] }) {
   const { ahora } = useActividad();
   const posicion = usePosicion();
   const sale = (v: EnVivo) => (v.estado.sale ? Date.parse(v.estado.sale) : Infinity);
@@ -72,6 +75,11 @@ function EnVivoAhora({ jornada, cofradias }: { jornada: Jornada; cofradias: EnVi
 
   return (
     <div className="cf-ahora">
+      {/* Lo que publica el equipo (panel, 5.2): primero lo que afecta a toda la jornada, luego las incidencias */}
+      {contexto.map((a) => (
+        <BandaContexto key={a.id} texto={a.texto} icono={a.clase === "lluvia" ? "lluvia" : "informativo"} critica />
+      ))}
+      {cofradias.map((v) => (v.estado.incidencias.length ? <IncidenciasDe key={v.estado.id} v={v} conNombre /> : null))}
       {nadieHaDadoFe && calle.length ? <p className="cf-ahora-nota">Según el horario del programa: nadie ha dado fe todavía.</p> : null}
       {cerca.length ? (
         <Bloque titulo="Cerca de ti">
