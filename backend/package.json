@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "cargar:datos": "tsx scripts/cargar-supabase.ts",
     "test": "tsx --test src/motor/*.test.ts",
-    "esquema": "tsx scripts/aplicar-esquema.ts"
+    "esquema": "tsx scripts/aplicar-esquema.ts",
+    "admin": "tsx scripts/admin.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",

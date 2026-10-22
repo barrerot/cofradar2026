@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import express from "express";
+import { routerAdmin } from "./rutas/admin.js";
 import { routerAportaciones } from "./rutas/aportaciones.js";
 import { routerCofradias } from "./rutas/cofradias.js";
 import { routerCuenta } from "./rutas/cuenta.js";
@@ -32,6 +33,7 @@ app.use("/api", routerEstado);
 app.use("/api", routerCofradias);
 app.use("/api", routerCuenta);
 app.use("/api", routerAportaciones);
+app.use("/api", routerAdmin);
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

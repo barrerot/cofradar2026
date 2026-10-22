@@ -1,0 +1,207 @@
+/* ── Panel de administración (9-admin/) ───────────────────────────────────
+   Herramienta interna, sobria y densa. En ordenador, menú lateral fijo; en el
+   móvil, el menú pasa arriba y el contenido debajo (la jornada en curso tiene
+   que poder usarse desde la calle). */
+
+/* P-27 · Acceso */
+.cf-admin-acceso {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--cf-space-6) var(--cf-space-4);
+  background: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-admin-acceso-caja {
+  display: grid;
+  gap: var(--cf-space-6);
+  width: min(100%, 24rem);
+  text-align: center;
+}
+
+.cf-admin-acceso-caja > .cf-btn {
+  width: 100%;
+}
+
+.cf-admin-logo {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-4xl);
+  line-height: var(--cf-leading-4xl);
+  font-weight: 600;
+}
+
+.cf-admin-sub {
+  margin: calc(-1 * var(--cf-space-5)) 0 var(--cf-space-2);
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-lg);
+}
+
+.cf-admin-aviso {
+  margin: 0;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface-sunken);
+  color: var(--cf-text-secondary);
+}
+
+/* El panel */
+.cf-admin {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-height: 100dvh;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-admin-menu {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding: var(--cf-space-6) var(--cf-space-3);
+  border-right: var(--cf-border-width) solid var(--cf-border);
+  background: var(--cf-surface);
+}
+
+.cf-admin-menu-cab {
+  padding: 0 var(--cf-space-3) var(--cf-space-6);
+}
+
+.cf-admin-menu .cf-admin-logo {
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+}
+
+.cf-admin-menu .cf-admin-sub {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-admin-menu ul {
+  display: grid;
+  gap: var(--cf-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-admin-menu a {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-height: 2.75rem;
+  padding: 0 var(--cf-space-3);
+  border-radius: var(--cf-radius-md);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-admin-menu a:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-admin-menu a[aria-current="page"] {
+  background: var(--cf-surface-sunken);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-menu-pie {
+  margin-top: auto;
+  padding: var(--cf-space-4) var(--cf-space-3) 0;
+  border-top: var(--cf-border-width) solid var(--cf-border);
+  overflow-wrap: anywhere;
+}
+
+.cf-admin-menu-pie p {
+  margin: 0 0 var(--cf-space-1);
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-admin-salir {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.cf-admin-contenido {
+  min-width: 0;
+}
+
+.cf-admin-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--cf-space-2) var(--cf-space-4);
+  padding: var(--cf-space-6) var(--cf-space-8) var(--cf-space-4);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-cab h1 {
+  margin: 0;
+  font-size: var(--cf-text-3xl);
+  line-height: var(--cf-leading-3xl);
+}
+
+.cf-admin-cuerpo {
+  padding: var(--cf-space-6) var(--cf-space-8);
+}
+
+@media (max-width: 52rem) {
+  .cf-admin {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .cf-admin-menu {
+    position: static;
+    height: auto;
+    padding: var(--cf-space-3) var(--cf-space-4);
+    border-right: 0;
+    border-bottom: var(--cf-border-width) solid var(--cf-border);
+  }
+
+  .cf-admin-menu-cab {
+    display: none;
+  }
+
+  .cf-admin-menu ul {
+    display: flex;
+    gap: var(--cf-space-1);
+    overflow-x: auto;
+  }
+
+  .cf-admin-menu a {
+    white-space: nowrap;
+  }
+
+  .cf-admin-menu-pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cf-space-2);
+    margin-top: var(--cf-space-2);
+    padding: var(--cf-space-2) var(--cf-space-3) 0;
+  }
+
+  .cf-admin-menu-pie p {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .cf-admin-cab,
+  .cf-admin-cuerpo {
+    padding-inline: var(--cf-space-4);
+  }
+}

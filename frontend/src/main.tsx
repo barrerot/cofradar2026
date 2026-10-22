@@ -33,6 +33,7 @@ import "./estilos/recorrido.css";
 import "./estilos/agenda.css";
 import "./estilos/mi-cofradar.css";
 import "./estilos/mapa.css";
+import "./estilos/admin.css";
 
 iniciarTema();
 registrarServiceWorker();

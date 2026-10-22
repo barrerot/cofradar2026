@@ -19,6 +19,7 @@ import { MisAportaciones } from "./rutas/MisAportaciones";
 import { Seguidas } from "./rutas/Seguidas";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
+import { Panel } from "./rutas/admin/Panel";
 
 /**
  * Las cinco areas, en el orden en que viven en la barra.
@@ -57,6 +58,8 @@ export function App() {
       <Route path="/mi-cofradar/ayuda" element={<Ayuda estado={estado} />} />
       <Route path="/mi-cofradar/ayuda/privacidad" element={<Privacidad desde="ayuda" />} />
       <Route path="/mi-cofradar/ayuda/aviso-legal" element={<AvisoLegal />} />
+      {/* El panel de administración (fase 5): fuera del marco de la app */}
+      <Route path="/admin/*" element={<Panel />} />
       {/* Andamio de revisión: los ocho estados (issue 1.4). */}
       <Route path="/estados" element={<Estados />} />
     </Routes>
