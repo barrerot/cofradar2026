@@ -127,7 +127,15 @@ export function proximoPunto(v: EnVivo, jornada: Jornada, ahora: Date, posicion:
 }
 
 // ── El mapa de una cofradía (4.5) ───────────────────────────────────────────────────────────────────
-export type Hito = { titulo: string; prevista: Date; estimada: Date; retrasoMin: number; confianza: ElementoEstado["confianza"] };
+export type Hito = {
+  titulo: string;
+  prevista: Date;
+  estimada: Date;
+  retrasoMin: number;
+  confianza: ElementoEstado["confianza"];
+  /** Después de un cambio de recorrido: no se sabe si pasará ni a qué hora. */
+  sinConfirmar: boolean;
+};
 
 /**
  * Los tres hitos de la hoja del mapa de una cofradía (3-mapa/mapa-2): por dónde va o adónde llega
@@ -136,36 +144,53 @@ export type Hito = { titulo: string; prevista: Date; estimada: Date; retrasoMin:
  */
 export function hitosDe(v: EnVivo, jornada: Jornada): Hito[] {
   const res: Hito[] = [];
-  const hito = (titulo: string, hora: string, el: ElementoEstado | undefined, orden: number) => {
+  // Tras un cambio de recorrido, lo que queda desde donde la vieron no tiene hora (BUL-217)
+  const visto = cambioDe(v.estado)?.desdeM;
+  const hito = (titulo: string, hora: string, el: ElementoEstado | undefined, orden: number, m: number | null) => {
     const prevista = aHoy(hora, jornada);
     const retraso = el?.retrasoMin ?? retrasoDe(v.estado, orden);
-    if (prevista) res.push({ titulo, prevista, estimada: new Date(prevista.getTime() + retraso * 60_000), retrasoMin: retraso, confianza: el?.confianza ?? "estimado" });
+    const sinConfirmar = visto !== undefined && (m === null || m > visto);
+    if (prevista)
+      res.push({ titulo, prevista, estimada: new Date(prevista.getTime() + retraso * 60_000), retrasoMin: retraso, confianza: el?.confianza ?? "estimado", sinConfirmar });
   };
   const cruz = v.estado.elementos.find((x) => x.orden === 0);
   if (cruz) {
     const puntos = referencia(v.mapa, cruz);
     const actual = puntos.find((h) => Math.abs(h.m! - cruz.m) <= EN_EL_LUGAR) ?? puntos.find((h) => h.m! > cruz.m);
-    if (actual) hito(actual.lugar, actual.hora, cruz, 0);
+    if (actual) hito(actual.lugar, actual.hora, cruz, 0, actual.m);
     // El final de la carrera oficial: su último lugar en el recorrido (hitos de la ciudad, 5.4). Se nombra
     // por el sitio («Catedral», de «Catedral · Puerta de los Palos»), y si ya va por él no se repite
     const sitio = (lugar: string) => lugar.split(" · ")[0]!;
     const fin = puntos.filter((h) => h.carrera).at(-1);
-    if (fin && fin.m! > cruz.m + EN_EL_LUGAR && !(actual && sitio(actual.lugar) === sitio(fin.lugar))) hito(sitio(fin.lugar), fin.hora, cruz, 0);
+    if (fin && fin.m! > cruz.m + EN_EL_LUGAR && !(actual && sitio(actual.lugar) === sitio(fin.lugar))) hito(sitio(fin.lugar), fin.hora, cruz, 0, fin.m);
   }
   const n = Math.max(1, v.mapa.pasos);
   const entrada = v.mapa.ultimoPaso[v.mapa.ultimoPaso.length - 1];
-  if (entrada) hito("Entrada", entrada.hora, v.estado.elementos.find((x) => x.orden === n), n);
+  if (entrada) hito("Entrada", entrada.hora, v.estado.elementos.find((x) => x.orden === n), n, entrada.m);
   return res;
 }
 
 /** El recorrido partido por la cabeza del cortejo: lo hecho (hasta la cruz) y lo que le queda. */
-export function partirRecorrido(v: EnVivo): { hecho: [number, number][]; pendiente: [number, number][] } {
+export function partirRecorrido(v: EnVivo): { hecho: [number, number][]; pendiente: [number, number][]; sinConfirmar: boolean } {
+  const { hecho, pendiente } = partir(v);
+  return { hecho, pendiente, sinConfirmar: cambioDe(v.estado)?.desdeM !== undefined };
+}
+
+/** El cambio de recorrido en pie, si lo hay (4.15). */
+export const cambioDe = (e: EstadoCofradia) => e.alteraciones.find((a) => a.tipo === "cambio_recorrido");
+
+/**
+ * Lo hecho y lo que le queda. Tras un cambio de recorrido (BUL-217), lo hecho llega solo hasta donde la
+ * vieron en el recorrido por última vez; desde ahí, lo previsto, sin confirmar, hasta que vuelva.
+ */
+function partir(v: EnVivo): { hecho: [number, number][]; pendiente: [number, number][] } {
   const linea = v.mapa.linea;
   if (linea.length < 2) return { hecho: [], pendiente: [] };
   const acum = [0];
   for (let i = 1; i < linea.length; i++) acum.push(acum[i - 1]! + metros({ latitud: linea[i - 1]![1], longitud: linea[i - 1]![0], precision: 0 }, linea[i]!));
   const total = acum[acum.length - 1]!;
-  const cabeza = enLaCalle(v.estado) ? Math.min(v.estado.progreso?.m ?? 0, total) : v.estado.fase.valor === "finalizada" ? total : 0;
+  const visto = cambioDe(v.estado)?.desdeM;
+  const cabeza = enLaCalle(v.estado) ? Math.min(visto ?? v.estado.progreso?.m ?? 0, total) : v.estado.fase.valor === "finalizada" ? total : 0;
   const i = acum.findIndex((x) => x >= cabeza);
   if (i <= 0) return cabeza <= 0 ? { hecho: [], pendiente: linea } : { hecho: linea, pendiente: [] };
   const [a, b] = [linea[i - 1]!, linea[i]!];
@@ -179,9 +204,12 @@ export function partirRecorrido(v: EnVivo): { hecho: [number, number][]; pendien
  * programa con su retraso); si va de camino, la de llegada al siguiente. Los pasos de en medio, sin hora
  * propia mientras nadie los vea: null.
  */
-export function horaDelElemento(c: CofradiaMapa, el: ElementoEstado, jornada: Jornada): Date | null {
+export function horaDelElemento(c: CofradiaMapa, el: ElementoEstado, jornada: Jornada, estado?: EstadoCofradia): Date | null {
   const intermedio = el.orden > 0 && el.orden < Math.max(1, c.pasos);
   if (intermedio && el.confianza === "estimado") return null;
+  // Pasado el último sitio donde la vieron antes de un cambio de recorrido, no se pone hora (BUL-217)
+  const visto = estado ? cambioDe(estado)?.desdeM : undefined;
+  if (visto !== undefined && el.m > visto) return null;
   const donde = dondeVa(c, el);
   const actual = donde.startsWith("en ") ? referencia(c, el).find((h) => `en ${h.lugar}` === donde) : undefined;
   return actual ? horaEstimada(actual.hora, jornada, el.retrasoMin) : (siguienteLugar(c, el, jornada)?.hora ?? null);

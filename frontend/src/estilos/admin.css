@@ -1057,3 +1057,21 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Lo que tuvo y ya terminó (4.15): una línea por alteración */
+.cf-admin-historial {
+  display: grid;
+  gap: var(--cf-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Un chip largo («Cambio de recorrido») parte en dos líneas antes que invadir la columna de acciones */
+.cf-admin-alteraciones .cf-alt {
+  max-width: 100%;
+  height: auto;
+  min-height: 1.75rem;
+  padding-block: 0.125rem;
+  white-space: normal;
+}

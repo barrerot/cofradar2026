@@ -288,9 +288,21 @@ Código en `backend/src/motor/` y pruebas en `motor.test.ts` (`npm test -w backe
 - **Ubicación:** a más de 60 m del recorrido, la aportación queda fuera del cálculo de la posición, pero sigue contando como presencia. Si la calle se recorre dos veces, se elige la pasada que el programa pone más cerca de esa hora.
 - **Fase:** la lleva el horario, con el retraso que se sepa. Si dos personas la están viendo, está en la calle aunque el horario diga otra cosa.
 - **Confianza:** confirmado hasta 10 min desde la última aportación que consolidó, desactualizado hasta 30 min y estimado después.
-- **Alteraciones:** retraso o adelanto a partir de 10 min, al minuto (el mismo que se usa para las horas estimadas).
+- **Alteraciones:** retraso o adelanto a partir de 10 min, publicados de 5 en 5 para que no bailen (12 min es «10», 13 es «15»). Las horas estimadas siguen al minuto.
 - **Todas las cifras son candidatas a calibrar.**
-- **Falta:** inferir `interrumpida`, `cambio_recorrido` y `regreso_anticipado`.
+
+### Las otras alteraciones (4.15, 22/10/2026)
+
+Aprobadas por Carlos. Igual que el retraso, nada se publica con una sola persona.
+
+- **Interrumpida:** el mismo elemento, visto por 2 personas en el mismo sitio (a menos de 50 m) y, 15 minutos o más después, por otras 2 todavía ahí, cuando el programa ya lo ponía más adelante. Mientras dura, el motor no estima que avance. Se quita cuando alguien ve el cortejo más adelante.
+  - *Ejemplo:* el palio de la Esperanza de Triana, en la Catedral a las 03:00 y aún allí a las 03:20: «Interrumpida desde las 03:00».
+- **Cambio de recorrido:** 2 personas, en menos de 15 minutos, dan fe a menos de 100 m una de otra y fuera del recorrido (a más de 60 m de él). Vale también «Estoy viendo la cofradía». Dura hasta que un elemento vuelve a consolidar en el recorrido.
+  - *Cómo se ve (BUL-217, opción C):* lo hecho llega hasta donde la vieron en su recorrido por última vez; lo que le queda, en gris claro, «previsto, sin confirmar», y sin horas. El nombre sale del lugar conocido más cercano a menos de 150 m («cerca de Regina»).
+  - *En el historial:* «cerca de Regina en lugar de Feria», con los lugares del programa que se saltó.
+- **Regreso anticipado:** un grupo que la sitúa 30 minutos o más por delante del programa, o de lo que se sabía justo antes. Eso no es ir deprisa: es haber acortado. Sustituye al adelanto y adelanta la entrada estimada.
+- **Historial:** cada cofradía lleva lo que ha tenido en la jornada, con su hora de inicio y de fin. No se guarda: el motor lo vuelve a calcular con las aportaciones del día. Una alteración desmentida o terminada se cierra con su hora, nunca desaparece. Se ve en la ficha («Lo que ha pasado hoy») y en el panel.
+  - *Caso de referencia:* sale, se refugia y vuelve antes. Termina `finalizada` con «Interrumpida» y «Regreso anticipado» en el historial.
 
 ### Aportaciones (21/10/2026)
 

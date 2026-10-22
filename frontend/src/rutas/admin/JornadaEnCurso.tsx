@@ -19,8 +19,15 @@ const hhmm = (iso: string) => new Date(iso).toLocaleTimeString("es-ES", { hour: 
 const fecha = (iso: string) =>
   new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" });
 
-const NOMBRE_ALTERACION = { retraso: "Retraso", adelanto: "Adelanto" } as const;
-const etiquetaAlteracion = (a: AlteracionMotor) => `${NOMBRE_ALTERACION[a.tipo]} ${a.minutos} min`;
+const NOMBRE_ALTERACION = {
+  retraso: "Retraso",
+  adelanto: "Adelanto",
+  interrumpida: "Interrumpida",
+  cambio_recorrido: "Cambio de recorrido",
+  regreso_anticipado: "Regreso anticipado",
+} as const;
+const etiquetaAlteracion = (a: AlteracionMotor) =>
+  `${NOMBRE_ALTERACION[a.tipo]}${a.minutos !== undefined ? ` ${a.minutos} min` : ""}${a.detalle ? ` · ${a.detalle}` : ""}`;
 
 type Dialogo =
   | { tipo: "aviso" }
@@ -220,7 +227,7 @@ function FilaCofradia({ c, abrir }: { c: CofradiaPanel; abrir: (d: Dialogo) => v
   const antesDeSalir = f.valor === "prevista" || f.valor === "inminente";
   const enLaCalle = f.valor === "en_calle" || f.valor === "proxima_entrada";
   const antiguedad = f.haceMin !== null ? `hace ${f.haceMin} min` : f.confianza === "estimado" ? "según horario" : undefined;
-  const nada = !c.alteraciones.length && !c.incidencias.length && !c.cancelada && !c.alteracionesRetiradas.length;
+  const nada = !c.alteraciones.length && !c.incidencias.length && !c.cancelada && !c.alteracionesRetiradas.length && !c.historial.length;
 
   return (
     <li className="cf-admin-fila">
@@ -291,7 +298,7 @@ function FilaCofradia({ c, abrir }: { c: CofradiaPanel; abrir: (d: Dialogo) => v
           <Publicado
             key={a.tipo}
             muestra={<ChipAlteracion alteracion={a} confianza={f.confianza} />}
-            quien="Cofradar"
+            quien={["Cofradar", a.desde ? `desde las ${hhmm(a.desde)}` : "", a.detalle ?? ""].filter(Boolean).join(" · ")}
             accion={<BotonRetirar onClick={() => abrir({ tipo: "retirar-alteracion", c, a })} />}
           />
         ))}
@@ -316,6 +323,15 @@ function FilaCofradia({ c, abrir }: { c: CofradiaPanel; abrir: (d: Dialogo) => v
             }
           />
         ))}
+        {c.historial.length ? (
+          <ul className="cf-admin-historial">
+            {c.historial.map((h) => (
+              <li key={`${h.tipo}-${h.desde}`} className="cf-admin-quien">
+                Tuvo {etiquetaAlteracion(h).replace(/^./, (x) => x.toLowerCase())} · <span className="cf-num">{hhmm(h.desde)}–{hhmm(h.hasta)}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
       <div className="cf-admin-acciones">
         {antesDeSalir && !c.cancelada ? (

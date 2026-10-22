@@ -212,3 +212,83 @@ describe("bonus de las que consolidan", () => {
     assert.equal(estadoCofradia(salida(), [a], 50 * MIN).bonus[a.id], undefined);
   });
 });
+
+describe("las otras alteraciones (4.15)", () => {
+  const tipos = (e: ReturnType<typeof estadoCofradia>) => e.alteraciones.map((a) => a.tipo);
+
+  it("el retraso se publica de 5 en 5: 12 minutos son 10 y 13 son 15", () => {
+    // La cruz debería estar en el metro 800 a los 40 min
+    const doce = estadoCofradia(salida(), [fe("ana", 52, 0, 800), fe("luis", 52, 0, 800)], 53 * MIN);
+    assert.deepEqual(doce.alteraciones, [{ tipo: "retraso", minutos: 10 }]);
+    const trece = estadoCofradia(salida(), [fe("ana", 53, 0, 800), fe("luis", 53, 0, 800)], 54 * MIN);
+    assert.deepEqual(trece.alteraciones, [{ tipo: "retraso", minutos: 15 }]);
+    // La hora estimada sigue al minuto
+    assert.equal(cruz(trece)?.retrasoMin, 13);
+  });
+
+  // La cruz, parada en el metro 600 (donde el programa la ponía a los 30 min): a los 40 y a los 60
+  const parada = () => [fe("ana", 40, 0, 600), fe("luis", 40, 0, 600), fe("eva", 60, 0, 600), fe("pepe", 60, 0, 600)];
+
+  it("interrumpida: vista en el mismo sitio 20 minutos, y no se estima que avance", () => {
+    const e = estadoCofradia(salida(), parada(), 70 * MIN);
+    assert.deepEqual(e.alteraciones[0], { tipo: "interrumpida", desde: 40 * MIN });
+    assert.equal(cruz(e)?.m, 600);
+    assert.deepEqual(e.historial.map((h) => [h.tipo, h.hasta]).sort(), [["interrumpida", null], ["retraso", null]]);
+  });
+
+  it("con una sola vez en el sitio no hay interrumpida, solo retraso", () => {
+    const e = estadoCofradia(salida(), parada().slice(2), 62 * MIN);
+    assert.deepEqual(tipos(e), ["retraso"]);
+  });
+
+  it("interrumpida: cuando la ven más adelante se quita, y queda en el historial", () => {
+    const sigue = [...parada(), fe("ana", 80, 0, 900), fe("luis", 80, 0, 900)];
+    const e = estadoCofradia(salida(), sigue, 82 * MIN);
+    assert.ok(!tipos(e).includes("interrumpida"));
+    const h = e.historial.find((x) => x.tipo === "interrumpida");
+    assert.deepEqual([h?.desde, h?.hasta], [40 * MIN, 80 * MIN]);
+  });
+
+  it("cambio de recorrido: dos personas a la vez fuera del recorrido, y hasta dónde se sabía", () => {
+    const fuera = [fe("ana", 30, 0, 600), fe("luis", 30, 0, 600), fe("eva", 50, null, 1000, 200), fe("pepe", 51, null, 1030, 200)];
+    const e = estadoCofradia(salida(), fuera, 55 * MIN);
+    const cambio = e.alteraciones.find((a) => a.tipo === "cambio_recorrido");
+    assert.equal(cambio?.desde, 50 * MIN);
+    assert.equal(cambio?.mDesde, 600);
+    assert.ok(cambio?.fuera);
+  });
+
+  it("cambio de recorrido: una sola persona fuera no basta", () => {
+    const e = estadoCofradia(salida(), [fe("eva", 50, null, 1000, 200)], 55 * MIN);
+    assert.deepEqual(tipos(e), []);
+  });
+
+  it("cambio de recorrido: vuelve cuando un elemento consolida en el recorrido, y queda dónde volvió", () => {
+    const fuera = [fe("eva", 50, null, 1000, 200), fe("pepe", 51, null, 1030, 200), fe("ana", 70, 0, 1300), fe("luis", 70, 0, 1300)];
+    const e = estadoCofradia(salida(), fuera, 72 * MIN);
+    assert.ok(!tipos(e).includes("cambio_recorrido"));
+    const h = e.historial.find((x) => x.tipo === "cambio_recorrido");
+    assert.deepEqual([h?.desde, h?.hasta, h?.mHasta], [50 * MIN, 70 * MIN, 1300]);
+  });
+
+  it("un adelanto de 30 minutos o más es regreso anticipado, no adelanto", () => {
+    // La cruz debería estar en el metro 1600 a los 80 min: la ven ahí a los 45
+    const e = estadoCofradia(salida(), [fe("ana", 45, 0, 1600), fe("luis", 45, 0, 1600)], 46 * MIN);
+    assert.deepEqual(tipos(e), ["regreso_anticipado"]);
+  });
+
+  it("caso de referencia: sale, se refugia y vuelve antes → finalizada, con interrumpida y regreso anticipado en el historial", () => {
+    // Parada en el 600 y, a los 70, la Virgen cerca de la entrada (el programa la ponía ahí a los 155)
+    const dia = [...parada(), fe("ana", 70, 2, 1900), fe("luis", 70, 2, 1900)];
+    const enCamino = estadoCofradia(salida(), dia, 72 * MIN);
+    assert.ok(tipos(enCamino).includes("regreso_anticipado"));
+    assert.ok(!tipos(enCamino).includes("interrumpida"));
+
+    const e = estadoCofradia(salida(), dia, 95 * MIN);
+    assert.equal(e.fase.valor, "finalizada");
+    assert.deepEqual(e.alteraciones, []);
+    const h = e.historial.map((x) => x.tipo);
+    assert.ok(h.includes("interrumpida") && h.includes("regreso_anticipado"));
+    assert.ok(e.historial.every((x) => x.hasta !== null));
+  });
+});

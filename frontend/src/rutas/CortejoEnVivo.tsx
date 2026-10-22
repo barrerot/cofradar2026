@@ -102,7 +102,7 @@ function DondeVa({ v, el, jornada, intermedio }: { v: EnVivo; el: ElementoEstado
       </>
     );
   }
-  const hora = horaDelElemento(v.mapa, el, jornada);
+  const hora = horaDelElemento(v.mapa, el, jornada, v.estado);
   return (
     <>
       <p className="cf-ficha-donde">{donde}</p>
@@ -129,4 +129,84 @@ function FueraDeLaCalle({ v, orden, jornada, ahora }: { v: EnVivo; orden: number
     );
   }
   return <p className="cf-ficha-donde">ya ha entrado</p>;
+}
+
+/**
+ * Lo que deduce el motor y no cabe en un chip (4.15): desde cuándo está parada, por dónde va tras un
+ * cambio de recorrido, a qué hora entrará si vuelve antes. Sale de lo que ve la gente: procedencia
+ * «usuarios».
+ */
+export function AlteracionesDe({ v }: { v: EnVivo }) {
+  const e = v.estado;
+  const desde = (iso?: string) => (iso ? ` desde las ${hhmm(new Date(iso))}` : "");
+  return (
+    <>
+      {e.alteraciones.map((a) => {
+        if (a.tipo === "interrumpida")
+          return (
+            <Aviso
+              key={a.tipo}
+              tipo="critico"
+              procedencia="usuarios"
+              titulo="Interrumpida"
+              cuerpo={`Está parada${desde(a.desde)}. Mientras no se mueva, las horas de lo que le queda no son fiables.`}
+            />
+          );
+        if (a.tipo === "cambio_recorrido")
+          return (
+            <Aviso
+              key={a.tipo}
+              tipo="atencion"
+              procedencia="usuarios"
+              titulo="Cambio de recorrido"
+              cuerpo={`La han visto ${a.detalle ?? "fuera del recorrido"}. Lo que le queda es el recorrido previsto, sin confirmar.`}
+            />
+          );
+        if (a.tipo === "regreso_anticipado")
+          return (
+            <Aviso
+              key={a.tipo}
+              tipo="critico"
+              procedencia="usuarios"
+              titulo="Regreso anticipado"
+              cuerpo={`Ha acortado para volver antes${e.entra ? `: entrará hacia las ${hhmm(new Date(e.entra))}` : ""}.`}
+            />
+          );
+        return null;
+      })}
+    </>
+  );
+}
+
+const NOMBRE_HISTORIAL = {
+  retraso: "Retraso",
+  adelanto: "Adelanto",
+  interrumpida: "Interrumpida",
+  cambio_recorrido: "Cambio de recorrido",
+  regreso_anticipado: "Regreso anticipado",
+} as const;
+
+/** «Lo que ha pasado hoy»: cada alteración de la jornada con su rato, también las que ya terminaron. */
+export function HistorialDe({ v }: { v: EnVivo }) {
+  const h = v.estado.historial;
+  if (!h.length) return null;
+  return (
+    <section className="cf-ficha-seccion" aria-labelledby="ficha-historial">
+      <h2 id="ficha-historial">Lo que ha pasado hoy</h2>
+      <ul className="cf-ficha-historial">
+        {h.map((x) => (
+          <li key={`${x.tipo}-${x.desde}`}>
+            <p className="cf-ficha-elemento">
+              {NOMBRE_HISTORIAL[x.tipo]}
+              {x.minutos !== undefined ? <span className="cf-num"> {x.minutos} min</span> : null}
+              {x.detalle ? ` · ${x.detalle}` : null}
+            </p>
+            <p className="cf-ficha-nota cf-num">
+              {x.hasta ? `de ${hhmm(new Date(x.desde))} a ${hhmm(new Date(x.hasta))}` : `desde las ${hhmm(new Date(x.desde))} · sigue`}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }

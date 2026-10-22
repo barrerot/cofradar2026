@@ -254,3 +254,21 @@
   gap: var(--cf-space-3);
   margin-block: var(--cf-space-4);
 }
+
+/* «Lo que ha pasado hoy» (4.15): una alteración por fila, con su rato */
+.cf-ficha-historial {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cf-ficha-historial > li {
+  display: grid;
+  gap: var(--cf-space-1);
+  padding-block-end: var(--cf-space-3);
+  border-block-end: var(--cf-border-width) solid var(--cf-border);
+}
+.cf-ficha-historial > li:last-child {
+  border-block-end: 0;
+}

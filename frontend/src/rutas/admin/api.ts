@@ -1,6 +1,6 @@
 import { desfaseReloj } from "../../datos/reloj";
 import { cabecerasSesion } from "../../datos/sesion";
-import type { Confianza, Fase } from "../../datos/mapa";
+import type { AlteracionMotor, Confianza, Fase } from "../../datos/mapa";
 
 /**
  * Las llamadas del panel a /api/admin (backend/src/rutas/admin.ts), siempre con la sesión. Con el reloj
@@ -22,7 +22,7 @@ export type Anotacion = {
   retirada: { cuando: string; por: string; motivo: string } | null;
 };
 
-export type AlteracionMotor = { tipo: "retraso" | "adelanto"; minutos: number };
+export type { AlteracionMotor };
 
 export type CofradiaPanel = {
   id: string;
@@ -31,6 +31,8 @@ export type CofradiaPanel = {
   sale: string | null;
   alteraciones: AlteracionMotor[];
   alteracionesRetiradas: Anotacion[];
+  /** Lo que tuvo y ya terminó (4.15). */
+  historial: (AlteracionMotor & { desde: string; hasta: string })[];
   incidencias: Anotacion[];
   cancelada: Anotacion | null;
   ultima: { que: string; hora: string } | null;

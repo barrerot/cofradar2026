@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { cuenta } from "../motor/reputacion.js";
-import { estadoCofradia, MEMORIA, type Aportacion, type Resultado, type SalidaMotor } from "../motor/motor.js";
+import { distancia, type Coord } from "../geo.js";
+import { estadoCofradia, type Alteracion, type Aportacion, type EntradaHistorial, type Resultado, type SalidaMotor } from "../motor/motor.js";
 import { supabase } from "../supabase.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "../motor/tiempo.js";
 import { registro, vigente } from "../panel.js";
@@ -35,9 +36,11 @@ routerEstado.get("/estado-jornada", (_peticion, respuesta) => {
 /** Más imprecisa que esto, la ubicación del teléfono no sirve para situar un elemento (sí como presencia). */
 const PRECISION_MAXIMA = 100;
 
+/** Las aportaciones de todo el día: las de las dos últimas horas dan el estado; las demás, el historial. */
+const DIA_MS = 24 * 60 * 60_000;
+
 /**
- * Las aportaciones de «Dar fe» de esas cofradías que le sirven al motor: las plausibles de las dos
- * últimas horas, con su hora llevada al programa (tiempo.ts). Las hechas con el reloj de prueba solo
+ * Las aportaciones de «Dar fe» de esas cofradías que le sirven al motor: las plausibles del día, con su hora llevada al programa (tiempo.ts). Las hechas con el reloj de prueba solo
  * cuentan cuando se mira con el reloj de prueba.
  */
 async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: boolean): Promise<Map<string, Aportacion[]>> {
@@ -48,7 +51,7 @@ async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: b
     .select("id, usuario_id, hermandad_id, elemento, latitud, longitud, precision_m, observada")
     .in("hermandad_id", ids)
     .eq("plausible", true)
-    .gte("observada", new Date(instante.getTime() - MEMORIA).toISOString())
+    .gte("observada", new Date(instante.getTime() - DIA_MS).toISOString())
     .lte("observada", instante.toISOString());
   if (!conPruebas) consulta = consulta.eq("de_prueba", false);
   const { data, error } = await consulta;
@@ -123,6 +126,58 @@ async function anotarResultados(resultados: Record<string, Resultado>, bonus: Re
   }
 }
 
+/** Los lugares con coordenadas, para decir por dónde va una cofradía que ha cambiado de recorrido. */
+let lugares: { hasta: number; datos: Promise<{ nombre: string; punto: Coord }[]> } | null = null;
+function lugaresConPunto() {
+  if (!lugares || lugares.hasta < Date.now()) {
+    const datos = (async () => {
+      const { data, error } = await supabase().from("punto_geografico").select("nombre, latitud, longitud").not("latitud", "is", null);
+      if (error) throw error;
+      return (data ?? []).map((l) => ({ nombre: l.nombre as string, punto: [Number(l.longitud), Number(l.latitud)] as Coord }));
+    })();
+    lugares = { hasta: Date.now() + 10 * 60_000, datos };
+    datos.catch(() => (lugares = null));
+  }
+  return lugares.datos;
+}
+
+/** Más lejos de esto, el lugar conocido más cercano no sirve para nombrar por dónde va. */
+const CERCA_DE_UN_LUGAR = 150;
+
+/**
+ * Una alteración del motor, para la app: las horas, reales; el cambio de recorrido, con palabras
+ * («cerca de Regina»; en el historial, «cerca de Regina en lugar de Feria») y el metro desde el que lo
+ * pendiente es «previsto, sin confirmar» (BUL-217).
+ */
+function paraLaApp(
+  a: Alteracion | EntradaHistorial,
+  c: CofradiaMapa,
+  todos: { nombre: string; punto: Coord }[],
+  real: (t: number | null) => string | null,
+) {
+  let detalle: string | undefined;
+  if (a.tipo === "cambio_recorrido") {
+    const cerca = a.fuera ? todos.reduce<{ nombre: string; d: number } | null>((x, l) => {
+      const d = distancia(l.punto, a.fuera!);
+      return d <= CERCA_DE_UN_LUGAR && (!x || d < x.d) ? { nombre: l.nombre, d } : x;
+    }, null) : null;
+    detalle = cerca ? `cerca de ${cerca.nombre}` : "fuera del recorrido";
+    const mHasta = "mHasta" in a ? a.mHasta : undefined;
+    if (mHasta !== undefined && a.mDesde !== undefined) {
+      const saltados = [...new Set(c.cruzGuia.filter((h) => h.m !== null && h.m > a.mDesde! && h.m < mHasta).map((h) => h.lugar))];
+      if (saltados.length) detalle += ` en lugar de ${saltados.length > 1 ? `${saltados.slice(0, -1).join(", ")} y ${saltados.at(-1)}` : saltados[0]}`;
+    }
+  }
+  return {
+    tipo: a.tipo,
+    ...(a.minutos !== undefined ? { minutos: a.minutos } : {}),
+    ...(a.desde !== undefined ? { desde: real(a.desde) } : {}),
+    ...("hasta" in a ? { hasta: real(a.hasta) } : {}),
+    ...(detalle ? { detalle } : {}),
+    ...(a.tipo === "cambio_recorrido" && a.mDesde !== undefined && !("hasta" in a) ? { desdeM: Math.round(a.mDesde) } : {}),
+  };
+}
+
 const CADA_MS = 30_000;
 const memoria = new Map<string, { hasta: number; datos: Promise<EstadoJornada> }>();
 
@@ -150,7 +205,7 @@ export function salidaMotor(c: CofradiaMapa): SalidaMotor {
 async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
   const lista = await mapa(jornada);
   const anio = lista[0]?.anio ?? (await hermandadesYEdicion()).anio;
-  const [porCofradia, anotaciones] = await Promise.all([aportaciones(lista, instante, conPruebas), registro(jornada, anio, conPruebas)]);
+  const [porCofradia, anotaciones, todos] = await Promise.all([aportaciones(lista, instante, conPruebas), registro(jornada, anio, conPruebas), lugaresConPunto()]);
   const panel = vigente(anotaciones);
   const publicada = (a: { id: string; texto: string; creada: string }) => ({ id: a.id, texto: a.texto, publicada: a.creada });
   const cofradias = lista.map((c) => {
@@ -172,8 +227,10 @@ async function calcular(jornada: number, instante: Date, conPruebas: boolean) {
       // La incidencia va también como alteración, la más grave, para que la vean todas las pantallas
       alteraciones: [
         ...(incidencias.length ? [{ tipo: "incidencia" as const }] : []),
-        ...(suprimidas ? e.alteraciones.filter((a) => !suprimidas.has(a.tipo)) : e.alteraciones),
+        ...e.alteraciones.filter((a) => !suprimidas?.has(a.tipo)).map((a) => paraLaApp(a, c, todos, real)),
       ],
+      // Lo que ha tenido en la jornada (lo retirado desde el panel, mientras siga retirado, no sale)
+      historial: e.historial.filter((h) => !(h.hasta === null && suprimidas?.has(h.tipo))).map((h) => paraLaApp(h, c, todos, real)),
       incidencias,
       progreso: e.progreso,
       elementos: e.elementos,

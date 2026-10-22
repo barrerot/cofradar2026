@@ -136,3 +136,10 @@ export function pasadas(linea: Coord[], acum: number[], punto: Coord, hasta: num
   }
   return res.sort((a, b) => a.d - b.d);
 }
+
+/** Distancia en metros entre dos puntos. */
+export function distancia(a: Coord, b: Coord): number {
+  const [ax, ay] = xy(a);
+  const [bx, by] = xy(b);
+  return Math.hypot(bx - ax, by - ay);
+}

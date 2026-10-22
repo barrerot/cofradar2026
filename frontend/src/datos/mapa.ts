@@ -40,6 +40,19 @@ export type ElementoEstado = {
   retrasoMin: number;
 };
 
+/**
+ * Una alteración que deduce el motor (4.15). `minutos`, de 5 en 5, en retraso y adelanto; `desde`, cuándo
+ * empezó; `detalle`, por dónde va en un cambio de recorrido («cerca de Regina»); `desdeM`, el metro desde
+ * el que lo pendiente es «previsto, sin confirmar» (BUL-217).
+ */
+export type AlteracionMotor = {
+  tipo: "retraso" | "adelanto" | "interrumpida" | "cambio_recorrido" | "regreso_anticipado";
+  minutos?: number;
+  desde?: string;
+  detalle?: string;
+  desdeM?: number;
+};
+
 export type EstadoCofradia = {
   id: string;
   nombre: string;
@@ -47,7 +60,9 @@ export type EstadoCofradia = {
   sale: string | null;
   entra: string | null;
   /** Las del motor y, primero, «incidencia» si la administración ha publicado alguna (su texto, en `incidencias`). */
-  alteraciones: ({ tipo: "retraso" | "adelanto"; minutos: number } | { tipo: "incidencia"; minutos?: undefined })[];
+  alteraciones: (AlteracionMotor | { tipo: "incidencia"; minutos?: undefined; desde?: undefined; detalle?: undefined; desdeM?: undefined })[];
+  /** Lo que ha tenido en la jornada, también lo que ya terminó (`hasta`). */
+  historial: (AlteracionMotor & { desde: string; hasta: string | null })[];
   incidencias: Publicado[];
   progreso: { m: number; total: number } | null;
   elementos: ElementoEstado[];

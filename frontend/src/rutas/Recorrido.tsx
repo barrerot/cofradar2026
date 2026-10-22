@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { Contorno, Esqueleto, SegunDato } from "../componentes";
-import { dondeVa, enLaCalle, horaEstimada, retrasoDe, type EnVivo } from "../datos/enVivo";
+import { cambioDe, dondeVa, enLaCalle, horaEstimada, retrasoDe, type EnVivo } from "../datos/enVivo";
 import type { Jornada } from "../datos/jornada";
 import { Icono, PantallaSecundaria } from "../marco";
 import { coser, type Punto } from "../datos/horario";
@@ -135,17 +135,19 @@ function Tabla({ id, salida }: { id: string; salida: NonNullable<Ficha["salida"]
 
 /** «Cruz de guía en La Campana», la barra y «1.396 de 2.172 m · 64 %». */
 function Progreso({ v, donde }: { v: EnVivo; donde: string | null }) {
-  const p = v.estado.progreso!;
+  // Tras un cambio de recorrido, la barra llega hasta donde la vieron en él por última vez (BUL-217)
+  const cambio = cambioDe(v.estado);
+  const p = cambio?.desdeM !== undefined ? { ...v.estado.progreso!, m: Math.min(cambio.desdeM, v.estado.progreso!.m) } : v.estado.progreso!;
   const pc = p.total ? Math.round((100 * p.m) / p.total) : 0;
-  const confirmado = v.estado.elementos.find((e) => e.orden === 0)?.confianza === "confirmado";
+  const confirmado = !cambio && v.estado.elementos.find((e) => e.orden === 0)?.confianza === "confirmado";
   return (
     <div className="cf-recorrido-progreso">
-      <p>Cruz de guía {donde ?? "en la calle"}</p>
+      <p>{cambio ? `Cambio de recorrido: la han visto ${cambio.detalle ?? "fuera del recorrido"}` : `Cruz de guía ${donde ?? "en la calle"}`}</p>
       <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pc} aria-label="Recorrido hecho">
         <span style={{ width: `${pc}%` }} data-confianza={confirmado ? "confirmado" : "estimado"} />
       </div>
       <p className="cf-num">
-        {miles(p.m)} de {miles(p.total)} m · {pc} %{confirmado ? "" : " · según horario"}
+        {miles(p.m)} de {miles(p.total)} m · {pc} %{cambio ? " · hasta donde se la vio en su recorrido" : confirmado ? "" : " · según horario"}
       </p>
     </div>
   );
@@ -162,6 +164,14 @@ function Real({ punto, v, jornada, orden }: { punto?: Punto; v: EnVivo; jornada:
   // Lo que ya ha dejado atrás no se sabe a qué hora lo pasó: no se inventa
   const situado = v.mapa[orden === 0 ? "cruzGuia" : "ultimoPaso"].find((h) => h.lugar === punto.lugar.nombre && h.hora === punto.hora.slice(0, 16));
   if (el && situado?.m != null && situado.m < el.m - 80) return null;
+  // Tras un cambio de recorrido, lo que queda desde donde la vieron no se sabe si lo pisará (BUL-217)
+  const cambio = cambioDe(v.estado);
+  if (cambio?.desdeM !== undefined && situado?.m != null && situado.m > cambio.desdeM)
+    return (
+      <span className="cf-recorrido-real" data-confianza="estimado" data-desfase="no">
+        previsto, sin confirmar
+      </span>
+    );
   // En la calle y sin cruz visible: la cruz ya ha entrado
   if (!el && orden === 0) return null;
   const retraso = el?.retrasoMin ?? retrasoDe(v.estado, orden);

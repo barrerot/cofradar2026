@@ -6,7 +6,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { Alteraciones, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Boton, Cabecera, Icono, Marco, TRAZOS } from "../marco";
 import { useJornada, type Jornada } from "../datos/jornada";
-import { distancia, distanciaEnLlano, dondeVa, hitosDe, horaDelElemento, nombreElemento, partirRecorrido, siguienteLugar } from "../datos/enVivo";
+import { cambioDe, distancia, distanciaEnLlano, dondeVa, hitosDe, horaDelElemento, nombreElemento, partirRecorrido, siguienteLugar } from "../datos/enVivo";
 import { usePosicion } from "../datos/ubicacion";
 import { useEstadoJornada, useMapaJornada } from "../datos/estadoJornada";
 import { tramoCortejo, type CofradiaMapa, type ElementoEstado, type EstadoCofradia } from "../datos/mapa";
@@ -152,7 +152,16 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
       type: "FeatureCollection",
       features: partes
         ? (["hecho", "pendiente"] as const).flatMap((tipo) =>
-            partes[tipo].length > 1 ? [{ type: "Feature" as const, properties: { tipo }, geometry: { type: "LineString" as const, coordinates: partes[tipo] } }] : [],
+            partes[tipo].length > 1
+              ? [
+                  {
+                    type: "Feature" as const,
+                    // Tras un cambio de recorrido, lo que le queda es lo previsto, sin confirmar (BUL-217)
+                    properties: { tipo: tipo === "pendiente" && partes.sinConfirmar ? "sin_confirmar" : tipo },
+                    geometry: { type: "LineString" as const, coordinates: partes[tipo] },
+                  },
+                ]
+              : [],
           )
         : [],
     };
@@ -354,13 +363,14 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
 /**
  * El tramo que ocupa cada cofradía, entre su cabeza y su cola: continuo si está confirmado, discontinuo si
  * no. Debajo, el recorrido entero de la elegida (mapa-2): lo hecho, continuo en verde; lo que le queda,
- * discontinuo y neutro.
+ * discontinuo y neutro; tras un cambio de recorrido, más claro: es lo previsto, sin confirmar (BUL-217).
  */
 function pintarCortejos(m: Mapa_, datos: GeoJSON.FeatureCollection, recorrido: GeoJSON.FeatureCollection) {
   const fuenteRecorrido = m.getSource("recorrido") as GeoJSONSource | undefined;
   if (fuenteRecorrido) fuenteRecorrido.setData(recorrido);
   else {
     m.addSource("recorrido", { type: "geojson", data: recorrido });
+    m.addLayer({ id: "recorrido-sin-confirmar", type: "line", source: "recorrido", filter: ["==", ["get", "tipo"], "sin_confirmar"], paint: { "line-color": token("--cf-text-muted"), "line-opacity": 0.55, "line-width": 4, "line-dasharray": [0.5, 1.5] } });
     m.addLayer({ id: "recorrido-pendiente", type: "line", source: "recorrido", filter: ["==", ["get", "tipo"], "pendiente"], paint: { "line-color": token("--cf-text-secondary"), "line-width": 3, "line-dasharray": [1.5, 1.5] } });
     m.addLayer({ id: "recorrido-hecho", type: "line", source: "recorrido", filter: ["==", ["get", "tipo"], "hecho"], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": token("--cf-live"), "line-width": 3 } });
   }
@@ -494,9 +504,14 @@ function comoSeSabe(e: ElementoEstado): string {
 }
 
 /** «20 min de retraso», o nada. */
+const SIN_MINUTOS = { interrumpida: "interrumpida", regreso_anticipado: "regreso anticipado", cambio_recorrido: "cambio de recorrido" } as const;
+
+/** La más grave de las del motor, en palabras: «interrumpida», «15 min de retraso». */
 function alteracion(s: EstadoCofradia): string {
   const a = s.alteraciones.find((x) => x.tipo !== "incidencia");
-  return a?.minutos !== undefined ? `${a.minutos} min de ${a.tipo}` : "";
+  if (!a) return "";
+  if (a.tipo in SIN_MINUTOS) return SIN_MINUTOS[a.tipo as keyof typeof SIN_MINUTOS];
+  return a.minutos !== undefined ? `${a.minutos} min de ${a.tipo}` : "";
 }
 
 /**
@@ -548,6 +563,11 @@ function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; 
         <Alteraciones alteraciones={s.alteraciones} densidad="estandar" confianza={s.fase.confianza} />
       </div>
       {s.fase.valor === "inminente" && s.sale ? <p className="cf-mapa-rapida-estado">Sale a las {hora(s.sale)}.</p> : null}
+      {cambioDe(s) ? (
+        <p className="cf-mapa-rapida-estado">
+          La han visto {cambioDe(s)!.detalle ?? "fuera del recorrido"}. En gris claro, lo previsto, sin confirmar.
+        </p>
+      ) : null}
       {hitos.length ? (
         <dl className="cf-mapa-hitos">
           {hitos.map((h) => (
@@ -555,7 +575,9 @@ function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; 
               <dt>{h.titulo}</dt>
               <dd className="prevista cf-num">Prevista {hhmm(h.prevista)}</dd>
               <dd className="real" data-confianza={h.confianza}>
-                {h.retrasoMin !== 0 || h.confianza !== "estimado" ? (
+                {h.sinConfirmar ? (
+                  <span className="hr">sin confirmar</span>
+                ) : h.retrasoMin !== 0 || h.confianza !== "estimado" ? (
                   <>
                     <span className="hr cf-num">{hhmm(h.estimada)}</span>
                     {h.retrasoMin !== 0 ? <span className="dif cf-num"> {h.retrasoMin > 0 ? `+${h.retrasoMin}` : `−${-h.retrasoMin}`} min</span> : null}
@@ -568,7 +590,7 @@ function VistaCofradia({ c, s, jornada }: { c: CofradiaMapa; s: EstadoCofradia; 
           ))}
         </dl>
       ) : null}
-      {cruz && pc !== null ? (
+      {cruz && pc !== null && !cambioDe(s) ? (
         <p className="cf-mapa-rapida-progreso">
           Cruz de guía {dondeVa(c, cruz)}
           <span className="cf-num">{pc} % del recorrido</span>
@@ -595,7 +617,7 @@ function DetalleElemento({ c, s, el, jornada, alVolver }: { c: CofradiaMapa; s: 
   const posicion = usePosicion();
   const hhmm = (d: Date) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
   const linea = (e: ElementoEstado, mayuscula = false) => {
-    const h = horaDelElemento(c, e, jornada);
+    const h = horaDelElemento(c, e, jornada, s);
     const donde = dondeVa(c, e);
     return (
       <>

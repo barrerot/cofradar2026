@@ -1,6 +1,21 @@
 import { Router, type Request, type Response } from "express";
 import { exigirAdmin, ponerAdmin, todasLasCuentas } from "../admin.js";
-import { ALTERACION_MINIMA, BONUS, DESACTUALIZADO, MEMORIA, MINIMO_INDEPENDIENTES, SIMULTANEAS, TOLERANCIA, VENTANA_INMINENTE, VIGENTE } from "../motor/motor.js";
+import {
+  ALTERACION_MINIMA,
+  BONUS,
+  CERCA_FUERA,
+  DESACTUALIZADO,
+  MEMORIA,
+  MINIMO_INDEPENDIENTES,
+  MISMO_SITIO,
+  PARADA,
+  REDONDEO,
+  SALTO,
+  SIMULTANEAS,
+  TOLERANCIA,
+  VENTANA_INMINENTE,
+  VIGENTE,
+} from "../motor/motor.js";
 import { PUNTOS_BASE } from "../motor/plausibilidad.js";
 import { registro, vigente, type TipoRegistro } from "../panel.js";
 import type { Usuario } from "../sesion.js";
@@ -77,6 +92,8 @@ routerAdmin.get(
         // Las del motor: las incidencias van aparte, con su texto
         alteraciones: c.alteraciones.filter((a) => a.tipo !== "incidencia"),
         alteracionesRetiradas: de("retirar_alteracion"),
+        // Lo que tuvo y ya terminó: lo que sigue está en `alteraciones`
+        historial: c.historial.filter((h) => h.hasta !== null),
         incidencias: de("incidencia"),
         cancelada: de("cancelada")[0] ?? null,
         ultima,
@@ -197,7 +214,10 @@ function ajustes() {
       grupo: "Fases y alteraciones",
       valores: [
         { nombre: "«Sale pronto»", valor: `${min(VENTANA_INMINENTE)} min antes de la salida` },
-        { nombre: "Retraso o adelanto", valor: `a partir de ${min(ALTERACION_MINIMA)} min` },
+        { nombre: "Retraso o adelanto", valor: `a partir de ${min(ALTERACION_MINIMA)} min, de ${min(REDONDEO)} en ${min(REDONDEO)}` },
+        { nombre: "Interrumpida", valor: `en el mismo sitio (menos de ${MISMO_SITIO} m) ${min(PARADA)} min o más` },
+        { nombre: "Cambio de recorrido", valor: `${MINIMO_INDEPENDIENTES} personas a la vez fuera del recorrido, a menos de ${CERCA_FUERA} m entre ellas` },
+        { nombre: "Regreso anticipado", valor: `aparece ${min(SALTO)} min o más por delante de lo que tocaba` },
       ],
     },
     {
