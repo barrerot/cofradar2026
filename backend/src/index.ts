@@ -40,7 +40,7 @@ app.use("/api", routerAdmin);
 app.use("/api", routerDatosBase);
 
 /**
- * Los escudos (BUL-171). Provisionales, sacados de la web del Consejo solo para desarrollar: viven en el
+ * Los escudos (BUL-171), sacados de la web del Consejo; se quitan si el Consejo o la hermandad lo piden. Viven en el
  * servidor (ESCUDOS_DIR, por defecto ~/.cofradar/escudos) y NUNCA en el repositorio, que es público.
  * `hermandad.escudo` guarda solo el nombre del archivo. Sin la carpeta, la app se queda con las iniciales.
  */

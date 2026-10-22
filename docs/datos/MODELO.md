@@ -389,7 +389,7 @@ Aprobado por Carlos el 22/10/2026. Lo que antes estaba escrito en el código pas
 
 ### Escudos (BUL-171, 22/10/2026)
 
-**Provisionales, solo para desarrollar** (decisión de Carlos del 22/10/2026). Mientras Cofradar no tenga usuarios y la web siga tras contraseña, los escudos salen de las páginas por jornada de la web del Consejo (hermandades-de-sevilla.org). Antes del lanzamiento se cambian por los dibujos de Carlos o por el permiso que den el Consejo y las hermandades (BUL-225).
+**Definitivos** (decisión de Carlos del 22/10/2026). Los escudos salen de las páginas por jornada de la web del Consejo (hermandades-de-sevilla.org). Antes del lanzamiento, Carlos escribirá al Consejo. Si el Consejo o alguna hermandad dice que no, se quitan: basta con borrar el archivo del servidor o vaciar `hermandad.escudo`, y la app vuelve a las iniciales (BUL-225).
 
 - **Las imágenes nunca van al repositorio, que es público.** Viven en el servidor, en `~/.cofradar/escudos/` (o en `ESCUDOS_DIR`): una de 192 px en WebP por hermandad, con los originales en `originales/`.
 - `hermandad.escudo` guarda solo el nombre del archivo («el-gran-poder.webp»). La API lo sirve en `/api/escudos/<archivo>`.
