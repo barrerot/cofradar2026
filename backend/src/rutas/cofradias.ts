@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { acumulados, situarEnOrden, type Coord } from "../geo.js";
+import { enviarGuardado } from "../enviar.js";
 import { supabase } from "../supabase.js";
 
 /**
@@ -132,10 +133,11 @@ const memoria = new Map<string, { hasta: number; salidas: Promise<Salida[]> }>()
 export function olvidarDatosBase() {
   memoria.clear();
   memoriaMapa.clear();
+  derivadas.clear();
 }
 
-/** Las salidas de una edición (la última si no se pide año), con todo lo necesario para las rutas. */
-async function salidas(anio?: number): Promise<Salida[]> {
+/** Las salidas de una edición (la última si no se pide año), con todo lo necesario para las rutas. Sin `async`: devuelve siempre la MISMA promesa mientras esté guardada, que es lo que reconoce `derivada`. */
+function salidas(anio?: number): Promise<Salida[]> {
   const clave = String(anio ?? "ultima");
   const guardada = memoria.get(clave);
   if (guardada && guardada.hasta > Date.now()) return guardada.salidas;
@@ -144,6 +146,23 @@ async function salidas(anio?: number): Promise<Salida[]> {
   // Si falla, no se guarda el fallo: la siguiente petición lo vuelve a intentar
   pedidas.catch(() => memoria.delete(clave));
   return pedidas;
+}
+
+/**
+ * Lo que se calcula a partir de unas salidas guardadas (la lista de una jornada, una ficha) se guarda con
+ * ellas: mientras sean las mismas, se reutiliza; cuando se vuelven a leer de Supabase, se recalcula. Así
+ * cada respuesta se calcula y se convierte a texto una vez (enviar.ts), no en cada petición (BUL-212).
+ */
+const derivadas = new Map<string, { de: Promise<Salida[]>; valor: Promise<unknown> }>();
+function derivada<T>(clave: string, de: Promise<Salida[]>, calcular: (lista: Salida[]) => T | Promise<T>): Promise<T> {
+  const ya = derivadas.get(clave);
+  if (ya && ya.de === de) return ya.valor as Promise<T>;
+  // Las claves salen de la dirección (?jornada=, ?anio=): que nadie la llene pidiendo números al azar
+  if (derivadas.size > 1000) derivadas.clear();
+  const valor = de.then(calcular);
+  derivadas.set(clave, { de, valor });
+  valor.catch(() => derivadas.delete(clave));
+  return valor;
 }
 
 async function leerSalidas(anio?: number): Promise<Salida[]> {
@@ -226,70 +245,82 @@ export const ruta =
 routerCofradias.get(
   "/jornadas",
   ruta(async (peticion, respuesta) => {
-    const lista = await salidas(anioPedido(peticion));
-    const { data, error } = await supabase().from("jornada").select("id, nombre, orden").order("orden");
-    if (error) throw error;
-    respuesta.json(
-      data.map((j) => {
+    const anio = anioPedido(peticion);
+    const datos = derivada(`jornadas|${anio ?? ""}`, salidas(anio), async (lista) => {
+      const { data, error } = await supabase().from("jornada").select("id, nombre, orden").order("orden");
+      if (error) throw error;
+      return data.map((j) => {
         const deLaJornada = lista.filter((s) => s.jornada.id === j.id);
         const salidasDelDia = deLaJornada.map((s) => salidaYEntrada(s.punto_itinerario).horaSalida).filter((h) => h !== null).sort();
         // La fecha es la de la primera salida del día (la Madrugá empieza pasada la medianoche)
         return { id: j.id, nombre: j.nombre, orden: j.orden, fecha: salidasDelDia[0]?.slice(0, 10) ?? null, cofradias: deLaJornada.length };
-      }),
-    );
+      });
+    });
+    await enviarGuardado(peticion, respuesta, datos);
   }),
 );
 
 routerCofradias.get(
   "/cofradias",
   ruta(async (peticion, respuesta) => {
-    const jornada = Number(peticion.query.jornada);
-    const lista = (await salidas(anioPedido(peticion)))
-      .filter((s) => !peticion.query.jornada || s.jornada.id === jornada)
-      .sort((a, b) => a.jornada.orden - b.jornada.orden || (salidaYEntrada(a.punto_itinerario).horaSalida ?? "").localeCompare(salidaYEntrada(b.punto_itinerario).horaSalida ?? ""));
-    respuesta.json(lista.map(directorio));
+    const anio = anioPedido(peticion);
+    const jornada = peticion.query.jornada ? Number(peticion.query.jornada) : null;
+    const datos = derivada(`cofradias|${jornada ?? ""}|${anio ?? ""}`, salidas(anio), (lista) =>
+      lista
+        .filter((s) => jornada === null || s.jornada.id === jornada)
+        .map((s) => ({ s, salida: salidaYEntrada(s.punto_itinerario).horaSalida ?? "" }))
+        .sort((a, b) => a.s.jornada.orden - b.s.jornada.orden || a.salida.localeCompare(b.salida))
+        .map(({ s }) => directorio(s)),
+    );
+    await enviarGuardado(peticion, respuesta, datos);
   }),
 );
 
 routerCofradias.get(
   "/cofradias/:id",
   ruta(async (peticion, respuesta) => {
+    const de = salidas(anioPedido(peticion));
     const s = await buscar(peticion, respuesta);
     if (!s) return;
-    const h = s.hermandad;
-    const cruzGuia = horario(s.punto_itinerario, "cruz_guia");
-    const { data: rec } = await supabase().from("recorrido").select("metros, provisional").eq("salida_procesional_id", s.id).maybeSingle();
-    // El templo de salida es el primer lugar del itinerario: casi siempre la sede, pero no siempre (Cigarreras en 2026)
-    const { data: salidaDe } = cruzGuia[0]
-      ? await supabase().from("templo").select("nombre, direccion, punto_geografico(id, nombre, tipo, latitud, longitud)").eq("punto_geografico_id", cruzGuia[0].lugar.id).maybeSingle()
-      : { data: null };
-    respuesta.json({
-      id: slug(h.nombre),
-      nombre: h.nombre,
-      nombreOficial: h.nombre_oficial,
-      escudo: escudoUrl(h.escudo),
-      web: h.web,
-      fundacion: h.fundacion,
-      historia: h.historia,
-      hermanos: h.numero_hermanos,
-      nazarenos: h.numero_nazarenos,
-      duracionCortejo: h.duracion_cortejo,
-      sede: templo(h.templo),
-      pasos: pasos(h),
-      salida: {
-        id: s.id,
-        anio: s.edicion.anio,
-        jornada: { id: s.jornada.id, nombre: s.jornada.nombre },
-        estado: s.estado,
-        templo: salidaDe ? templo(salidaDe as unknown as Templo) : templo(h.templo),
-        ...salidaYEntrada(s.punto_itinerario),
-        cruzGuia,
-        ultimoPaso: horario(s.punto_itinerario, "ultimo_paso"),
-        recorrido: rec ? { metros: rec.metros, provisional: rec.provisional } : null,
-      },
-    });
+    await enviarGuardado(peticion, respuesta, derivada(`ficha|${s.id}`, de, () => ficha(s)));
   }),
 );
+
+/** La ficha de una cofradía (P-11): la hermandad, su sede, sus pasos y su salida con el horario. */
+async function ficha(s: Salida) {
+  const h = s.hermandad;
+  const cruzGuia = horario(s.punto_itinerario, "cruz_guia");
+  const { data: rec } = await supabase().from("recorrido").select("metros, provisional").eq("salida_procesional_id", s.id).maybeSingle();
+  // El templo de salida es el primer lugar del itinerario: casi siempre la sede, pero no siempre (Cigarreras en 2026)
+  const { data: salidaDe } = cruzGuia[0]
+    ? await supabase().from("templo").select("nombre, direccion, punto_geografico(id, nombre, tipo, latitud, longitud)").eq("punto_geografico_id", cruzGuia[0].lugar.id).maybeSingle()
+    : { data: null };
+  return {
+    id: slug(h.nombre),
+    nombre: h.nombre,
+    nombreOficial: h.nombre_oficial,
+    escudo: escudoUrl(h.escudo),
+    web: h.web,
+    fundacion: h.fundacion,
+    historia: h.historia,
+    hermanos: h.numero_hermanos,
+    nazarenos: h.numero_nazarenos,
+    duracionCortejo: h.duracion_cortejo,
+    sede: templo(h.templo),
+    pasos: pasos(h),
+    salida: {
+      id: s.id,
+      anio: s.edicion.anio,
+      jornada: { id: s.jornada.id, nombre: s.jornada.nombre },
+      estado: s.estado,
+      templo: salidaDe ? templo(salidaDe as unknown as Templo) : templo(h.templo),
+      ...salidaYEntrada(s.punto_itinerario),
+      cruzGuia,
+      ultimoPaso: horario(s.punto_itinerario, "ultimo_paso"),
+      recorrido: rec ? { metros: rec.metros, provisional: rec.provisional } : null,
+    },
+  };
+}
 
 /**
  * Las taxonomías (5.4): los tipos de elemento del cortejo, con su nombre cofrade y en llano, y los hitos
@@ -412,6 +443,6 @@ export async function cofradiaMapa(id: string): Promise<CofradiaMapa | undefined
 routerCofradias.get(
   "/jornadas/:id/mapa",
   ruta(async (peticion, respuesta) => {
-    respuesta.json(await mapa(Number(peticion.params.id), anioPedido(peticion)));
+    await enviarGuardado(peticion, respuesta, mapa(Number(peticion.params.id), anioPedido(peticion)));
   }),
 );

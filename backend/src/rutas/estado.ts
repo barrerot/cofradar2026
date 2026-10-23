@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { cuenta } from "../motor/reputacion.js";
+import { enviarGuardado } from "../enviar.js";
 import { distancia, type Coord } from "../geo.js";
 import { estadoCofradia, type Alteracion, type Aportacion, type EntradaHistorial, type Resultado, type SalidaMotor } from "../motor/motor.js";
 import { supabase } from "../supabase.js";
@@ -280,8 +281,7 @@ routerEstado.get(
       return;
     }
     const conPruebas = peticion.query.ahora !== undefined || peticion.query.desfase !== undefined;
-    const datos = await estadoDe(jornada, pedido, conPruebas);
     respuesta.setHeader("Cache-Control", "public, max-age=30");
-    respuesta.json(datos);
+    await enviarGuardado(peticion, respuesta, estadoDe(jornada, pedido, conPruebas));
   }),
 );
