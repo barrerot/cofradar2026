@@ -84,29 +84,29 @@ Crea las tablas que falten (`backend/supabase/esquema.sql`), vacía y vuelve a l
 | `PUT` / `DELETE /api/yo/vistas/:id` | «La he visto» en la edición actual, o quitarlo; con `?anio=`, en ese año (desde 1950) |
 | `GET /api/salud` | `{ ok: true }` |
 
-**Entrar con Google** (Supabase Auth). La web guarda la sesión en el teléfono y la renueva sola (`frontend/src/datos/sesion.tsx`). A la API le manda el token en la cabecera `X-Sesion`, no en `Authorization`, porque en cofradar.buluu.es esa la usa la contraseña de Apache. `backend/src/sesion.ts` lo comprueba en todas las rutas; las que necesitan cuenta llevan `exigirSesion`.
+**Entrar con Google** (Supabase Auth). La web guarda la sesión en el teléfono y la renueva sola (`frontend/src/datos/sesion.tsx`). A la API le manda el token en la cabecera `X-Sesion`, no en `Authorization`, porque en www.cofradar.es y cofradar.buluu.es esa la usa la contraseña de Apache. `backend/src/sesion.ts` lo comprueba en todas las rutas; las que necesitan cuenta llevan `exigirSesion`.
 
 Configurado fuera del código:
 - **Google Cloud**, proyecto Cofradar: un cliente OAuth «Cofradar web» con
-  - orígenes `https://cofradar.buluu.es` y `http://localhost:5173`;
+  - orígenes `https://www.cofradar.es`, `https://cofradar.buluu.es` y `http://localhost:5173`;
   - redirección `https://<proyecto>.supabase.co/auth/v1/callback`.
 
   Está «en pruebas», así que solo entran los usuarios de prueba que se añadan allí.
 - **Supabase**, Authentication:
   - Google activado con ese cliente;
   - Site URL `https://cofradar.buluu.es`;
-  - Redirect URLs `https://cofradar.buluu.es/**` y `http://localhost:5173/**`.
+  - Redirect URLs `https://www.cofradar.es/**`, `https://cofradar.buluu.es/**` y `http://localhost:5173/**`.
 
 ## Publicar
 
-**Versión de desarrollo: https://cofradar.buluu.es**, en el VPS de dev.buluu.es (91.107.207.230). Un solo proceso de Node sirve la web y la API en `127.0.0.1:3010` y Apache le reenvía las visitas, con certificado de Let's Encrypt y usuario y contraseña mientras está en desarrollo. Todo está en `despliegue/`:
+**https://www.cofradar.es**, y también **https://cofradar.buluu.es** (las dos sirven lo mismo). `cofradar.es`, `cofradar.com` y `www.cofradar.com` redirigen a www.cofradar.es. Los dominios están en DonDominio y apuntan al VPS de dev.buluu.es (91.107.207.230). Un solo proceso de Node sirve la web y la API en `127.0.0.1:3010` y Apache le reenvía las visitas, con certificado de Let's Encrypt y usuario y contraseña mientras está en desarrollo. Todo está en `despliegue/`:
 
 ```bash
 despliegue/publicar.sh            # compila y reinicia (tras cada cambio)
 despliegue/publicar.sh --arrancar # solo arranca; lo lanza el crontab de dev al reiniciar el VPS
 ```
 
-Registro en `~/.cofradar/web.log` del usuario `dev`. El sitio de Apache es `despliegue/cofradar.buluu.es.conf` (la parte https la añadió certbot) y la contraseña, `despliegue/cofradar-acceso.conf`.
+Registro en `~/.cofradar/web.log` del usuario `dev`. Los sitios de Apache son `despliegue/www.cofradar.es.conf`, `despliegue/cofradar-redireccion.conf` y `despliegue/cofradar.buluu.es.conf` (la parte https la añadió certbot) y la contraseña, `despliegue/cofradar-acceso.conf`. Antes del lanzamiento se decide si la versión pública pasa al VPS de Hestia (45.67.217.138).
 
 ### En otro servidor
 
