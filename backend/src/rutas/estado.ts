@@ -3,7 +3,7 @@ import { cuenta } from "../motor/reputacion.js";
 import { enviarGuardado } from "../enviar.js";
 import { distancia, type Coord } from "../geo.js";
 import { estadoCofradia, type Alteracion, type Aportacion, type EntradaHistorial, type Resultado, type SalidaMotor } from "../motor/motor.js";
-import { supabase } from "../supabase.js";
+import { supabase, todas } from "../supabase.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "../motor/tiempo.js";
 import { registro, vigente } from "../panel.js";
 import { hermandadesYEdicion, mapa, ruta, type CofradiaMapa } from "./cofradias.js";
@@ -47,20 +47,21 @@ const DIA_MS = 24 * 60 * 60_000;
 async function aportaciones(lista: CofradiaMapa[], instante: Date, conPruebas: boolean): Promise<Map<string, Aportacion[]>> {
   const { porSlug, porId } = await hermandadesYEdicion();
   const ids = lista.map((c) => porSlug.get(c.id)).filter((x): x is number => x !== undefined);
-  let consulta = supabase()
-    .from("aportacion")
-    .select("id, usuario_id, hermandad_id, elemento, latitud, longitud, precision_m, observada")
-    .in("hermandad_id", ids)
-    .eq("plausible", true)
-    .gte("observada", new Date(instante.getTime() - DIA_MS).toISOString())
-    .lte("observada", instante.toISOString());
-  if (!conPruebas) consulta = consulta.eq("de_prueba", false);
-  const { data, error } = await consulta;
-  if (error) throw error;
+  const data = await todas((desde, hasta) => {
+    let consulta = supabase()
+      .from("aportacion")
+      .select("id, usuario_id, hermandad_id, elemento, latitud, longitud, precision_m, observada", { count: "exact" })
+      .in("hermandad_id", ids)
+      .eq("plausible", true)
+      .gte("observada", new Date(instante.getTime() - DIA_MS).toISOString())
+      .lte("observada", instante.toISOString());
+    if (!conPruebas) consulta = consulta.eq("de_prueba", false);
+    return consulta.order("id").range(desde, hasta);
+  });
   const anio = new Map(lista.map((c) => [c.id, c.anio]));
-  const fiables = await quienesCuentan([...new Set((data ?? []).map((f) => f.usuario_id as string))]);
+  const fiables = await quienesCuentan([...new Set(data.map((f) => f.usuario_id as string))]);
   const res = new Map<string, Aportacion[]>();
-  for (const f of data ?? []) {
+  for (const f of data) {
     const id = porId.get(f.hermandad_id);
     // Quien tiene un patrón de aportaciones contradichas no cuenta para consolidar (reputacion.ts)
     if (!id || !fiables.has(f.usuario_id)) continue;
@@ -84,14 +85,24 @@ async function quienesCuentan(usuarios: string[]): Promise<Set<string>> {
   const ahora = Date.now();
   const faltan = usuarios.filter((u) => (reputaciones.get(u)?.hasta ?? 0) < ahora);
   if (faltan.length) {
-    const { data, error } = await supabase()
-      .from("aportacion")
-      .select("usuario_id, resultado")
-      .in("usuario_id", faltan)
-      .in("resultado", ["consolidada", "contradicha"]);
-    if (error) throw error;
+    // De 100 en 100: la lista de personas va en la dirección de la consulta, que no puede ser infinita
+    const data = [];
+    for (let i = 0; i < faltan.length; i += 100) {
+      const grupo = faltan.slice(i, i + 100);
+      data.push(
+        ...(await todas((desde, hasta) =>
+          supabase()
+            .from("aportacion")
+            .select("id, usuario_id, resultado", { count: "exact" })
+            .in("usuario_id", grupo)
+            .in("resultado", ["consolidada", "contradicha"])
+            .order("id")
+            .range(desde, hasta),
+        )),
+      );
+    }
     const historial = new Map(faltan.map((u) => [u, { consolidadas: 0, contradichas: 0 }]));
-    for (const f of data ?? []) {
+    for (const f of data) {
       const h = historial.get(f.usuario_id)!;
       if (f.resultado === "consolidada") h.consolidadas++;
       else h.contradichas++;
@@ -111,17 +122,24 @@ const bonusAnotado = new Map<string, number>();
 async function anotarResultados(resultados: Record<string, Resultado>, bonus: Record<string, number>) {
   if (anotados.size > 50_000) anotados.clear();
   if (bonusAnotado.size > 50_000) bonusAnotado.clear();
+  // Se agrupan por valor y se escriben de 100 en 100: con miles de «Dar fe», una escritura por cada una
+  // tardaba minutos en ponerse al día (BUL-212)
+  const porValor = <V,>(pares: [string, V][]) => {
+    const grupos = new Map<V, string[]>();
+    for (const [id, v] of pares) grupos.set(v, [...(grupos.get(v) ?? []), id]);
+    return [...grupos].flatMap(([v, ids]) => Array.from({ length: Math.ceil(ids.length / 100) }, (_, i) => [v, ids.slice(i * 100, i * 100 + 100)] as const));
+  };
   // El bonus solo sube: si ya tenía más, se queda
-  for (const [id, valor] of Object.entries(bonus)) {
-    if ((bonusAnotado.get(id) ?? 0) >= valor) continue;
-    bonusAnotado.set(id, valor);
-    const { error } = await supabase().from("aportacion").update({ bonus: valor }).eq("id", id).lt("bonus", valor);
+  const subenBonus = Object.entries(bonus).filter(([id, valor]) => (bonusAnotado.get(id) ?? 0) < valor);
+  for (const [id, valor] of subenBonus) bonusAnotado.set(id, valor);
+  for (const [valor, ids] of porValor(subenBonus)) {
+    const { error } = await supabase().from("aportacion").update({ bonus: valor }).in("id", ids).lt("bonus", valor);
     if (error) console.error(error);
   }
   const cambios = Object.entries(resultados).filter(([id, r]) => anotados.get(id) !== r && anotados.get(id) !== "consolidada");
-  for (const [id, r] of cambios) {
-    anotados.set(id, r);
-    const consulta = supabase().from("aportacion").update({ resultado: r }).eq("id", id);
+  for (const [id, r] of cambios) anotados.set(id, r);
+  for (const [r, ids] of porValor(cambios)) {
+    const consulta = supabase().from("aportacion").update({ resultado: r }).in("id", ids);
     const { error } = await (r === "consolidada" ? consulta : consulta.or("resultado.is.null,resultado.neq.consolidada"));
     if (error) console.error(error);
   }

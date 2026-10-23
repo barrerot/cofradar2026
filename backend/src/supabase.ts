@@ -19,3 +19,25 @@ export function supabase(): SupabaseClient {
   });
   return cliente;
 }
+
+/**
+ * Todas las filas de una consulta. Supabase (PostgREST) no devuelve más de 1.000 de una vez, y lo que
+ * pasa de ahí se pierde SIN AVISO: en la prueba de carga (BUL-212), con 20.000 «Dar fe» en la Madrugá,
+ * el motor solo veía 1.000. Aquí se piden de 1.000 en 1.000: la primera dice cuántas hay y las demás
+ * van a la vez. `pagina` recibe el rango y debe ordenar por algo estable (si no, se repiten o se saltan).
+ */
+const PAGINA = 1000;
+type Pagina<T> = PromiseLike<{ data: T[] | null; error: unknown; count?: number | null }>;
+export async function todas<T>(pagina: (desde: number, hasta: number) => Pagina<T>): Promise<T[]> {
+  const primera = await pagina(0, PAGINA - 1);
+  if (primera.error) throw primera.error;
+  const filas = primera.data ?? [];
+  const total = primera.count ?? filas.length;
+  const resto = [];
+  for (let desde = PAGINA; desde < total; desde += PAGINA) resto.push(pagina(desde, desde + PAGINA - 1));
+  for (const r of await Promise.all(resto)) {
+    if (r.error) throw r.error;
+    filas.push(...(r.data ?? []));
+  }
+  return filas;
+}
