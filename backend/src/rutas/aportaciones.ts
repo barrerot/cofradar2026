@@ -88,15 +88,7 @@ routerAportaciones.post(
     const hermandadId = porSlug.get(c.id)!;
     const db = supabase();
 
-    // 2. Si ya llegó (reintento), la misma
-    const ya = await db.from("aportacion").select("id, puntos_base, observada").eq("usuario_id", usuario.id).eq("cliente_id", clienteId).maybeSingle();
-    if (ya.error) throw ya.error;
-    if (ya.data) {
-      respuesta.status(200).json({ id: ya.data.id, puntos: ya.data.puntos_base, observada: ya.data.observada });
-      return;
-    }
-
-    // 3. Los cuatro controles, con su propia historia de la última hora
+    // 2. Los cuatro controles, con su propia historia de la última hora
     // Nadie ve algo en el futuro: si el reloj del teléfono va adelantado, la hora de llegada
     const observada = Math.min(observadaPedida, ahora);
     const previasBd = await db
@@ -127,7 +119,8 @@ routerAportaciones.post(
     );
     const puntos = juicio.plausible ? PUNTOS_BASE : 0;
 
-    // 4. Se guarda siempre
+    // 3. Se guarda siempre. Si ya llegó (reintento), (usuario_id, cliente_id) se repite y se devuelve la
+    // que había: así no se pregunta antes en cada «Dar fe» (una consulta menos, BUL-212)
     const { data, error } = await db
       .from("aportacion")
       .insert({
@@ -146,6 +139,12 @@ routerAportaciones.post(
       })
       .select("id")
       .single();
+    if (error?.code === "23505") {
+      const ya = await db.from("aportacion").select("id, puntos_base, observada").eq("usuario_id", usuario.id).eq("cliente_id", clienteId).single();
+      if (ya.error) throw ya.error;
+      respuesta.status(200).json({ id: ya.data.id, puntos: ya.data.puntos_base, observada: ya.data.observada });
+      return;
+    }
     if (error) throw error;
     if (!juicio.plausible) console.log(`aportación ${data.id} sin puntos base: ${juicio.motivo}`);
     respuesta.status(201).json({ id: data.id, puntos, observada: new Date(observada).toISOString() });

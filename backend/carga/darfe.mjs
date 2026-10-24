@@ -1,7 +1,7 @@
 // Prueba de carga (BUL-212), fase 2: gente con cuenta DANDO FE en plena Madrugá.
 // Cada persona, como la app (frontend/src/datos/darFe.ts, puntos.ts):
 //   - da fe cada `cadaS` segundos de un elemento que está en la calle, donde el motor dice que va
-//   - pide /yo/aportaciones cada 60 s (sus puntos)
+//   - abre «Mi Cofradar» (pide /yo/aportaciones, sus puntos) cada 5 min: la app ya no los pide cada minuto
 //   - y mira el estado cada 30 s
 // Las sesiones son reales (tokens.json); varias personas simuladas pueden compartir sesión.
 // Uso: node darfe.mjs <personas> <segundos> <cadaS> [base]
@@ -66,7 +66,7 @@ for (let i = 0; i < N; i++) {
       }),
     });
   }, llega);
-  cada(60_000, () => void pide("mis puntos", "/yo/aportaciones", { headers: sesion }), llega);
+  cada(300_000, () => void pide("mis puntos", "/yo/aportaciones", { headers: sesion }), llega);
   cada(30_000, () => void mirarEstado(), llega);
 }
 

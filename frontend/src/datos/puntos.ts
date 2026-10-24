@@ -69,12 +69,16 @@ export function useMisAportaciones(): { puntos: number; aportaciones: MiAportaci
       }
     };
     void pedir();
-    const id = window.setInterval(() => void pedir(), 60_000);
-    // Cuando sale una de la cola de pendientes, ya está en el servidor
+    // Sin pedirlos cada minuto (en la Madrugá serían miles de consultas, BUL-212): al abrir la pantalla,
+    // al volver a la app (por si llegó un bonus) y cuando sale una de la cola de pendientes
+    const alVolver = () => {
+      if (document.visibilityState === "visible") void pedir();
+    };
+    document.addEventListener("visibilitychange", alVolver);
     const dejar = alCambiarCola(() => void pedir());
     return () => {
       vigente = false;
-      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", alVolver);
       dejar();
     };
   }, [usuario?.id]);
