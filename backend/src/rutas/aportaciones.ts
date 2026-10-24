@@ -4,9 +4,10 @@ import { estadoCofradia } from "../motor/motor.js";
 import { juzgar, PUNTOS_BASE, type Hecho } from "../motor/plausibilidad.js";
 import { ahoraEnPrograma, aReal } from "../motor/tiempo.js";
 import { exigirSesion, type Usuario } from "../sesion.js";
-import { supabase } from "../supabase.js";
+import { supabase, todas } from "../supabase.js";
 import { cofradiaMapa, hermandadesYEdicion, nombresDeHermandades, type CofradiaMapa } from "./cofradias.js";
 import { salidaMotor } from "./estado.js";
+import { crearHistorias, crearLotes, type Guardada } from "./recientes.js";
 
 /**
  * «Dar fe» (4.7, BUL-186): recibirlo, juzgarlo en el momento y dar los puntos base.
@@ -51,12 +52,97 @@ export function desfaseDe(peticion: Request): number {
   return Number.isFinite(d) ? d : 0;
 }
 
-/** Por dónde iba una cofradía a una hora real: sus elementos en la calle o, si no, su templo. */
+/**
+ * Por dónde iba una cofradía a una hora real: sus elementos en la calle o, si no, su templo. Al minuto
+ * (en un minuto un cortejo no avanza ni 100 m) y recordado: cada «Dar fe» mira toda la última hora de
+ * esa persona, y calcularlo con el motor para cada una ahogaba el servidor en la prueba de carga (BUL-212).
+ */
+const zonas = new Map<string, Coord[]>();
 function zona(c: CofradiaMapa, t: number): Coord[] {
   if (c.linea.length < 2) return [];
-  const e = estadoCofradia(salidaMotor(c), [], ahoraEnPrograma(new Date(t), c.anio));
-  return e.elementos.length ? e.elementos.map((x) => x.punto) : [c.linea[0]!];
+  const minuto = Math.round(t / MIN) * MIN;
+  const clave = `${c.id} ${c.anio} ${minuto}`;
+  let z = zonas.get(clave);
+  if (!z) {
+    const e = estadoCofradia(salidaMotor(c), [], ahoraEnPrograma(new Date(minuto), c.anio));
+    z = e.elementos.length ? e.elementos.map((x) => x.punto) : [c.linea[0]!];
+    if (zonas.size > 50_000) zonas.clear();
+    zonas.set(clave, z);
+  }
+  return z;
 }
+
+type Fila = {
+  usuario_id: string;
+  cliente_id: string;
+  hermandad_id: number;
+  elemento: number | null;
+  latitud: number | null;
+  longitud: number | null;
+  precision_m: number | null;
+  observada: string;
+  recibida: string;
+  plausible: boolean;
+  puntos_base: number;
+  de_prueba: boolean;
+};
+const claveDe = (usuario: string, cliente: string) => `${usuario} ${cliente}`;
+
+/** La historia de cada persona se lee de aquí la primera vez; después vive en memoria (recientes.ts). */
+export const historias = crearHistorias(async (usuario, desde, hasta) => {
+  const filas = await todas((d, h) => {
+    let consulta = supabase()
+      .from("aportacion")
+      .select("id, cliente_id, hermandad_id, elemento, observada, puntos_base", { count: "exact" })
+      .eq("usuario_id", usuario)
+      .gte("observada", new Date(desde).toISOString());
+    if (Number.isFinite(hasta)) consulta = consulta.lte("observada", new Date(hasta).toISOString());
+    return consulta.order("id").range(d, h);
+  });
+  return filas.map((f) => ({
+    clienteId: f.cliente_id,
+    hermandadId: f.hermandad_id,
+    elemento: f.elemento,
+    t: Date.parse(f.observada),
+    guardada: Promise.resolve({ id: f.id, puntos: f.puntos_base, observada: new Date(f.observada).toISOString() }),
+  }));
+});
+setInterval(() => historias.limpiar(), 10 * MIN).unref();
+
+/**
+ * Un lote de una vez. Las que ya estaban (un reintento que llegó antes de tenerla en memoria) no se
+ * duplican y se devuelve la que había. Si el lote entero falla por una sola fila (una cuenta borrada
+ * entre medias), se escriben una a una para que no arrastre a las demás.
+ */
+async function escribirLote(filas: Fila[]): Promise<Map<string, Guardada>> {
+  const db = supabase();
+  const hechas = new Map<string, Guardada>();
+  const { data, error } = await db
+    .from("aportacion")
+    .upsert(filas, { onConflict: "usuario_id,cliente_id", ignoreDuplicates: true })
+    .select("id, usuario_id, cliente_id, puntos_base, observada");
+  if (error?.code === "23503" && filas.length > 1) {
+    for (const f of filas) for (const [k, g] of await escribirLote([f]).catch(() => new Map<string, Guardada>())) hechas.set(k, g);
+    return hechas;
+  }
+  if (error) throw error;
+  for (const f of data ?? []) hechas.set(claveDe(f.usuario_id, f.cliente_id), { id: f.id, puntos: f.puntos_base, observada: new Date(f.observada).toISOString() });
+  const yaEstaban = filas.filter((f) => !hechas.has(claveDe(f.usuario_id, f.cliente_id)));
+  if (yaEstaban.length) {
+    const ya = await db
+      .from("aportacion")
+      .select("id, usuario_id, cliente_id, puntos_base, observada")
+      .in("cliente_id", yaEstaban.map((f) => f.cliente_id))
+      .in("usuario_id", [...new Set(yaEstaban.map((f) => f.usuario_id))]);
+    if (ya.error) throw ya.error;
+    for (const f of ya.data ?? []) {
+      const k = claveDe(f.usuario_id, f.cliente_id);
+      if (!hechas.has(k)) hechas.set(k, { id: f.id, puntos: f.puntos_base, observada: new Date(f.observada).toISOString() });
+    }
+  }
+  return hechas;
+}
+const lotes = crearLotes(escribirLote, (f) => claveDe(f.usuario_id, f.cliente_id));
 
 routerAportaciones.post(
   "/yo/aportaciones",
@@ -86,22 +172,26 @@ routerAportaciones.post(
     }
     const { porSlug, porId } = await hermandadesYEdicion();
     const hermandadId = porSlug.get(c.id)!;
-    const db = supabase();
 
-    // 2. Los cuatro controles, con su propia historia de la última hora
+    // 2. Los cuatro controles, con su propia historia de la última hora (en memoria, recientes.ts)
     // Nadie ve algo en el futuro: si el reloj del teléfono va adelantado, la hora de llegada
     const observada = Math.min(observadaPedida, ahora);
-    const previasBd = await db
-      .from("aportacion")
-      .select("hermandad_id, elemento, observada")
-      .eq("usuario_id", usuario.id)
-      .gte("observada", new Date(observada - 60 * MIN).toISOString())
-      .lte("observada", new Date(observada + 60 * MIN).toISOString());
-    if (previasBd.error) throw previasBd.error;
+    const historia = await historias.de(usuario.id, observada - 60 * MIN, observada + 60 * MIN);
     const mapas = new Map<number, CofradiaMapa | undefined>([[hermandadId, c]]);
-    for (const p of previasBd.data ?? []) {
-      if (!mapas.has(p.hermandad_id)) mapas.set(p.hermandad_id, await cofradiaMapa(porId.get(p.hermandad_id) ?? ""));
+    for (;;) {
+      const faltan = [...new Set(historia.map((r) => r.hermandadId))].filter((h) => !mapas.has(h));
+      if (!faltan.length) break;
+      for (const h of faltan) mapas.set(h, await cofradiaMapa(porId.get(h) ?? ""));
     }
+    // Desde aquí, sin ningún await hasta anotarla: dos «Dar fe» seguidos de la misma persona se ven uno a otro
+
+    // Si ya llegó (reintento), la misma
+    const ya = historia.find((r) => r.clienteId === clienteId);
+    if (ya) {
+      respuesta.status(200).json(await ya.guardada);
+      return;
+    }
+    const previas = historia.filter((r) => Math.abs(r.t - observada) <= 60 * MIN);
     const hecho = (h: number, el: number | null, t: number): Hecho => {
       const cm = mapas.get(h);
       return { hermandadId: h, elemento: el, t, zona: cm ? zona(cm, t) : [] };
@@ -114,40 +204,36 @@ routerAportaciones.post(
         : null;
     const juicio = juzgar(
       hecho(hermandadId, elemento, observada),
-      (previasBd.data ?? []).map((p) => hecho(p.hermandad_id, p.elemento, Date.parse(p.observada))),
+      previas.map((p) => hecho(p.hermandadId, p.elemento, p.t)),
       ventana,
     );
     const puntos = juicio.plausible ? PUNTOS_BASE : 0;
 
-    // 3. Se guarda siempre. Si ya llegó (reintento), (usuario_id, cliente_id) se repite y se devuelve la
-    // que había: así no se pregunta antes en cada «Dar fe» (una consulta menos, BUL-212)
-    const { data, error } = await db
-      .from("aportacion")
-      .insert({
-        usuario_id: usuario.id,
-        cliente_id: clienteId,
-        hermandad_id: hermandadId,
-        elemento,
-        latitud: ubicacion?.latitud ?? null,
-        longitud: ubicacion?.longitud ?? null,
-        precision_m: ubicacion?.precision ?? null,
-        observada: new Date(observada).toISOString(),
-        recibida: new Date(ahora).toISOString(),
-        plausible: juicio.plausible,
-        puntos_base: puntos,
-        de_prueba: desfase !== 0,
-      })
-      .select("id")
-      .single();
-    if (error?.code === "23505") {
-      const ya = await db.from("aportacion").select("id, puntos_base, observada").eq("usuario_id", usuario.id).eq("cliente_id", clienteId).single();
-      if (ya.error) throw ya.error;
-      respuesta.status(200).json({ id: ya.data.id, puntos: ya.data.puntos_base, observada: ya.data.observada });
-      return;
+    // 3. Se guarda siempre, en el siguiente lote
+    const guardada = lotes.guardar({
+      usuario_id: usuario.id,
+      cliente_id: clienteId,
+      hermandad_id: hermandadId,
+      elemento,
+      latitud: ubicacion?.latitud ?? null,
+      longitud: ubicacion?.longitud ?? null,
+      precision_m: ubicacion?.precision ?? null,
+      observada: new Date(observada).toISOString(),
+      recibida: new Date(ahora).toISOString(),
+      plausible: juicio.plausible,
+      puntos_base: puntos,
+      de_prueba: desfase !== 0,
+    });
+    historias.anotar(usuario.id, { clienteId, hermandadId, elemento, t: observada, guardada });
+    let g: Guardada;
+    try {
+      g = await guardada;
+    } catch (e) {
+      historias.quitar(usuario.id, clienteId);
+      throw e;
     }
-    if (error) throw error;
-    if (!juicio.plausible) console.log(`aportación ${data.id} sin puntos base: ${juicio.motivo}`);
-    respuesta.status(201).json({ id: data.id, puntos, observada: new Date(observada).toISOString() });
+    if (!juicio.plausible) console.log(`aportación ${g.id} sin puntos base: ${juicio.motivo}`);
+    respuesta.status(201).json(g);
   }),
 );
 

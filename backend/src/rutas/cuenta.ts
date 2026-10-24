@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { exigirSesion, type Usuario } from "../sesion.js";
 import { supabase } from "../supabase.js";
+import { historias } from "./aportaciones.js";
 import { hermandadesYEdicion } from "./cofradias.js";
 
 /**
@@ -38,6 +39,7 @@ routerCuenta.delete(
     try {
       const { error } = await supabase().auth.admin.deleteUser(usuario.id);
       if (error) throw error;
+      historias.olvidar(usuario.id);
       respuesta.status(204).end();
     } catch (e) {
       console.error(e);

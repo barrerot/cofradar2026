@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "cargar:datos": "tsx scripts/cargar-supabase.ts",
     "exportar:datos": "tsx scripts/exportar-supabase.ts",
-    "test": "tsx --test src/motor/*.test.ts",
+    "test": "tsx --test src/motor/*.test.ts src/rutas/*.test.ts",
     "esquema": "tsx scripts/aplicar-esquema.ts",
     "admin": "tsx scripts/admin.ts"
   },
