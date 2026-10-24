@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
-import { estadoCofradia, type Aportacion, type SalidaMotor } from "./motor.js";
+import { estadoCofradia, olvidarCalculado, type Aportacion, type SalidaMotor } from "./motor.js";
 import { ahoraEnPrograma, aReal, msPrograma } from "./tiempo.js";
 
 /**
@@ -300,5 +300,33 @@ describe("las otras alteraciones (4.15)", () => {
     const h = e.historial.map((x) => x.tipo);
     assert.ok(h.includes("interrumpida") && h.includes("regreso_anticipado"));
     assert.ok(e.historial.every((x) => x.hasta !== null));
+  });
+});
+
+describe("lo ya calculado (BUL-212)", () => {
+  it("calcular cada 30 segundos, recordando lo de antes, da lo mismo que calcularlo todo de nuevo", () => {
+    // La cruz se para en el 600 y luego sigue; una aportación llega tarde (teléfono sin conexión)
+    const dia = [
+      fe("ana", 40, 0, 600),
+      fe("luis", 40, 0, 600),
+      fe("eva", 60, 0, 600),
+      fe("pepe", 60, 0, 600),
+      fe("ana", 80, 0, 900),
+      fe("luis", 80, 0, 900),
+      fe("rosa", 85, 1, 700),
+      fe("juan", 86, 1, 700),
+    ];
+    const tarde = fe("mar", 55, 0, 600);
+    for (let t = 30 * MIN; t <= 120 * MIN; t += MIN / 2) {
+      const vistas = [...dia, ...(t >= 75 * MIN ? [tarde] : [])].filter((a) => a.t <= t);
+      // A los 90 min, Ana y Luis dejan de contar (reputación): sin ellos no hubo interrumpida, tampoco antes
+      const cuentan = t === 90 * MIN ? vistas.filter((a) => a.usuario !== "ana" && a.usuario !== "luis") : vistas;
+      const recordando = estadoCofradia(salida(), cuentan, t);
+      olvidarCalculado();
+      const deNuevo = estadoCofradia(salida(), cuentan, t);
+      assert.deepEqual(recordando, deNuevo, `a los ${t / MIN} min`);
+      // Se vuelve a calcular recordando lo de esta vez, para la siguiente
+      estadoCofradia(salida(), cuentan, t);
+    }
   });
 });

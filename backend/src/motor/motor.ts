@@ -166,11 +166,12 @@ function enHorario(h: Horario, total: number, t: number): number {
   return Math.max(h[h.length - 1]!.m, total);
 }
 
-type Cortejo = { s: SalidaMotor; acum: number[]; total: number; n: number };
+type Cortejo = { s: SalidaMotor; acum: number[]; total: number; n: number; tMin: number; tMax: number };
 
 function cortejo(s: SalidaMotor): Cortejo {
   const acum = acumulados(s.linea);
-  return { s, acum, total: acum[acum.length - 1] ?? 0, n: Math.max(1, s.pasos.length) };
+  const ts = [...s.cruz, ...s.ultimo].map((p) => p.t);
+  return { s, acum, total: acum[acum.length - 1] ?? 0, n: Math.max(1, s.pasos.length), tMin: Math.min(...ts), tMax: Math.max(...ts) };
 }
 
 /** H_k(t): dónde debería estar el elemento k según el programa. */
@@ -183,9 +184,8 @@ function horarioDe(c: Cortejo, k: number, t: number): number {
 
 /** La inversa: a qué hora debería pasar el elemento k por el metro m (por bisección: H_k no retrocede). */
 function horaDe(c: Cortejo, k: number, m: number): number {
-  const ts = [...c.s.cruz, ...c.s.ultimo].map((p) => p.t);
-  let lo = Math.min(...ts);
-  let hi = Math.max(...ts);
+  let lo = c.tMin;
+  let hi = c.tMax;
   if (m <= horarioDe(c, k, lo)) return lo;
   if (m >= horarioDe(c, k, hi)) return hi;
   while (hi - lo > 1000) {
@@ -207,32 +207,32 @@ type Observacion = { a: Aportacion; k: number; retraso: number; m: number };
  */
 type Situadas = { obs: Observacion[]; fuera: Aportacion[]; desviadas: Aportacion[] };
 
-function observaciones(c: Cortejo, aportaciones: Aportacion[]): Situadas {
+/** Una aportación, situada: su observación, o fuera del cálculo (y si es por estar lejos del recorrido). */
+type Situada = { obs: Observacion | null; desviada: boolean };
+
+function situar(c: Cortejo, a: Aportacion): Situada {
+  const usable = c.s.linea.length >= 2 && c.s.cruz.length >= 2 && c.s.ultimo.length >= 2;
+  if (a.punto === null || !usable) return { obs: null, desviada: false };
+  const candidatas = pasadas(c.s.linea, c.acum, a.punto, DISTANCIA_MAXIMA);
+  // Con ubicación pero lejos del recorrido: candidata a cambio de recorrido (también «Estoy viendo…»)
+  if (!candidatas.length) return { obs: null, desviada: true };
+  if (a.elemento === null || a.elemento > c.n) return { obs: null, desviada: false };
+  const k = a.elemento;
+  const elegida = candidatas
+    .map((p) => ({ m: p.m, hora: horaDe(c, k, p.m) }))
+    .reduce((x, y) => (Math.abs(y.hora - a.t) < Math.abs(x.hora - a.t) ? y : x));
+  return { obs: { a, k, retraso: a.t - elegida.hora, m: elegida.m }, desviada: false };
+}
+
+function observaciones(aportaciones: Aportacion[], situada: (a: Aportacion) => Situada): Situadas {
   const obs: Observacion[] = [];
   const fuera: Aportacion[] = [];
-  // Con ubicación pero lejos del recorrido: candidatas a cambio de recorrido (también «Estoy viendo…»)
   const desviadas: Aportacion[] = [];
-  const usable = c.s.linea.length >= 2 && c.s.cruz.length >= 2 && c.s.ultimo.length >= 2;
   for (const a of aportaciones) {
-    if (a.punto === null || !usable) {
-      fuera.push(a);
-      continue;
-    }
-    const candidatas = pasadas(c.s.linea, c.acum, a.punto, DISTANCIA_MAXIMA);
-    if (!candidatas.length) {
-      fuera.push(a);
-      desviadas.push(a);
-      continue;
-    }
-    if (a.elemento === null || a.elemento > c.n) {
-      fuera.push(a);
-      continue;
-    }
-    const k = a.elemento;
-    const elegida = candidatas
-      .map((p) => ({ m: p.m, hora: horaDe(c, k, p.m) }))
-      .reduce((x, y) => (Math.abs(y.hora - a.t) < Math.abs(x.hora - a.t) ? y : x));
-    obs.push({ a, k, retraso: a.t - elegida.hora, m: elegida.m });
+    const x = situada(a);
+    if (x.obs) obs.push(x.obs);
+    else fuera.push(a);
+    if (x.desviada) desviadas.push(a);
   }
   return { obs, fuera, desviadas };
 }
@@ -262,14 +262,79 @@ type Ancla = { retraso: number; t: number; desde: number; m: number };
  */
 export const BONUS = { base: 5, escasez: 10, obsoleta: 20 };
 
-/** El grupo MÁS RECIENTE de aportaciones de personas distintas, hechas casi a la vez y que dicen lo mismo. */
-function grupoMasReciente(obs: Observacion[]): Observacion[] | null {
-  const recientes = [...obs].sort((x, y) => y.a.t - x.a.t);
-  for (const o of recientes) {
-    const grupo = recientes.filter((p) => Math.abs(p.a.t - o.a.t) <= SIMULTANEAS && Math.abs(p.retraso - o.retraso) <= TOLERANCIA);
-    if (new Set(grupo.map((p) => p.a.usuario)).size >= MINIMO_INDEPENDIENTES) return grupo;
+// ── Rapidez (BUL-212) ───────────────────────────────────────────────────────────────────────────────
+// En la Madrugá hay miles de aportaciones y el historial vuelve a mirar la situación muchas veces. Para
+// no recorrerlas todas en cada mirada, las listas se ordenan UNA vez, de la más reciente a la más antigua
+// (orden estable: a igual hora, el de llegada), y de ellas se toman tramos: las de las últimas dos horas,
+// las anteriores a un grupo… Un grupo solo puede juntar aportaciones de SIMULTANEAS minutos alrededor,
+// así que cada una se compara con las de su rato, no con todas. Lo que sale es lo mismo que comparando
+// todas con todas (lo comprueba el banco de pruebas de backend/carga/).
+
+/** Una lista ordenada de la más reciente a la más antigua, sin tocar la original. */
+const masRecientesPrimero = <T,>(xs: T[], hora: (x: T) => number) => [...xs].sort((x, y) => hora(y) - hora(x));
+
+/** En una lista de la más reciente a la más antigua, el primer índice desde `ini` en el que se cumple `cumple` (que, una vez se cumple, se sigue cumpliendo). */
+function primero<T>(xs: T[], cumple: (x: T) => boolean, ini = 0): number {
+  let lo = ini;
+  let hi = xs.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (cumple(xs[mid]!)) hi = mid;
+    else lo = mid + 1;
   }
+  return lo;
+}
+
+/** El tramo [ini, fin) de las que están en memoria a la hora t (hechas en las MEMORIA anteriores). */
+function enMemoria<T>(xs: T[], hora: (x: T) => number, t: number): [number, number] {
+  const ini = primero(xs, (x) => hora(x) <= t);
+  return [ini, primero(xs, (x) => !(t - hora(x) <= MEMORIA), ini)];
+}
+
+/** Hasta dónde ha mirado una búsqueda: si nunca llegó a `fin`, sale lo mismo con cualquier `fin` mayor que `leido`. */
+type Alcance = { leido: number; llegoAlFin: boolean };
+
+/**
+ * El grupo más reciente del tramo [ini, fin) de una lista de la más reciente a la más antigua: el de la
+ * primera que, con las de su rato (SIMULTANEAS) que `casan` con ella, junta a personas distintas.
+ */
+function primerGrupo<T extends { usuario: string; t: number }, O>(
+  xs: O[],
+  ini: number,
+  fin: number,
+  ap: (o: O) => T,
+  casan: (p: O, o: O) => boolean,
+  alcance: Alcance = { leido: 0, llegoAlFin: false },
+): O[] | null {
+  let lo = ini;
+  let hi = ini;
+  alcance.llegoAlFin = true;
+  for (let i = ini; i < fin; i++) {
+    const o = xs[i]!;
+    const t = ap(o).t;
+    while (Math.abs(ap(xs[lo]!).t - t) > SIMULTANEAS) lo++;
+    if (hi < i) hi = i;
+    while (hi + 1 < fin && Math.abs(ap(xs[hi + 1]!).t - t) <= SIMULTANEAS) hi++;
+    alcance.leido = Math.min(hi + 2, fin);
+    alcance.llegoAlFin = hi + 1 >= fin;
+    const grupo: O[] = [];
+    const quienes = new Set<string>();
+    for (let j = lo; j <= hi; j++) {
+      const p = xs[j]!;
+      if (casan(p, o)) {
+        grupo.push(p);
+        quienes.add(ap(p).usuario);
+      }
+    }
+    if (quienes.size >= MINIMO_INDEPENDIENTES) return grupo;
+  }
+  alcance.llegoAlFin = true;
   return null;
+}
+
+/** El grupo MÁS RECIENTE de aportaciones de personas distintas, hechas casi a la vez y que dicen lo mismo. */
+function grupoMasReciente(recientes: Observacion[], ini = 0, fin = recientes.length, alcance?: Alcance): Observacion[] | null {
+  return primerGrupo(recientes, ini, fin, (o) => o.a, (p, o) => Math.abs(p.retraso - o.retraso) <= TOLERANCIA, alcance);
 }
 
 const anclaDe = (grupo: Observacion[]): Ancla => ({
@@ -279,16 +344,31 @@ const anclaDe = (grupo: Observacion[]): Ancla => ({
   m: mediana(grupo.map((p) => p.m)),
 });
 
-/** Todos los grupos que consolidan, del más reciente al más antiguo (cada uno, anterior al siguiente). */
-function grupos(obs: Observacion[]): Ancla[] {
+/**
+ * Un paso de `grupos`: el grupo que se encuentra empezando en un índice, y desde dónde se sigue buscando.
+ * El historial mira la situación muchas veces seguidas y casi todos los grupos son los de la vez anterior:
+ * se recuerdan, y valen mientras la búsqueda no dependa de dónde acaba el tramo (ver Alcance).
+ */
+type Paso = { ancla: Ancla | null; siguiente: number; fin: number } & Alcance;
+const vale = (p: Paso, fin: number) => (p.llegoAlFin ? fin === p.fin : fin >= p.leido);
+
+/** Todos los grupos que consolidan en el tramo [ini, fin), del más reciente al más antiguo (cada uno, anterior al siguiente). */
+function grupos(recientes: Observacion[], ini: number, fin: number, recordados?: Map<number, Paso>): Ancla[] {
   const res: Ancla[] = [];
-  let resto = obs;
+  let resto = ini;
   for (;;) {
-    const g = grupoMasReciente(resto);
-    if (!g) return res;
-    const a = anclaDe(g);
-    res.push(a);
-    resto = resto.filter((p) => p.a.t < a.desde);
+    let paso = recordados?.get(resto);
+    if (!paso || !vale(paso, fin)) {
+      const alcance: Alcance = { leido: 0, llegoAlFin: false };
+      const g = grupoMasReciente(recientes, resto, fin, alcance);
+      const ancla = g && anclaDe(g);
+      // Las anteriores al grupo
+      paso = { ancla, siguiente: ancla ? primero(recientes, (p) => p.a.t < ancla.desde, resto) : fin, fin, ...alcance };
+      recordados?.set(resto, paso);
+    }
+    if (!paso.ancla) return res;
+    res.push(paso.ancla);
+    resto = paso.siguiente;
   }
 }
 
@@ -297,7 +377,8 @@ function grupos(obs: Observacion[]): Ancla[] {
  * grupo quedan contradichas; las demás, sin resolver. Y el bonus de las del grupo.
  */
 function consolidar(obs: Observacion[], resultados: Record<string, Resultado>, bonus: Record<string, number>): Ancla | null {
-  const grupo = grupoMasReciente(obs);
+  const recientes = masRecientesPrimero(obs, (p) => p.a.t);
+  const grupo = grupoMasReciente(recientes);
   if (!grupo) return null;
   const ancla = anclaDe(grupo);
   for (const p of grupo) resultados[p.a.id] = "consolidada";
@@ -305,7 +386,7 @@ function consolidar(obs: Observacion[], resultados: Record<string, Resultado>, b
 
   // Qué se sabía justo antes de este grupo
   const desde = Math.min(...grupo.map((p) => p.a.t));
-  const previo = grupoMasReciente(obs.filter((p) => p.a.t < desde));
+  const previo = grupoMasReciente(recientes, primero(recientes, (p) => p.a.t < desde));
   const antes = previo ? anclaDe(previo) : null;
   let valor = BONUS.base;
   if (!antes || desde - antes.t > DESACTUALIZADO) valor = BONUS.escasez;
@@ -342,24 +423,30 @@ function parada(g: Ancla[], t: number): { desde: number; m: number } | null {
   return { desde: primero.desde, m: ultimo.m };
 }
 
-/** Varias personas a la vez en un mismo sitio fuera del recorrido: el corrillo más reciente. */
-function corrilloFuera(desviadas: Aportacion[]): Aportacion[] | null {
-  const recientes = [...desviadas].sort((x, y) => y.t - x.t);
-  for (const o of recientes) {
-    const g = recientes.filter((p) => Math.abs(p.t - o.t) <= SIMULTANEAS && distancia(p.punto!, o.punto!) <= CERCA_FUERA);
-    if (new Set(g.map((p) => p.usuario)).size >= MINIMO_INDEPENDIENTES) return g;
-  }
-  return null;
+/** Varias personas a la vez en un mismo sitio fuera del recorrido: el corrillo más reciente del tramo [ini, fin). */
+function corrilloFuera(recientes: Aportacion[], ini: number, fin: number): Aportacion[] | null {
+  return primerGrupo(recientes, ini, fin, (a) => a, (p, o) => distancia(p.punto!, o.punto!) <= CERCA_FUERA);
 }
 
 const redondeo = (ms: number) => Math.round(Math.abs(ms) / REDONDEO) * (REDONDEO / MIN);
 
-function situacion(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], t: number): Situacion {
+/** Las listas que usa `situacion`, ordenadas una vez de la más reciente a la más antigua (ver «Rapidez»). */
+type Indice = { aportaciones: Aportacion[]; porElemento: Observacion[][]; desviadas: Aportacion[]; recordados: Map<number, Paso>[] };
+
+function indice(c: Cortejo, sit: Situadas, aportaciones: Aportacion[]): Indice {
+  const obs = masRecientesPrimero(sit.obs, (o) => o.a.t);
+  return {
+    aportaciones: masRecientesPrimero(aportaciones, (a) => a.t),
+    porElemento: Array.from({ length: c.n + 1 }, (_, k) => obs.filter((o) => o.k === k)),
+    desviadas: masRecientesPrimero(sit.desviadas, (a) => a.t),
+    recordados: Array.from({ length: c.n + 1 }, () => new Map()),
+  };
+}
+
+function situacion(c: Cortejo, ind: Indice, t: number): Situacion {
   const s = c.s;
-  const enMemoria = (x: number) => x <= t && t - x <= MEMORIA;
-  const vivas = aportaciones.filter((a) => enMemoria(a.t));
-  const obs = sit.obs.filter((o) => enMemoria(o.a.t));
-  const gruposPor = Array.from({ length: c.n + 1 }, (_, k) => grupos(obs.filter((o) => o.k === k)));
+  const [ini, fin] = enMemoria(ind.aportaciones, (a) => a.t, t);
+  const gruposPor = ind.porElemento.map((obs, k) => grupos(obs, ...enMemoria(obs, (o) => o.a.t, t), ind.recordados[k]));
   const anclas = gruposPor.map((g) => g[0] ?? null);
   // Parado, salvo que después se haya visto algo del cortejo más adelante
   const paradas = gruposPor.map((g) => {
@@ -390,8 +477,12 @@ function situacion(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], t: num
   const sale = s.salida === null ? null : s.salida + retrasos[0]!;
   const entra = s.entrada === null ? null : s.entrada + retrasos[c.n]!;
   // La presencia: cualquier aportación, también sin elemento ni ubicación, cuenta para la fase
-  const presencia = (desde: number) => new Set(vivas.filter((a) => t - a.t <= desde).map((a) => a.usuario)).size >= MINIMO_INDEPENDIENTES;
-  const ultimaPresencia = Math.max(...vivas.map((a) => a.t));
+  const presencia = (desde: number) => {
+    const quienes = new Set<string>();
+    for (let i = ini; i < fin && t - ind.aportaciones[i]!.t <= desde; i++) quienes.add(ind.aportaciones[i]!.usuario);
+    return quienes.size >= MINIMO_INDEPENDIENTES;
+  };
+  const ultimaPresencia = ini < fin ? ind.aportaciones[ini]!.t : -Infinity;
 
   let valor: Fase;
   if (s.estadoAdmin && /cancelad|suspendid/i.test(s.estadoAdmin)) valor = "cancelada";
@@ -425,12 +516,26 @@ function situacion(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], t: num
   if (enCalle && paradasEnPie.length) alteraciones.push({ tipo: "interrumpida", desde: Math.min(...paradasEnPie.map((p) => p.desde)) });
 
   // Regreso anticipado: un grupo SALTO o más adelantado al programa, o a lo que se sabía justo antes
-  const saltos = todos.filter((a) => a.retraso <= -SALTO || todos.some((b) => b.t < a.desde && b.retraso - a.retraso >= SALTO));
+  // (para cada grupo basta el mayor retraso de los anteriores: por orden de hora, el máximo acumulado)
+  const porHora = [...todos].sort((x, y) => x.t - y.t);
+  const maxHasta: number[] = [];
+  for (const x of porHora) maxHasta.push(Math.max(maxHasta[maxHasta.length - 1] ?? -Infinity, x.retraso));
+  const maxAntesDe = (desde: number) => {
+    let lo = 0;
+    let hi = porHora.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (porHora[mid]!.t < desde) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo ? maxHasta[lo - 1]! : -Infinity;
+  };
+  const saltos = todos.filter((a) => a.retraso <= -SALTO || maxAntesDe(a.desde) - a.retraso >= SALTO);
   const regreso = enCalle && saltos.length > 0;
   if (regreso) alteraciones.push({ tipo: "regreso_anticipado", desde: Math.min(...saltos.map((a) => a.desde)) });
 
   // Cambio de recorrido: hasta que algún elemento vuelve a consolidar en el recorrido
-  const corrillo = corrilloFuera(sit.desviadas.filter((a) => enMemoria(a.t)));
+  const corrillo = corrilloFuera(ind.desviadas, ...enMemoria(ind.desviadas, (a) => a.t, t));
   if (corrillo) {
     const desde = Math.min(...corrillo.map((a) => a.t));
     const hasta = Math.max(...corrillo.map((a) => a.t));
@@ -458,25 +563,32 @@ function situacion(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], t: num
 }
 
 // ── El historial ────────────────────────────────────────────────────────────────────────────────────
-/** Cada cuánto se vuelve a mirar la jornada para el historial (además de en cada aportación). */
-const PASO_HISTORIAL = 5 * MIN;
+/**
+ * Cada cuánto se vuelve a mirar la jornada para el historial: cada minuto en punto (y ahora). Antes se
+ * miraba en cada aportación, y en la Madrugá eso son cientos de veces por minuto (BUL-212). La app
+ * muestra las horas al minuto, así que el historial dice lo mismo; lo que dura menos de un minuto (un
+ * dato que aparece y se desmiente enseguida) no llega al historial.
+ */
+const PASO_HISTORIAL = MIN;
 
 /**
  * Lo que ha tenido la cofradía en la jornada: se vuelve a mirar la situación a lo largo del día (cada
- * aportación, cada PASO_HISTORIAL y cuando caduca algo) y se juntan los ratos seguidos de cada alteración.
- * Una que deja de estar en pie (se desmiente o termina) se cierra con su hora; no desaparece.
+ * PASO_HISTORIAL) y se juntan los ratos seguidos de cada alteración. Una que deja de estar en pie (se
+ * desmiente o termina) se cierra con su hora; no desaparece.
  */
-function historial(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], ahora: number, actual: Situacion): EntradaHistorial[] {
-  const ts = aportaciones.filter((a) => a.t <= ahora).map((a) => a.t);
-  if (!ts.length) return [];
-  const muestras = new Set<number>([...ts, ahora]);
-  for (let t = Math.min(...ts); t < ahora; t += PASO_HISTORIAL) muestras.add(t);
-  for (const t of ts) for (const caduca of [t + DESACTUALIZADO + 1, t + MEMORIA + 1]) if (caduca < ahora) muestras.add(caduca);
+function historial(aportaciones: Aportacion[], ahora: number, mirar: (t: number) => Situacion): EntradaHistorial[] {
+  let primera = Infinity;
+  for (const a of aportaciones) if (a.t <= ahora && a.t < primera) primera = a.t;
+  if (primera === Infinity) return [];
+  // En minutos en punto, para que de un cálculo al siguiente sean las mismas horas (y valga lo recordado)
+  const muestras: number[] = [];
+  for (let t = Math.ceil(primera / PASO_HISTORIAL) * PASO_HISTORIAL; t < ahora; t += PASO_HISTORIAL) muestras.push(t);
+  muestras.push(ahora);
 
   const res: EntradaHistorial[] = [];
   const abiertas = new Map<TipoAlteracion, EntradaHistorial>();
-  for (const t of [...muestras].sort((a, b) => a - b)) {
-    const s = t === ahora ? actual : situacion(c, sit, aportaciones, t);
+  for (const t of muestras) {
+    const s = mirar(t);
     for (const a of s.alteraciones) {
       const e = abiertas.get(a.tipo);
       if (e) Object.assign(e, { ...a, desde: Math.min(e.desde, a.desde ?? e.desde), hasta: null });
@@ -500,13 +612,61 @@ function historial(c: Cortejo, sit: Situadas, aportaciones: Aportacion[], ahora:
   return res.sort((a, b) => a.desde - b.desde);
 }
 
+// ── Lo ya calculado ─────────────────────────────────────────────────────────────────────────────────
+/**
+ * El servidor pide el estado cada 30 segundos, y entre una vez y otra casi todo es igual: las mismas
+ * aportaciones y unas pocas nuevas. Se recuerda, por cofradía, cómo se situó cada aportación y la
+ * situación a cada hora del historial. La situación a una hora solo depende de la salida y de las
+ * aportaciones hechas hasta esa hora; así que vale lo recordado de antes de la primera aportación que
+ * haya cambiado (una nueva, una que llega tarde porque el teléfono estaba sin conexión, una que ya no
+ * cuenta…). Lo de después se vuelve a calcular. El resultado es el mismo que calculándolo todo de nuevo.
+ */
+type Recuerdo = { firma: string; lista: Aportacion[]; situadas: Map<string, { a: Aportacion; x: Situada }>; situaciones: Map<number, Situacion> };
+const recuerdos = new Map<string, Recuerdo>();
+
+const mismaAportacion = (a: Aportacion, b: Aportacion) =>
+  a.id === b.id && a.usuario === b.usuario && a.t === b.t && a.elemento === b.elemento && a.punto?.[0] === b.punto?.[0] && a.punto?.[1] === b.punto?.[1];
+
+/** Para las pruebas: olvidar todo lo calculado. */
+export function olvidarCalculado() {
+  recuerdos.clear();
+}
+
 // ── El estado ───────────────────────────────────────────────────────────────────────────────────────
 export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora: number): EstadoCofradia {
   const c = cortejo(s);
   const resultados: Record<string, Resultado> = {};
   const bonus: Record<string, number> = {};
   const delDia = aportaciones.filter((a) => a.t <= ahora);
-  const sit = observaciones(c, delDia);
+
+  // Lo recordado de la vez anterior, si la salida es la misma
+  const firma = JSON.stringify(s);
+  const antes = recuerdos.get(s.id);
+  const recuerdo: Recuerdo = { firma, lista: [...delDia].sort((x, y) => x.t - y.t), situadas: new Map(), situaciones: new Map() };
+  let valeHasta = -Infinity;
+  if (antes?.firma === firma) {
+    // Hasta la primera diferencia, por orden de hora
+    const [x, y] = [antes.lista, recuerdo.lista];
+    let i = 0;
+    while (i < x.length && i < y.length && mismaAportacion(x[i]!, y[i]!)) i++;
+    valeHasta = Math.min(x[i]?.t ?? Infinity, y[i]?.t ?? Infinity);
+  }
+  if (recuerdos.size > 500) recuerdos.clear();
+  recuerdos.set(s.id, recuerdo);
+
+  const sit = observaciones(delDia, (a) => {
+    const viejo = antes?.firma === firma ? antes.situadas.get(a.id) : undefined;
+    const x = viejo && mismaAportacion(viejo.a, a) ? viejo.x : situar(c, a);
+    recuerdo.situadas.set(a.id, { a: viejo && x === viejo.x ? viejo.a : a, x });
+    return x;
+  });
+  const ind = indice(c, sit, delDia);
+  const mirar = (t: number) => {
+    let x = recuerdo.situaciones.get(t) ?? (t < valeHasta ? antes!.situaciones.get(t) : undefined);
+    if (!x) x = situacion(c, ind, t);
+    recuerdo.situaciones.set(t, x);
+    return x;
+  };
 
   // Qué ha hecho el motor con cada aportación de ahora (para los puntos y la reputación)
   const vivasObs = sit.obs.filter((o) => ahora - o.a.t <= MEMORIA);
@@ -514,7 +674,7 @@ export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora
   for (let k = 0; k <= c.n; k++) consolidar(vivasObs.filter((o) => o.k === k), resultados, bonus);
   for (const o of vivasObs) resultados[o.a.id] ??= "sin_resolver";
 
-  const actual = situacion(c, sit, delDia, ahora);
+  const actual = mirar(ahora);
   const { anclas, retrasos, fase, sale, entra, alteraciones } = actual;
 
   // 4. Dónde va cada elemento: su horario, desplazado por su retraso; nadie adelanta al de delante
@@ -551,7 +711,7 @@ export function estadoCofradia(s: SalidaMotor, aportaciones: Aportacion[], ahora
     sale,
     entra,
     alteraciones,
-    historial: historial(c, sit, delDia, ahora, actual),
+    historial: historial(delDia, ahora, mirar),
     progreso,
     elementos,
     resultados,

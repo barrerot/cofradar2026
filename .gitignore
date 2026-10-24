@@ -19,3 +19,6 @@ docs/datos/recorridos/trabajo/
 docs/datos/recorridos/__pycache__/
 # Programas y Llamadores en PDF: se dejan en docs/datos/ para trabajar, no se suben (el Llamador pesa 25 MB)
 docs/datos/*.pdf
+
+# Prueba de carga (BUL-212): las sesiones y las cuentas no se suben nunca
+backend/carga/*.json
