@@ -231,3 +231,31 @@ create table if not exists registro_panel (
 create index if not exists registro_panel_jornada on registro_panel (anio, jornada_id, creada);
 
 alter table registro_panel enable row level security;
+
+-- ── Cuánta gente abre Cofradar cada jornada (aprobada por Carlos el 25/10/2026; BUL-213) ──
+-- Solo dos contadores por jornada, sin saber quién: el teléfono se apunta él mismo qué jornadas ha
+-- abierto y avisa una vez por jornada, diciendo si ya la abrió otra jornada de esa Semana Santa.
+--   abiertas   cuántos teléfonos la han abierto esa jornada          («¿Lo entienden?», con los que dan fe)
+--   vuelven    de ellos, cuántos ya la habían abierto otra jornada   («¿Les resulta útil?»)
+-- Sin usuario, sin IP, sin ningún id del teléfono. Quien borra los datos del navegador cuenta dos veces.
+create table if not exists metrica_apertura (
+  anio        integer not null,
+  jornada_id  integer not null,
+  -- Con el reloj de prueba (?ahora=): se borra antes del lanzamiento
+  de_prueba   boolean not null default false,
+  abiertas    integer not null default 0,
+  vuelven     integer not null default 0,
+  primary key (anio, jornada_id, de_prueba)
+);
+
+alter table metrica_apertura enable row level security;
+
+-- El servidor junta los avisos en memoria y los suma de vez en cuando, en una sola escritura
+create or replace function sumar_aperturas(p_anio integer, p_jornada integer, p_prueba boolean, p_abiertas integer, p_vuelven integer)
+returns void language sql as $$
+  insert into metrica_apertura (anio, jornada_id, de_prueba, abiertas, vuelven)
+  values (p_anio, p_jornada, p_prueba, p_abiertas, p_vuelven)
+  on conflict (anio, jornada_id, de_prueba)
+  do update set abiertas = metrica_apertura.abiertas + excluded.abiertas, vuelven = metrica_apertura.vuelven + excluded.vuelven;
+$$;
+revoke all on function sumar_aperturas(integer, integer, boolean, integer, integer) from public, anon, authenticated;

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useActividad } from "./datos/actividad";
+import { useContarApertura } from "./datos/aperturas";
 import { tocaIntroduccion } from "./datos/introduccion";
 import { leerEstadoJornada } from "./fixture";
 import { Agenda } from "./rutas/Agenda";
@@ -29,8 +30,10 @@ import { Panel } from "./rutas/admin/Panel";
  * horario del programa (datos/actividad.tsx); con el motor, del backend.
  */
 export function App() {
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const { intensidad } = useActividad();
+  // El panel no cuenta como abrir Cofradar
+  useContarApertura(!pathname.startsWith("/admin"));
   const estado = leerEstadoJornada(queryEfectiva(search), intensidad);
 
   return (

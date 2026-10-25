@@ -4,6 +4,7 @@ import { cabecerasSesion, useSesion } from "../../datos/sesion";
 import { Boton, Icono, type NombreTrazo } from "../../marco";
 import { DatosBase } from "./DatosBase";
 import { JornadaEnCurso } from "./JornadaEnCurso";
+import { Metricas } from "./Metricas";
 import { Permisos } from "./Permisos";
 import { Taxonomias } from "./Taxonomias";
 
@@ -110,6 +111,7 @@ const SECCIONES: { ruta: string; nombre: string; icono: NombreTrazo }[] = [
   { ruta: "jornada", nombre: "Jornada en curso", icono: "agenda" },
   { ruta: "datos", nombre: "Datos base", icono: "documento" },
   { ruta: "taxonomias", nombre: "Taxonomías", icono: "cofradias" },
+  { ruta: "metricas", nombre: "Métricas", icono: "check" },
   { ruta: "permisos", nombre: "Permisos y configuración", icono: "usuario" },
 ];
 
@@ -144,6 +146,7 @@ function Dentro({ email, salir }: { email: string; salir: () => Promise<void> })
           <Route path="jornada" element={<JornadaEnCurso />} />
           <Route path="datos" element={<DatosBase />} />
           <Route path="taxonomias" element={<Taxonomias />} />
+          <Route path="metricas" element={<Metricas />} />
           <Route path="permisos" element={<Permisos />} />
           <Route path="*" element={<Navigate to="jornada" replace />} />
         </Routes>

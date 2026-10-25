@@ -1075,3 +1075,71 @@
   padding-block: 0.125rem;
   white-space: normal;
 }
+
+/* P-32 · Métricas (BUL-213) */
+.cf-admin-metricas {
+  display: grid;
+  gap: var(--cf-space-5);
+}
+
+.cf-admin-metricas .cf-admin-nota {
+  margin: 0;
+}
+
+.cf-admin-metricas tbody th {
+  padding: var(--cf-space-3);
+  border-bottom: var(--cf-border-width) solid var(--cf-border);
+  color: var(--cf-text);
+  font-size: inherit;
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-metricas td {
+  white-space: nowrap;
+}
+
+.cf-admin-metricas-leyenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--cf-space-3) var(--cf-space-5);
+  margin: var(--cf-space-4) 0 0;
+  color: var(--cf-text-secondary);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-admin-metricas-leyenda dt {
+  color: var(--cf-text);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-admin-metricas-leyenda dd {
+  margin: var(--cf-space-1) 0 0;
+}
+
+.cf-admin-metricas-horas {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-admin-metricas-horas:first-of-type {
+  margin-top: var(--cf-space-3);
+}
+
+.cf-admin-metricas-horas summary {
+  min-height: 2.75rem;
+  padding: var(--cf-space-3) 0;
+  cursor: pointer;
+}
+
+.cf-admin-metricas-horas ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--cf-space-1) var(--cf-space-4);
+  margin: 0 0 var(--cf-space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.cf-admin-metricas-horas li {
+  display: flex;
+  gap: var(--cf-space-3);
+}
