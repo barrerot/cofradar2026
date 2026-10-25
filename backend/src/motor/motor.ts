@@ -182,18 +182,38 @@ function horarioDe(c: Cortejo, k: number, t: number): number {
   return cola + ((cabeza - cola) * (c.n - k)) / c.n;
 }
 
-/** La inversa: a qué hora debería pasar el elemento k por el metro m (por bisección: H_k no retrocede). */
-function horaDe(c: Cortejo, k: number, m: number): number {
-  let lo = c.tMin;
-  let hi = c.tMax;
-  if (m <= horarioDe(c, k, lo)) return lo;
-  if (m >= horarioDe(c, k, hi)) return hi;
-  while (hi - lo > 1000) {
-    const mid = (lo + hi) / 2;
-    if (horarioDe(c, k, mid) < m) lo = mid;
-    else hi = mid;
-  }
-  return (lo + hi) / 2;
+/**
+ * La inversa: a qué hora debería pasar el elemento k por el metro m, visto a la hora `cuando` (por
+ * bisección: H_k no retrocede). Si el programa lo tiene un rato en ese metro (el último paso, dentro del
+ * templo hasta que sale), cualquier hora de ese rato vale: la más cercana a `cuando`. Con la primera,
+ * el palio de La Macarena saliendo a su hora daba 112 min de retraso (BUL-215).
+ */
+function horaDe(c: Cortejo, k: number, m: number, cuando: number): number {
+  // Desde cuándo y hasta cuándo está ahí: la primera hora en que llega a m y la última en que no ha pasado
+  const primera = (() => {
+    let [lo, hi] = [c.tMin, c.tMax];
+    if (m <= horarioDe(c, k, lo)) return lo;
+    if (m > horarioDe(c, k, hi)) return hi;
+    while (hi - lo > 1000) {
+      const mid = (lo + hi) / 2;
+      if (horarioDe(c, k, mid) < m) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  })();
+  const ultima = (() => {
+    let [lo, hi] = [c.tMin, c.tMax];
+    // Unos metros antes del arranque (el GPS) es como estar en el arranque: hasta que sale
+    const mm = Math.max(m, horarioDe(c, k, lo));
+    if (mm >= horarioDe(c, k, hi)) return hi;
+    while (hi - lo > 1000) {
+      const mid = (lo + hi) / 2;
+      if (horarioDe(c, k, mid) <= mm) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  })();
+  return Math.min(Math.max(cuando, primera), Math.max(primera, ultima));
 }
 
 // ── Elegibilidad ────────────────────────────────────────────────────────────────────────────────────
@@ -219,7 +239,7 @@ function situar(c: Cortejo, a: Aportacion): Situada {
   if (a.elemento === null || a.elemento > c.n) return { obs: null, desviada: false };
   const k = a.elemento;
   const elegida = candidatas
-    .map((p) => ({ m: p.m, hora: horaDe(c, k, p.m) }))
+    .map((p) => ({ m: p.m, hora: horaDe(c, k, p.m, a.t) }))
     .reduce((x, y) => (Math.abs(y.hora - a.t) < Math.abs(x.hora - a.t) ? y : x));
   return { obs: { a, k, retraso: a.t - elegida.hora, m: elegida.m }, desviada: false };
 }
@@ -413,9 +433,12 @@ type Situacion = {
 };
 
 /** Interrumpida: sus últimos grupos, en el mismo sitio, durante PARADA o más, y el programa ya lo ponía más adelante. */
-function parada(g: Ancla[], t: number): { desde: number; m: number } | null {
+function parada(g: Ancla[], t: number, programa: number): { desde: number; m: number } | null {
   const ultimo = g[0];
   if (!ultimo || t - ultimo.t > DESACTUALIZADO) return null;
+  // Si el programa también lo tiene ahí (hay tramos en que apenas avanza), no está parado: va a su paso.
+  // Sin esto, el error del GPS sobre un tramo lento cambiaba el retraso y salía «interrumpida» (BUL-215)
+  if (programa - ultimo.m <= MISMO_SITIO) return null;
   let i = 1;
   while (i < g.length && Math.abs(g[i]!.m - ultimo.m) <= MISMO_SITIO) i++;
   const primero = g[i - 1]!;
@@ -449,8 +472,8 @@ function situacion(c: Cortejo, ind: Indice, t: number): Situacion {
   const gruposPor = ind.porElemento.map((obs, k) => grupos(obs, ...enMemoria(obs, (o) => o.a.t, t), ind.recordados[k]));
   const anclas = gruposPor.map((g) => g[0] ?? null);
   // Parado, salvo que después se haya visto algo del cortejo más adelante
-  const paradas = gruposPor.map((g) => {
-    const p = parada(g, t);
+  const paradas = gruposPor.map((g, k) => {
+    const p = parada(g, t, horarioDe(c, k, t));
     return p && !gruposPor.flat().some((a) => a.desde > g[0]!.t && a.m > p.m + MISMO_SITIO) ? p : null;
   });
 
@@ -459,7 +482,7 @@ function situacion(c: Cortejo, ind: Indice, t: number): Situacion {
   const propios = anclas.map((a, k) => {
     if (!a) return null;
     const p = paradas[k];
-    return p ? Math.max(a.retraso, t - horaDe(c, k, p.m)) : a.retraso;
+    return p ? Math.max(a.retraso, t - horaDe(c, k, p.m, t)) : a.retraso;
   });
   const retrasos = propios.map((r, k) => {
     if (r !== null) return r;

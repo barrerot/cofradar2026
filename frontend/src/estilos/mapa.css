@@ -90,17 +90,36 @@
   z-index: 2;
 }
 
+/* Encima del plano, de arriba abajo: la banda de la jornada (a todo lo ancho, como en 3-mapa/01) y los avisos */
+.cf-mapa-arriba {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: grid;
+  gap: var(--cf-space-3);
+  pointer-events: none;
+}
+
+.cf-mapa-arriba > * {
+  pointer-events: auto;
+}
+
+.cf-mapa-arriba > .cf-band {
+  border-radius: 0;
+}
+
 .cf-mapa-aviso,
 .cf-mapa-vacio {
-  position: absolute;
-  top: var(--cf-space-3);
-  left: var(--cf-space-3);
-  right: var(--cf-space-3);
-  z-index: 2;
+  margin: 0 var(--cf-space-3);
+}
+
+.cf-mapa-arriba > :is(.cf-mapa-aviso, .cf-mapa-vacio):first-child {
+  margin-top: var(--cf-space-3);
 }
 
 .cf-mapa-vacio {
-  margin: 0;
   padding: var(--cf-space-3) var(--cf-space-4);
   border: var(--cf-border-width) solid var(--cf-border);
   border-radius: var(--cf-radius-md);

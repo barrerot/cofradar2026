@@ -330,3 +330,34 @@ describe("lo ya calculado (BUL-212)", () => {
     }
   });
 });
+
+describe("lo que salió en el ensayo de la administración (BUL-215)", () => {
+  it("el último paso saliendo del templo 10 minutos tarde va 10 minutos tarde, no desde que empezó la jornada", () => {
+    // El programa lo tiene esperando en la puerta (metro 0) hasta la 01:00; sale a la 01:10
+    const e = estadoCofradia(salida(), [fe("ana", 70, 2, 0), fe("luis", 70.5, 2, 0), fe("eva", 71, 2, 0, 8)], 72 * MIN);
+    const virgen = e.elementos.find((x) => x.orden === 2);
+    assert.equal(virgen?.retrasoMin, 10);
+    assert.ok(!e.alteraciones.some((a) => a.tipo === "regreso_anticipado"));
+  });
+
+  it("unos metros antes del arranque (el GPS) cuenta como en el arranque", () => {
+    const e = estadoCofradia(salida(), [fe("ana", 70, 2, -6), fe("luis", 70.5, 2, -4)], 72 * MIN);
+    assert.equal(e.elementos.find((x) => x.orden === 2)?.retrasoMin, 10);
+  });
+
+  it("en un tramo en que el programa apenas avanza, verla casi en el mismo sitio no es «interrumpida»", () => {
+    // La cruz hace 1.000 m en 20 min y luego solo 30 m en 40 min (una espera larga en el programa)
+    const lenta = salida({
+      cruz: [
+        { t: 0, m: 0 },
+        { t: 20 * MIN, m: 1000 },
+        { t: 60 * MIN, m: 1030 },
+        { t: 100 * MIN, m: 2000 },
+      ],
+    });
+    // A las 00:45 el programa la pone en el 1.019; el GPS la sitúa 10 m más atrás, y eso son 14 min de «retraso»
+    const aps = [fe("ana", 25, 0, 1004), fe("luis", 25.5, 0, 1003), fe("ana", 45, 0, 1008), fe("luis", 45.5, 0, 1007)];
+    const e = estadoCofradia(lenta, aps, 46 * MIN);
+    assert.ok(!e.alteraciones.some((a) => a.tipo === "interrumpida"), JSON.stringify(e.alteraciones));
+  });
+});

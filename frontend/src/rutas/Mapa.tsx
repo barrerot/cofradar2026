@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Alteraciones, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
+import { Alteraciones, BandaContexto, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Boton, Cabecera, Icono, Marco, TRAZOS } from "../marco";
 import { useJornada, type Jornada } from "../datos/jornada";
 import { cambioDe, distancia, distanciaEnLlano, dondeVa, hitosDe, horaDelElemento, nombreElemento, partirRecorrido, siguienteLugar } from "../datos/enVivo";
@@ -337,16 +337,22 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
     >
       <div className="cf-mapa">
         <div ref={caja} className="cf-mapa-lienzo" role="region" aria-label="Mapa de las cofradías" />
-        {sinTeselas ? (
-          <div className="cf-mapa-aviso">
-            <SinCartografia />
-          </div>
-        ) : null}
-        {datos.datos && motor.datos && !situaciones.length ? (
-          <p className="cf-mapa-vacio" role="status">
-            Ahora no hay ninguna cofradía en la calle.
-          </p>
-        ) : null}
+        <div className="cf-mapa-arriba">
+          {/* Lo que afecta a toda la jornada (lluvia), publicado desde el panel: pegado arriba, a todo lo ancho */}
+          {(motor.datos?.contexto ?? []).map((a) => (
+            <BandaContexto key={a.id} texto={a.texto} icono={a.clase === "lluvia" ? "lluvia" : "informativo"} critica />
+          ))}
+          {sinTeselas ? (
+            <div className="cf-mapa-aviso">
+              <SinCartografia />
+            </div>
+          ) : null}
+          {datos.datos && motor.datos && !situaciones.length ? (
+            <p className="cf-mapa-vacio" role="status">
+              Ahora no hay ninguna cofradía en la calle.
+            </p>
+          ) : null}
+        </div>
         {fuera.map((f) => (
           <button
             key={f.id}
