@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { exigirAdmin, ponerAdmin, todasLasCuentas } from "../admin.js";
 import {
   ALTERACION_MINIMA,
+  ALTERACION_SE_QUITA,
   BONUS,
   CERCA_FUERA,
   DESACTUALIZADO,
@@ -214,7 +215,7 @@ function ajustes() {
       grupo: "Fases y alteraciones",
       valores: [
         { nombre: "«Sale pronto»", valor: `${min(VENTANA_INMINENTE)} min antes de la salida` },
-        { nombre: "Retraso o adelanto", valor: `a partir de ${min(ALTERACION_MINIMA)} min, de ${min(REDONDEO)} en ${min(REDONDEO)}` },
+        { nombre: "Retraso o adelanto", valor: `a partir de ${min(ALTERACION_MINIMA)} min, de ${min(REDONDEO)} en ${min(REDONDEO)}; ya publicado, se quita al bajar de ${min(ALTERACION_SE_QUITA)} min` },
         { nombre: "Interrumpida", valor: `en el mismo sitio (menos de ${MISMO_SITIO} m) ${min(PARADA)} min o más` },
         { nombre: "Cambio de recorrido", valor: `${MINIMO_INDEPENDIENTES} personas a la vez fuera del recorrido, a menos de ${CERCA_FUERA} m entre ellas` },
         { nombre: "Regreso anticipado", valor: `aparece ${min(SALTO)} min o más por delante de lo que tocaba` },

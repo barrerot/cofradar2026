@@ -360,4 +360,15 @@ describe("lo que salió en el ensayo de la administración (BUL-215)", () => {
     const e = estadoCofradia(lenta, aps, 46 * MIN);
     assert.ok(!e.alteraciones.some((a) => a.tipo === "interrumpida"), JSON.stringify(e.alteraciones));
   });
+
+  it("un retraso que ronda los 10 minutos no aparece y desaparece: se quita cuando baja de 7", () => {
+    // La cruz va a 20 m por minuto: a los 30 min, 12 de retraso (metro 360); a los 50, 8 (metro 840)
+    const aps = [fe("ana", 30, 0, 360), fe("luis", 30.5, 0, 365), fe("ana", 50, 0, 840), fe("luis", 50.5, 0, 845)];
+    assert.deepEqual(estadoCofradia(salida(), aps, 51 * MIN).alteraciones, [{ tipo: "retraso", minutos: 10 }]);
+    // Si nunca llegó a 10, con 8 no se publica
+    assert.deepEqual(estadoCofradia(salida(), aps.slice(2), 51 * MIN).alteraciones, []);
+    // Y cuando baja a 5, se quita
+    const baja = [...aps, fe("ana", 70, 0, 1300), fe("luis", 70.5, 0, 1305)];
+    assert.deepEqual(estadoCofradia(salida(), baja, 71 * MIN).alteraciones, []);
+  });
 });

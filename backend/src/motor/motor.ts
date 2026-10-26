@@ -61,6 +61,11 @@ export const MEMORIA = 2 * 60 * MIN;
 export const DISTANCIA_MAXIMA = 60;
 /** Un retraso o adelanto se publica como alteración a partir de aquí. */
 export const ALTERACION_MINIMA = 10 * MIN;
+/**
+ * Y una vez publicado, sigue hasta que baja de aquí: un retraso que ronda los 10 minutos aparecía y
+ * desaparecía (BUL-215). Mientras sigue, se publica como mínimo con ALTERACION_MINIMA.
+ */
+export const ALTERACION_SE_QUITA = 7 * MIN;
 /** Y se publica de 5 en 5 minutos, para que no baile (11, 12, 13… es el mismo retraso). */
 export const REDONDEO = 5 * MIN;
 /** Interrumpida: sigue en el mismo sitio (a menos de MISMO_SITIO metros) al menos este rato. */
@@ -577,9 +582,21 @@ function situacion(c: Cortejo, ind: Indice, t: number): Situacion {
 
   // Retraso o adelanto: el del dato consolidado más reciente (si es un salto, ya es regreso anticipado)
   const masReciente = anclas.reduce<Ancla | null>((x, a) => (a && (!x || a.t > x.t) ? a : x), null);
-  if (masReciente && Math.abs(masReciente.retraso) >= ALTERACION_MINIMA && t - masReciente.t <= DESACTUALIZADO) {
-    if (masReciente.retraso > 0) alteraciones.push({ tipo: "retraso", minutos: redondeo(masReciente.retraso) });
-    else if (!saltos.length) alteraciones.push({ tipo: "adelanto", minutos: redondeo(masReciente.retraso) });
+  // Por debajo del mínimo, sigue publicado si los datos de antes, sin bajar de ALTERACION_SE_QUITA, llegaron a él
+  const publicado = (r: number) => {
+    if (Math.abs(r) >= ALTERACION_MINIMA) return true;
+    if (Math.abs(r) < ALTERACION_SE_QUITA) return false;
+    for (let i = porHora.length - 1; i >= 0; i--) {
+      const x = porHora[i]!.retraso;
+      if (Math.sign(x) !== Math.sign(r) || Math.abs(x) < ALTERACION_SE_QUITA) return false;
+      if (Math.abs(x) >= ALTERACION_MINIMA) return true;
+    }
+    return false;
+  };
+  if (masReciente && publicado(masReciente.retraso) && t - masReciente.t <= DESACTUALIZADO) {
+    const minutos = Math.max(redondeo(masReciente.retraso), ALTERACION_MINIMA / MIN);
+    if (masReciente.retraso > 0) alteraciones.push({ tipo: "retraso", minutos });
+    else if (!saltos.length) alteraciones.push({ tipo: "adelanto", minutos });
   }
 
   return { anclas, retrasos, fase, sale, entra, alteraciones, cerradas };
