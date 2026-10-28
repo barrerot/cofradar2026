@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { ChipAlteracion, ChipEstado } from "../../componentes";
 import { useJornada } from "../../datos/jornada";
 import { Boton, Icono } from "../../marco";
-import { ErrorPanel, leerJornada, publicar, retirar, type AlteracionMotor, type Anotacion, type CofradiaPanel, type JornadaPanel } from "./api";
+import { corregir, ErrorPanel, leerJornada, publicar, retirar, type AlteracionMotor, type Anotacion, type CofradiaPanel, type JornadaPanel } from "./api";
 
 /**
  * P-28 · Jornada en curso (9-admin/admin-2*). Las excepciones del día que el motor no puede deducir:
@@ -11,6 +11,8 @@ import { ErrorPanel, leerJornada, publicar, retirar, type AlteracionMotor, type 
  * - Por cofradía: «Marcar como cancelada» antes de que salga (cancelada es no salir) y «Publicar
  *   incidencia» mientras está en la calle.
  * - Retirar una alteración que publicó el motor («Cofradar»), o lo que se publicó aquí.
+ * - Corregir el texto de un aviso o una incidencia (BUL-329): se retira con el motivo «Corregido» y se
+ *   publica el nuevo en un solo paso, así que en la app no desaparece; el registro guarda los dos.
  *
  * Todo pide nota o motivo y queda en «Registro de hoy»: quién, cuándo y por qué. Nada se borra. Lo que se
  * publica aquí se ve en la app en su siguiente refresco (30 segundos).
@@ -34,7 +36,8 @@ type Dialogo =
   | { tipo: "incidencia"; c: CofradiaPanel }
   | { tipo: "cancelar"; c: CofradiaPanel }
   | { tipo: "retirar-alteracion"; c: CofradiaPanel; a: AlteracionMotor }
-  | { tipo: "retirar"; a: Anotacion; titulo: string; muestra: ReactNode };
+  | { tipo: "retirar"; a: Anotacion; titulo: string; muestra: ReactNode }
+  | { tipo: "corregir"; a: Anotacion; titulo: string; cofradia?: string };
 
 export function JornadaEnCurso() {
   const { jornadas, hoy, consultada } = useJornada();
@@ -176,11 +179,14 @@ function AvisosJornada({ datos, abrir }: { datos: JornadaPanel; abrir: (d: Dialo
             key={a.id}
             a={a}
             accion={
-              <BotonRetirar
-                onClick={() =>
-                  abrir({ tipo: "retirar", a, titulo: "¿Retirar el aviso de jornada?", muestra: <BandaAviso a={{ ...a, autor: "" }} /> })
-                }
-              />
+              <>
+                <BotonCorregir onClick={() => abrir({ tipo: "corregir", a, titulo: "Corregir el aviso de jornada" })} />
+                <BotonRetirar
+                  onClick={() =>
+                    abrir({ tipo: "retirar", a, titulo: "¿Retirar el aviso de jornada?", muestra: <BandaAviso a={{ ...a, autor: "" }} /> })
+                  }
+                />
+              </>
             }
           />
         ))
@@ -192,6 +198,14 @@ function AvisosJornada({ datos, abrir }: { datos: JornadaPanel; abrir: (d: Dialo
 }
 
 // ── Las cofradías del día ─────────────────────────────────────────────────────────────────────────
+
+function BotonCorregir({ onClick }: { onClick: () => void }) {
+  return (
+    <Boton variante="secundario" tamano="36" onClick={onClick}>
+      Corregir
+    </Boton>
+  );
+}
 
 function BotonRetirar({ onClick, texto = "Retirar" }: { onClick: () => void; texto?: string }) {
   return (
@@ -281,16 +295,19 @@ function FilaCofradia({ c, abrir }: { c: CofradiaPanel; abrir: (d: Dialogo) => v
             quien={`${hhmm(a.creada)} · ${a.autor}`}
             texto={a.texto}
             accion={
-              <BotonRetirar
-                onClick={() =>
-                  abrir({
-                    tipo: "retirar",
-                    a,
-                    titulo: `¿Retirar la incidencia de ${c.nombre}?`,
-                    muestra: <ChipAlteracion alteracion={{ tipo: "incidencia" }} />,
-                  })
-                }
-              />
+              <>
+                <BotonCorregir onClick={() => abrir({ tipo: "corregir", a, titulo: `Corregir la incidencia de ${c.nombre}`, cofradia: c.nombre })} />
+                <BotonRetirar
+                  onClick={() =>
+                    abrir({
+                      tipo: "retirar",
+                      a,
+                      titulo: `¿Retirar la incidencia de ${c.nombre}?`,
+                      muestra: <ChipAlteracion alteracion={{ tipo: "incidencia" }} />,
+                    })
+                  }
+                />
+              </>
             }
           />
         ))}
@@ -367,20 +384,39 @@ function Publicado({ muestra, quien, texto, accion }: { muestra: ReactNode; quie
 
 // ── Registro de hoy ───────────────────────────────────────────────────────────────────────────────
 
-type Entrada = { hora: string; texto: string; quien: string; nota?: string };
+type Entrada = { hora: string; texto: string; quien: string; nota?: string; antes?: string };
+
+/** Lo que se corrigió (BUL-329): la fila retirada con «Corregido» y la que se publicó en ese mismo instante. */
+const CORREGIDO = "Corregido";
+function correcciones(registro: Anotacion[]): Map<string, Anotacion> {
+  const vieja = new Map<string, Anotacion>();
+  for (const r of registro) {
+    if (r.retirada?.motivo !== CORREGIDO) continue;
+    const n = registro.find((x) => x.creada === r.retirada!.cuando && x.tipo === r.tipo && x.cofradia === r.cofradia && x.id !== r.id);
+    if (n) vieja.set(n.id, r);
+  }
+  return vieja;
+}
 
 function entradas(registro: Anotacion[]): Entrada[] {
   const en = (a: Anotacion) => a.nombre ?? a.cofradia ?? "";
+  const vieja = correcciones(registro);
+  const corregidas = new Set([...vieja.values()].map((r) => r.id));
   const res: Entrada[] = [];
   for (const a of registro) {
+    const antes = vieja.get(a.id);
+    if (antes) {
+      const que = a.tipo === "aviso_jornada" ? `el aviso de jornada «${a.clase === "lluvia" ? "Lluvia" : "Aviso"}»` : `la incidencia de ${en(a)}`;
+      res.push({ hora: a.creada, texto: `Corrigió ${que}.`, quien: a.autor, nota: a.texto, antes: antes.texto });
+    }
     const publicado: Record<Anotacion["tipo"], string> = {
       aviso_jornada: `Publicó el aviso de jornada «${a.clase === "lluvia" ? "Lluvia" : "Aviso"}».`,
       incidencia: `Publicó una incidencia en ${en(a)}.`,
       cancelada: `Marcó ${en(a)} como cancelada.`,
       retirar_alteracion: `Retiró «${a.detalle}» de ${en(a)}.`,
     };
-    res.push({ hora: a.creada, texto: publicado[a.tipo], quien: a.autor, nota: a.texto });
-    if (a.retirada) {
+    if (!antes) res.push({ hora: a.creada, texto: publicado[a.tipo], quien: a.autor, nota: a.texto });
+    if (a.retirada && !corregidas.has(a.id)) {
       const retirado: Record<Anotacion["tipo"], string> = {
         aviso_jornada: `Retiró el aviso de jornada «${a.clase === "lluvia" ? "Lluvia" : "Aviso"}».`,
         incidencia: `Retiró la incidencia de ${en(a)}.`,
@@ -407,6 +443,7 @@ function Registro({ registro }: { registro: Anotacion[] }) {
               <div>
                 <p>{e.texto}</p>
                 {e.nota ? <p className="cf-admin-publicado-texto">«{e.nota}»</p> : null}
+                {e.antes ? <p className="cf-admin-quien">Antes: «{e.antes}»</p> : null}
                 <p className="cf-admin-quien">{e.quien}</p>
               </div>
             </li>
@@ -423,7 +460,7 @@ function Registro({ registro }: { registro: Anotacion[] }) {
 
 function DialogoAccion({ dialogo, jornada, cerrar, hecho }: { dialogo: Dialogo; jornada: number; cerrar: () => void; hecho: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [texto, setTexto] = useState("");
+  const [texto, setTexto] = useState(dialogo.tipo === "corregir" ? dialogo.a.texto : "");
   const [clase, setClase] = useState<"lluvia" | "otro">("lluvia");
   const [enviando, setEnviando] = useState(false);
   const [fallo, setFallo] = useState<string | null>(null);
@@ -433,7 +470,7 @@ function DialogoAccion({ dialogo, jornada, cerrar, hecho }: { dialogo: Dialogo; 
     if (d && !d.open) d.showModal();
   }, []);
 
-  const listo = texto.trim().length > 0;
+  const listo = texto.trim().length > 0 && !(dialogo.tipo === "corregir" && texto.trim() === dialogo.a.texto);
 
   const enviar = async () => {
     if (!listo || enviando) return;
@@ -452,6 +489,7 @@ function DialogoAccion({ dialogo, jornada, cerrar, hecho }: { dialogo: Dialogo; 
           detalle: etiquetaAlteracion(dialogo.a),
           texto: t,
         });
+      else if (dialogo.tipo === "corregir") await corregir(dialogo.a.id, t);
       else await retirar(dialogo.a.id, t);
       hecho();
     } catch (e) {
@@ -535,6 +573,33 @@ function DialogoAccion({ dialogo, jornada, cerrar, hecho }: { dialogo: Dialogo; 
           boton: "Retirar",
           peligro: true,
         };
+      case "corregir": {
+        const aviso = dialogo.a.tipo === "aviso_jornada";
+        return {
+          titulo: dialogo.titulo,
+          cuerpo: (
+            <>
+              <p>En la app se cambia el texto en el siguiente refresco, sin que el aviso desaparezca. El registro guarda el texto de antes.</p>
+              <Campo etiqueta="Texto del aviso" valor={texto} cambiar={setTexto} />
+              <p className="cf-admin-campo-titulo">Vista previa en la app</p>
+              {aviso ? (
+                <div className="cf-band" role="note">
+                  <Icono nombre={dialogo.a.clase === "lluvia" ? "lluvia" : "informativo"} tamano={20} />
+                  <span className="txt">{texto.trim() || "Aquí aparecerá el texto del aviso."}</span>
+                </div>
+              ) : (
+                <div className="cf-admin-previa">
+                  <p className="cf-admin-previa-nombre">{dialogo.cofradia}</p>
+                  <ChipAlteracion alteracion={{ tipo: "incidencia" }} />
+                  <p>{texto.trim() || "Aquí aparecerá el texto del aviso."}</p>
+                </div>
+              )}
+            </>
+          ),
+          boton: "Guardar corrección",
+          peligro: false,
+        };
+      }
       case "retirar":
         return {
           titulo: dialogo.titulo,

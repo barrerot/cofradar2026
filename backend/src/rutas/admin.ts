@@ -33,6 +33,8 @@ import { estadoDe, olvidarEstado } from "./estado.js";
  *                                           publicado, los avisos de jornada y el registro de hoy
  *   POST /api/admin/jornadas/:id/registro   publicar: { tipo, cofradia?, clase?, detalle?, texto }
  *   POST /api/admin/registro/:id/retirar    retirar algo publicado: { motivo }
+ *   POST /api/admin/registro/:id/corregir   corregir un aviso o una incidencia: { texto } (lo retira con
+ *                                           el motivo «Corregido» y publica el texto nuevo, en un paso)
  *   GET    /api/admin/permisos              P-31: quién entra al panel y los ajustes del motor (solo lectura)
  *   POST   /api/admin/permisos              dar acceso: { email } de una cuenta que ya ha entrado en Cofradar
  *   DELETE /api/admin/permisos/:id          quitarlo (a uno mismo, no: el panel se quedaría sin nadie)
@@ -190,6 +192,25 @@ routerAdmin.post(
     if (!data?.length) return void respuesta.status(409).json({ error: "Ya estaba retirado" });
     olvidarEstado();
     respuesta.status(204).end();
+  }),
+);
+
+routerAdmin.post(
+  "/admin/registro/:id/corregir",
+  ruta(async (peticion, respuesta, usuario) => {
+    const t = texto((peticion.body ?? {}).texto).slice(0, 500);
+    if (!t) return void respuesta.status(400).json({ error: "Falta el texto" });
+    const { data, error } = await supabase().rpc("corregir_registro", {
+      p_id: peticion.params.id,
+      p_texto: t,
+      p_autor: usuario.id,
+      p_email: usuario.email ?? usuario.id,
+      p_cuando: new Date(Date.now() + desfaseDe(peticion)).toISOString(),
+    });
+    if (error) throw error;
+    if (!data) return void respuesta.status(409).json({ error: "Ya estaba retirado" });
+    olvidarEstado();
+    respuesta.status(201).json({ id: data });
   }),
 );
 

@@ -82,3 +82,8 @@ export function publicar(
 export function retirar(id: string, motivo: string): Promise<void> {
   return pedir(`/registro/${id}/retirar`, { motivo });
 }
+
+/** Corregir un aviso o una incidencia: lo retira con el motivo «Corregido» y publica el texto nuevo (BUL-329). */
+export function corregir(id: string, texto: string): Promise<{ id: string }> {
+  return pedir(`/registro/${id}/corregir`, { texto });
+}

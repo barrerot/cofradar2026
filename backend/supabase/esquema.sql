@@ -232,6 +232,28 @@ create index if not exists registro_panel_jornada on registro_panel (anio, jorna
 
 alter table registro_panel enable row level security;
 
+-- Corregir un aviso de jornada o una incidencia (BUL-329, opción A aprobada por Carlos el 28/10/2026):
+-- en un solo paso, retira la fila con el motivo «Corregido» y publica otra igual con el texto nuevo.
+-- Nada se sobrescribe: el registro guarda los dos textos. Devuelve la fila nueva, o null si la de antes
+-- no existe, no se puede corregir o ya estaba retirada.
+create or replace function corregir_registro(p_id uuid, p_texto text, p_autor uuid, p_email text, p_cuando timestamptz)
+returns uuid language plpgsql as $$
+declare
+  antes registro_panel;
+  nueva uuid;
+begin
+  update registro_panel set retirada = p_cuando, retirada_email = p_email, retirada_motivo = 'Corregido'
+  where id = p_id and retirada is null and tipo in ('aviso_jornada', 'incidencia')
+  returning * into antes;
+  if not found then return null; end if;
+  insert into registro_panel (anio, jornada_id, tipo, hermandad_id, clase, detalle, texto, autor_id, autor_email, creada, de_prueba)
+  values (antes.anio, antes.jornada_id, antes.tipo, antes.hermandad_id, antes.clase, antes.detalle, p_texto, p_autor, p_email, p_cuando, antes.de_prueba)
+  returning id into nueva;
+  return nueva;
+end;
+$$;
+revoke all on function corregir_registro(uuid, text, uuid, text, timestamptz) from public, anon, authenticated;
+
 -- ── Cuánta gente abre Cofradar cada jornada (aprobada por Carlos el 25/10/2026; BUL-213) ──
 -- Solo dos contadores por jornada, sin saber quién: el teléfono se apunta él mismo qué jornadas ha
 -- abierto y avisa una vez por jornada, diciendo si ya la abrió otra jornada de esa Semana Santa.
