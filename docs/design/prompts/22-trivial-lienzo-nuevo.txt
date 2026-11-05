@@ -1,0 +1,79 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía —la cruz de guía y cada uno de sus pasos por separado— y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe»: «estoy viendo esta cofradía ahora». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+Esta área nueva es el TRIVIAL COFRADE: un juego de preguntas para las esperas, mientras llega la cofradía. Cofradar acompaña: enseña y entretiene, pero nunca compite con la calle.
+
+LAS REGLAS DEL TRIVIAL
+- Partidas cortas de 10 preguntas con cuatro respuestas.
+- Se juega con todas las hermandades o solo con una, desde su ficha.
+- No hace falta cuenta y no se guarda nada: ni récords, ni historial, ni puntos. Nada de nivel, rachas, monedas, medallas ni clasificaciones.
+- Funciona sin conexión: las preguntas van dentro de la aplicación.
+- Cada pregunta, al responderla, enseña la respuesta buena, una explicación corta y su fuente.
+- Nunca aparece en Inicio ni en el Mapa.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Trivial». Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de abajo. Las preguntas son reales: cópialas tal cual, sin cambiar una palabra. No inventes hermandades, preguntas, respuestas ni cifras.
+- Los lienzos aprobados de Cofradar mandan en armazón, colores, chips y textos. Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+ARMAZÓN: usa el de los lienzos «Cofradar · Armazón», «Cofradías» y «Mi Cofradar» tal cual, sin redibujarlo
+- Arriba: «Madrugá ▾» a la izquierda y sincronización a la derecha: flechas circulares + «hace 1 min».
+- Pantallas secundarias: el enlace de vuelta sustituye a la jornada («← Mi Cofradar», «← Trivial» o «← La Macarena»); la sincronización sigue a la derecha.
+- Abajo: barra con cinco destinos, icono + texto: Inicio · Mapa · Cofradías · Agenda · Mi Cofradar. El trivial no es un destino nuevo: con la barra activa en Mi Cofradar (o en Cofradías si se entró desde la ficha).
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en la franja encima de la barra. En la Madrugá de los datos hay cofradías en la calle, así que se ve también mientras se juega: si pasa la cofradía, se deja la partida y se da fe.
+
+ESTILO
+- El mismo de Cofradar. Prohibido: morado, dorado, símbolos religiosos, ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados. Nada de confeti, trofeos, estrellas ni estética de concurso de televisión.
+- Registro editorial (tono cera #F7F1E6, Newsreader en títulos y en el texto de la pregunta); Inter para respuestas, cifras y botones. Nada por debajo de 12 px; 16 px para leer; la pregunta, 22 px.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC.
+- Respuesta buena: verde #15603B (texto #0E4A2D, fondo #E3F1E7) con icono de check y la palabra «Correcta».
+- Respuesta equivocada que eligió la persona: NO en rojo (el rojo es para incidencias y cancelaciones). Contorno en tinta, icono de X y la rotulación «Tu respuesta».
+- El granate #6E1C2F no se usa: el trivial no es «lo tuyo» porque no se guarda.
+- Botón primario en tinta (#1D1A16, texto claro). Respuestas como botones de toda la anchura, de al menos 56 px de alto, radio 10, con letra A B C D a la izquierda.
+- Iconos Phosphor. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA.
+
+DATOS · Madrugá del 26 de marzo de 2027, 02:40
+- 1.261 preguntas de las 72 hermandades. La Macarena tiene 20.
+- Temas de las preguntas: historia, imágenes, patrimonio, música, curiosidades, literatura, jornada.
+- Dificultades: fácil, media, difícil.
+
+Preguntas de ejemplo (reales, cópialas tal cual):
+
+P1 · La Macarena · imágenes · fácil
+«¿De qué color es el famoso manto de la Esperanza Macarena que describen tantos escritores?»
+Respuestas: Verde (correcta) · Azul · Granate · Negro
+Explicación: «Luis Martínez Kleiser habla de su "magnífico manto de terciopelo verde".»
+Fuente: hermandaddelamacarena.es · Patrimonio literario
+
+P2 · El Gran Poder · imágenes · fácil
+«¿Qué escultor talló en 1620 a Nuestro Padre Jesús del Gran Poder?»
+Respuestas: Juan de Mesa (correcta) · Juan Martínez Montañés · Pedro Roldán · Francisco Antonio Ruiz Gijón
+Explicación: «Durante siglos se atribuyó a Montañés; en 1930 apareció la carta de pago a Juan de Mesa.»
+Fuente: gran-poder.es · Nuestro Padre Jesús del Gran Poder
+
+P3 · La Macarena · historia · media
+«¿En qué año fue coronada canónicamente la Esperanza Macarena?»
+Respuestas: 1964 (correcta) · 1913 · 1929 · 2000
+Explicación: «Fue el 31 de mayo de 1964; para la ocasión se compuso la marcha "Coronación de la Macarena".»
+Fuente: hermandaddelamacarena.es · Patrimonio musical
+
+ÁREA: Trivial
+
+1. ACCESO DESDE MI COFRADAR. La portada aprobada de Mi Cofradar con cuenta, sin cambiar nada más: añade una fila «Trivial cofrade» con icono de interrogación y la línea «Preguntas sobre las 72 hermandades para las esperas», entre los accesos y las filas funcionales. Sin cifra.
+
+2. ACCESO DESDE LA FICHA. La ficha aprobada de La Macarena, sin cambiar nada más: al final, después de los datos de la hermandad, un bloque sobrio «¿Cuánto sabes de La Macarena?» · «20 preguntas» y botón secundario «Jugar». Nunca arriba, para que no compita con el estado de la cofradía.
+
+3. ELEGIR PARTIDA. Secundaria («← Mi Cofradar»). Título «Trivial cofrade» en Newsreader y una línea: «10 preguntas. Sin cuenta y sin conexión.» Dos opciones grandes: «Todas las hermandades» y «Una hermandad», que abre un buscador como el del listado de Cofradías. Debajo, «Dificultad» con control segmentado: Mezcla (marcado) · Fácil · Media · Difícil. Botón primario «Empezar».
+
+4. PREGUNTA SIN RESPONDER. Secundaria («← Trivial»). Arriba, «Pregunta 1 de 10» y una barra de avance fina en tinta. Chip neutro con la hermandad y el tema: «La Macarena · imágenes». La pregunta P1 en Newsreader 22 px. Las cuatro respuestas en botones A B C D. Nada más: sin reloj ni cuenta atrás.
+
+5. PREGUNTA ACERTADA. La misma P1 tras pulsar «Verde»: esa respuesta en verde con check y «Correcta»; las otras tres atenuadas con color de texto secundario (nunca con transparencia). Debajo, la explicación y la fuente como enlace con icono de enlace externo. Botón primario «Siguiente».
+
+6. PREGUNTA FALLADA. P2 (Pregunta 2 de 10, «El Gran Poder · imágenes»), tras pulsar «Juan Martínez Montañés»: esa respuesta con contorno en tinta, icono de X y «Tu respuesta»; «Juan de Mesa» en verde con check y «Correcta». Explicación, fuente y «Siguiente». Tono tranquilo: nada de «¡Has fallado!».
+
+7. RESULTADO. Secundaria («← Trivial»). «7 de 10» en cifra grande en tinta, en Newsreader, y una frase sobria que no juzgue: «Has repasado 10 preguntas.» Lista compacta de las 10 preguntas con check verde o X en tinta; muestra completas P1, P2 y P3 y deja las demás como filas rotuladas «ejemplo». Al pulsar una fila se ve su explicación y fuente. Dos botones: primario «Otra partida» y secundario «Volver a Mi Cofradar». Nada se guarda: no hay «mejor resultado».
+
+8. ESTADO SIN CONEXIÓN. La pantalla 4 con el aviso azul de la cabecera «Sin conexión · último dato hace 12 min». El trivial funciona igual; no cambia nada más.
+
+Claro en todas; la 4 y la 5, también en oscuro.
