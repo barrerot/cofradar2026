@@ -8,7 +8,7 @@ WEBS_DIR), como los escudos.
 
 Con cuidado, porque muchas webs de hermandad están en servidores pequeños:
   - solo páginas de la propia web de cada hermandad (mismo dominio, con o sin www);
-  - respeta su robots.txt, y su Crawl-delay si pide más de 1 s;
+  - respeta su robots.txt y su Crawl-delay (si pide más de 30 s entre páginas, no se descarga);
   - una petición por segundo a cada web, y como mucho MAX_PAGINAS páginas y MAX_PDF PDF por web;
   - varias webs a la vez (son servidores distintos), cada una de una en una.
 
@@ -168,9 +168,12 @@ def descargar(h: dict) -> None:
         espera = max(ESPERA, float(robots.crawl_delay(AGENTE) or 0))
     except Exception:
         robots.parse([])  # sin robots.txt: todo permitido
-    if espera > 10:
-        errores.append(f"Crawl-delay de {espera:.0f} s: se usa 10")
-        espera = 10
+    if espera > 30:
+        # Pide ir muy despacio: se respeta no bajándola (150 páginas a ese ritmo serían horas)
+        resumen = {"hermandad": h["nombre"], "web": inicio, "paginas": 0, "pdf": 0, "sin_visitar": 0, "errores": [f"Crawl-delay de {espera:.0f} s: no se descarga"]}
+        (carpeta / "hecho.json").write_text(json.dumps(resumen, ensure_ascii=False, indent=2), encoding="utf-8")
+        avisar(f"· {h['nombre']}: pide {espera:.0f} s entre páginas, no se descarga")
+        return
 
     cola = deque([normalizar(inicio, inicio)])
     vistas: set[str] = set()
