@@ -9,6 +9,7 @@ import { SesionProvider } from "./datos/sesion";
 import { DarFeProvider } from "./rutas/FlujoDarFe";
 import { SincronizacionProvider } from "./datos/sincronizacion";
 import { registrarServiceWorker } from "./pwa";
+import { precargarTrivial } from "./datos/trivial";
 import { iniciarTema } from "./tema";
 
 /* Orden de carga deliberado: base primero, para que cualquier regla de
@@ -32,11 +33,14 @@ import "./estilos/ficha.css";
 import "./estilos/recorrido.css";
 import "./estilos/agenda.css";
 import "./estilos/mi-cofradar.css";
+import "./estilos/trivial.css";
 import "./estilos/mapa.css";
 import "./estilos/admin.css";
 
 iniciarTema();
 registrarServiceWorker();
+// Las preguntas del trivial, guardadas para jugar sin conexión (F-50)
+precargarTrivial();
 
 /*
  * Enrutado segun el build (ver vite-env.d.ts).

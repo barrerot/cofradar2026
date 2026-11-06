@@ -28,8 +28,8 @@ export function PantallaSecundaria({
 }: {
   /** Sin título, la pantalla pone el suyo en el contenido (la ficha de cofradía). */
   titulo?: string;
-  /** A donde vuelve y como se llama ese sitio. */
-  vuelta: { etiqueta: string; ruta?: string };
+  /** A donde vuelve y como se llama ese sitio. `accion`, para volver dentro de la misma pantalla (el trivial). */
+  vuelta: { etiqueta: string; ruta?: string; accion?: () => void };
   acciones?: ReactNode;
   accion?: ReactNode;
   children: ReactNode;
@@ -58,7 +58,7 @@ export function PantallaSecundaria({
               variante="secundario"
               tamano="36"
               data-vuelta=""
-              onClick={() => (vuelta.ruta ? navegar(vuelta.ruta) : navegar(-1))}
+              onClick={() => (vuelta.accion ? vuelta.accion() : vuelta.ruta ? navegar(vuelta.ruta) : navegar(-1))}
             >
               <Icono nombre="flechaIzquierda" tamano={16} />
               <span>{vuelta.etiqueta}</span>

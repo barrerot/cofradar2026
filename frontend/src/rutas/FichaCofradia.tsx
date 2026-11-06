@@ -6,6 +6,7 @@ import { diaProximo } from "../datos/fechas";
 import { useJornada } from "../datos/jornada";
 import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
+import { cuentaPorCofradia, useBancoTrivial } from "../datos/trivial";
 import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
@@ -180,6 +181,8 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
         <h2 id="ficha-historia">Su historia</h2>
         {f.historia ? <p className="cf-ficha-historia">{f.historia.replace(/([^.])$/, "$1.")}</p> : <DatoPendiente />}
       </section>
+
+      <TrivialDe id={f.id} nombre={f.nombre} />
     </article>
   );
 }
@@ -294,4 +297,26 @@ function useDiaDeSalida(jornadaId: number | null): string | null {
   const fecha = jornadas.datos?.find((j) => j.id === jornadaId)?.fecha;
   const dia = fecha ? diaProximo(fecha) : null;
   return dia ? dia.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : null;
+}
+
+/**
+ * «¿Cuánto sabes de La Macarena?» (10-trivial/trivial-02): al final de la
+ * ficha, para que no compita con el estado de la cofradía. Abre el trivial con
+ * solo sus preguntas. Si la hermandad no tiene ninguna, no sale.
+ */
+function TrivialDe({ id, nombre }: { id: string; nombre: string }) {
+  const { banco } = useBancoTrivial();
+  const preguntas = banco ? cuentaPorCofradia(banco).get(id)?.preguntas : undefined;
+  if (!preguntas) return null;
+  return (
+    <section className="cf-ficha-seccion cf-ficha-trivial" aria-labelledby="ficha-trivial">
+      <div>
+        <h2 id="ficha-trivial">¿Cuánto sabes de {nombre}?</h2>
+        <p>{preguntas === 1 ? "Una pregunta" : `${preguntas} preguntas`}</p>
+      </div>
+      <Link className="cf-btn" data-variant="secundario" to={`/cofradias/${id}/trivial`}>
+        Jugar
+      </Link>
+    </section>
+  );
 }

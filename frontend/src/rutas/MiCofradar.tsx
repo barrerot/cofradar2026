@@ -23,6 +23,9 @@ import { SelectorJornada } from "./SelectorJornada";
  *                20/10/2026: lo personal es de la cuenta y no se guarda «solo
  *                en este teléfono»), así que se invita a entrar con Google, como
  *                botón secundario y no como barrera: Ajustes y Ayuda siguen ahí.
+ *   Trivial      el juego de preguntas para las esperas (F-50, 10-trivial/
+ *                trivial-01): sin cuenta y sin puntos, así que no es «lo tuyo»
+ *                y su icono no va en granate.
  *   Más          Cuenta (con sesión), Ajustes y Ayuda y fuentes.
  */
 export function MiCofradar({ estado }: { estado: EstadoJornada }) {
@@ -85,6 +88,12 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
             </Boton>
           </div>
         ) : null}
+
+        <nav className="cf-mi-grupo" aria-label="Trivial">
+          <Fila icono="trivial" a="/mi-cofradar/trivial" nota="Preguntas sobre las 72 hermandades para las esperas">
+            Trivial cofrade
+          </Fila>
+        </nav>
 
         <nav className="cf-mi-grupo" aria-label="Más">
           {con ? (

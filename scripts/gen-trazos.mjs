@@ -101,6 +101,14 @@ const EXTRA = {
     "M40,52H216V84H40ZM52,84H204v16H52ZM60,100H76V212H60ZM180,100h16V212H180ZM48,184H208v24H48Z",
   chevronDerecha:
     "M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z",
+  /** Trivial cofrade (10-trivial/trivial-01): la fila de Mi Cofradar. cards,
+      peso regular como Ajustes y Ayuda. */
+  trivial:
+    "M184,72H40A16,16,0,0,0,24,88V200a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V88A16,16,0,0,0,184,72Zm0,128H40V88H184V200ZM232,56V176a8,8,0,0,1-16,0V56H64a8,8,0,0,1,0-16H216A16,16,0,0,1,232,56Z",
+  /** Trivial: la fuente de cada pregunta, que abre la web de la hermandad.
+      arrow-square-out-bold. */
+  enlaceExterno:
+    "M228,104a12,12,0,0,1-24,0V69l-59.51,59.51a12,12,0,0,1-17-17L187,52H152a12,12,0,0,1,0-24h64a12,12,0,0,1,12,12Zm-44,24a12,12,0,0,0-12,12v64H52V84h64a12,12,0,0,0,0-24H48A20,20,0,0,0,28,80V208a20,20,0,0,0,20,20H176a20,20,0,0,0,20-20V140A12,12,0,0,0,184,128Z",
 };
 
 // clave = los 20 primeros caracteres del trazo tal como aparece en el export

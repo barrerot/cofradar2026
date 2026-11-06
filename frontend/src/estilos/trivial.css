@@ -1,0 +1,438 @@
+/* ==========================================================================
+   COFRADAR · TRIVIAL COFRADE (P-32, F-50; 10-trivial/)
+   Registro editorial: la pregunta en Newsreader, las respuestas en Inter.
+   La buena, en verde con check y «Correcta»; la tuya, si fallas, en tinta con
+   X y «Tu respuesta», nunca en rojo (el rojo es para incidencias). Las demás
+   bajan a texto secundario, nunca con transparencia. Sin granate: el trivial
+   no se guarda, así que no es «lo tuyo». Namespace: cf-trivial*.
+   ========================================================================== */
+
+.cf-trivial {
+  display: grid;
+  gap: var(--cf-space-6);
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-trivial-intro,
+.cf-trivial-nota {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-nota {
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+}
+
+.cf-trivial-aviso {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: flex-start;
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-aviso p {
+  margin: 0;
+}
+
+/* ── Elegir partida (03, 03c) ─────────────────────────────────────────── */
+.cf-trivial-opciones {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-trivial-opcion,
+.cf-trivial-hermandad {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  width: 100%;
+  min-height: 5rem;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-trivial-opcion[aria-checked="true"] {
+  border: 2px solid var(--cf-text);
+  padding: calc(var(--cf-space-4) - 1px);
+}
+
+.cf-trivial-radio {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--cf-border-interactive);
+  border-radius: 50%;
+}
+
+.cf-trivial-opcion[aria-checked="true"] .cf-trivial-radio {
+  border-color: var(--cf-text);
+  background: radial-gradient(circle, var(--cf-text) 0 45%, transparent 50%);
+}
+
+.cf-trivial-opcion-texto {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: var(--cf-space-1);
+}
+
+.cf-trivial-opcion-nombre {
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-trivial-opcion-nota {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-dificultad {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-trivial-dificultad h2 {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-segmentado[data-cuatro] {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.cf-segmentado[data-cuatro] button {
+  font-size: var(--cf-text-base);
+}
+
+/* ── Elegir una hermandad (03b) ───────────────────────────────────────── */
+.cf-trivial-hermandades {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0 0 var(--cf-space-8);
+  list-style: none;
+}
+
+.cf-trivial-hermandad {
+  border-color: var(--cf-border);
+  min-height: 4.5rem;
+}
+
+/* ── Pregunta (04, 05, 06) ────────────────────────────────────────────── */
+.cf-trivial-avance {
+  display: grid;
+  gap: var(--cf-space-2);
+}
+
+.cf-trivial-avance p {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-barra {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cf-border);
+  overflow: hidden;
+}
+
+.cf-trivial-barra span {
+  display: block;
+  height: 100%;
+  background: var(--cf-text);
+}
+
+.cf-trivial-chip {
+  justify-self: start;
+  margin: 0 0 calc(var(--cf-space-3) * -1);
+  padding: var(--cf-space-1) var(--cf-space-3);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-sunken);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-trivial-pregunta {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+}
+
+.cf-trivial-respuestas {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-trivial-respuesta {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--cf-space-3) var(--cf-space-4) var(--cf-space-3) var(--cf-space-3);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: var(--cf-weight-emphasis);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-trivial-respuesta:disabled {
+  cursor: default;
+}
+
+.cf-trivial-letra {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-text);
+  color: var(--cf-text-inverse);
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-trivial-respuesta-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.cf-trivial-rotulo {
+  display: inline-flex;
+  flex: none;
+  gap: var(--cf-space-1);
+  align-items: center;
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-critical);
+}
+
+/* La buena: verde, con check y «Correcta» */
+.cf-trivial-respuesta[data-marca="correcta"] {
+  border: 2px solid var(--cf-live);
+  padding: calc(var(--cf-space-3) - 1px) calc(var(--cf-space-4) - 1px) calc(var(--cf-space-3) - 1px) calc(var(--cf-space-3) - 1px);
+  background: var(--cf-live-soft);
+  color: var(--cf-live-text);
+}
+
+.cf-trivial-respuesta[data-marca="correcta"] .cf-trivial-letra {
+  background: var(--cf-live);
+  color: var(--cf-surface);
+}
+
+/* La tuya, si fallas: en tinta, con X y «Tu respuesta» */
+.cf-trivial-respuesta[data-marca="tuya"] {
+  border: 2px solid var(--cf-text);
+  padding: calc(var(--cf-space-3) - 1px) calc(var(--cf-space-4) - 1px) calc(var(--cf-space-3) - 1px) calc(var(--cf-space-3) - 1px);
+}
+
+/* Las demás: texto secundario, nunca transparencia */
+.cf-trivial-respuesta[data-marca="apagada"] {
+  border-color: var(--cf-border);
+  color: var(--cf-text-secondary);
+  font-weight: var(--cf-weight-body);
+}
+
+.cf-trivial-respuesta[data-marca="apagada"] .cf-trivial-letra {
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  background: transparent;
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-respuesta:focus-visible,
+.cf-trivial-opcion:focus-visible,
+.cf-trivial-hermandad:focus-visible,
+.cf-trivial-repaso-fila:focus-visible,
+.cf-trivial-fuente:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
+.cf-trivial-explicacion {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-trivial-explicacion > p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-trivial-fuente {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: flex-start;
+  margin: 0;
+  color: var(--cf-text);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-trivial-fuente > .cf-ph {
+  flex: none;
+}
+
+a.cf-trivial-fuente span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+/* ── Resultado (07) ───────────────────────────────────────────────────── */
+.cf-trivial-cifra {
+  margin: 0 0 calc(var(--cf-space-4) * -1);
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: 4rem;
+  line-height: 4.5rem;
+  font-feature-settings: var(--cf-font-features-data);
+}
+
+.cf-trivial-repaso {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-trivial-repaso > li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-trivial-repaso-fila {
+  display: grid;
+  grid-template-columns: 1.5rem 1.75rem 1fr 1.25rem;
+  gap: var(--cf-space-3);
+  align-items: center;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: 0;
+  background: transparent;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-trivial-repaso-n {
+  font-weight: var(--cf-weight-data);
+  color: var(--cf-text-secondary);
+}
+
+.cf-trivial-repaso-marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1.5px solid var(--cf-text);
+  border-radius: 50%;
+}
+
+.cf-trivial-repaso-marca[data-bien] {
+  border-color: var(--cf-live-border);
+  background: var(--cf-live-soft);
+  color: var(--cf-live-text);
+}
+
+.cf-trivial-repaso-chevron {
+  display: inline-flex;
+  transition: transform var(--cf-dur-fast) var(--cf-ease-in-out);
+}
+
+.cf-trivial-repaso-fila[aria-expanded="true"] .cf-trivial-repaso-chevron {
+  transform: rotate(180deg);
+}
+
+.cf-trivial-repaso-detalle {
+  display: grid;
+  gap: var(--cf-space-2);
+  padding: 0 var(--cf-space-4) var(--cf-space-4) calc(var(--cf-space-4) + 1.5rem + var(--cf-space-3));
+}
+
+.cf-trivial-repaso-detalle > p {
+  margin: 0;
+}
+
+.cf-trivial-repaso-buena {
+  color: var(--cf-live-text);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-trivial-repaso-tuya {
+  font-weight: var(--cf-weight-data);
+}
+
+.cf-trivial-final {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+/* ── Acceso desde la ficha (02) ───────────────────────────────────────── */
+.cf-ficha-trivial {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-ficha-trivial h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-weight: 600;
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+}
+
+.cf-ficha-trivial .cf-btn {
+  text-decoration: none;
+}
+
+.cf-ficha-trivial p {
+  margin: var(--cf-space-1) 0 0;
+  color: var(--cf-text-secondary);
+}

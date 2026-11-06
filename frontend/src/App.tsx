@@ -18,6 +18,7 @@ import { Cuenta } from "./rutas/Cuenta";
 import { EliminarCuenta } from "./rutas/EliminarCuenta";
 import { MisAportaciones } from "./rutas/MisAportaciones";
 import { Seguidas } from "./rutas/Seguidas";
+import { Trivial } from "./rutas/Trivial";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 import { Panel } from "./rutas/admin/Panel";
@@ -50,11 +51,13 @@ export function App() {
       <Route path="/cofradias" element={<Cofradias estado={estado} />} />
       <Route path="/cofradias/:id" element={<FichaCofradia estado={estado} />} />
       <Route path="/cofradias/:id/recorrido" element={<Recorrido estado={estado} />} />
+      <Route path="/cofradias/:id/trivial" element={<Trivial estado={estado} />} />
       <Route path="/agenda" element={<Agenda estado={estado} />} />
       <Route path="/mi-cofradar" element={<MiCofradar estado={estado} />} />
       <Route path="/mi-cofradar/seguidas" element={<Seguidas estado={estado} />} />
       <Route path="/mi-cofradar/coleccion" element={<Coleccion estado={estado} />} />
       <Route path="/mi-cofradar/aportaciones" element={<MisAportaciones estado={estado} />} />
+      <Route path="/mi-cofradar/trivial" element={<Trivial estado={estado} />} />
       <Route path="/mi-cofradar/cuenta" element={<Cuenta />} />
       <Route path="/mi-cofradar/cuenta/eliminar" element={<EliminarCuenta />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />
