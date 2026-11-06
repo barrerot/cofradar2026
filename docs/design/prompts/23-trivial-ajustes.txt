@@ -1,0 +1,10 @@
+Todo bien; acepto tus decisiones. Respuesta a tus dudas:
+
+1. Icono repetido. Para el trivial, usa Cards de Phosphor. La interrogación se queda solo en «Ayuda y fuentes».
+
+2. «Tu progreso» en la portada. No toques la portada. Para que nadie piense que jugar da puntos, cambia la línea de ELEGIR PARTIDA por:
+«10 preguntas. Sin cuenta, sin conexión y sin puntos.»
+
+3. El verde. Déjalo así: la respuesta buena siempre va con check y la palabra «Correcta», así que no se confunde con «En la calle».
+
+4. El buscador de «Una hermandad». Sí, añade una pantalla 3B: ELEGIR UNA HERMANDAD. Secundaria («← Trivial»). Usa el buscador del listado de Cofradías tal cual, escribiendo «mac». Resultados: La Macarena · 20 preguntas. Sin marcas de seguida ni vista y sin chips de estado: aquí solo se elige con qué hermandad jugar. Al pulsar la fila se vuelve a ELEGIR PARTIDA con «La Macarena» elegida en lugar de «Una hermandad». Solo en claro.

@@ -236,3 +236,20 @@ Regla: el panel no es una mesa de control. Las fases las mueve el horario y las 
 - `admin-3-datos-base` — 3 · DATOS BASE (P-29). Las siete hermandades; La Macarena con su ficha e itinerario esquemático. La Soledad, «Sin horarios» y «Sin itinerario» en gris.
 - `admin-4-taxonomias` — 4 · TAXONOMÍAS (P-30). Los tres elementos en orden de cortejo, reordenables; hitos y templos.
 - `admin-5-permisos-y-configuracion` — 5 · PERMISOS Y CONFIGURACIÓN (P-31). Personas con acceso; umbrales de posición 10 y 30 min (§7.1); ventana de «Inminente» y horarios, pendientes (BUL-226, BUL-227).
+
+## 10-trivial
+
+**Vigentes** · lienzo «Cofradar · Trivial» (https://claude.ai/artifact/3gEjCuRuZmbq9inqz7hyBM), aprobado el 6 de noviembre de 2026 en BUL-372. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Prompts: `prompts/22-trivial-lienzo-nuevo.txt` y `23-trivial-ajustes.txt`. Las preguntas son reales, del banco `docs/datos/trivial/`.
+
+Reglas (PRD, F-50): partidas de 10 preguntas; sin cuenta, sin conexión y sin puntos; no se guarda nada; nunca en Inicio ni en el Mapa. La respuesta buena va en verde con check y «Correcta». La equivocada va con contorno en tinta, X y «Tu respuesta», nunca en rojo. Sin reloj. La franja «Dar fe» sigue visible mientras se juega.
+
+- `trivial-01-mi-cofradar-con-trivial-claro` — 1 · ACCESO DESDE MI COFRADAR. La portada aprobada más la fila «Trivial cofrade», con el icono Cards en gris, no en granate.
+- `trivial-02-ficha-la-macarena-con-trivial-claro` — 2 · ACCESO DESDE LA FICHA (P-11). Bloque «¿Cuánto sabes de La Macarena?» · «20 preguntas» · «Jugar», al final de la ficha.
+- `trivial-03-elegir-partida-claro` — 3 · ELEGIR PARTIDA (P-32). «Todas las hermandades» o «Una hermandad»; dificultad Mezcla, Fácil, Media o Difícil; «Empezar».
+- `trivial-03b-elegir-una-hermandad-claro` — 3B · ELEGIR UNA HERMANDAD. El buscador del listado de Cofradías, sin marcas ni chips de estado.
+- `trivial-03c-elegir-partida-la-macarena-claro` — 3C · VUELTA CON LA MACARENA ELEGIDA. La lupa permite cambiarla.
+- `trivial-04-pregunta-sin-responder-{claro,oscuro}` — 4 · PREGUNTA. «Pregunta 1 de 10», chip hermandad · tema, respuestas A–D.
+- `trivial-05-pregunta-acertada-{claro,oscuro}` — 5 · ACERTADA. Las demás bajan a texto secundario, sin transparencia; explicación y fuente; «Siguiente».
+- `trivial-06-pregunta-fallada-claro` — 6 · FALLADA. «Tu respuesta» en tinta junto a la «Correcta».
+- `trivial-07-resultado-claro` — 7 · RESULTADO. «7 de 10», «Has repasado 10 preguntas.», lista desplegable con explicación y fuente; «Otra partida» y «Volver a Mi Cofradar». Las filas 4 a 10 son de ejemplo.
+- `trivial-08-sin-conexion-claro` — 8 · SIN CONEXIÓN. La pregunta con el aviso azul; el juego funciona igual.
