@@ -253,3 +253,49 @@ Reglas (PRD, F-50): partidas de 10 preguntas; sin cuenta, sin conexión y sin pu
 - `trivial-06-pregunta-fallada-claro` — 6 · FALLADA. «Tu respuesta» en tinta junto a la «Correcta».
 - `trivial-07-resultado-claro` — 7 · RESULTADO. «7 de 10», «Has repasado 10 preguntas.», lista desplegable con explicación y fuente; «Otra partida» y «Volver a Mi Cofradar». Las filas 4 a 10 son de ejemplo.
 - `trivial-08-sin-conexion-claro` — 8 · SIN CONEXIÓN. La pregunta con el aviso azul; el juego funciona igual.
+
+## 11-trivial-online
+
+**Vigentes** · lienzo «Cofradar · Trivial online» (https://claude.ai/artifact/X7QiwMVwdykPf33Bj5vY9K), aprobado el 10 de noviembre de 2026. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Prompt: `prompts/24-trivial-online-lienzo-nuevo.txt`, con los ajustes «CI/CO» en las fichas y un borde fino en tinta en las casillas. Las preguntas son reales, del banco `docs/datos/trivial/`. Los alias son de ejemplo.
+
+Reglas (PRD, F-51 y P-33): partida por turnos entre dos cuentas, con 48 horas por turno y 6 estrellas. La casilla decide la categoría. El rival solo ve el alias. No da puntos de Cofradar y necesita conexión.
+
+**El tablero** tiene 43 casillas:
+- **El anillo:** 36 casillas, con una estrella cada 6. Siguiendo el anillo:
+  - La Campana: Historia;
+  - Sierpes: Imágenes;
+  - Plaza de San Francisco: Patrimonio y símbolos;
+  - Avenida de la Constitución: Jornadas y sedes;
+  - Puerta de los Palos: Música y literatura;
+  - Puerta de San Miguel: Tradiciones y curiosidades.
+- **Las casillas normales:** después de cada estrella vienen las otras cinco categorías, en este orden.
+- **Las calles:** la Salida está en el centro, con tres calles de 2 casillas hacia La Campana, Plaza de San Francisco y Puerta de los Palos.
+
+**Colores e iconos de las categorías** (Phosphor, de oscuro a claro):
+
+| Categoría | Color | Icono |
+|---|---|---|
+| Historia | #4A3528 | Scroll |
+| Imágenes | #2D5E66 | Image |
+| Patrimonio y símbolos | #A3593A | Flag |
+| Jornadas y sedes | #7F8C3E | Signpost |
+| Música y literatura | #D19A8E | MusicNotes |
+| Tradiciones y curiosidades | #E2D9C3, icono en tinta | Lightbulb |
+
+**Las fichas** llevan dos letras del alias: la tuya con contorno sólido en tinta y la del rival con contorno discontinuo.
+
+**Las pantallas:**
+- `01-portada-trivial` — 1 · PORTADA. «Jugar solo», que lleva a «Elegir partida» del lienzo aprobado, y «Jugar online» con «1 partida te espera».
+- `02-elegir-alias`, `02b-alias-cogido` — 2 · ALIAS la primera vez. El error va en tinta con icono, no en rojo.
+- `03-vestibulo-online` — 3 · VESTÍBULO. «Invitar a un amigo», «Buscar rival», las filas de invitación y búsqueda, y la bandeja «Tu turno / Turno del rival / Finalizadas».
+- `04-invitar-amigo` — 4 · INVITAR. El enlace, «Compartir», «Copiar enlace» y «Cancelar invitación».
+- `05-invitacion-recibida`, `05b-invitacion-caducada`, `05c-invitacion-cancelada`, `05d-invitacion-ya-aceptada` — 5 · INVITACIÓN RECIBIDA y sus estados, con «Volver al trivial» cuando no hay nada que aceptar.
+- `06-partida-te-toca-tirar-{claro,oscuro}` — 6 · TE TOCA. Tablero, marcador y «Tirar el dado» junto a «Dar fe».
+- `07-partida-elegir-destino-{claro,oscuro}` — 7 · ELEGIR DESTINO. Un 4 que da tres destinos, numerados en el tablero y como botones de texto.
+- `08-pregunta-online` — 8 · PREGUNTA. Chip de categoría, A–D y «Confirmar respuesta».
+- `09-acierto-en-estrella-{claro,oscuro}` — 9 · ACIERTO EN ESTRELLA. «Consigues la estrella de Imágenes» y «Volver a tirar».
+- `10-fallo` — 10 · FALLO. «Ahora le toca a Costalero83» y «Volver a la partida».
+- `11-esperando-al-rival` — 11 · ESPERANDO. Sin «Tirar», con enlace «Rendirse».
+- `12-rendirse` — 12 · RENDIRSE. Hoja de confirmación.
+- `13-resultado`, `13b-rival-rendido`, `13c-cerrada-por-inactividad` — 13 · RESULTADO. El «6 – 4» solo aparece en la victoria por estrellas.
+- `14-sin-conexion` — 14 · SIN CONEXIÓN. Bandeja con lo último guardado y enlace a «Jugar solo».
