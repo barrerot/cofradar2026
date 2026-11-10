@@ -53,6 +53,14 @@ export function Cuenta() {
             </Accion>
           </section>
 
+          <section className="cf-cuenta-grupo" aria-label="Trivial online">
+            <Link to="/mi-cofradar/trivial/alias" className="cf-ajustes-fila cf-ajustes-enlace cf-cuenta-accion">
+              <Icono nombre="trivial" tamano={24} />
+              <span>Alias del trivial online</span>
+              <Icono nombre="chevronDerecha" tamano={20} />
+            </Link>
+          </section>
+
           <section className="cf-cuenta-grupo" aria-label="Tus datos">
             <Accion icono="descargar" onClick={() => void descargar()} cargando={descarga === "bajando"}>
               Descargar mis datos

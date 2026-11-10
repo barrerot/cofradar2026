@@ -200,10 +200,12 @@ async function crearPartida(bd: Cliente, a: string, b: string, banco: number, or
 
 // ── Lo que ve cada jugador ──
 
-async function aliasDeVarios(ids: (string | null)[]): Promise<Map<string, string>> {
+/** Dentro de una transacción, con su misma conexión (`bd`): pedir otra mientras se tiene una puede atascar el pool. */
+async function aliasDeVarios(ids: (string | null)[], bd?: Cliente): Promise<Map<string, string>> {
   const validos = [...new Set(ids.filter((x): x is string => !!x))];
   if (!validos.length) return new Map();
-  const { rows } = await consulta<{ usuario_id: string; alias: string }>("select usuario_id, alias from trivial_jugador where usuario_id = any($1)", [validos]);
+  const sql = "select usuario_id, alias from trivial_jugador where usuario_id = any($1)";
+  const { rows } = bd ? await bd.query<{ usuario_id: string; alias: string }>(sql, [validos]) : await consulta<{ usuario_id: string; alias: string }>(sql, [validos]);
   return new Map(rows.map((r) => [r.usuario_id, r.alias]));
 }
 
@@ -246,7 +248,7 @@ function vista(f: FilaPartida, yo: Puesto, alias: Map<string, string>, enunciado
 }
 
 async function vistaDe(bd: Cliente, f: FilaPartida, yo: Puesto) {
-  const alias = await aliasDeVarios([f.jugador_0, f.jugador_1]);
+  const alias = await aliasDeVarios([f.jugador_0, f.jugador_1], bd);
   let enunciado: { enunciado: string; hermandad: string } | undefined;
   if (f.pregunta && f.turno === yo) {
     const { rows } = await bd.query<{ enunciado: string; hermandad: string }>(

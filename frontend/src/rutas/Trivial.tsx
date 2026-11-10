@@ -25,7 +25,8 @@ import { DarFe } from "./DarFe";
  *               la explicación y la fuente (04, 05, 06)
  *   resultado   «7 de 10» y el repaso, sin juzgar (07)
  *
- * Se entra desde Mi Cofradar (/mi-cofradar/trivial) o desde la ficha de una
+ * Se entra desde la portada del trivial («Jugar solo», /mi-cofradar/trivial/solo;
+ * la portada ofrece también el online, TrivialOnline.tsx) o desde la ficha de una
  * cofradía (/cofradias/:id/trivial), con esa hermandad ya elegida. Sin cuenta,
  * sin conexión, sin puntos, y no se guarda nada: la partida vive aquí. La
  * franja «Dar fe» sigue a mano: si pasa la cofradía, se deja la partida.
@@ -60,7 +61,7 @@ export function Trivial({ estado }: { estado: EstadoJornada }) {
   const nombreFicha = id ? cuenta?.get(id)?.nombre : undefined;
   const origen = desdeFicha
     ? { etiqueta: nombreFicha ?? "Cofradía", ruta: `/cofradias/${id}` }
-    : { etiqueta: "Mi Cofradar", ruta: "/mi-cofradar" };
+    : { etiqueta: "Trivial", ruta: "/mi-cofradar/trivial" };
   const accion = estado.activa ? <DarFe cofradia={id} /> : undefined;
   const aTrivial = { etiqueta: "Trivial", accion: () => setFase({ es: "elegir" }) };
 
@@ -125,7 +126,7 @@ export function Trivial({ estado }: { estado: EstadoJornada }) {
           partida={fase.partida}
           respuestas={fase.respuestas}
           alOtra={empezar}
-          volver={{ etiqueta: `Volver a ${origen.etiqueta}`, alPulsar: () => navegar(origen.ruta) }}
+          volver={{ etiqueta: desdeFicha ? `Volver a ${origen.etiqueta}` : "Volver al trivial", alPulsar: () => navegar(origen.ruta) }}
         />
       </PantallaSecundaria>
     );
@@ -377,7 +378,7 @@ function Explicacion({ pregunta: p }: { pregunta: Pregunta }) {
   );
 }
 
-function FuenteDe({ fuente, cofradia }: { fuente: Fuente; cofradia: string }) {
+export function FuenteDe({ fuente, cofradia }: { fuente: Fuente; cofradia: string }) {
   if (fuente.tipo === "web") {
     return (
       <a className="cf-trivial-fuente" href={fuente.url} target="_blank" rel="noreferrer">

@@ -1,0 +1,624 @@
+/* ==========================================================================
+   COFRADAR · TRIVIAL ONLINE (P-33, F-51; 11-trivial-online/)
+   El tablero cofrade y las pantallas del juego por turnos. Las preguntas y
+   respuestas reutilizan cf-trivial-* (trivial.css). Namespace: cf-online-*,
+   cf-tablero-*, cf-estrellas-*.
+   Categorías: color apagado + icono, siempre con borde fino en tinta (claro)
+   o en hueso (oscuro), para que se distingan del fondo y en gris.
+   ========================================================================== */
+
+:root {
+  --cf-cat-historia: #4A3528;
+  --cf-cat-imagenes: #2D5E66;
+  --cf-cat-patrimonio_simbolos: #A3593A;
+  --cf-cat-jornadas_sedes: #7F8C3E;
+  --cf-cat-musica_literatura: #D19A8E;
+  --cf-cat-tradiciones_curiosidades: #E2D9C3;
+  --cf-cat-borde: #1D1A16;
+  --cf-cat-tinta: #1D1A16;
+  --cf-cat-claro: #FBF9F5;
+}
+
+[data-theme="dark"] {
+  --cf-cat-borde: #F5F1EA;
+}
+
+[data-cat="historia"] { --cf-cat: var(--cf-cat-historia); }
+[data-cat="imagenes"] { --cf-cat: var(--cf-cat-imagenes); }
+[data-cat="patrimonio_simbolos"] { --cf-cat: var(--cf-cat-patrimonio_simbolos); }
+[data-cat="jornadas_sedes"] { --cf-cat: var(--cf-cat-jornadas_sedes); }
+[data-cat="musica_literatura"] { --cf-cat: var(--cf-cat-musica_literatura); }
+[data-cat="tradiciones_curiosidades"] { --cf-cat: var(--cf-cat-tradiciones_curiosidades); }
+
+/* ── Pantallas ─────────────────────────────────────────────────────────── */
+
+.cf-online {
+  display: grid;
+  gap: var(--cf-space-6);
+  padding-bottom: var(--cf-space-8);
+}
+
+.cf-online-partida {
+  gap: var(--cf-space-5);
+}
+
+.cf-online-intro,
+.cf-online-nota,
+.cf-online-ayuda {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-online-intro {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  color: var(--cf-text);
+}
+
+.cf-online-ayuda {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+}
+
+.cf-online-titulo,
+.cf-online-h1 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: 600;
+  color: var(--cf-text);
+}
+
+.cf-online-h1 {
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+}
+
+/* El error va en tinta con icono, nunca en rojo (02b) */
+.cf-online-error {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: flex-start;
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text);
+}
+
+.cf-online-error > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.cf-online-error span {
+  flex: 1;
+}
+
+.cf-online-enlace,
+.cf-online-cancelar,
+.cf-online-nota a {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-emphasis);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 2.75rem;
+}
+
+.cf-online-nota a {
+  min-height: 0;
+}
+
+.cf-online-botones {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+/* 01 · Las dos opciones de la portada */
+.cf-online-modo {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+  min-height: 6rem;
+  padding: var(--cf-space-4) var(--cf-space-3) var(--cf-space-4) var(--cf-space-5);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-online-modo-texto {
+  display: grid;
+  flex: 1;
+  gap: var(--cf-space-1);
+}
+
+.cf-online-modo-nombre {
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: 600;
+}
+
+.cf-online-modo-nota {
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-online-modo-aviso {
+  justify-self: start;
+  margin-top: var(--cf-space-1);
+  padding: 2px var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-text);
+  border-radius: var(--cf-radius-sm);
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+/* 03 · Invitación enviada / buscando rival */
+.cf-online-estados {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-online-estados > li {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+  padding: var(--cf-space-2) var(--cf-space-4);
+}
+
+.cf-online-estados > li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-online-estado-texto {
+  flex: 1;
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+/* 03 · Bandeja */
+.cf-online-grupo {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-online-grupo h2 {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+}
+
+.cf-online-grupo ul {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-online-fila {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-online-fila-texto {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+
+.cf-online-fila-titulo {
+  font-size: var(--cf-text-lg);
+  font-weight: 600;
+}
+
+.cf-online-fila-nota {
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* 04 · El enlace */
+.cf-online-enlace-caja {
+  width: 100%;
+  min-height: var(--cf-touch-min);
+  padding: 0 var(--cf-space-3);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-sm);
+}
+
+/* 06 · Plazo, dado y destinos */
+.cf-online-plazo,
+.cf-online-dado {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: center;
+  margin: var(--cf-space-2) 0 0;
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-online-dado {
+  gap: var(--cf-space-4);
+  margin: 0;
+  font-size: var(--cf-text-2xl);
+}
+
+.cf-online-dado-cara {
+  display: inline-flex;
+  color: var(--cf-text);
+}
+
+.cf-online-destinos {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-online-destino {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-online-destino-n {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--cf-text);
+  color: var(--cf-text-inverse);
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-online-franja {
+  flex: 1;
+  display: grid;
+}
+
+/* 06 · Marcador */
+.cf-online-marcador {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-online-marcador > li {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+}
+
+.cf-online-marcador > li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-online-marcador-cabeza {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+}
+
+.cf-online-marcador-alias {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--cf-text-lg);
+  font-weight: 600;
+}
+
+.cf-online-marcador-cifra {
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+  white-space: nowrap;
+}
+
+.cf-online-ficha {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  border: 2px dashed var(--cf-text-secondary);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: var(--cf-weight-critical);
+}
+
+.cf-online-ficha[data-tuya] {
+  border: 2px solid var(--cf-text);
+}
+
+.cf-estrellas {
+  display: flex;
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-estrellas-hueco {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px dashed var(--cf-text-secondary);
+  border-radius: var(--cf-radius-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-estrellas-hueco > svg {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.cf-estrellas-hueco[data-tiene] {
+  border: 1px solid var(--cf-cat-borde);
+  background: var(--cf-cat);
+}
+
+/* Conseguida: el color de la categoría con el icono claro u oscuro, como en el tablero */
+.cf-estrellas-hueco[data-tiene] { color: var(--cf-cat-claro); }
+.cf-estrellas-hueco[data-tiene][data-cat="jornadas_sedes"],
+.cf-estrellas-hueco[data-tiene][data-cat="musica_literatura"],
+.cf-estrellas-hueco[data-tiene][data-cat="tradiciones_curiosidades"] { color: var(--cf-cat-tinta); }
+
+/* 08 · Chip de categoría */
+.cf-online-chip {
+  display: inline-flex;
+  gap: var(--cf-space-2);
+  align-items: center;
+  justify-self: start;
+  margin: 0;
+  padding: var(--cf-space-1) var(--cf-space-3) var(--cf-space-1) var(--cf-space-1);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-surface-raised);
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis);
+}
+
+.cf-online-chip-icono,
+.cf-online-estrella-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--cf-cat-borde);
+  border-radius: var(--cf-radius-sm);
+  background: var(--cf-cat);
+  color: var(--cf-cat-claro);
+}
+
+[data-cat="jornadas_sedes"].cf-online-chip-icono,
+[data-cat="musica_literatura"].cf-online-chip-icono,
+[data-cat="tradiciones_curiosidades"].cf-online-chip-icono,
+[data-cat="jornadas_sedes"].cf-online-estrella-icono,
+[data-cat="musica_literatura"].cf-online-estrella-icono,
+[data-cat="tradiciones_curiosidades"].cf-online-estrella-icono {
+  color: var(--cf-cat-tinta);
+}
+
+/* 08 · La elegida antes de confirmar: contorno en tinta */
+.cf-trivial-respuesta[data-marca="elegida"] {
+  border: 2px solid var(--cf-text);
+  padding: calc(var(--cf-space-3) - 1px) calc(var(--cf-space-4) - 1px) calc(var(--cf-space-3) - 1px) calc(var(--cf-space-3) - 1px);
+}
+
+/* 09 · «Consigues la estrella de Imágenes» */
+.cf-online-resolucion {
+  display: grid;
+  gap: var(--cf-space-5);
+}
+
+.cf-online-estrella {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  padding: var(--cf-space-4);
+  border: 2px solid var(--cf-text);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-online-estrella p {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  line-height: var(--cf-leading-2xl);
+  font-weight: 600;
+}
+
+.cf-online-estrella-icono {
+  position: relative;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.cf-online-estrella-insignia {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1px solid var(--cf-cat-borde);
+  border-radius: 50%;
+  background: var(--cf-surface);
+  color: var(--cf-text);
+}
+
+/* ── El tablero ────────────────────────────────────────────────────────── */
+
+.cf-tablero {
+  padding: var(--cf-space-2);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-tablero svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cf-tablero-calle {
+  fill: var(--cf-cera-100, #EFE6D4);
+}
+
+[data-theme="dark"] .cf-tablero-calle {
+  fill: #2E2924;
+}
+
+.cf-tablero-plaza {
+  fill: var(--cf-surface);
+}
+
+.cf-tablero-calle-linea {
+  stroke: var(--cf-cera-100, #EFE6D4);
+  stroke-width: 26;
+}
+
+[data-theme="dark"] .cf-tablero-calle-linea {
+  stroke: #2E2924;
+}
+
+.cf-tablero-casilla,
+.cf-tablero-estrella {
+  fill: var(--cf-cat);
+  stroke: var(--cf-cat-borde);
+  stroke-width: 1;
+}
+
+.cf-tablero-estrella {
+  stroke-width: 3;
+}
+
+.cf-tablero-casilla[data-destino],
+.cf-tablero-estrella[data-destino] {
+  stroke: var(--cf-text);
+  stroke-width: 4;
+}
+
+.cf-tablero-icono-claro {
+  fill: var(--cf-cat-claro);
+}
+
+.cf-tablero-icono-tinta {
+  fill: var(--cf-cat-tinta);
+}
+
+.cf-tablero-insignia {
+  fill: var(--cf-surface);
+  stroke: var(--cf-cat-borde);
+  stroke-width: 1;
+}
+
+.cf-tablero-insignia + path {
+  fill: var(--cf-text);
+}
+
+.cf-tablero-salida {
+  fill: var(--cf-surface);
+  stroke: var(--cf-text);
+  stroke-width: 2;
+}
+
+.cf-tablero-salida-texto,
+.cf-tablero-rotulo {
+  fill: var(--cf-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cf-tablero-rotulo-cat {
+  fill: var(--cf-text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.cf-tablero-numero {
+  fill: var(--cf-text);
+}
+
+.cf-tablero-numero-texto {
+  fill: var(--cf-text-inverse);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cf-tablero-ficha {
+  fill: var(--cf-surface);
+  stroke: var(--cf-text-secondary);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.cf-tablero-ficha[data-tuya] {
+  stroke: var(--cf-text);
+  stroke-dasharray: none;
+}
+
+.cf-tablero-ficha-texto {
+  fill: var(--cf-text);
+  font-size: 11px;
+  font-weight: 700;
+}

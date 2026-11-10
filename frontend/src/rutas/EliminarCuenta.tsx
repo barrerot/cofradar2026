@@ -54,12 +54,14 @@ export function EliminarCuenta() {
               <li>Tu colección</li>
               <li>Tus seguidas</li>
               <li>Tu historial de aportaciones</li>
+              <li>Tu alias del trivial online. Las partidas que tengas en marcha las gana tu rival.</li>
             </ul>
           </section>
 
           <section className="cf-eliminar-caja" aria-labelledby="se-conserva">
             <h2 id="se-conserva">Se conserva, sin tu nombre</h2>
             <p>Que alguien vio un paso en un sitio a una hora. Se queda porque sostiene lo que Cofradar publicó esa noche.</p>
+            <p>Las partidas del trivial ya terminadas, para tu rival, donde saldrás como «Jugador eliminado».</p>
           </section>
 
           <div className="cf-eliminar-copia">

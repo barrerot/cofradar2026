@@ -12,7 +12,7 @@ function conexion(): pg.Pool {
   if (pool) return pool;
   const url = process.env.SUPABASE_DB_URL;
   if (!url) throw new Error("Falta SUPABASE_DB_URL en backend/.env");
-  pool = new pg.Pool({ connectionString: url, ssl: { rejectUnauthorized: false }, max: 5, idleTimeoutMillis: 30_000 });
+  pool = new pg.Pool({ connectionString: url, ssl: { rejectUnauthorized: false }, max: 10, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 10_000 });
   pool.on("error", (e) => console.error("bd:", e.message));
   return pool;
 }
