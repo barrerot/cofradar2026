@@ -10,6 +10,7 @@ import { routerCofradias } from "./rutas/cofradias.js";
 import { routerCuenta } from "./rutas/cuenta.js";
 import { routerDatosBase } from "./rutas/datosBase.js";
 import { routerEstado } from "./rutas/estado.js";
+import { routerTrivial } from "./rutas/trivial.js";
 import { leerSesion } from "./sesion.js";
 
 /**
@@ -40,6 +41,7 @@ app.use("/api", routerAportaciones);
 app.use("/api", routerMetricas);
 app.use("/api", routerAdmin);
 app.use("/api", routerDatosBase);
+app.use("/api", routerTrivial);
 
 /**
  * Los escudos (BUL-171), sacados de la web del Consejo; se quitan si el Consejo o la hermandad lo piden. Viven en el

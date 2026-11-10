@@ -281,3 +281,128 @@ returns void language sql as $$
   do update set abiertas = metrica_apertura.abiertas + excluded.abiertas, vuelven = metrica_apertura.vuelven + excluded.vuelven;
 $$;
 revoke all on function sumar_aperturas(integer, integer, boolean, integer, integer) from public, anon, authenticated;
+
+-- ── Trivial online por turnos (F-51, P-33; aprobada por Carlos el 10/11/2026) ──
+-- Partidas a distancia entre dos cuentas, con el tablero cofrade y seis estrellas. El servidor manda:
+-- dado, posiciones, preguntas, plazos y resultado (backend/src/trivial/). Las transiciones se hacen en
+-- una transacción con la partida bloqueada (select … for update) y `version` sube en cada una.
+-- Al borrar una cuenta (decisión de Carlos, «A»): sus partidas en marcha las gana el rival como por
+-- rendición (rutas/cuenta.ts), las terminadas se quedan y su puesto queda vacío («Jugador eliminado»).
+
+-- El alias público: lo único que ve el rival. Único sin distinguir mayúsculas.
+create table if not exists trivial_jugador (
+  usuario_id  uuid primary key references auth.users (id) on delete cascade,
+  alias       text not null check (alias ~ '^[A-Za-z0-9_ÁÉÍÓÚÜÑáéíóúüñ]{3,20}$'),
+  creado      timestamptz not null default now(),
+  cambiado    timestamptz not null default now()
+);
+create unique index if not exists trivial_jugador_alias on trivial_jugador (lower(alias));
+
+-- Cada versión publicada del banco. Una sola activa: la que usan las invitaciones y búsquedas nuevas.
+-- Se conserva mientras la use alguna partida, invitación o búsqueda (no se borra nunca sola).
+create table if not exists trivial_banco (
+  version     integer primary key,
+  titulo      text not null,
+  categorias  jsonb not null,          -- [{ id, nombre, temas: [..], preguntas }]
+  huella      text not null,           -- sha256 del CSV de origen: si no cambia, no se publica otra
+  preguntas   integer not null,
+  activa      boolean not null default false,
+  publicada   timestamptz not null default now()
+);
+create unique index if not exists trivial_banco_activa on trivial_banco (activa) where activa;
+
+create table if not exists trivial_pregunta (
+  banco_version  integer not null references trivial_banco (version) on delete cascade,
+  id             integer not null,     -- el id del CSV
+  categoria      text not null,
+  tema           text not null,
+  hermandad      text not null,
+  dificultad     text not null,
+  lote           integer,
+  enunciado      text not null,
+  opciones       jsonb not null,       -- [{ id, texto }]: ids opacos, no dicen cuál es la buena
+  correcta       text not null,        -- id de la opción buena
+  explicacion    text not null default '',
+  fuente         text not null,
+  primary key (banco_version, id)
+);
+create index if not exists trivial_pregunta_categoria on trivial_pregunta (banco_version, categoria);
+
+create table if not exists trivial_invitacion (
+  token          text primary key,     -- aleatorio, va en el enlace
+  anfitrion_id   uuid not null references auth.users (id) on delete cascade,
+  banco_version  integer not null references trivial_banco (version),
+  estado         text not null default 'pendiente' check (estado in ('pendiente', 'aceptada', 'cancelada')),
+  creada         timestamptz not null default now(),
+  vence          timestamptz not null,
+  partida_id     uuid
+);
+create index if not exists trivial_invitacion_anfitrion on trivial_invitacion (anfitrion_id, estado);
+
+-- Quien busca rival. Una búsqueda activa por cuenta; caduca a las 24 horas.
+create table if not exists trivial_cola (
+  id             uuid primary key default gen_random_uuid(),
+  usuario_id     uuid not null references auth.users (id) on delete cascade,
+  banco_version  integer not null references trivial_banco (version),
+  estado         text not null default 'buscando' check (estado in ('buscando', 'emparejada', 'cancelada')),
+  creada         timestamptz not null default now(),
+  vence          timestamptz not null,
+  partida_id     uuid
+);
+create unique index if not exists trivial_cola_una on trivial_cola (usuario_id) where estado = 'buscando';
+
+create table if not exists trivial_partida (
+  id                     uuid primary key default gen_random_uuid(),
+  -- Puesto 0 y puesto 1. Se vacían si la persona borra su cuenta.
+  jugador_0              uuid references auth.users (id) on delete set null,
+  jugador_1              uuid references auth.users (id) on delete set null,
+  banco_version          integer not null references trivial_banco (version),
+  reglas                 text not null,
+  tablero                text not null,
+  origen                 text not null check (origen in ('invitacion', 'cola')),
+  estado                 text not null default 'activa' check (estado in ('activa', 'finalizada')),
+  motivo                 text check (motivo in ('estrellas', 'rendicion', 'inactividad')),
+  ganador                smallint check (ganador in (0, 1)),   -- vacío en inactividad
+  posiciones             jsonb not null,       -- [casilla del 0, casilla del 1]
+  estrellas              jsonb not null,       -- [[categorías del 0], [categorías del 1]]
+  turno                  smallint not null check (turno in (0, 1)),
+  turno_n                integer not null default 1,
+  turno_desde            timestamptz not null,
+  turno_vence            timestamptz not null,
+  fase                   text not null check (fase in ('tirar', 'mover', 'responder')),
+  tirada                 smallint,
+  destinos               jsonb,                -- casillas a las que se puede ir con la tirada
+  pregunta               jsonb,                -- la pendiente: { jugada, id, categoria, casilla, estrella, opciones }
+  vencimientos_seguidos  smallint not null default 0,
+  acciones               jsonb not null default '{}',   -- la última acción de cada puesto, para reintentos
+  version                integer not null default 1,
+  creada                 timestamptz not null default now(),
+  terminada              timestamptz
+);
+create index if not exists trivial_partida_0 on trivial_partida (jugador_0, estado);
+create index if not exists trivial_partida_1 on trivial_partida (jugador_1, estado);
+
+-- Cada pregunta que ha salido en una partida y lo que pasó con ella
+create table if not exists trivial_jugada (
+  partida_id   uuid not null references trivial_partida (id) on delete cascade,
+  n            integer not null,
+  turno_n      integer not null,
+  puesto       smallint not null,
+  pregunta_id  integer not null,
+  categoria    text not null,
+  casilla      text not null,
+  mostrada     timestamptz not null default now(),
+  respuesta    text,                 -- id de la opción elegida
+  acierto      boolean,
+  resultado    text check (resultado in ('acierto', 'fallo', 'vencida')),
+  resuelta     timestamptz,
+  primary key (partida_id, n)
+);
+
+alter table trivial_jugador    enable row level security;
+alter table trivial_banco      enable row level security;
+alter table trivial_pregunta   enable row level security;
+alter table trivial_invitacion enable row level security;
+alter table trivial_cola       enable row level security;
+alter table trivial_partida    enable row level security;
+alter table trivial_jugada     enable row level security;
