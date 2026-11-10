@@ -1,0 +1,111 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe». Se usa de pie, andando entre mucha gente, con una mano, a pleno sol o de madrugada.
+
+Ya existe el TRIVIAL COFRADE en solitario (lienzo aprobado «Cofradar · Trivial»): partidas de 10 preguntas, sin cuenta y sin conexión. Esta área nueva es el TRIVIAL ONLINE: una partida por turnos entre dos personas, a distancia, como un juego de mesa por correspondencia. Cada uno juega su turno cuando puede, cierra la app y vuelve horas después.
+
+LAS REGLAS DEL TRIVIAL ONLINE
+- Dos jugadores con cuenta de Google. El rival solo ve un ALIAS; el correo nunca se enseña.
+- Se empieza invitando a un amigo con un enlace (vale 72 horas, un solo uso) o buscando rival al azar (la búsqueda caduca a las 24 horas).
+- En tu turno tiras un dado (1 a 6) y mueves tu ficha exactamente ese número de casillas por el tablero. Si hay varios destinos posibles, eliges uno.
+- La casilla decide la categoría de la pregunta. El jugador NO elige tema ni dificultad.
+- Cuatro respuestas; se elige una y se confirma. Si aciertas, vuelves a tirar. Si fallas, el turno pasa al rival.
+- Acertar en una casilla de estrella da la estrella de esa categoría. Hay seis estrellas; gana quien consigue las seis.
+- Cada turno tiene 48 horas. Si vence, pasa al rival. Si vencen dos turnos seguidos sin que nadie juegue, la partida termina sin ganador. También se puede rendir.
+- Se pueden tener varias partidas a la vez.
+- No da puntos de Cofradar, no hay ranking, ni chat, ni récords. Nada de monedas, rachas, niveles ni medallas.
+- Necesita conexión. El solitario sigue funcionando sin ella.
+
+FORMATO
+- Lienzo nuevo «Cofradar · Trivial online». Móvil 390 × 844, mobile-first. Español de España. Si la pantalla es más larga, dibújala entera.
+- Usa solo los datos de abajo. Las preguntas son reales: cópialas tal cual, sin cambiar una palabra. Los alias son de ejemplo y van rotulados como tales donde se vean por primera vez. No inventes hermandades, preguntas, respuestas, lugares ni cifras.
+- Los lienzos aprobados de Cofradar mandan en armazón, colores, chips y textos, y el lienzo «Cofradar · Trivial» manda en preguntas, respuestas y resultado. Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+ARMAZÓN: el de los lienzos «Cofradar · Armazón», «Mi Cofradar» y «Cofradar · Trivial» tal cual, sin redibujarlo
+- Pantallas secundarias: enlace de vuelta a la izquierda («← Trivial», «← Online»), sincronización a la derecha.
+- Abajo: barra con cinco destinos (Inicio · Mapa · Cofradías · Agenda · Mi Cofradar), activa en Mi Cofradar. El trivial online no es un destino nuevo.
+- «Dar fe»: botón en tinta con icono de ojo, abajo a la derecha, en la franja encima de la barra. Los datos son de la Madrugá con cofradías en la calle, así que se ve también mientras se juega.
+
+ESTILO
+- El mismo de Cofradar y del trivial aprobado. Prohibido: morado, dorado, símbolos religiosos (cruces, capirotes, coronas como iconos), ornamentación barroca, sepia, texturas envejecidas, desenfoques, translucidez, degradados. Nada de confeti, trofeos, casino ni estética de concurso de televisión.
+- Registro editorial (tono cera #F7F1E6, Newsreader en títulos y en el texto de la pregunta); Inter para respuestas, cifras, botones y rótulos del tablero. Nada por debajo de 12 px; 16 px para leer; la pregunta, 22 px.
+- Colores, tema claro: fondo #FBF9F5, superficie #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC.
+- Respuesta buena: verde #15603B (texto #0E4A2D, fondo #E3F1E7) con check y «Correcta». La equivocada que eligió la persona: contorno en tinta, X y «Tu respuesta». Nunca rojo.
+- Botón primario en tinta. Respuestas como botones de toda la anchura, al menos 56 px de alto, radio 10, con letra A B C D.
+- Iconos Phosphor. Toque mínimo 48 px. Ningún significado depende solo del color.
+- Tema oscuro cálido, sin negros puros ni grises azulados: fondo #15120F, texto #F5F1EA.
+
+LAS SEIS CATEGORÍAS (cada una con su icono Phosphor Y su nombre; propón un color apagado para cada una, sin morado, dorado, rojo de incidencias ni el azul del aviso «Sin conexión», y que se distingan también en escala de grises)
+1. Historia · 453 preguntas
+2. Imágenes · 292
+3. Patrimonio y símbolos · 153
+4. Jornadas y sedes · 189
+5. Música y literatura · 88
+6. Tradiciones y curiosidades · 86
+
+EL TABLERO (lo más importante del lienzo)
+Es un recorrido cofrade estilizado por el centro de Sevilla: no un mapa literal ni un callejero, sino un tablero de juego de mesa con el espíritu de la Carrera Oficial. Tiene que caber entero en la pantalla del móvil, sin zoom, y leerse de un vistazo.
+- Un anillo cerrado de 36 casillas. Cada 6 casillas hay una casilla de ESTRELLA, más grande, con el nombre de un lugar real y su categoría. En este orden, siguiendo el anillo:
+  · La Campana — Historia
+  · Sierpes — Imágenes
+  · Plaza de San Francisco — Patrimonio y símbolos
+  · Avenida de la Constitución — Jornadas y sedes
+  · Puerta de los Palos — Música y literatura
+  · Puerta de San Miguel — Tradiciones y curiosidades
+- Entre dos estrellas hay 5 casillas normales, pequeñas, cada una con el color y el icono de una categoría (sin nombre de lugar). Después de cada estrella vienen, por orden, las otras cinco categorías una vez cada una: tras La Campana, Imágenes · Patrimonio · Jornadas · Música · Tradiciones; tras Sierpes, Patrimonio · Jornadas · Música · Tradiciones · Historia; y así.
+- En el centro, la casilla de SALIDA, rotulada «Salida». De ella salen tres calles de 2 casillas normales que llegan a La Campana, a Plaza de San Francisco y a Puerta de los Palos. Sus categorías, de la estrella hacia la Salida: hacia La Campana, Jornadas y sedes · Música y literatura; hacia Plaza de San Francisco, Tradiciones y curiosidades · Historia; hacia Puerta de los Palos, Imágenes · Patrimonio y símbolos.
+- Las fichas de los dos jugadores: círculos con la inicial del alias y un contorno distinto (uno en tinta, otro en el color secundario con trazo discontinuo), nunca solo por color. Si coinciden en la misma casilla, se ven las dos.
+- Debajo del tablero, el marcador: los dos alias y, para cada uno, sus seis estrellas como seis huecos con el icono de categoría, rellenos los conseguidos.
+
+DATOS · Madrugá del 26 de marzo de 2027, 02:40
+- Tú eres «Cirio_de_San_Lorenzo» (alias de ejemplo). Tus rivales: «Costalero83» y «Mantilla_de_Triana» (alias de ejemplo).
+- Partida 1 contra Costalero83: te toca; te quedan 31 h. Tú tienes Historia; Costalero83 tiene Historia, Jornadas y sedes y Música y literatura. Tu ficha está en la segunda casilla después de La Campana (una de Patrimonio y símbolos).
+- Partida 2 contra Mantilla_de_Triana: le toca a Mantilla_de_Triana; le quedan 12 h. Tú tienes 1 estrella; Mantilla_de_Triana, 2.
+- Partida 3 contra Costalero83, finalizada: ganaste 6 a 4, el 20 de marzo.
+- Invitación pendiente que has enviado: creada hace 5 h, vence en 67 h.
+- Búsqueda de rival activa: desde hace 3 h.
+
+Preguntas reales (cópialas tal cual):
+
+P1 · Imágenes · El Gran Poder
+«¿Qué escultor talló en 1620 a Nuestro Padre Jesús del Gran Poder?»
+Respuestas: Juan de Mesa (correcta) · Juan Martínez Montañés · Pedro Roldán · Francisco Antonio Ruiz Gijón
+Explicación: «Durante siglos se atribuyó a Montañés; en 1930 apareció la carta de pago a Juan de Mesa.»
+Fuente: gran-poder.es · Nuestro Padre Jesús del Gran Poder
+
+P2 · Música y literatura · La Macarena
+«¿Qué compositor escribió las marchas "Macarena" y "La Madrugá", muy difundidas?» (en pantalla, con comillas latinas «» como en el banco)
+Respuestas: Abel Moreno (correcta) · Manuel López Farfán · Pedro Morales · Font de Anta
+Explicación: «"La Madrugá" (1987) está dedicada a todas las hermandades de esa noche; "Macarena" es de 1988.»
+Fuente: hermandaddelamacarena.es · Patrimonio musical
+
+ÁREA: Trivial online
+
+1. PORTADA DEL TRIVIAL. La pantalla aprobada «Elegir partida» pasa a ser la portada, con dos opciones grandes arriba: «Jugar solo» (10 preguntas, sin cuenta y sin conexión; lleva a lo de siempre) y «Jugar online» (contra otra persona, por turnos). Si hay partidas en las que te toca, «Jugar online» lo dice con una cifra y texto: «2 partidas te esperan».
+
+2. ELEGIR ALIAS (la primera vez). Secundaria («← Trivial»). «Elige cómo te verá tu rival.» Campo de texto con «Cirio_de_San_Lorenzo», ayuda «De 3 a 20 letras, números o _. Tu correo no se enseña nunca.» y botón primario «Guardar y seguir». Variante con error bajo el campo: «Ese alias ya está cogido».
+
+3. VESTÍBULO ONLINE. Secundaria («← Trivial»). Título «Trivial online». Dos botones: primario «Invitar a un amigo» y secundario «Buscar rival». Debajo, la bandeja en tres grupos con su cabecera: «Tu turno» (partida 1, con «te quedan 31 h» y las estrellas 1-3), «Turno del rival» («Esperando a Mantilla_de_Triana · 12 h»), «Finalizadas» («Ganaste 6-4 a Costalero83»). Aparte, arriba de la bandeja, dos filas de estado: «Invitación enviada · vence en 67 h · Cancelar» y «Buscando rival desde hace 3 h · Cancelar».
+
+4. INVITAR A UN AMIGO. Secundaria («← Online»). «Tu invitación está lista.» El enlace en una caja de solo lectura, botón primario «Compartir» (abre el menú del móvil) y secundario «Copiar enlace». Línea: «Vale 72 horas y solo para una persona.» Enlace de texto «Cancelar invitación».
+
+5. INVITACIÓN RECIBIDA. Lo que ve quien abre el enlace. «Costalero83 te reta a una partida de Trivial cofrade.» Una línea con las reglas en corto: «Por turnos, 48 horas para cada jugada. Gana quien consiga las seis estrellas.» Botones «Aceptar» (primario) y «Ahora no». Variantes pequeñas, en la misma pantalla sin botón Aceptar: «Esta invitación ya ha caducado», «Costalero83 ha cancelado esta invitación», «Otra persona ya ha aceptado esta invitación».
+
+6. PARTIDA · TE TOCA TIRAR. Secundaria («← Online»). Arriba, «Contra Costalero83» y «Te toca · te quedan 31 h». El tablero entero. El marcador debajo. Botón primario grande «Tirar el dado» (en la zona del pulgar, sin tapar a «Dar fe»). Una línea en texto: «Estás en una casilla de Patrimonio y símbolos, entre La Campana y Sierpes».
+
+7. PARTIDA · ELEGIR DESTINO. La misma tras tirar un 4: el dado con la cara 4 junto a «Has sacado un 4». En el tablero, los tres destinos posibles resaltados con contorno grueso y numerados «1», «2» y «3». Debajo, tres botones en texto, nunca solo en el tablero: «1 · Sierpes · estrella de Imágenes», «2 · Jornadas y sedes, entre Puerta de San Miguel y La Campana» y «3 · Música y literatura, en la calle de La Campana a la Salida».
+
+8. PREGUNTA ONLINE. Secundaria («← Partida»). Chip con la categoría (icono + nombre): «Imágenes · casilla de estrella: Sierpes». La pregunta P1 en Newsreader 22 px. Las cuatro respuestas A B C D; la elegida marcada con contorno en tinta antes de confirmar. Botón primario «Confirmar respuesta». Sin cuenta atrás de segundos.
+
+9. ACIERTO EN ESTRELLA. P1 resuelta: «Juan de Mesa» en verde con «Correcta». Mensaje sobrio: «Consigues la estrella de Imágenes» con el icono de la categoría (nada de fuegos artificiales). Explicación y fuente. Botón primario «Volver a tirar».
+
+10. FALLO. P2 tras elegir «Manuel López Farfán»: la tuya con «Tu respuesta», «Abel Moreno» con «Correcta». Explicación y fuente. «Ahora le toca a Costalero83.» Botón primario «Volver a la partida».
+
+11. PARTIDA · ESPERANDO AL RIVAL. La partida 2: «Esperando a Mantilla_de_Triana · tiene 12 h». Tablero y marcador, sin botón de tirar. Una línea tranquila: «Te avisaremos aquí, en la bandeja, cuando te toque.» Abajo, enlace de texto «Rendirse».
+
+12. RENDIRSE. Hoja inferior de confirmación sobre la 11: «¿Rendirte en esta partida?» «Ganará Mantilla_de_Triana y no se puede deshacer.» Botones «Rendirme» (secundario con contorno en tinta) y «Seguir jugando» (primario).
+
+13. RESULTADO. La partida 3. «Ganaste a Costalero83» en Newsreader, el marcador «6 – 4» en cifra grande y el motivo: «Conseguiste las seis estrellas». Las estrellas de ambos. Botón primario «Volver a la bandeja». Variantes de una línea: «Costalero83 se ha rendido», «Partida cerrada por inactividad: nadie jugó en dos turnos seguidos» (sin ganador).
+
+14. SIN CONEXIÓN. El vestíbulo con el aviso azul de la cabecera «Sin conexión · último dato hace 12 min». La bandeja se ve con lo último guardado, los botones de jugar desactivados y una línea: «Para jugar online necesitas conexión. Mientras, puedes jugar solo.» con enlace «Jugar solo».
+
+Claro en todas; la 6, la 7 y la 9, también en oscuro.
