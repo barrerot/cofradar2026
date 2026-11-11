@@ -1,0 +1,139 @@
+CONTEXTO
+Cofradar es una web app (PWA) para seguir la Semana Santa de Sevilla desde la calle: dice por dónde va realmente cada cofradía y cuánto puede uno fiarse de ese dato. La gente colabora con una sola acción, «Dar fe».
+
+El cofrade no vive una semana: vive el año entero esperando esa semana. Por eso Cofradar le acompaña también fuera de ella («El año cofrade»). Ya están aprobados el trivial en solitario (lienzo «Cofradar · Trivial») y el trivial online, con revancha, historial, «Te reto a esta pregunta» y número de hermano (lienzo «Cofradar · Trivial online»). Este lienzo nuevo trae dos piezas más:
+
+1. LA PREGUNTA DEL DÍA Y EL CIRIO ENCENDIDO. Solo en Cuaresma, del Miércoles de Ceniza (10 de febrero de 2027) al Sábado de Pasión (20 de marzo de 2027): 39 días.
+- Cada día hay una pregunta, la misma para todo el mundo, que cambia a las 00:00 de Madrid. Sale del banco del trivial, con su explicación y su fuente al contestar.
+- Si contestas cada día, aciertes o no, tu cirio sigue encendido: «Llevas 23 días con el cirio encendido». Si dejas pasar un día entero, se apaga y al contestar vuelve a empezar desde 1. Los aciertos se cuentan aparte («Has acertado 18 de 23»).
+- Se comparte como el Wordle, sin destripar la respuesta: «Cofradar · Día 23 de Cuaresma ✅ 🕯️ 23 días».
+- Necesita cuenta. Vive en la portada del trivial y en Mi Cofradar; nunca en Inicio ni en el Mapa. No hay avisos al móvil.
+
+2. CUADRILLAS. Un grupo privado de amigos, de 2 a 30 personas, para picarse entre ellos y no con desconocidos.
+- Quien la crea es el CAPATAZ. Entra gente con un enlace de invitación. Cualquiera puede salir cuando quiera.
+- Dentro se ve, de cada uno: su alias, su número de hermano, su cirio y las partidas online entre miembros. Por orden alfabético y SIN PODIO: ni primero, ni medallas, ni «líder».
+- Nunca se enseñan los puntos, el nivel, lo que ha dado fe nadie ni dónde ha estado.
+- Desde la cuadrilla se puede retar a un miembro a una partida online sin mandar enlace: le llega a su bandeja como la revancha (vale 72 horas, la acepta o dice «Ahora no»).
+- El capataz puede cambiar el nombre y quitar a alguien. Si el capataz sale, pasa a serlo quien lleve más tiempo dentro. Si sale el último, la cuadrilla desaparece.
+
+El tono es de casa de hermandad, no de videojuego. El cirio es un gesto de constancia, sobrio, no una racha de fuego. Si una pantalla tienta a poner llamas animadas, trofeos, coronas, medallas, confeti, «¡racha!», contadores rojos o cuentas atrás de urgencia, no.
+
+REGLAS DE TONO (son del PRD y no se negocian)
+- Nunca «te falta», «no pierdas tu racha» ni «date prisa». El cirio apagado se cuenta sin reproche: lo que hiciste se queda, y se vuelve a encender contestando.
+- Nada de clasificaciones abiertas. En la cuadrilla, orden alfabético siempre.
+- En esta tanda no se dibujan puntos de Cofradar (llegan después). Tampoco el álbum de estampas ni «Tu Semana Santa».
+
+FORMATO
+- Lienzo nuevo «Cofradar · El año cofrade». Móvil 390 × 844. Español de España. Si una pantalla es más larga, dibújala entera.
+- Usa solo los datos de abajo. La pregunta es real: cópiala tal cual, sin cambiar una palabra. Los alias, números de hermano, días, cirios, nombre de la cuadrilla y partidas son de ejemplo y van rotulados «Ejemplo» donde se vean por primera vez. No inventes hermandades, preguntas, respuestas ni cifras.
+- Los lienzos aprobados mandan en armazón, colores, chips, botones, hojas y textos: «Cofradar · Armazón», «Mi Cofradar», «Cofradar · Acceso», «Cofradar · Trivial» y «Cofradar · Trivial online». La pregunta y su resolución son las del trivial (pantallas 4–6 de «Cofradar · Trivial»); la invitación y la bandeja, las del online (3, 4, 5 y 16). Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+
+ARMAZÓN, sin redibujarlo
+- Es Cuaresma: no hay cofradías en la calle, así que NO aparece la franja «Dar fe». La barra de abajo, con los cinco destinos, activa en Mi Cofradar.
+- Pantallas secundarias con vuelta a la izquierda («← Trivial», «← Mi Cofradar», «← Cuadrillas»).
+
+ESTILO
+- El de Cofradar. Registro editorial (tono cera #F7F1E6, Newsreader en títulos y en la pregunta a 22 px; Inter en el resto). Nada por debajo de 12 px; 16 px para leer.
+- Claro: fondo #FBF9F5, superficie #FFFFFF, tinta #1D1A16, secundario #4A443C, bordes #E6E3DC. Oscuro cálido: fondo #15120F, texto #F5F1EA.
+- Respuesta buena en verde #15603B con check y «Correcta»; la equivocada, contorno en tinta, X y «Tu respuesta». Nunca rojo.
+- Prohibido: morado, dorado, símbolos religiosos como iconos (cruces, capirotes, coronas), ornamentación barroca, sepia, texturas envejecidas, degradados, desenfoques.
+- Iconos Phosphor. Toque mínimo 48 px. Ningún significado depende solo del color.
+
+EL CIRIO
+Propón un dibujo propio, de línea, sencillo: un cirio de nazareno visto de frente, alto y estrecho, con la llama quieta. Tres estados que se distingan también en escala de grises y sin depender del color:
+- ENCENDIDO: llama dibujada (puede llevar un único color cálido apagado, no dorado ni naranja chillón).
+- HOY AÚN NO: encendido, pero la pantalla dice «Contesta hoy para mantenerlo». Sin rojo y sin reloj de urgencia.
+- APAGADO: sin llama, solo el pabilo. Sin humo dramático.
+Tamaño grande (unos 96 px de alto) en la pregunta del día y pequeño (20 px, como icono) en listas. Nada de animaciones de fuego; como mucho, la llama aparece con un fundido al contestar.
+
+DATOS DE EJEMPLO · jueves 4 de marzo de 2027, 21:15, día 23 de Cuaresma
+- Tú: «Cirio_de_San_Lorenzo», hermano nº 214. Llevas 22 días seguidos con el cirio encendido y hoy aún no has contestado; al contestar pasan a ser 23. Has acertado 17 de 22 (18 de 23 si aciertas hoy).
+- La pregunta del día 23 (real, del banco del trivial, tal cual):
+  Patrimonio y símbolos · San Esteban
+  «¿A qué hermandad compró San Esteban en 1930 las andas del paso de Cristo, por 7.000 pesetas?»
+  Respuestas: Al Cachorro (correcta) · A la Macarena · Al Gran Poder · A la Esperanza de Triana
+  Explicación: «La Hermandad de la Expiración (el Cachorro) le cedió la parihuela, el canasto y los respiraderos, tallados en 1887 por Antonio Cruz Gómez.»
+  Fuente: hermandadsanesteban.org
+- La cuadrilla «Los de la Campana», 6 de 30. Capataz: Mantilla_de_Triana. Miembros, por orden alfabético, con su cirio:
+  · Acolito_de_la_O · nº 2.418 · cirio apagado
+  · Capirote_Morado · nº 905 · 8 días
+  · Cirio_de_San_Lorenzo (tú) · nº 214 · 22 días · hoy aún no
+  · Costalero83 · nº 1.032 · 23 días
+  · Mantilla_de_Triana · capataz · nº 57 · 23 días
+  · Nazareno_de_Ruda · nº 1.877 · 15 días
+- Partidas entre miembros, de la más reciente a la más antigua:
+  · 3 de marzo · Costalero83 ganó a Capirote_Morado · 6 – 4
+  · 1 de marzo · Tú ganaste a Nazareno_de_Ruda · 6 – 2
+  · 26 de febrero · Mantilla_de_Triana ganó a Costalero83 · Costalero83 se rindió
+  Y en curso: tú contra Costalero83 (te toca).
+- Otra cuadrilla tuya: «Hermanos de la oficina», 4 de 30, capataz tú.
+
+PANTALLAS
+
+PREGUNTA DEL DÍA
+
+1. PORTADA DEL TRIVIAL CON LA PREGUNTA DEL DÍA. La 1 del lienzo «Trivial online» tal cual, con una tarjeta nueva ARRIBA de «Jugar solo»: «Pregunta del día · Día 23 de Cuaresma», el cirio pequeño y «Llevas 22 días con el cirio encendido · Contesta hoy para mantenerlo». Toda la tarjeta lleva a la pregunta.
+Variantes de una línea en la misma pantalla:
+- ya contestada hoy: «Hecho por hoy · 23 días · Mañana, nueva pregunta»;
+- cirio apagado: «Tu cirio se apagó. Contesta hoy y vuelve a encenderse»;
+- sin cuenta: «Pregunta del día · Entra con Google para encender tu cirio» (lleva a «Entrar con Google» del lienzo «Acceso»);
+- antes de Cuaresma (desde el 1 de febrero): «El Miércoles de Ceniza, 10 de febrero, empieza la pregunta del día»;
+- acabada la Cuaresma (del 21 de marzo en adelante): «Mantuviste el cirio 39 días esta Cuaresma». El resto del año, la tarjeta no aparece.
+
+2. LA PREGUNTA DEL DÍA, SIN RESPONDER. Secundaria «← Trivial». Arriba, en pequeño, «Día 23 de Cuaresma · jueves 4 de marzo». El chip «Patrimonio y símbolos · San Esteban», la pregunta en Newsreader 22 px, las cuatro respuestas A–D y «Confirmar respuesta», como la pregunta del trivial. Abajo del todo, discreta: «Una pregunta al día, la misma para todos. Cambia a las 00:00.»
+
+3. LA PREGUNTA DEL DÍA, RESUELTA (acierto). La 2 con «Al Cachorro» marcada «Correcta», la explicación y la fuente. Debajo, el bloque del cirio:
+- el cirio grande, encendido;
+- «Llevas 23 días con el cirio encendido», en Newsreader;
+- en secundario: «Has acertado 18 de 23»;
+- una fila de 23 marcas pequeñas, una por día (lleno si acertaste, contorno si fallaste), con el día 23 resaltado. Sin rojo.
+Luego, primario «Compartir» y secundario «Volver al trivial». Y el enlace de texto que ya existe: «Retar a un amigo con esta pregunta».
+Al pie, en pequeño: «Mañana, nueva pregunta a las 00:00».
+En claro y en oscuro.
+
+4. COMPARTIR (como el Wordle). Hoja sobre la 3, «Vista previa del mensaje», igual que la del reto, con:
+«Cofradar · Día 23 de Cuaresma ✅ 🕯️ 23 días cofradar.es/dia»
+Botones «Compartir» y «Ahora no». Variante de una línea, si falla: «❌» en lugar de «✅». Nunca la respuesta.
+
+5. FALLO. La 3 tras elegir «A la Macarena»: la suya con «Tu respuesta», «Al Cachorro» con «Correcta». El cirio sigue igual de encendido, con «Llevas 23 días con el cirio encendido» y «Has acertado 17 de 23». Que se note que fallar no apaga nada.
+
+6. CIRIO APAGADO. La 2 para alguien que no contestó ayer, con una línea arriba, sin reproche: «Tu cirio se apagó el día 22. Lo encendiste 21 días seguidos. Contesta hoy y vuelve a encenderse.» El cirio pequeño, apagado. Tras contestar (variante de una línea), «Llevas 1 día con el cirio encendido».
+
+7. MI COFRADAR EN CUARESMA. Sobre la portada aprobada de Mi Cofradar (la 21a de «Trivial online», con el número de hermano), sin redibujarla:
+- en la tarjeta de progreso, bajo «Hermano nº 214 de Cofradar · desde noviembre de 2026», una línea con el cirio pequeño: «Cirio encendido · 22 días · contesta hoy». Lleva a la pregunta del día;
+- en el bloque de filas (Seguidas, Mi colección, Mis aportaciones), una fila nueva «Cuadrillas» con icono Phosphor UsersThree y «2» a la derecha;
+- quita la franja «Dar fe» (es Cuaresma).
+
+CUADRILLAS
+
+8. TUS CUADRILLAS. Secundaria «← Mi Cofradar», título «Cuadrillas». Una fila por cuadrilla: nombre en Newsreader, «6 personas · capataz Mantilla_de_Triana» y, si es tuya, «tú eres el capataz». Primario «Crear una cuadrilla». Al pie: «Una cuadrilla es un grupo privado de amigos, de 2 a 30. Solo la ven sus miembros.»
+Variante vacía, con el mismo texto de ayuda y el botón.
+
+9. CREAR UNA CUADRILLA. Un solo campo, «Nombre de la cuadrilla», con ayuda «Hasta 30 letras. Lo ven solo los que entren». Debajo, «Serás el capataz: podrás invitar, cambiar el nombre y quitar a alguien.» Primario «Crear». Error en tinta con icono, nunca rojo: «Ponle un nombre».
+
+10. INVITAR A LA CUADRILLA. Como la 4 del online: el enlace, «Compartir», «Copiar enlace», «El enlace vale 7 días y sirve para varias personas, hasta llenar la cuadrilla», y «6 de 30». El enlace se puede anular («Anular el enlace»).
+
+11. INVITACIÓN RECIBIDA. Lo que ve quien abre el enlace, como la 5 del online: «Mantilla_de_Triana te invita a la cuadrilla «Los de la Campana»», «6 personas», y lo que verá dentro: «Verás el alias, el cirio y las partidas de cada uno. Nunca tus puntos ni dónde has estado.» Primario «Entrar en la cuadrilla», secundario «Ahora no».
+Variantes de una línea: sin cuenta, «Entra con Google para unirte»; sin alias, pide el alias como la 2 del online; llena («Esta cuadrilla ya tiene 30 personas»); enlace caducado o anulado; ya estás dentro («Ya estás en esta cuadrilla» con «Ver la cuadrilla»).
+
+12. LA CUADRILLA. Secundaria «← Cuadrillas». Título «Los de la Campana», debajo «6 personas · capataz Mantilla_de_Triana». Acciones arriba: «Invitar» y un menú «…».
+- MIEMBROS, por orden alfabético: alias, «nº 1.032» en secundario y, a la derecha, el cirio pequeño con sus días («23 días», «apagado»). Tu fila con «(tú)» y «hoy aún no». El capataz, con la palabra «capataz», sin icono de corona. Nada de podio, posiciones ni colores de ganador. Al tocar un miembro se abre su hoja (13).
+- PARTIDAS EN LA CUADRILLA: la tuya en curso arriba («Tú contra Costalero83 · te toca», que lleva a la partida), y debajo las terminadas con fecha, quién ganó y cómo. Sin marcador acumulado de la cuadrilla.
+- Al pie, pequeño: «Solo lo veis los de la cuadrilla. El cirio se ve en Cuaresma.»
+En claro y en oscuro.
+Variante fuera de Cuaresma (en una línea): la columna del cirio no aparece.
+
+13. UN MIEMBRO. Hoja sobre la 12 al tocar «Costalero83»: alias, «hermano nº 1.032», «Tú y Costalero83: 3 – 2 · Ver historial» (lleva a la 17 del online) y primario «Jugar una partida». Si ya hay una en curso contra él, «Ir a la partida». Si ya le has retado, «Reto enviado · vence en 72 h» con «Cancelar».
+Para el capataz, además, un enlace de texto al pie: «Quitar de la cuadrilla».
+
+14. EL RETO EN LA BANDEJA. La 16 del online con una fila nueva en el grupo de arriba (que pasa a llamarse «Te esperan»): «Costalero83 te reta · Los de la Campana · vence en 70 h», con «Aceptar» y «Ahora no», junto a la revancha que ya estaba.
+
+15. MENÚ DE LA CUADRILLA Y SALIR. El menú «…» de la 12 como hoja: «Cambiar el nombre» y «Anular el enlace de invitación» (solo el capataz) y «Salir de la cuadrilla». Al elegir «Salir», hoja de confirmación como la de rendirse: «¿Salir de «Los de la Campana»? Podrás volver si te invitan otra vez.» con «Salir» y «Cancelar». Si eres el capataz: «Mantilla_de_Triana pasará a ser el capataz». Si eres el último: «La cuadrilla desaparecerá».
+Y la hoja de «Quitar de la cuadrilla», para el capataz: «¿Quitar a Capirote_Morado? Podrá volver si le invitáis otra vez.»
+
+Claro en todas; la 3 y la 12, también en oscuro.
+
+AL TERMINAR, dime:
+- qué has decidido del dibujo del cirio y por qué;
+- qué choca con los lienzos aprobados, si algo;
+- lo que no hayas podido dibujar con los datos que te he dado.
