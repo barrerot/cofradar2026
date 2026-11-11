@@ -365,3 +365,17 @@ Reglas: el álbum enseña lo que tienes y deja en blanco lo que no; nunca «te f
 - `24a-mas-5`, `24b-tope-de-la-casa` — 24 · LOS PUNTOS DE LA CASA: «+5 puntos para tu cargo» en la partida ganada, «+2» en la pregunta del día y «Hoy ya has sumado los 10 puntos de la casa. Mañana, más.» al llegar al tope.
 
 Frases de los cargos dibujadas: Costalero, Contraguía y Diputado de tramo. Las otras nueve, por escribir y revisar con Carlos.
+
+**Tu Semana Santa** (página «Tu Semana Santa» del mismo lienzo, aprobada el 11 de noviembre de 2026; F-59). Prompt: `prompts/28-tu-semana-santa.txt` (con tres correcciones en el chat: la 31 sin tarjeta del cargo, la 29 de Monaguillo, y el icono del trivial en la línea de la pregunta del día). Es el Domingo de Resurrección, 28/03/2027, por la tarde: cabecera «Resurrección» y sin franja «Dar fe». Alias, cifras y cargos, de ejemplo.
+
+Reglas: solo datos que Cofradar tiene, nunca las horas en la calle ni por dónde anduvo nadie. Sale lo que hizo y se calla lo que no: sin «0», sin «te faltó», sin comparar ni medallas. Vive solo en Mi Cofradar; cada año tiene su tarjeta, y el año sin nada no tiene ni fila.
+
+**La tarjeta** (solo tipografía): la estampa del álbum en grande, con papel, marco fino y filete de 2 px en tinta. Arriba, «Cofradar» espaciado y «Semana Santa de Sevilla · 2027»; una rayita, el alias en Newsreader y «Hermano nº 214 · Diputado de tramo en Cofradar»; un filete y las líneas del año, alineadas a la izquierda con su icono (ojo, sello de dar fe, cirio, Cards, BookOpen); al pie, «cofradar.es». Tamaño fijo, con las líneas centradas en vertical: con dos líneas sigue siendo una estampa entera. Siempre en claro; en oscuro solo cambia la pantalla de alrededor. Un alias largo se corta por el guion bajo, nunca a mitad de palabra.
+
+- `25-mi-cofradar-resurreccion`, `25-mi-cofradar-resurreccion-oscuro` — 25 · MI COFRADAR: la fila «Tu Semana Santa 2027 · Ya está tu tarjeta del año» (Scroll en granate sobre cuadrado granate suave, borde granate suave) entre la tarjeta del cargo y el bloque de «lo tuyo». Desde el año siguiente, la fila se queda sin la línea de «ya está».
+- `26-tu-semana-santa`, `26-tu-semana-santa-oscuro` — 26 · LA TARJETA: «← Mi Cofradar», «Tu Semana Santa», la tarjeta, «Compartir», «Guardar imagen» y «Las horas que pasaste en la calle no salen: Cofradar no guarda dónde has estado.»
+- `27-imagen-compartida` — 27 · LA IMAGEN, a 1080 × 1920 (estados de WhatsApp e historias): la misma tarjeta, con la letra algo mayor y casi sin margen.
+- `28-compartir` — 28 · COMPARTIR: la hoja aprobada con miniatura y «Mi Semana Santa 2027 en Cofradar · cofradar.es», sin emojis; «Compartir» y «Ahora no».
+- `29-un-ano-con-poco`, `29b-imagen-con-poco` — 29 · UN AÑO CON POCO: «Nazareno_de_la_Alfalfa», «Hermano nº 1.873 · Monaguillo en Cofradar», solo «Viste 3 cofradías» y «Contestaste 12 preguntas del día» (con Cards, no con el cirio apagado). La 29b, a 1080 × 1920, con el alias en dos líneas.
+- `30-otros-anos`, `30b-ano-anterior` — 30 · OTROS AÑOS: al pie de la 26, «Otros años» con una fila por año («Semana Santa 2027»); al abrirla, «← Tu Semana Santa» y título «Semana Santa 2027».
+- `31-sin-nada` — 31 · SIN NADA QUE CONTAR: Mi Cofradar sin la fila y sin la tarjeta del cargo (0 puntos). Las cifras de las filas de «lo tuyo» no cuentan: la app enseña las que tenga cada persona.
