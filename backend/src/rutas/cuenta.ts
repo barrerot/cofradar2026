@@ -5,6 +5,7 @@ import { historias } from "./aportaciones.js";
 import { hermandadesYEdicion } from "./cofradias.js";
 import { alBorrarCuenta, datosDe as datosTrivial } from "../trivial/partidas.js";
 import { hermanoDe } from "../hermano.js";
+import { datosDe as datosDia } from "../dia/dia.js";
 
 /**
  * Lo de la cuenta de cada persona. Todas las rutas piden sesión (`X-Sesion`) y solo tocan lo suyo.
@@ -101,7 +102,7 @@ routerCuenta.get(
   ruta(async (_peticion, respuesta, usuario) => {
     const { porId } = await hermandadesYEdicion();
     const db = supabase();
-    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano] = await Promise.all([
+    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano, preguntaDelDia] = await Promise.all([
       db.auth.admin.getUserById(usuario.id),
       db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
       db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
@@ -113,6 +114,7 @@ routerCuenta.get(
         .order("observada"),
       datosTrivial(usuario.id),
       hermanoDe(usuario.id),
+      datosDia(usuario.id),
     ]);
     for (const r of [seguidas, vistas, nombres, aportaciones]) if (r.error) throw r.error;
     if (cuenta.error) throw cuenta.error;
@@ -149,6 +151,8 @@ routerCuenta.get(
         })),
         // El alias del trivial online y sus partidas (sin las preguntas)
         trivial,
+        // La pregunta del día de Cuaresma (F-55): qué día contestaste y si acertaste
+        pregunta_del_dia: preguntaDelDia,
       });
   }),
 );

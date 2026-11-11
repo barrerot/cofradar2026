@@ -21,6 +21,7 @@ import { Seguidas } from "./rutas/Seguidas";
 import { Trivial } from "./rutas/Trivial";
 import { RedirigirInvitacion, TrivialAlias, TrivialHistorial, TrivialInvitacion, TrivialInvitar, TrivialPartida, TrivialPortada, TrivialVestibulo } from "./rutas/TrivialOnline";
 import { RedirigirReto, TrivialReto } from "./rutas/RetoTrivial";
+import { PreguntaDelDia, RedirigirDia } from "./rutas/PreguntaDelDia";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 import { Panel } from "./rutas/admin/Panel";
@@ -70,6 +71,8 @@ export function App() {
       <Route path="/trivial/i/:token" element={<RedirigirInvitacion />} />
       <Route path="/mi-cofradar/trivial/reto/:id" element={<TrivialReto estado={estado} />} />
       <Route path="/trivial/r/:id" element={<RedirigirReto />} />
+      <Route path="/mi-cofradar/trivial/dia" element={<PreguntaDelDia estado={estado} />} />
+      <Route path="/dia" element={<RedirigirDia />} />
       <Route path="/mi-cofradar/cuenta" element={<Cuenta />} />
       <Route path="/mi-cofradar/cuenta/eliminar" element={<EliminarCuenta />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />

@@ -1,3 +1,4 @@
+import { LineaCirio } from "./PreguntaDelDia";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
@@ -61,6 +62,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
         ) : (
           <>
             {hermano ? <NumeroHermano h={hermano} /> : null}
+            <LineaCirio />
             <p className="cf-mi-progreso">
               <Icono nombre="darFeNoVerificable" tamano={24} />
               <span>Empiezas a sumar puntos cuando das fe.</span>
@@ -142,6 +144,7 @@ function Progreso({ puntos, hermano }: { puntos: number; hermano: Hermano | null
         {n.nombre} <span className="en">en Cofradar</span>
       </p>
       {hermano ? <NumeroHermano h={hermano} /> : null}
+      <LineaCirio />
       {n.siguiente ? (
         <>
           <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pc} aria-label={`Hacia ${n.siguiente.nombre}`}>

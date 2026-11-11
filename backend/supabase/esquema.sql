@@ -466,3 +466,30 @@ $$;
 drop trigger if exists dar_numero_de_hermano on auth.users;
 create trigger dar_numero_de_hermano after insert on auth.users
   for each row execute function public.dar_numero_de_hermano();
+
+-- ── La pregunta del día y el cirio encendido (F-55; aprobada por Carlos el 10/11/2026) ─────────────
+-- Durante la Cuaresma, una pregunta al día, la misma para todos, que cambia a las 00:00 de Madrid. Sale
+-- del banco del trivial. Contestar cada día (aciertes o no) mantiene el cirio encendido; dejar pasar un
+-- día lo apaga. El calendario lo carga scripts/importar-cuaresma.ts desde docs/datos/trivial/cuaresma-AAAA.csv.
+create table if not exists dia_pregunta (
+  fecha        date primary key,       -- día de Madrid
+  dia          smallint not null check (dia between 1 and 60),   -- «Día 23 de Cuaresma»
+  pregunta_id  integer not null        -- el id del CSV del trivial (igual en todas las versiones del banco)
+);
+alter table dia_pregunta enable row level security;
+
+-- Lo que contestó cada uno. Una por persona y día. Las contestadas con el reloj de prueba (RELOJ_DE_PRUEBA)
+-- van aparte, marcadas de_prueba, y no se mezclan nunca con las de verdad.
+create table if not exists dia_respuesta (
+  usuario_id     uuid not null references auth.users (id) on delete cascade,
+  de_prueba      boolean not null default false,
+  fecha          date not null,
+  pregunta_id    integer not null,
+  banco_version  integer not null,
+  respuesta      text not null,        -- id de la opción elegida
+  acierto        boolean not null,
+  creada         timestamptz not null default now(),
+  primary key (usuario_id, de_prueba, fecha)
+);
+create index if not exists dia_respuesta_fecha on dia_respuesta (fecha);
+alter table dia_respuesta enable row level security;

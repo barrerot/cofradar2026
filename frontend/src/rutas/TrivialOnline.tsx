@@ -28,11 +28,13 @@ import { DarFe } from "./DarFe";
 import { TableroTrivial, Estrellas } from "./TableroTrivial";
 import { FuenteDe } from "./Trivial";
 import { RetarConPregunta } from "./RetoTrivial";
+import { TarjetaDia } from "./PreguntaDelDia";
 
 /**
  * P-33 Trivial online por turnos (F-51; 11-trivial-online/).
  *
- *   /mi-cofradar/trivial                    portada: «Jugar solo» o «Jugar online» (01)
+ *   /mi-cofradar/trivial                    portada: «Jugar solo» o «Jugar online» (01), y en Cuaresma la
+ *                                           pregunta del día encima (F-55, PreguntaDelDia.tsx)
  *   /mi-cofradar/trivial/online             vestíbulo y bandeja (03, 14); el alias la primera vez (02)
  *   /mi-cofradar/trivial/alias              cambiar el alias (desde Cuenta)
  *   /mi-cofradar/trivial/invitar/:token     el enlace para compartir (04)
@@ -71,6 +73,7 @@ export function TrivialPortada({ estado }: { estado: EstadoJornada }) {
   return (
     <PantallaSecundaria titulo="Trivial cofrade" vuelta={{ etiqueta: "Mi Cofradar", ruta: "/mi-cofradar" }} accion={franja(estado)} registro="editorial">
       <div className="cf-online">
+        <TarjetaDia />
         <Link to="/mi-cofradar/trivial/solo" className="cf-online-modo">
           <span className="cf-online-modo-texto">
             <span className="cf-online-modo-nombre">Jugar solo</span>
@@ -918,7 +921,7 @@ function ChipCategoria({ p }: { p: NonNullable<Partida["pregunta"]> }) {
   );
 }
 
-function Opciones({
+export function Opciones({
   opciones,
   elegida,
   alElegir,
