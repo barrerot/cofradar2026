@@ -1,0 +1,62 @@
+Seguimos en el lienzo aprobado «Cofradar · El año cofrade». Añade una página nueva, «Tu Semana Santa», sin redibujar las que ya están: armazón, estilo, colores, cirio, estampas, cargo y textos se quedan exactamente como los aprobaste.
+
+QUÉ ES NUEVO
+El Domingo de Resurrección, cuando acaba la Semana Santa, cada persona con cuenta recibe su tarjeta del año: un resumen de lo que vivió con Cofradar, para guardarlo y compartirlo. Ejemplo del PRD: «Este año viste 14 cofradías, diste fe 22 veces y 9 ayudaron a situar un paso, mantuviste el cirio 39 días y ganaste 6 de 9 partidas».
+
+Reglas que no se negocian:
+- Solo datos que Cofradar tiene. Nunca las horas en la calle ni por dónde anduvo nadie: Cofradar no guarda dónde ha estado nadie.
+- Enseña lo que hizo y calla lo que no. Si no dio fe, esa línea no sale; nunca «0 veces», «te faltó» ni «el año que viene, más». Nada de comparar con nadie: ni «más que el 80 %», ni rankings, ni medallas, trofeos o confeti.
+- Es un recuerdo, no un premio. El tono es el de una estampa de recuerdo de hermandad: sobrio, tipográfico, sin imágenes de los titulares ni escudos.
+- Vive en Mi Cofradar. Nunca en Inicio ni en el Mapa. Cada año tiene la suya y las de antes se quedan.
+
+FORMATO
+- Móvil 390 × 844, como el resto del lienzo. Si una pantalla es más larga, dibújala entera.
+- Usa solo los datos de abajo. Las cifras, el alias y las fechas son de ejemplo y van rotulados «Ejemplo» donde se vean por primera vez. No inventes hermandades ni cifras.
+- Los lienzos aprobados mandan: «Mi Cofradar» y las páginas ya aprobadas de este lienzo (sobre todo el cirio, las estampas y la tarjeta del cargo). Si algo de aquí choca con ellos, ganan ellos y me lo dices.
+- Es el Domingo de Resurrección, 28 de marzo de 2027, por la tarde: ya no hay franja «Dar fe» (la jornada ha acabado).
+
+DATOS DE EJEMPLO
+- Tú: «Cirio_de_San_Lorenzo», hermano nº 214, Diputado de tramo en Cofradar.
+- Tu Semana Santa 2027 (Ejemplo):
+  · Viste 14 cofradías (las que marcaste en Mi colección con el año 2027).
+  · Diste fe 22 veces, y 9 de ellas ayudaron a situar un paso.
+  · El cirio: lo mantuviste encendido los 39 días de la Cuaresma.
+  · Trivial online: ganaste 6 de 9 partidas.
+  · Tu álbum: 5 estampas nuevas este año (14 en total).
+- Para la variante con poco: alguien que solo vio 3 cofradías y contestó 12 preguntas del día con el cirio apagado al final; no dio fe ni jugó online.
+
+PANTALLAS
+
+25. MI COFRADAR EL DOMINGO DE RESURRECCIÓN. La 16 de este lienzo (Mi Cofradar con el cargo y el álbum), sin franja «Dar fe», con una fila nueva arriba del bloque de «lo tuyo», destacada pero sobria: «Tu Semana Santa 2027» con una línea debajo, «Ya está tu tarjeta del año». Propón su icono (Phosphor, sobrio). A partir del año siguiente la fila se queda, sin la línea de «ya está».
+En claro y en oscuro.
+
+26. LA TARJETA. Secundaria «← Mi Cofradar», título «Tu Semana Santa». Dentro, la tarjeta, que es lo que se comparte, con forma de estampa de recuerdo (vertical, papel, marco y filete como las estampas del álbum):
+- arriba, en pequeño, «Cofradar» y «Semana Santa de Sevilla · 2027»;
+- en Newsreader, el alias y, debajo, «Hermano nº 214 · Diputado de tramo en Cofradar»;
+- las líneas del año, cada una con su icono de siempre (el ojo de Mi colección, el sello de dar fe, el cirio, el icono del trivial, el libro del álbum), en frases cortas y en llano:
+  «Viste 14 cofradías»
+  «Diste fe 22 veces · 9 ayudaron a situar un paso»
+  «Mantuviste el cirio encendido los 39 días de la Cuaresma»
+  «Ganaste 6 de 9 partidas»
+  «5 estampas nuevas en tu álbum»
+- al pie, en pequeño: «cofradar.es».
+Bajo la tarjeta, primario «Compartir» y secundario «Guardar imagen». Y, en secundario, una línea: «Las horas que pasaste en la calle no salen: Cofradar no guarda dónde has estado.»
+En claro y en oscuro (la tarjeta compartida es siempre la clara; en oscuro cambia solo la pantalla de alrededor).
+
+27. LA IMAGEN QUE SE COMPARTE. La tarjeta sola, como imagen vertical 1080 × 1920 (para estados de WhatsApp e historias), sin nada de la app alrededor. Que se lea bien en pequeño, en una conversación.
+
+28. COMPARTIR. La hoja de compartir aprobada (la 4 de este lienzo o la del reto) con la vista previa de la imagen y el texto que la acompaña: «Mi Semana Santa 2027 en Cofradar · cofradar.es». Botones «Compartir» y «Ahora no». Sin emojis.
+
+29. UN AÑO CON POCO. La 26 con los datos de la variante: solo salen «Viste 3 cofradías» y, para el cirio apagado, «Contestaste 12 preguntas del día». Sin líneas vacías, sin ceros, sin reproche. Que siga pareciendo una tarjeta bonita aunque tenga dos líneas.
+
+30. LAS DE OTROS AÑOS. Al pie de la 26, un bloque «Otros años» con la lista de tarjetas anteriores, una fila por año. Dibújalo con una sola fila de ejemplo, «Semana Santa 2027», tal como se vería en 2028, y la 26 abierta en 2028 mostrando ese año, no el actual. Si el año no tuvo nada, ese año no tiene tarjeta (no sale la fila).
+
+31. SIN NADA QUE CONTAR. Alguien con cuenta que este año no hizo nada en Cofradar: en Mi Cofradar no aparece la fila «Tu Semana Santa 2027». Dibuja solo esa portada (la 25 sin la fila), para que se vea que no hay hueco ni aviso.
+
+Claro en todas; la 25 y la 26, también en oscuro.
+
+AL TERMINAR, dime:
+- qué has decidido del dibujo de la tarjeta y por qué;
+- qué icono propones para la fila «Tu Semana Santa»;
+- qué choca con los lienzos aprobados, si algo;
+- lo que no hayas podido dibujar con los datos que te he dado.
