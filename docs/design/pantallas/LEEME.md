@@ -344,3 +344,24 @@ Reglas (PRD, F-55 y F-57; P-34 y P-36): pregunta del día del 10/02 al 20/03/202
 - `13-miembro`, `13b-jugar`, `13c-reto-enviado`, `13d-capataz` — 13 · UN MIEMBRO: «Tú y X: 3 – 2 · Ver historial», y «Ir a la partida», «Jugar una partida» o «Reto enviado · vence en 72 h»; el capataz, además, «Quitar de la cuadrilla».
 - `14-bandeja` — 14 · EL RETO EN LA BANDEJA: el grupo de arriba pasa a «Te esperan», con revanchas y retos de cuadrilla. Las fechas de «Finalizadas» son las de la 16 del online.
 - `15-menu`, `15b-menu-capataz`, `15c-salir`, `15d-salir-capataz`, `15e-salir-ultimo`, `15f-quitar` — 15 · MENÚ, SALIR Y QUITAR. Si sale el capataz, pasa a serlo quien lleve más tiempo dentro (en la app, con su alias real); si sale el último, la cuadrilla desaparece.
+
+**Álbum y cargo** (página «Álbum y cargo» del mismo lienzo, aprobada el 11 de noviembre de 2026; F-56 y F-58, P-35 y P-37). Prompts: `prompts/27-album-y-cargo-ajustes.txt` y `prompts/27b-album-y-cargo-correcciones.txt`. Es la Madrugá del 26/03/2027, 02:40, salvo la 24b (Cuaresma). Nombres de hermandades y la pregunta del Gran Poder, reales; grados, puntos y alias, de ejemplo.
+
+Reglas: el álbum enseña lo que tienes y deja en blanco lo que no; nunca «te falta», «de 72», contadores por jornada ni barras. Es de por vida y no da puntos. Cargo: la calle (dar fe, sin tope) y la casa (partida online ganada 5, pregunta del día 2, hasta 10 al día; el trivial en solitario no suma). Desde Diputado de tramo, al menos la mitad de la calle.
+
+**La estampa** (solo tipografía): papel con marco y filete, la jornada en pequeño, una rayita y el nombre en Newsreader. En blanco: marco y filete finos en gris y el nombre en gris, sin marcas. Con grados, el filete pasa a tinta y engorda (1, 1,5 o 2 px) y salen sus marcas: Cards «La conoces», ojo relleno granate «La has visto», sello con check granate «Has dado fe». La de tres grados no cambia de color. En la app, las marcas no pueden tocar el filete (en la 17 van muy justas).
+
+**Álbum:**
+- `16-mi-cofradar`, `16-mi-cofradar-oscuro` — 16 · MI COFRADAR: la tarjeta con «Diputado de tramo en Cofradar», «Faltan 320» hacia Fiscal de cruz y «De la calle 620 · De la casa 560» (toda lleva a la 21); la fila «Álbum de estampas · 14» (BookOpen) entre Mi colección y Mis aportaciones. Cada fila, solo su número.
+- `17-album`, `17-album-oscuro` — 17 · EL ÁLBUM: «Tienes 14 estampas», «Cómo se completan», selector de jornada sin fechas y cuadrícula de tres en fila.
+- `18-estampa`, `18b-en-blanco`, `18c-dos-grados` — 18 · UNA ESTAMPA: la estampa en grande, una fila por grado con lo que hay («2026 · 2027», «Madrugá de 2027») y «Ver su ficha». En blanco, las tres filas en gris sin texto de lo que falta.
+- `19-como-se-completan` — 19 · CÓMO SE COMPLETAN, con «Lo de cada año se suma. El álbum no da puntos.»
+- `20-nueva-en-tu-album` — 20 · NUEVA EN TU ÁLBUM: bajo la fuente del acierto, miniatura y «Nueva en tu álbum: El Gran Poder · la conoces · Ver el álbum». Sin animación.
+
+**Cargo:**
+- `21-tu-cargo`, `21-tu-cargo-oscuro` — 21 · TU CARGO: cargo, puntos y frase del puesto; los doce cargos (pasados con check, el tuyo resaltado, los siguientes en secundario, sin candados); la calle y la casa con su cifra; la regla; «Los puntos no compran nada…».
+- `22-tope-de-la-calle` — 22 · EL TOPE: 400 de la calle y 780 de la casa se quedan en Contraguía. Sin barra ni «Faltan»: línea en tinta con icono de información.
+- `23-subes-de-cargo`, `23b-subes-tras-partida` — 23 · SUBES DE CARGO: hoja con «Ahora eres Costalero en Cofradar», la frase del puesto y un solo «Seguir». Sin confeti ni compartir. Sale tras dar fe o tras ganar una partida.
+- `24a-mas-5`, `24b-tope-de-la-casa` — 24 · LOS PUNTOS DE LA CASA: «+5 puntos para tu cargo» en la partida ganada, «+2» en la pregunta del día y «Hoy ya has sumado los 10 puntos de la casa. Mañana, más.» al llegar al tope.
+
+Frases de los cargos dibujadas: Costalero, Contraguía y Diputado de tramo. Las otras nueve, por escribir y revisar con Carlos.
