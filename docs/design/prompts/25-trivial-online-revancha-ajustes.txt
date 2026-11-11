@@ -1,0 +1,59 @@
+Seguimos en el lienzo aprobado «Cofradar · Trivial online». Añade estas pantallas sin redibujar las que ya están: armazón, estilo, colores, tablero, fichas, marcador y textos se quedan exactamente como los aprobaste.
+
+QUÉ ES NUEVO
+Cuatro piezas para que el online tenga más pique y más cofradía:
+1. REVANCHA. Al acabar una partida se le puede pedir la revancha al mismo rival. Le llega directamente a su bandeja, sin enlace. Vale 72 horas, y él la acepta o dice «Ahora no». Solo hay una pendiente por pareja. Si la acepta, empieza una partida normal.
+2. HISTORIAL CON CADA RIVAL. «Costalero83 y tú: 3 – 2», con las partidas una a una. Ese marcador solo lo veis los dos.
+3. «TE RETO A ESTA PREGUNTA». Después de contestar una pregunta, la mandas por WhatsApp. Quien abre el enlace la contesta SIN cuenta y ve la explicación y la fuente. El enlace no dice quién lo mandó ni lo que contestó.
+4. NÚMERO DE HERMANO. Cada cuenta tiene un número por orden de llegada, como la antigüedad en una hermandad: «Hermano nº 214 de Cofradar». Siempre «de Cofradar», porque no es la antigüedad de ninguna hermandad real. Se ve junto al alias en el online, en Mi Cofradar y en Cuenta.
+
+Lo que NO trae esta tanda: puntos, rachas, cirio, estampas, cuadrillas ni clasificaciones. Esas piezas llegan después. Nada de trofeos, coronas, medallas ni confeti: la revancha es un gesto entre dos, sobrio.
+
+FORMATO
+- Móvil 390 × 844, como el resto del lienzo. Si una pantalla es más larga, dibújala entera.
+- Usa solo los datos de abajo. La pregunta es real: cópiala tal cual. Los alias, los números de hermano, las fechas y el historial son de ejemplo, y van rotulados «Ejemplo» donde se vean por primera vez. No inventes hermandades, preguntas, respuestas ni cifras.
+- Si algo choca con los lienzos aprobados, ganan ellos y me lo dices.
+
+DATOS DE EJEMPLO · Madrugá del 26 de marzo de 2027, 02:40, como en el resto del lienzo
+- Tú: «Cirio_de_San_Lorenzo», hermano nº 214, desde el 12 de noviembre de 2026.
+- Costalero83: hermano nº 1.032. Mantilla_de_Triana: hermano nº 57.
+- Historial con Costalero83, de la más reciente a la más antigua (marcador 3 – 2 a tu favor):
+  · 20 de marzo · Ganaste 6 – 4 · por estrellas
+  · 11 de marzo · Perdiste · te rendiste
+  · 2 de marzo · Ganaste · Costalero83 se rindió
+  · 21 de febrero · Perdiste 3 – 6 · por estrellas
+  · 9 de febrero · Ganaste 6 – 2 · por estrellas
+  Y la partida 1 contra él, en curso.
+- Historial con Mantilla_de_Triana: ninguna terminada. La partida 2, en curso.
+
+La pregunta real del reto (la P1 del lienzo, tal cual):
+Imágenes · El Gran Poder
+«¿Qué escultor talló en 1620 a Nuestro Padre Jesús del Gran Poder?»
+Respuestas: Juan de Mesa (correcta) · Juan Martínez Montañés · Pedro Roldán · Francisco Antonio Ruiz Gijón
+Explicación: «Durante siglos se atribuyó a Montañés; en 1930 apareció la carta de pago a Juan de Mesa.»
+Fuente: gran-poder.es · Nuestro Padre Jesús del Gran Poder
+
+PANTALLAS
+
+15. RESULTADO CON REVANCHA. La 13 (ganaste 6 – 4 a Costalero83) con dos cambios:
+- Bajo el alias del rival, en secundario, «hermano nº 1.032».
+- Botón primario «Pedir la revancha» y, debajo, el secundario «Volver a la bandeja». Además, un enlace de texto «Tú y Costalero83: 3 – 2 · Ver historial».
+Variantes de una línea, en la misma pantalla: tras pedirla, el botón pasa a «Revancha pedida · vence en 72 h» (desactivado), con el enlace «Cancelar». Si el rival eliminó su cuenta, sale «Jugador eliminado», sin revancha ni historial.
+En claro y en oscuro.
+
+16. VESTÍBULO CON REVANCHAS. La 3 tal cual, con un grupo nuevo arriba del todo de la bandeja, «Te piden la revancha»: «Mantilla_de_Triana te pide la revancha · vence en 70 h», con «Aceptar» (primario pequeño) y «Ahora no» (texto). Y, entre las filas de estado, la tuya: «Revancha pedida a Costalero83 · vence en 72 h · Cancelar». En la fila «Finalizadas», «Ganaste 6-4 a Costalero83» lleva a su historial.
+
+17. HISTORIAL CON UN RIVAL. Secundaria («← Online»). Título «Tú y Costalero83», con «hermano nº 1.032» debajo. El marcador «3 – 2» en cifra grande, con «tú» y «Costalero83» bajo cada cifra. Una fila «En curso · te toca · te quedan 31 h» que lleva a la partida. Debajo, la lista de las cinco terminadas: fecha, resultado y motivo. La de ganar, con contorno en tinta. La de perder, sin rojo. Botón primario «Pedir la revancha». Una línea pequeña al pie: «Este marcador solo lo veis vosotros dos.»
+
+18. RETAR CON UNA PREGUNTA. La 9 (acierto en Sierpes con la P1) con un enlace de texto nuevo bajo la fuente, con icono de compartir: «Retar a un amigo con esta pregunta». Al pulsarlo, se abre el menú de compartir del móvil. Dibuja delante, como hoja, la vista previa del mensaje: «¿Sabes qué escultor talló en 1620 a Nuestro Padre Jesús del Gran Poder? Yo sí. ¿Y tú? cofradar.es/trivial/r/…». El mismo enlace va también en la 10 (fallo), y en la resolución del trivial en solitario del lienzo «Cofradar · Trivial»: dibuja solo la de la 9.
+
+19. EL RETO, AL ABRIR EL ENLACE. Lo que ve quien recibe el WhatsApp, sin cuenta, con el armazón de siempre (cabecera, barra de abajo y «Dar fe», porque es la Madrugá). Arriba, «Te han retado a una pregunta del Trivial cofrade». El chip «Imágenes · El Gran Poder». La P1 en Newsreader 22 px, las cuatro respuestas A–D y «Confirmar respuesta», como la 8.
+
+20. EL RETO, RESUELTO. La 19 tras elegir «Juan Martínez Montañés»: la suya con «Tu respuesta» y «Juan de Mesa» con «Correcta», con la explicación y la fuente. Debajo, primario «Jugar al trivial» (lleva a la portada del trivial) y secundario «Retar a otro con esta pregunta». Variante de una línea, si acierta: «¡Acertaste! Ahora reta tú a alguien.»
+
+21. NÚMERO DE HERMANO EN MI COFRADAR Y EN CUENTA. Dos piezas sobre los lienzos aprobados «Mi Cofradar» y «Cofradar · Acceso», sin redibujarlos:
+- En la cabecera de Mi Cofradar, bajo el nivel, una línea «Hermano nº 214 de Cofradar · desde noviembre de 2026».
+- En Cuenta, una fila nueva bajo «Alias del trivial online»: «Número de hermano · 214 · desde el 12 de noviembre de 2026», sin acción, con una ayuda pequeña: «Por orden de llegada a Cofradar. No cambia nunca.»
+Y en el marcador de la partida (la 6), bajo cada alias, su número en secundario, a 12 px: «nº 214» y «nº 1.032».
+
+Claro en todas; la 15 y la 17, también en oscuro.
