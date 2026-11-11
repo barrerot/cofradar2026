@@ -299,3 +299,21 @@ Reglas (PRD, F-51 y P-33): partida por turnos entre dos cuentas, con 48 horas po
 - `12-rendirse` — 12 · RENDIRSE. Hoja de confirmación.
 - `13-resultado`, `13b-rival-rendido`, `13c-cerrada-por-inactividad` — 13 · RESULTADO. El «6 – 4» solo aparece en la victoria por estrellas.
 - `14-sin-conexion` — 14 · SIN CONEXIÓN. Bandeja con lo último guardado y enlace a «Jugar solo».
+
+**Ampliación del 11 de noviembre de 2026** (PRD: F-52, F-53 y F-54). Prompt: `prompts/25-trivial-online-revancha-ajustes.txt`, con sus ajustes. Los números de hermano, las fechas y el historial son de ejemplo. Las piezas de Mi Cofradar y Cuenta son copias dentro de este lienzo; mandan sobre `7-mi-cofradar/` y `8-acceso/` solo en el número de hermano.
+- `15-resultado-revancha-{claro,oscuro}`, `15b-revancha-pedida`, `15c-jugador-eliminado` — 15 · RESULTADO CON REVANCHA:
+  - «Pedir la revancha» y el enlace al historial («Tú y Costalero83: 3 – 2»);
+  - ya pedida, el botón se desactiva y aparece «Cancelar»;
+  - si el rival eliminó su cuenta, solo «Ganaste», sin marcador grande ni revancha, como en la 13b.
+- `16-vestibulo-revanchas` — 16 · BANDEJA:
+  - el grupo «Te piden la revancha», arriba, con «Aceptar» y «Ahora no»;
+  - la revancha que has pedido tú, entre las filas de estado.
+- `17-historial-rival-{claro,oscuro}` — 17 · HISTORIAL CON UN RIVAL:
+  - el marcador «3 – 2», la partida en curso y las terminadas (las ganadas con contorno en tinta, nunca rojo);
+  - «Este marcador solo lo veis vosotros dos».
+- `18-retar-con-pregunta` — 18 · RETAR. La 9 con «Retar a un amigo con esta pregunta» y la vista previa del mensaje. También va en la 10 y en la resolución del trivial en solitario.
+- `19-reto-al-abrir`, `20-reto-resuelto`, `20b-reto-acertado` — 19 y 20 · EL RETO. Lo que ve quien abre el enlace: sin cuenta, la pregunta, su resolución con fuente, «Jugar al trivial» y «Retar a otro con esta pregunta».
+- `21a-mi-cofradar-numero-hermano`, `21b-cuenta-numero-hermano`, `21c-partida-numero-hermano` — 21 · NÚMERO DE HERMANO:
+  - en Mi Cofradar, bajo el nivel;
+  - en Cuenta, como fila propia bajo la cuenta de Google;
+  - en el marcador de la partida, «nº 214» bajo cada alias.
