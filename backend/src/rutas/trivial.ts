@@ -2,15 +2,19 @@ import { Router, type Request, type Response } from "express";
 import { exigirSesion, type Usuario } from "../sesion.js";
 import {
   aceptarInvitacion,
+  aceptarRevancha,
   aliasDe,
   bandeja,
   buscarRival,
   cancelarInvitacion,
+  cerrarRevancha,
   crearInvitacion,
   dejarDeBuscar,
   ErrorTrivial,
   guardarAlias,
+  historial,
   jugar,
+  pedirRevancha,
   verInvitacion,
   verPartida,
   type Accion,
@@ -32,6 +36,11 @@ import {
  *   GET    /api/trivial/partidas/:id
  *   POST   /api/trivial/partidas/:id/jugadas  { accionId, version, tipo, destino?, opcion? }
  *                                                  → { resultado, partida }
+ *   GET    /api/trivial/partidas/:id/historial     tú y ese rival: marcador, partidas y revancha pendiente
+ *   POST   /api/trivial/partidas/:id/revancha      pedírsela al rival de una partida terminada → { revancha }
+ *   POST   /api/trivial/revanchas/:id/aceptar      → { partida }
+ *   POST   /api/trivial/revanchas/:id/rechazar     «Ahora no»
+ *   DELETE /api/trivial/revanchas/:id              cancelar la que pediste
  *
  * Los errores van como { error, ...extra }; un 409 de jugada trae la partida al día para repintarla.
  */
@@ -109,5 +118,25 @@ routerTrivial.post(
       destino: typeof b.destino === "string" ? b.destino : undefined,
       opcion: typeof b.opcion === "string" ? b.opcion : undefined,
     });
+  }),
+);
+
+routerTrivial.get("/trivial/partidas/:id/historial", exigirSesion, ruta((p, _r, u) => historial(u.id, param(p, "id", UUID))));
+routerTrivial.post("/trivial/partidas/:id/revancha", exigirSesion, ruta((p, _r, u) => pedirRevancha(u.id, param(p, "id", UUID))));
+routerTrivial.post("/trivial/revanchas/:id/aceptar", exigirSesion, ruta((p, _r, u) => aceptarRevancha(u.id, param(p, "id", UUID))));
+routerTrivial.post(
+  "/trivial/revanchas/:id/rechazar",
+  exigirSesion,
+  ruta(async (p, _r, u) => {
+    await cerrarRevancha(u.id, param(p, "id", UUID), "rechazada");
+    return { rechazada: true };
+  }),
+);
+routerTrivial.delete(
+  "/trivial/revanchas/:id",
+  exigirSesion,
+  ruta(async (p, _r, u) => {
+    await cerrarRevancha(u.id, param(p, "id", UUID), "cancelada");
+    return { cancelada: true };
   }),
 );

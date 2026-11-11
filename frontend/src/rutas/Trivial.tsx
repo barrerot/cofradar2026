@@ -14,6 +14,7 @@ import {
 import type { EstadoJornada } from "../fixture";
 import { coincide } from "./Cofradias";
 import { DarFe } from "./DarFe";
+import { RetarConPregunta } from "./RetoTrivial";
 
 /**
  * P-32 Trivial cofrade (F-50; 10-trivial/trivial-03 a 08).
@@ -355,6 +356,7 @@ function JugarPregunta({
           <>
             <p className="cf-oculto-visual">{elegida === p.correcta ? "Has acertado." : `No. La respuesta buena es ${p.correcta}.`}</p>
             <Explicacion pregunta={p} />
+            <RetarConPregunta id={p.id} enunciado={p.texto} acierto={elegida === p.correcta} />
           </>
         ) : null}
       </div>

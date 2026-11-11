@@ -4,11 +4,13 @@ import { supabase } from "../supabase.js";
 import { historias } from "./aportaciones.js";
 import { hermandadesYEdicion } from "./cofradias.js";
 import { alBorrarCuenta, datosDe as datosTrivial } from "../trivial/partidas.js";
+import { hermanoDe } from "../hermano.js";
 
 /**
  * Lo de la cuenta de cada persona. Todas las rutas piden sesión (`X-Sesion`) y solo tocan lo suyo.
  *
  *   GET    /api/yo                   quién soy para el servidor
+ *   GET    /api/yo/hermano           { numero, desde } tu número de hermano (F-54); numero null si no hay
  *   GET    /api/yo/relaciones        { anio, seguidas: [id], vistas: [{ id, anio }] }
  *   GET    /api/yo/datos             todo lo tuyo, para descargarlo (P-23, RGPD art. 15 y 20)
  *   DELETE /api/yo                   eliminar la cuenta, al momento y sin vuelta atrás (P-24)
@@ -60,6 +62,15 @@ const ruta =
     });
 
 routerCuenta.get(
+  "/yo/hermano",
+  exigirSesion,
+  ruta(async (_peticion, respuesta, usuario) => {
+    const h = await hermanoDe(usuario.id);
+    respuesta.set("Cache-Control", "no-store").json(h ?? { numero: null, desde: null });
+  }),
+);
+
+routerCuenta.get(
   "/yo/relaciones",
   exigirSesion,
   ruta(async (_peticion, respuesta, usuario) => {
@@ -90,7 +101,7 @@ routerCuenta.get(
   ruta(async (_peticion, respuesta, usuario) => {
     const { porId } = await hermandadesYEdicion();
     const db = supabase();
-    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial] = await Promise.all([
+    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano] = await Promise.all([
       db.auth.admin.getUserById(usuario.id),
       db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
       db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
@@ -101,6 +112,7 @@ routerCuenta.get(
         .eq("usuario_id", usuario.id)
         .order("observada"),
       datosTrivial(usuario.id),
+      hermanoDe(usuario.id),
     ]);
     for (const r of [seguidas, vistas, nombres, aportaciones]) if (r.error) throw r.error;
     if (cuenta.error) throw cuenta.error;
@@ -121,6 +133,8 @@ routerCuenta.get(
           entra_con: u.app_metadata?.provider ?? "google",
           creada: u.created_at,
           ultima_entrada: u.last_sign_in_at ?? null,
+          // Por orden de llegada a Cofradar (F-54)
+          numero_de_hermano: hermano?.numero ?? null,
         },
         seguidas: (seguidas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), desde: f.creada })),
         vistas: (vistas.data ?? []).map((f) => ({ ...cofradia(f.hermandad_id), anio: f.anio, guardada: f.creada })),

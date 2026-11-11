@@ -19,7 +19,8 @@ import { EliminarCuenta } from "./rutas/EliminarCuenta";
 import { MisAportaciones } from "./rutas/MisAportaciones";
 import { Seguidas } from "./rutas/Seguidas";
 import { Trivial } from "./rutas/Trivial";
-import { RedirigirInvitacion, TrivialAlias, TrivialInvitacion, TrivialInvitar, TrivialPartida, TrivialPortada, TrivialVestibulo } from "./rutas/TrivialOnline";
+import { RedirigirInvitacion, TrivialAlias, TrivialHistorial, TrivialInvitacion, TrivialInvitar, TrivialPartida, TrivialPortada, TrivialVestibulo } from "./rutas/TrivialOnline";
+import { RedirigirReto, TrivialReto } from "./rutas/RetoTrivial";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 import { Panel } from "./rutas/admin/Panel";
@@ -62,10 +63,13 @@ export function App() {
       <Route path="/mi-cofradar/trivial/solo" element={<Trivial estado={estado} />} />
       <Route path="/mi-cofradar/trivial/online" element={<TrivialVestibulo estado={estado} />} />
       <Route path="/mi-cofradar/trivial/online/:id" element={<TrivialPartida estado={estado} />} />
+      <Route path="/mi-cofradar/trivial/online/:id/historial" element={<TrivialHistorial estado={estado} />} />
       <Route path="/mi-cofradar/trivial/alias" element={<TrivialAlias estado={estado} />} />
       <Route path="/mi-cofradar/trivial/invitar/:token" element={<TrivialInvitar estado={estado} />} />
       <Route path="/mi-cofradar/trivial/i/:token" element={<TrivialInvitacion estado={estado} />} />
       <Route path="/trivial/i/:token" element={<RedirigirInvitacion />} />
+      <Route path="/mi-cofradar/trivial/reto/:id" element={<TrivialReto estado={estado} />} />
+      <Route path="/trivial/r/:id" element={<RedirigirReto />} />
       <Route path="/mi-cofradar/cuenta" element={<Cuenta />} />
       <Route path="/mi-cofradar/cuenta/eliminar" element={<EliminarCuenta />} />
       <Route path="/mi-cofradar/ajustes" element={<Ajustes estado={estado} />} />

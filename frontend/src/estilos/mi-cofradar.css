@@ -354,6 +354,30 @@
   color: var(--cf-text-secondary);
 }
 
+/* Número de hermano (F-54, 21b): la ayuda va dentro de su fila, sin el aire de una nota suelta */
+.cf-cuenta-ayuda {
+  padding: var(--cf-space-1) 0 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+}
+
+/* Alias del trivial (21b): el rótulo encima y el alias debajo, en negrita */
+.cf-cuenta-dato {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cf-cuenta-dato > span:first-child {
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cuenta-valor {
+  font-weight: var(--cf-weight-critical);
+  overflow-wrap: anywhere;
+}
+
 .cf-cuenta-eliminar {
   display: inline-flex;
   align-items: center;
@@ -510,5 +534,13 @@
   justify-content: space-between;
   gap: var(--cf-space-2);
   font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+/* Número de hermano (F-54, 21a): bajo el nivel, en secundario; sin progreso, una línea suelta */
+.cf-mi-hermano {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
   color: var(--cf-text-secondary);
 }

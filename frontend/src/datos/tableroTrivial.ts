@@ -21,6 +21,22 @@ export const CATEGORIAS: Record<Categoria, { nombre: string; icono: NombreTrazo;
 };
 export const ORDEN: Categoria[] = ["historia", "imagenes", "patrimonio_simbolos", "jornadas_sedes", "musica_literatura", "tradiciones_curiosidades"];
 
+/** La categoría jugable de cada tema del banco: la misma tabla que backend/src/trivial/banco.ts (TEMAS). */
+const DE_TEMA: Record<string, Categoria> = {
+  historia: "historia",
+  imágenes: "imagenes",
+  patrimonio: "patrimonio_simbolos",
+  símbolos: "patrimonio_simbolos",
+  jornada: "jornadas_sedes",
+  sede: "jornadas_sedes",
+  música: "musica_literatura",
+  literatura: "musica_literatura",
+  hábito: "tradiciones_curiosidades",
+  curiosidades: "tradiciones_curiosidades",
+  cultos: "tradiciones_curiosidades",
+};
+export const categoriaDeTema = (tema: string): Categoria | null => DE_TEMA[tema] ?? null;
+
 const LUGARES = ["La Campana", "Sierpes", "Plaza de San Francisco", "Avenida de la Constitución", "Puerta de los Palos", "Puerta de San Miguel"];
 
 export type CasillaDibujo = { id: string; x: number; y: number; categoria: Categoria | null; estrella: boolean; lugar?: string };

@@ -622,3 +622,120 @@
   font-size: 11px;
   font-weight: 700;
 }
+
+/* ── Ampliación del 11/11/2026 (F-52 a F-54; 11-trivial-online/15–21) ── */
+
+/* 21c · El número de hermano bajo cada alias del marcador */
+.cf-online-marcador-alias {
+  display: grid;
+}
+
+.cf-online-marcador-numero {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: var(--cf-weight-body);
+  color: var(--cf-text-secondary);
+}
+
+.cf-online-secundario {
+  color: var(--cf-text-secondary);
+}
+
+/* 16 · «Te piden la revancha» */
+.cf-online-revancha {
+  display: grid;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-online-revancha-texto {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: flex-start;
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: 600;
+}
+
+.cf-online-revancha-texto > svg {
+  flex: none;
+  margin-top: 4px;
+}
+
+.cf-online-revancha-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-5);
+  align-items: center;
+  padding-left: calc(20px + var(--cf-space-3));
+}
+
+/* 17 · Historial: el marcador de la pareja y las ganadas con contorno en tinta (nunca rojo) */
+.cf-online-cara {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  margin: 0;
+  text-align: center;
+}
+
+.cf-online-cara > span {
+  display: grid;
+  gap: var(--cf-space-1);
+}
+
+.cf-online-cara-cifra {
+  font-family: var(--cf-font-serif);
+  font-size: 4rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.cf-online-cara-guion {
+  font-family: var(--cf-font-serif);
+  font-size: 3rem;
+  line-height: 4rem;
+}
+
+.cf-online-cara-quien {
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-emphasis);
+  color: var(--cf-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.cf-online-fila[data-ganada] {
+  border: 2px solid var(--cf-text);
+}
+
+.cf-online-fila[data-ganada] .cf-online-fila-titulo {
+  font-weight: var(--cf-weight-critical);
+}
+
+/* 18 · «Retar a un amigo con esta pregunta» y la vista previa del mensaje */
+.cf-reto-enlace {
+  display: inline-flex;
+  gap: var(--cf-space-2);
+  align-items: center;
+}
+
+.cf-reto-mensaje {
+  margin: 0;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface-sunken, var(--cf-surface));
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  overflow-wrap: anywhere;
+}
+
+/* 20b */
+.cf-reto-acierto {
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl, 1.75rem);
+}

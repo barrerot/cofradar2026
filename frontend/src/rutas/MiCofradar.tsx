@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, Cabecera, Icono, Marco, type NombreTrazo } from "../marco";
 import { nivelDe, useMisAportaciones } from "../datos/puntos";
+import { mesDe, useHermano, type Hermano } from "../datos/hermano";
+import { miles } from "../datos/trivialOnline";
 import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
 import type { EstadoJornada } from "../fixture";
@@ -32,6 +34,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
   const { usuario, disponible, entrar } = useSesion();
   const relaciones = useRelaciones();
   const mias = useMisAportaciones();
+  const hermano = useHermano();
   const con = !!usuario;
   const eliminada = (useLocation().state as { cuentaEliminada?: boolean } | null)?.cuentaEliminada;
 
@@ -54,12 +57,15 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
         ) : null}
 
         {mias && mias.aportaciones.length ? (
-          <Progreso puntos={mias.puntos} />
+          <Progreso puntos={mias.puntos} hermano={hermano} />
         ) : (
-          <p className="cf-mi-progreso">
-            <Icono nombre="darFeNoVerificable" tamano={24} />
-            <span>Empiezas a sumar puntos cuando das fe.</span>
-          </p>
+          <>
+            {hermano ? <NumeroHermano h={hermano} /> : null}
+            <p className="cf-mi-progreso">
+              <Icono nombre="darFeNoVerificable" tamano={24} />
+              <span>Empiezas a sumar puntos cuando das fe.</span>
+            </p>
+          </>
         )}
 
         <nav className="cf-mi-grupo" aria-label="Lo tuyo">
@@ -114,7 +120,16 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
 }
 
 /** «Tu progreso»: los puntos, el nivel y la barra hasta el siguiente. Granate: es lo tuyo. */
-function Progreso({ puntos }: { puntos: number }) {
+/** F-54 (11-trivial-online/21a): «Hermano nº 214 de Cofradar · desde noviembre de 2026». */
+function NumeroHermano({ h }: { h: Hermano }) {
+  return (
+    <p className="cf-mi-hermano">
+      Hermano nº <span className="cf-num">{miles(h.numero)}</span> de Cofradar · desde {mesDe(h.desde)}
+    </p>
+  );
+}
+
+function Progreso({ puntos, hermano }: { puntos: number; hermano: Hermano | null }) {
   const n = nivelDe(puntos);
   const pc = n.siguiente ? Math.round((100 * (puntos - n.desde)) / (n.siguiente.desde - n.desde)) : 100;
   return (
@@ -126,6 +141,7 @@ function Progreso({ puntos }: { puntos: number }) {
       <p className="nivel">
         {n.nombre} <span className="en">en Cofradar</span>
       </p>
+      {hermano ? <NumeroHermano h={hermano} /> : null}
       {n.siguiente ? (
         <>
           <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pc} aria-label={`Hacia ${n.siguiente.nombre}`}>

@@ -1,17 +1,21 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, HojaDecision, Icono, PantallaSecundaria, type NombreTrazo } from "../marco";
 import { useDescargarDatos } from "../datos/descarga";
+import { diaDe, useHermano } from "../datos/hermano";
+import { api, miles } from "../datos/trivialOnline";
 import { useSesion } from "../datos/sesion";
 
 /**
  * P-23 Cuenta (7-mi-cofradar/cuenta).
  *
  *   Cuenta de Google        con la que has entrado.
+ *   Número de hermano       por orden de llegada a Cofradar (F-54, 11-trivial-online/21b). No cambia.
  *   Cambiar de cuenta       cierra esta sesión y abre el selector de cuentas de
  *                           Google. Avisa antes: lo tuyo se queda en ESTA cuenta,
  *                           no se pasa a la otra.
+ *   Alias del trivial       el que ve tu rival en el online; se cambia aquí.
  *   Descargar mis datos     todo lo que Cofradar guarda de ti, en un fichero
  *                           (GET /api/yo/datos).
  *   Cerrar sesión           no borra nada: lo tuyo sigue en tu cuenta.
@@ -24,6 +28,8 @@ export function Cuenta() {
   const navegar = useNavigate();
   const [cambiando, setCambiando] = useState(false);
   const { estado: descarga, descargar } = useDescargarDatos();
+  const hermano = useHermano();
+  const alias = useAliasTrivial(!!usuario);
 
   const cerrar = async () => {
     await salir();
@@ -48,6 +54,15 @@ export function Cuenta() {
               <p className="cf-cuenta-rotulo">Cuenta de Google</p>
               <p className="cf-cuenta-correo">{usuario.email ?? usuario.nombre}</p>
             </div>
+            {hermano ? (
+              <div className="cf-ajustes-fila">
+                <p className="cf-cuenta-rotulo">Número de hermano</p>
+                <p className="cf-cuenta-correo cf-num">
+                  {miles(hermano.numero)} · desde el {diaDe(hermano.desde)}
+                </p>
+                <p className="cf-cuenta-nota cf-cuenta-ayuda">Por orden de llegada a Cofradar. No cambia nunca.</p>
+              </div>
+            ) : null}
             <Accion icono="cambiarCuenta" onClick={() => setCambiando(true)}>
               Cambiar de cuenta de Google
             </Accion>
@@ -56,7 +71,10 @@ export function Cuenta() {
           <section className="cf-cuenta-grupo" aria-label="Trivial online">
             <Link to="/mi-cofradar/trivial/alias" className="cf-ajustes-fila cf-ajustes-enlace cf-cuenta-accion">
               <Icono nombre="trivial" tamano={24} />
-              <span>Alias del trivial online</span>
+              <span className="cf-cuenta-dato">
+                <span>Alias del trivial online</span>
+                {alias ? <span className="cf-cuenta-valor">{alias}</span> : null}
+              </span>
               <Icono nombre="chevronDerecha" tamano={20} />
             </Link>
           </section>
@@ -129,4 +147,21 @@ function Accion({
       <Icono nombre="chevronDerecha" tamano={20} />
     </button>
   );
+}
+
+/** El alias del trivial online, para enseñarlo en su fila (null si aún no tiene o no se sabe). */
+function useAliasTrivial(con: boolean): string | null {
+  const [alias, setAlias] = useState<string | null>(null);
+  useEffect(() => {
+    if (!con) return;
+    let vigente = true;
+    api<{ alias: string | null }>("GET", "/yo").then(
+      (r) => vigente && setAlias(r.alias),
+      () => undefined,
+    );
+    return () => {
+      vigente = false;
+    };
+  }, [con]);
+  return alias;
 }

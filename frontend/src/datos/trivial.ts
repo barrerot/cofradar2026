@@ -128,6 +128,12 @@ export function nuevaPartida(banco: Banco, cofradia: string | null, dificultad: 
   return elegidas.map((f) => aPregunta(banco, f));
 }
 
+/** Una pregunta por su id (el del CSV, el mismo que en el online), con las respuestas barajadas. Para el reto (F-53). */
+export function preguntaPorId(banco: Banco, id: number): Pregunta | null {
+  const f = banco.preguntas.find((x) => x[0] === id);
+  return f ? aPregunta(banco, f) : null;
+}
+
 function aPregunta(banco: Banco, f: Fila): Pregunta {
   const [id, h, tema, dificultad, texto, correcta, i1, i2, i3, explicacion, fuente] = f;
   const hermandad = banco.hermandades[h] ?? "";

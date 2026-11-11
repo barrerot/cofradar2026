@@ -1,5 +1,6 @@
 import { createHash, randomBytes, randomInt } from "node:crypto";
 import { consulta, enTransaccion, type Cliente } from "../bd.js";
+import { numerosDe } from "../hermano.js";
 import {
   categoriaDe,
   empezar,
@@ -24,6 +25,7 @@ import { CASILLAS, describir, TABLERO, type Categoria } from "./tablero.js";
 
 export const INVITACION_MS = 72 * 3600_000;
 export const COLA_MS = 24 * 3600_000;
+export const REVANCHA_MS = 72 * 3600_000;
 export const ELIMINADO = "Jugador eliminado";
 
 export class ErrorTrivial extends Error {
@@ -185,7 +187,7 @@ function puestoDe(f: FilaPartida, usuario: string): Puesto | null {
   return null;
 }
 
-async function crearPartida(bd: Cliente, a: string, b: string, banco: number, origen: "invitacion" | "cola"): Promise<string> {
+async function crearPartida(bd: Cliente, a: string, b: string, banco: number, origen: "invitacion" | "cola" | "revancha"): Promise<string> {
   // RF-03: quién es el puesto 0 y quién empieza, al azar en el servidor
   const [j0, j1] = randomInt(2) === 0 ? [a, b] : [b, a];
   const e = empezar(new Date(), randomInt(2) as Puesto);
@@ -211,13 +213,27 @@ async function aliasDeVarios(ids: (string | null)[], bd?: Cliente): Promise<Map<
 
 export type VistaPartida = ReturnType<typeof vista>;
 
-function vista(f: FilaPartida, yo: Puesto, alias: Map<string, string>, enunciado?: { enunciado: string; hermandad: string }) {
+/** Lo de la pareja que se ve al acabar (F-52): el marcador de todas sus partidas y la revancha pendiente. */
+type Pareja = { marcador: { tuyas: number; suyas: number }; revancha: Revancha | null };
+export type Revancha = { id: string; tuya: boolean; vence: string };
+
+function vista(
+  f: FilaPartida,
+  yo: Puesto,
+  alias: Map<string, string>,
+  extra: { enunciado?: { enunciado: string; hermandad: string }; numeros?: Map<string, number>; pareja?: Pareja | null } = {},
+) {
+  const { enunciado, numeros, pareja } = extra;
   const nombre = (u: string | null) => (u ? (alias.get(u) ?? ELIMINADO) : ELIMINADO);
+  const numero = (u: string | null) => (u ? (numeros?.get(u) ?? null) : null);
   const mia = f.estado === "activa" && f.turno === yo;
   return {
     id: f.id,
     yo,
     jugadores: [nombre(f.jugador_0), nombre(f.jugador_1)] as [string, string],
+    // F-54: el número de hermano de cada uno (null si no tiene o si eliminó su cuenta)
+    numeros: [numero(f.jugador_0), numero(f.jugador_1)] as [number | null, number | null],
+    eliminados: [!f.jugador_0, !f.jugador_1] as [boolean, boolean],
     estado: f.estado,
     motivo: f.motivo,
     ganador: f.ganador,
@@ -244,11 +260,44 @@ function vista(f: FilaPartida, yo: Puesto, alias: Map<string, string>, enunciado
     version: f.version,
     creada: new Date(f.creada).toISOString(),
     terminada: f.terminada ? new Date(f.terminada).toISOString() : null,
+    pareja: pareja ?? null,
   };
 }
 
+const rivalDe = (f: { jugador_0: string | null; jugador_1: string | null }, yo: Puesto) => (yo === 0 ? f.jugador_1 : f.jugador_0);
+
+/** Las partidas entre dos cuentas, en cualquier puesto. */
+const DE_LA_PAREJA = "((jugador_0 = $1 and jugador_1 = $2) or (jugador_0 = $2 and jugador_1 = $1))";
+
+async function marcadorDe(bd: Cliente, yo: string, rival: string) {
+  const { rows } = await bd.query<{ tuyas: number; suyas: number }>(
+    `select count(*) filter (where (ganador = 0 and jugador_0 = $1) or (ganador = 1 and jugador_1 = $1))::int as tuyas,
+            count(*) filter (where (ganador = 0 and jugador_0 = $2) or (ganador = 1 and jugador_1 = $2))::int as suyas
+     from trivial_partida where estado = 'finalizada' and ${DE_LA_PAREJA}`,
+    [yo, rival],
+  );
+  return rows[0]!;
+}
+
+/** La revancha pendiente entre los dos, si la hay y no ha vencido. */
+async function revanchaPendiente(bd: Cliente | null, yo: string, rival: string): Promise<Revancha | null> {
+  const sql = `select id, de_id, vence from trivial_revancha
+     where estado = 'pendiente' and vence > now() and ((de_id = $1 and para_id = $2) or (de_id = $2 and para_id = $1))
+     order by creada desc limit 1`;
+  const { rows } = bd ? await bd.query<{ id: string; de_id: string; vence: Date }>(sql, [yo, rival]) : await consulta<{ id: string; de_id: string; vence: Date }>(sql, [yo, rival]);
+  const r = rows[0];
+  return r ? { id: r.id, tuya: r.de_id === yo, vence: new Date(r.vence).toISOString() } : null;
+}
+
 async function vistaDe(bd: Cliente, f: FilaPartida, yo: Puesto) {
-  const alias = await aliasDeVarios([f.jugador_0, f.jugador_1], bd);
+  const ids = [f.jugador_0, f.jugador_1].filter((x): x is string => !!x);
+  const [alias, numeros] = await Promise.all([aliasDeVarios(ids, bd), numerosDe(ids, bd)]);
+  const yoId = yo === 0 ? f.jugador_0! : f.jugador_1!;
+  const rival = rivalDe(f, yo);
+  let pareja: Pareja | null = null;
+  if (f.estado === "finalizada" && rival) {
+    pareja = { marcador: await marcadorDe(bd, yoId, rival), revancha: await revanchaPendiente(bd, yoId, rival) };
+  }
   let enunciado: { enunciado: string; hermandad: string } | undefined;
   if (f.pregunta && f.turno === yo) {
     const { rows } = await bd.query<{ enunciado: string; hermandad: string }>(
@@ -257,7 +306,7 @@ async function vistaDe(bd: Cliente, f: FilaPartida, yo: Puesto) {
     );
     enunciado = rows[0];
   }
-  return vista(f, yo, alias, enunciado);
+  return vista(f, yo, alias, { enunciado, numeros, pareja });
 }
 
 export async function verPartida(usuario: string, id: string) {
@@ -280,7 +329,8 @@ export type Accion = {
   opcion?: string;
 };
 
-export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null };
+/** `pregunta` es su id en el banco: con él se reta a otro a la misma pregunta (F-53, /trivial/r/:id). */
+export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null; pregunta: number };
 
 async function elegirPregunta(bd: Cliente, f: FilaPartida, categoria: Categoria) {
   // RF-05: una que no haya salido en la partida; si la categoría se agota, la que salió hace más tiempo
@@ -368,7 +418,7 @@ export async function jugar(usuario: string, id: string, a: Accion) {
           "update trivial_jugada set respuesta = $3, acierto = $4, resultado = $5, resuelta = now() where partida_id = $1 and n = $2",
           [id, p!.jugada, a.opcion, acierto, acierto ? "acierto" : "fallo"],
         );
-        resultado = { acierto, correcta: q.correcta, explicacion: q.explicacion, fuente: q.fuente, estrella: r.estrella } satisfies Resolucion;
+        resultado = { acierto, correcta: q.correcta, explicacion: q.explicacion, fuente: q.fuente, estrella: r.estrella, pregunta: p!.id } satisfies Resolucion;
       } else if (a.tipo === "rendirse") {
         e = rendirse(e, yo);
       } else {
@@ -517,7 +567,7 @@ export async function bandeja(usuario: string) {
   );
   for (const { id } of vencidas.rows) await enTransaccion((bd) => bloquear(bd, id));
 
-  const [partidas, invitaciones, cola, alias] = await Promise.all([
+  const [partidas, invitaciones, cola, alias, revanchas] = await Promise.all([
     consulta<FilaPartida>(
       `(select * from trivial_partida where estado = 'activa' and (jugador_0 = $1 or jugador_1 = $1))
        union all
@@ -533,14 +583,20 @@ export async function bandeja(usuario: string) {
       [usuario],
     ),
     aliasDe(usuario),
+    consulta<{ id: string; de_id: string; para_id: string; vence: Date }>(
+      `select id, de_id, para_id, vence from trivial_revancha
+       where estado = 'pendiente' and vence > now() and (de_id = $1 or para_id = $1) order by creada desc`,
+      [usuario],
+    ),
   ]);
-  const nombres = await aliasDeVarios(partidas.rows.flatMap((f) => [f.jugador_0, f.jugador_1]));
+  const nombres = await aliasDeVarios([...partidas.rows.flatMap((f) => [f.jugador_0, f.jugador_1]), ...revanchas.rows.flatMap((r) => [r.de_id, r.para_id])]);
   const resumen = partidas.rows.map((f) => {
     const yo = puestoDe(f, usuario)!;
     const v = vista(f, yo, nombres);
     return {
       id: v.id,
       rival: v.jugadores[yo === 0 ? 1 : 0],
+      rivalEliminado: v.eliminados[yo === 0 ? 1 : 0],
       estado: v.estado,
       teToca: v.estado === "activa" && v.turno === yo,
       turnoVence: v.turnoVence,
@@ -555,15 +611,151 @@ export async function bandeja(usuario: string) {
     partidas: resumen,
     invitaciones: invitaciones.rows.map((i) => ({ token: i.token, creada: new Date(i.creada).toISOString(), vence: new Date(i.vence).toISOString() })),
     busqueda: cola.rows[0] ? { desde: new Date(cola.rows[0].creada).toISOString(), vence: new Date(cola.rows[0].vence).toISOString() } : null,
+    // F-52: las que te piden (con «Aceptar» y «Ahora no») y las que has pedido tú (con «Cancelar»)
+    revanchas: revanchas.rows.map((r) => {
+      const tuya = r.de_id === usuario;
+      return { id: r.id, tuya, rival: nombres.get(tuya ? r.para_id : r.de_id) ?? ELIMINADO, vence: new Date(r.vence).toISOString() };
+    }),
   };
+}
+
+// ── Revancha (F-52) ──
+
+/** Una a la vez por pareja: dos que la piden a la vez no crean dos. */
+const bloquearPareja = (bd: Cliente, a: string, b: string) =>
+  bd.query("select pg_advisory_xact_lock(hashtext($1))", [`revancha:${[a, b].sort().join(":")}`]);
+
+/**
+ * Pedir la revancha al rival de una partida terminada. Si ya la habías pedido, la misma (doble toque). Si
+ * él te la ha pedido a ti, no se crea otra: se dice, con la suya, para que la aceptes.
+ */
+export async function pedirRevancha(usuario: string, partidaId: string) {
+  await exigirAlias(usuario);
+  return enTransaccion(async (bd) => {
+    const { rows } = await bd.query<{ jugador_0: string | null; jugador_1: string | null; estado: string }>(
+      "select jugador_0, jugador_1, estado from trivial_partida where id = $1",
+      [partidaId],
+    );
+    const f = rows[0];
+    const yo = f ? (f.jugador_0 === usuario ? 0 : f.jugador_1 === usuario ? 1 : null) : null;
+    if (!f || yo === null) throw new ErrorTrivial(404, "No existe esa partida");
+    if (f.estado !== "finalizada") throw new ErrorTrivial(409, "La revancha se pide al acabar la partida");
+    const rival = rivalDe(f, yo);
+    if (!rival) throw new ErrorTrivial(410, "Tu rival eliminó su cuenta");
+
+    await bloquearPareja(bd, usuario, rival);
+    await bd.query(
+      `update trivial_revancha set estado = 'caducada'
+       where estado = 'pendiente' and vence <= now() and ((de_id = $1 and para_id = $2) or (de_id = $2 and para_id = $1))`,
+      [usuario, rival],
+    );
+    const ya = await revanchaPendiente(bd, usuario, rival);
+    if (ya?.tuya) return { revancha: ya };
+    if (ya) {
+      const alias = (await aliasDeVarios([rival], bd)).get(rival) ?? ELIMINADO;
+      throw new ErrorTrivial(409, `${alias} ya te ha pedido la revancha`, { revancha: ya });
+    }
+    const vence = new Date(Date.now() + REVANCHA_MS);
+    const { rows: nueva } = await bd.query<{ id: string }>(
+      "insert into trivial_revancha (partida_origen, de_id, para_id, vence) values ($1, $2, $3, $4) returning id",
+      [partidaId, usuario, rival, vence],
+    );
+    return { revancha: { id: nueva[0]!.id, tuya: true, vence: vence.toISOString() } satisfies Revancha };
+  });
+}
+
+/** Aceptarla empieza una partida normal entre los dos, con el banco activo. Repetir devuelve la misma. */
+export async function aceptarRevancha(usuario: string, id: string) {
+  return enTransaccion(async (bd) => {
+    const { rows } = await bd.query<{ de_id: string; para_id: string; estado: string; vence: Date; partida_id: string | null }>(
+      "select de_id, para_id, estado, vence, partida_id from trivial_revancha where id = $1 for update",
+      [id],
+    );
+    const r = rows[0];
+    if (!r || r.para_id !== usuario) throw new ErrorTrivial(404, "Esa revancha no existe");
+    if (r.estado === "aceptada" && r.partida_id) return { partida: r.partida_id };
+    const caducada = r.estado === "caducada" || (r.estado === "pendiente" && new Date(r.vence) <= new Date());
+    if (caducada) throw new ErrorTrivial(410, "Esa revancha ya ha caducado", { estado: "caducada" });
+    if (r.estado === "cancelada") throw new ErrorTrivial(410, "Han cancelado esa revancha", { estado: "cancelada" });
+    if (r.estado !== "pendiente") throw new ErrorTrivial(410, "Esa revancha ya no está pendiente", { estado: r.estado });
+    const partida = await crearPartida(bd, r.de_id, r.para_id, await bancoActivo(bd), "revancha");
+    await bd.query("update trivial_revancha set estado = 'aceptada', partida_id = $2 where id = $1", [id, partida]);
+    return { partida };
+  });
+}
+
+/** «Ahora no» (quien la recibe) o «Cancelar» (quien la pidió). */
+export async function cerrarRevancha(usuario: string, id: string, como: "rechazada" | "cancelada") {
+  const quien = como === "rechazada" ? "para_id" : "de_id";
+  const { rowCount } = await consulta(
+    `update trivial_revancha set estado = $3 where id = $1 and ${quien} = $2 and estado = 'pendiente'`,
+    [id, usuario, como],
+  );
+  if (!rowCount) throw new ErrorTrivial(404, "Esa revancha ya no está pendiente");
+}
+
+// ── Historial con un rival (F-52) ──
+
+/** «Tú y Costalero83: 3 – 2», con las partidas una a una. Se pide por una partida entre los dos. */
+export async function historial(usuario: string, partidaId: string) {
+  const { rows } = await consulta<{ jugador_0: string | null; jugador_1: string | null }>(
+    "select jugador_0, jugador_1 from trivial_partida where id = $1",
+    [partidaId],
+  );
+  const f = rows[0];
+  const yo = f ? (f.jugador_0 === usuario ? 0 : f.jugador_1 === usuario ? 1 : null) : null;
+  if (!f || yo === null) throw new ErrorTrivial(404, "No existe esa partida");
+  const rival = rivalDe(f, yo);
+  if (!rival) throw new ErrorTrivial(410, "Tu rival eliminó su cuenta");
+
+  // Las que tengan el turno vencido, al día antes de contarlas
+  const vencidas = await consulta<{ id: string }>(`select id from trivial_partida where estado = 'activa' and turno_vence <= now() and ${DE_LA_PAREJA}`, [usuario, rival]);
+  for (const { id } of vencidas.rows) await enTransaccion((bd) => bloquear(bd, id));
+
+  return enTransaccion(async (bd) => {
+    const { rows: todas } = await bd.query<FilaPartida>(
+      `select * from trivial_partida where ${DE_LA_PAREJA} order by coalesce(terminada, creada) desc`,
+      [usuario, rival],
+    );
+    const [alias, numeros, marcador, revancha] = [
+      await aliasDeVarios([rival], bd),
+      await numerosDe([rival], bd),
+      await marcadorDe(bd, usuario, rival),
+      await revanchaPendiente(bd, usuario, rival),
+    ];
+    const puesto = (p: FilaPartida): Puesto => (p.jugador_0 === usuario ? 0 : 1);
+    return {
+      rival: { alias: alias.get(rival) ?? ELIMINADO, numero: numeros.get(rival) ?? null },
+      marcador,
+      enCurso: todas
+        .filter((p) => p.estado === "activa")
+        .map((p) => ({ id: p.id, teToca: p.turno === puesto(p), turnoVence: new Date(p.turno_vence).toISOString() })),
+      terminadas: todas
+        .filter((p) => p.estado === "finalizada")
+        .map((p) => {
+          const yoP = puesto(p);
+          return {
+            id: p.id,
+            terminada: new Date(p.terminada ?? p.creada).toISOString(),
+            motivo: p.motivo,
+            ganaste: p.ganador === null ? null : p.ganador === yoP,
+            estrellas: { tuyas: p.estrellas[yoP].length, rival: p.estrellas[yoP === 0 ? 1 : 0].length },
+          };
+        }),
+      revancha,
+      // Para pedir la revancha desde aquí: la última terminada
+      ultima: todas.find((p) => p.estado === "finalizada")?.id ?? null,
+    };
+  });
 }
 
 // ── Cuenta ──
 
 /**
  * Antes de borrar una cuenta (decisión de Carlos, «A», 10/11/2026): sus partidas en marcha las gana el
- * rival, como si se hubiera rendido. Lo demás lo hace la base al borrar el usuario: alias, invitaciones y
- * búsquedas se borran, y su puesto en las partidas terminadas queda vacío («Jugador eliminado»).
+ * rival, como si se hubiera rendido. Lo demás lo hace la base al borrar el usuario: alias, invitaciones,
+ * búsquedas y revanchas se borran, su puesto en las partidas terminadas queda vacío («Jugador eliminado») y
+ * su número de hermano se queda sin dueño, sin volver a darse.
  */
 export async function alBorrarCuenta(usuario: string): Promise<void> {
   const { rows } = await consulta<{ id: string }>(
@@ -581,7 +773,7 @@ export async function alBorrarCuenta(usuario: string): Promise<void> {
 
 /** Lo del trivial para «Descargar mis datos». */
 export async function datosDe(usuario: string) {
-  const [alias, partidas] = await Promise.all([
+  const [alias, partidas, revanchas] = await Promise.all([
     aliasDe(usuario),
     consulta<{ creada: Date; estado: string; motivo: string | null; ganaste: boolean | null }>(
       `select creada, estado, motivo,
@@ -589,6 +781,14 @@ export async function datosDe(usuario: string) {
        from trivial_partida where jugador_0 = $1 or jugador_1 = $1 order by creada`,
       [usuario],
     ),
+    consulta<{ creada: Date; estado: string; pedida: boolean }>(
+      "select creada, estado, de_id = $1 as pedida from trivial_revancha where de_id = $1 or para_id = $1 order by creada",
+      [usuario],
+    ),
   ]);
-  return { alias, partidas: partidas.rows.map((p) => ({ empezada: new Date(p.creada).toISOString(), estado: p.estado, motivo: p.motivo, ganaste: p.ganaste })) };
+  return {
+    alias,
+    partidas: partidas.rows.map((p) => ({ empezada: new Date(p.creada).toISOString(), estado: p.estado, motivo: p.motivo, ganaste: p.ganaste })),
+    revanchas: revanchas.rows.map((r) => ({ creada: new Date(r.creada).toISOString(), estado: r.estado, laPedisteTu: r.pedida })),
+  };
 }

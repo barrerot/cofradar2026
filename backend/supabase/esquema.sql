@@ -359,7 +359,7 @@ create table if not exists trivial_partida (
   banco_version          integer not null references trivial_banco (version),
   reglas                 text not null,
   tablero                text not null,
-  origen                 text not null check (origen in ('invitacion', 'cola')),
+  origen                 text not null check (origen in ('invitacion', 'cola', 'revancha')),
   estado                 text not null default 'activa' check (estado in ('activa', 'finalizada')),
   motivo                 text check (motivo in ('estrellas', 'rendicion', 'inactividad')),
   ganador                smallint check (ganador in (0, 1)),   -- vacío en inactividad
@@ -406,3 +406,63 @@ alter table trivial_invitacion enable row level security;
 alter table trivial_cola       enable row level security;
 alter table trivial_partida    enable row level security;
 alter table trivial_jugada     enable row level security;
+
+-- La revancha (F-52) es otro origen de partida. Para las bases creadas antes de que existiera:
+alter table trivial_partida drop constraint if exists trivial_partida_origen_check;
+alter table trivial_partida add constraint trivial_partida_origen_check check (origen in ('invitacion', 'cola', 'revancha'));
+
+-- Revancha (F-52): al acabar una partida, uno de los dos se la pide al otro. Llega a su bandeja, vale 72
+-- horas y solo hay una pendiente por pareja. Si la acepta, empieza una partida normal (origen 'revancha').
+create table if not exists trivial_revancha (
+  id              uuid primary key default gen_random_uuid(),
+  partida_origen  uuid not null references trivial_partida (id) on delete cascade,
+  de_id           uuid not null references auth.users (id) on delete cascade,
+  para_id         uuid not null references auth.users (id) on delete cascade,
+  estado          text not null default 'pendiente' check (estado in ('pendiente', 'aceptada', 'rechazada', 'cancelada', 'caducada')),
+  creada          timestamptz not null default now(),
+  vence           timestamptz not null,
+  partida_id      uuid
+);
+create unique index if not exists trivial_revancha_una on trivial_revancha (least(de_id, para_id), greatest(de_id, para_id)) where estado = 'pendiente';
+create index if not exists trivial_revancha_para on trivial_revancha (para_id, estado);
+create index if not exists trivial_revancha_de on trivial_revancha (de_id, estado);
+alter table trivial_revancha enable row level security;
+
+-- ── Número de hermano (F-54) ────────────────────────────────────────────────────────────────────────
+-- Cada cuenta, su número por orden de llegada, como la antigüedad en una hermandad («hermano nº 214 de
+-- Cofradar»). No se reutiliza nunca: al borrar la cuenta la fila se queda, sin usuario. Las cuentas de
+-- prueba (@cofradar.invalid, las de las pruebas de carga) no tienen número.
+create table if not exists hermano (
+  numero      integer generated always as identity primary key,
+  usuario_id  uuid unique references auth.users (id) on delete set null,
+  desde       timestamptz not null
+);
+alter table hermano enable row level security;
+
+-- Las cuentas que ya existían, por su fecha de alta (solo las que aún no tienen número)
+insert into hermano (usuario_id, desde)
+  select u.id, u.created_at from auth.users u
+  where not exists (select 1 from hermano h where h.usuario_id = u.id)
+    and coalesce(u.email, '') not like '%@cofradar.invalid'
+  order by u.created_at, u.id;
+
+-- Las nuevas, al darse de alta. Si algo fallara aquí, el alta sigue: el servidor da el número la primera
+-- vez que lo pide (backend/src/hermano.ts).
+create or replace function public.dar_numero_de_hermano() returns trigger
+  language plpgsql security definer set search_path = public as $$
+begin
+  if coalesce(new.email, '') like '%@cofradar.invalid' then
+    return new;
+  end if;
+  begin
+    insert into public.hermano (usuario_id, desde) values (new.id, coalesce(new.created_at, now()))
+      on conflict (usuario_id) do nothing;
+  exception when others then
+    null;
+  end;
+  return new;
+end;
+$$;
+drop trigger if exists dar_numero_de_hermano on auth.users;
+create trigger dar_numero_de_hermano after insert on auth.users
+  for each row execute function public.dar_numero_de_hermano();

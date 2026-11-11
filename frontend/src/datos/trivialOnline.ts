@@ -19,6 +19,8 @@ export type Categoria =
 export type ResumenPartida = {
   id: string;
   rival: string;
+  /** El rival borró su cuenta: sin historial ni revancha. */
+  rivalEliminado: boolean;
   estado: "activa" | "finalizada";
   teToca: boolean;
   turnoVence: string;
@@ -33,7 +35,12 @@ export type Bandeja = {
   partidas: ResumenPartida[];
   invitaciones: { token: string; creada: string; vence: string }[];
   busqueda: { desde: string; vence: string } | null;
+  /** F-52: las que te piden (`tuya` false) y las que has pedido tú. */
+  revanchas: { id: string; tuya: boolean; rival: string; vence: string }[];
 };
+
+/** La revancha pendiente entre dos: `tuya` si la pediste tú. */
+export type Revancha = { id: string; tuya: boolean; vence: string };
 
 export type Motivo = "estrellas" | "rendicion" | "inactividad";
 
@@ -41,6 +48,9 @@ export type Partida = {
   id: string;
   yo: 0 | 1;
   jugadores: [string, string];
+  /** F-54: el número de hermano de cada uno. */
+  numeros: [number | null, number | null];
+  eliminados: [boolean, boolean];
   estado: "activa" | "finalizada";
   motivo: Motivo | null;
   ganador: 0 | 1 | null;
@@ -63,9 +73,22 @@ export type Partida = {
   version: number;
   creada: string;
   terminada: string | null;
+  /** Al acabar, si el rival sigue: el marcador de todas vuestras partidas y la revancha pendiente. */
+  pareja: { marcador: { tuyas: number; suyas: number }; revancha: Revancha | null } | null;
 };
 
-export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null };
+/** `pregunta`: su id en el banco, para retar a otro con ella (F-53). */
+export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null; pregunta: number };
+
+/** Tú y un rival (F-52, 11-trivial-online/17). */
+export type Historial = {
+  rival: { alias: string; numero: number | null };
+  marcador: { tuyas: number; suyas: number };
+  enCurso: { id: string; teToca: boolean; turnoVence: string }[];
+  terminadas: { id: string; terminada: string; motivo: Motivo | null; ganaste: boolean | null; estrellas: { tuyas: number; rival: number } }[];
+  revancha: Revancha | null;
+  ultima: string | null;
+};
 
 export type Invitacion = { anfitrion: string; estado: "pendiente" | "caducada" | "cancelada" | "aceptada"; vence: string; tuya: boolean; partida: string | null };
 
@@ -192,3 +215,6 @@ export function hace(iso: string, ahora = Date.now()): string {
 
 /** El enlace que se comparte para una invitación. */
 export const enlaceInvitacion = (token: string) => `${window.location.origin}/trivial/i/${token}`;
+
+/** «1.032», con el punto también en los de cuatro cifras (Intl no lo pone en español). */
+export const miles = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");

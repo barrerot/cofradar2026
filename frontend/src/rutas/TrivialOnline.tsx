@@ -10,20 +10,24 @@ import {
   enlaceInvitacion,
   ErrorApi,
   hace,
+  miles,
   nuevaAccion,
   quedan,
   useEnLinea,
   useSondeo,
   type Bandeja,
+  type Historial,
   type Invitacion,
   type Partida,
   type Resolucion,
   type ResumenPartida,
+  type Revancha,
 } from "../datos/trivialOnline";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
 import { TableroTrivial, Estrellas } from "./TableroTrivial";
 import { FuenteDe } from "./Trivial";
+import { RetarConPregunta } from "./RetoTrivial";
 
 /**
  * P-33 Trivial online por turnos (F-51; 11-trivial-online/).
@@ -33,7 +37,11 @@ import { FuenteDe } from "./Trivial";
  *   /mi-cofradar/trivial/alias              cambiar el alias (desde Cuenta)
  *   /mi-cofradar/trivial/invitar/:token     el enlace para compartir (04)
  *   /mi-cofradar/trivial/i/:token           la invitación recibida (05); /trivial/i/:token lleva aquí
- *   /mi-cofradar/trivial/online/:id         la partida: tablero, pregunta, resolución y resultado (06–13)
+ *   /mi-cofradar/trivial/online/:id         la partida: tablero, pregunta, resolución y resultado (06–13, 15)
+ *   /mi-cofradar/trivial/online/:id/historial   tú y ese rival: marcador y partidas (17)
+ *
+ * Revancha (F-52, 15–17): al acabar, uno se la pide al otro; le llega a su bandeja. Retar con una pregunta
+ * (F-53, 18): ver RetoTrivial.tsx. Número de hermano (F-54, 21): bajo cada alias del marcador.
  *
  * El servidor manda en todo; aquí se pinta lo que dice y se le mandan las jugadas con un id, para que un
  * reintento no se cuente dos veces. Necesita cuenta y conexión; el solitario sigue sin ninguna de las dos.
@@ -196,6 +204,8 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
       await fn();
     } catch (e) {
       setAviso(e instanceof ErrorApi && e.estado ? e.message : "No se ha podido hacer. Comprueba la conexión y vuelve a intentarlo.");
+      // Lo que ya no está pendiente (una revancha caducada, una invitación aceptada) desaparece enseguida
+      if (e instanceof ErrorApi && e.estado) void recargar();
     } finally {
       setOcupado(null);
     }
@@ -209,6 +219,9 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
     const tuTurno = datos.partidas.filter((p) => p.estado === "activa" && p.teToca);
     const suyo = datos.partidas.filter((p) => p.estado === "activa" && !p.teToca);
     const fin = datos.partidas.filter((p) => p.estado === "finalizada");
+    const revanchas = datos.revanchas ?? [];
+    const pedidas = revanchas.filter((r) => r.tuya);
+    const recibidas = revanchas.filter((r) => !r.tuya);
     cuerpo = (
       <div className="cf-online">
         <div className="cf-online-botones">
@@ -255,7 +268,7 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
           </p>
         ) : null}
 
-        {datos.invitaciones.length || datos.busqueda ? (
+        {datos.invitaciones.length || datos.busqueda || pedidas.length ? (
           <ul className="cf-online-estados">
             {datos.invitaciones.map((i) => (
               <li key={i.token}>
@@ -270,6 +283,27 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
                   onClick={() =>
                     void hacer(i.token, async () => {
                       await api("DELETE", `/invitaciones/${i.token}`);
+                      await recargar();
+                    })
+                  }
+                >
+                  Cancelar
+                </button>
+              </li>
+            ))}
+            {pedidas.map((r) => (
+              <li key={r.id}>
+                <Icono nombre="cambiarCuenta" tamano={20} />
+                <span className="cf-online-estado-texto">
+                  Revancha pedida a {r.rival} · vence en {quedan(r.vence)}
+                </span>
+                <button
+                  type="button"
+                  className="cf-online-cancelar"
+                  disabled={!enLinea || ocupado === r.id}
+                  onClick={() =>
+                    void hacer(r.id, async () => {
+                      await api("DELETE", `/revanchas/${r.id}`);
                       await recargar();
                     })
                   }
@@ -302,6 +336,52 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
           </ul>
         ) : null}
 
+        {recibidas.length ? (
+          <section className="cf-online-grupo" aria-label="Te piden la revancha">
+            <h2>Te piden la revancha</h2>
+            <ul>
+              {recibidas.map((r) => (
+                <li key={r.id} className="cf-online-revancha">
+                  <p className="cf-online-revancha-texto">
+                    <Icono nombre="cambiarCuenta" tamano={20} />
+                    <span>
+                      {r.rival} te pide la revancha · vence en {quedan(r.vence)}
+                    </span>
+                  </p>
+                  <div className="cf-online-revancha-acciones">
+                    <Boton
+                      variante="primario"
+                      disabled={!enLinea}
+                      cargando={ocupado === `si-${r.id}`}
+                      onClick={() =>
+                        void hacer(`si-${r.id}`, async () => {
+                          const x = await api<{ partida: string }>("POST", `/revanchas/${r.id}/aceptar`);
+                          navegar(`/mi-cofradar/trivial/online/${x.partida}`);
+                        })
+                      }
+                    >
+                      Aceptar
+                    </Boton>
+                    <button
+                      type="button"
+                      className="cf-online-cancelar"
+                      disabled={!enLinea || ocupado === `no-${r.id}`}
+                      onClick={() =>
+                        void hacer(`no-${r.id}`, async () => {
+                          await api("POST", `/revanchas/${r.id}/rechazar`);
+                          await recargar();
+                        })
+                      }
+                    >
+                      Ahora no
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <GrupoBandeja titulo="Tu turno" partidas={tuTurno} vacio="Ahora no te toca en ninguna." />
         <GrupoBandeja titulo="Turno del rival" partidas={suyo} />
         <GrupoBandeja titulo="Finalizadas" partidas={fin} />
@@ -326,7 +406,8 @@ function GrupoBandeja({ titulo, partidas, vacio }: { titulo: string; partidas: R
         <ul>
           {partidas.map((p) => (
             <li key={p.id}>
-              <Link to={`/mi-cofradar/trivial/online/${p.id}`} className="cf-online-fila">
+              {/* Una terminada lleva al historial con ese rival (16 → 17), salvo si borró su cuenta */}
+              <Link to={`/mi-cofradar/trivial/online/${p.id}${p.estado === "finalizada" && !p.rivalEliminado ? "/historial" : ""}`} className="cf-online-fila">
                 <span className="cf-online-fila-texto">
                   <span className="cf-online-fila-titulo">{tituloFila(p)}</span>
                   {notaFila(p).map((l) => (
@@ -654,6 +735,7 @@ export function TrivialPartida({ estado }: { estado: EstadoJornada }) {
               {r.explicacion ? <p>{r.explicacion}</p> : null}
               <FuenteDe fuente={aFuente(r.fuente)} cofradia={slug(p.hermandad)} />
             </div>
+            {typeof r.pregunta === "number" ? <RetarConPregunta id={r.pregunta} enunciado={p.enunciado} acierto={r.acierto} /> : null}
             {!r.acierto && partida.estado === "activa" ? <p className="cf-online-intro">Ahora le toca a {rival}.</p> : null}
           </div>
           <BotonFoco
@@ -672,9 +754,13 @@ export function TrivialPartida({ estado }: { estado: EstadoJornada }) {
   // 13 · Resultado
   if (partida.estado === "finalizada") {
     const gane = partida.ganador === yo;
-    const titulo = partida.motivo === "inactividad" ? "Partida cerrada por inactividad" : gane ? `Ganaste a ${rival}` : `Ganó ${rival}`;
+    const eliminado = partida.eliminados[rivalP];
+    const titulo =
+      partida.motivo === "inactividad" ? "Partida cerrada por inactividad" : eliminado ? (gane ? "Ganaste" : "Perdiste") : gane ? `Ganaste a ${rival}` : `Ganó ${rival}`;
     const motivo =
-      partida.motivo === "estrellas"
+      eliminado && gane && partida.motivo === "rendicion"
+        ? "Tu rival eliminó su cuenta y la partida cuenta como rendida."
+        : partida.motivo === "estrellas"
         ? gane
           ? "Conseguiste las seis estrellas"
           : `${rival} consiguió las seis estrellas`
@@ -694,9 +780,21 @@ export function TrivialPartida({ estado }: { estado: EstadoJornada }) {
           ) : null}
           <p className="cf-online-intro">{motivo}</p>
           <Marcador partida={partida} />
-          <Boton variante="primario" tamano="52" onClick={() => navegar(vuelta.ruta)}>
-            Volver a la bandeja
-          </Boton>
+          {partida.pareja ? (
+            <>
+              <BloqueRevancha partidaId={partida.id} revancha={partida.pareja.revancha} rival={rival} alCambiar={recargar} />
+              <Boton variante="secundario" tamano="52" onClick={() => navegar(vuelta.ruta)}>
+                Volver a la bandeja
+              </Boton>
+              <Link to={`/mi-cofradar/trivial/online/${partida.id}/historial`} className="cf-online-enlace">
+                Tú y {rival}: {partida.pareja.marcador.tuyas} – {partida.pareja.marcador.suyas} · Ver historial
+              </Link>
+            </>
+          ) : (
+            <Boton variante="primario" tamano="52" onClick={() => navegar(vuelta.ruta)}>
+              Volver a la bandeja
+            </Boton>
+          )}
         </div>
       </PantallaSecundaria>
     );
@@ -885,7 +983,10 @@ function Marcador({ partida }: { partida: Partida }) {
             <span className="cf-online-ficha" data-tuya={p === yo ? "" : undefined} aria-hidden="true">
               {iniciales(partida.jugadores[p], partida.jugadores[p === 0 ? 1 : 0])}
             </span>
-            <span className="cf-online-marcador-alias">{partida.jugadores[p]}</span>
+            <span className="cf-online-marcador-alias">
+              {partida.jugadores[p]}
+              {partida.numeros?.[p] ? <span className="cf-online-marcador-numero">nº {miles(partida.numeros[p]!)}</span> : null}
+            </span>
             <span className="cf-online-marcador-cifra">
               {quien} · {partida.estrellas[p].length} de 6
             </span>
@@ -908,4 +1009,203 @@ function BotonFoco({ children, alPulsar }: { children: ReactNode; alPulsar: () =
       {children}
     </button>
   );
+}
+
+/**
+ * La revancha al acabar (15, 15b, 17): pedirla; ya pedida, desactivada con «Cancelar»; si te la piden a
+ * ti, aceptarla (empieza la partida) o «Ahora no».
+ */
+function BloqueRevancha({ partidaId, revancha, rival, alCambiar }: { partidaId: string; revancha: Revancha | null; rival: string; alCambiar: () => void | Promise<void> }) {
+  const navegar = useNavigate();
+  const enLinea = useEnLinea();
+  const [ocupado, setOcupado] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  const hacer = async (que: string, fn: () => Promise<void>) => {
+    setOcupado(que);
+    setAviso(null);
+    try {
+      await fn();
+    } catch (e) {
+      // Ya te la había pedido él, o ya no está pendiente: se repinta como esté
+      if (e instanceof ErrorApi && (e.estado === 409 || e.estado === 404 || e.estado === 410)) {
+        setAviso(e.message);
+        await alCambiar();
+      } else setAviso(e instanceof ErrorApi && e.estado ? e.message : "No se ha podido hacer. Comprueba la conexión y vuelve a intentarlo.");
+    } finally {
+      setOcupado(null);
+    }
+  };
+
+  const avisoP = aviso ? (
+    <p className="cf-online-error" role="alert">
+      <Icono nombre="informativo" tamano={16} />
+      {aviso}
+    </p>
+  ) : null;
+
+  if (revancha && !revancha.tuya) {
+    return (
+      <div className="cf-online-botones">
+        <p className="cf-online-intro">{rival} te pide la revancha · vence en {quedan(revancha.vence)}</p>
+        {avisoP}
+        <Boton
+          variante="primario"
+          tamano="52"
+          disabled={!enLinea}
+          cargando={ocupado === "si"}
+          onClick={() =>
+            void hacer("si", async () => {
+              const r = await api<{ partida: string }>("POST", `/revanchas/${revancha.id}/aceptar`);
+              navegar(`/mi-cofradar/trivial/online/${r.partida}`);
+            })
+          }
+        >
+          Aceptar la revancha
+        </Boton>
+        <button
+          type="button"
+          className="cf-online-enlace"
+          disabled={!enLinea || ocupado === "no"}
+          onClick={() =>
+            void hacer("no", async () => {
+              await api("POST", `/revanchas/${revancha.id}/rechazar`);
+              await alCambiar();
+            })
+          }
+        >
+          Ahora no
+        </button>
+      </div>
+    );
+  }
+  if (revancha) {
+    return (
+      <div className="cf-online-botones">
+        <Boton variante="secundario" tamano="52" disabled>
+          Revancha pedida · vence en {quedan(revancha.vence)}
+        </Boton>
+        {avisoP}
+        <button
+          type="button"
+          className="cf-online-enlace"
+          disabled={!enLinea || ocupado === "cancelar"}
+          onClick={() =>
+            void hacer("cancelar", async () => {
+              await api("DELETE", `/revanchas/${revancha.id}`);
+              await alCambiar();
+            })
+          }
+        >
+          Cancelar
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="cf-online-botones">
+      {avisoP}
+      <Boton
+        variante="primario"
+        tamano="52"
+        disabled={!enLinea}
+        cargando={ocupado === "pedir"}
+        onClick={() =>
+          void hacer("pedir", async () => {
+            await api("POST", `/partidas/${partidaId}/revancha`);
+            await alCambiar();
+          })
+        }
+      >
+        Pedir la revancha
+      </Boton>
+    </div>
+  );
+}
+
+// ── 17 · Historial con un rival ──
+
+export function TrivialHistorial({ estado }: { estado: EstadoJornada }) {
+  const { id = "" } = useParams();
+  const { usuario } = useSesion();
+  const { datos, error, recargar } = useSondeo<Historial>(usuario ? `/partidas/${id}/historial` : null, 60_000);
+
+  let cuerpo: ReactNode;
+  if (usuario === null) cuerpo = <PideCuenta motivo="trivial-online" texto="Para ver tus partidas, entra con tu cuenta de Google." />;
+  else if (!datos)
+    cuerpo = error ? (
+      error.estado === 404 || error.estado === 410 ? (
+        <p className="cf-online-intro">{error.estado === 410 ? "Tu rival eliminó su cuenta." : "Esa partida no existe o no es tuya."}</p>
+      ) : (
+        <ErrorCarga alReintentar={recargar} />
+      )
+    ) : (
+      <Esqueleto forma="lista" />
+    );
+  else {
+    const rival = datos.rival.alias;
+    cuerpo = (
+      <div className="cf-online">
+        <div>
+          <h1 className="cf-online-h1">Tú y {rival}</h1>
+          {datos.rival.numero ? <p className="cf-online-intro cf-online-secundario">hermano nº {miles(datos.rival.numero)}</p> : null}
+        </div>
+        <p className="cf-online-cara" aria-label={`Tú ${datos.marcador.tuyas}, ${rival} ${datos.marcador.suyas}`}>
+          <span>
+            <span className="cf-online-cara-cifra cf-num">{datos.marcador.tuyas}</span>
+            <span className="cf-online-cara-quien">tú</span>
+          </span>
+          <span className="cf-online-cara-guion" aria-hidden="true">
+            –
+          </span>
+          <span>
+            <span className="cf-online-cara-cifra cf-num">{datos.marcador.suyas}</span>
+            <span className="cf-online-cara-quien">{rival}</span>
+          </span>
+        </p>
+        {datos.enCurso.map((p) => (
+          <Link key={p.id} to={`/mi-cofradar/trivial/online/${p.id}`} className="cf-online-fila">
+            <Icono nombre="reloj" tamano={20} />
+            <span className="cf-online-fila-texto">
+              <span className="cf-online-fila-titulo">
+                En curso · {p.teToca ? `te toca · te quedan ${quedan(p.turnoVence)}` : `le toca a ${rival} · ${quedan(p.turnoVence)}`}
+              </span>
+            </span>
+            <Icono nombre="chevronDerecha" tamano={20} />
+          </Link>
+        ))}
+        {datos.terminadas.length ? (
+          <section className="cf-online-grupo" aria-label="Terminadas">
+            <h2>Terminadas</h2>
+            <ul>
+              {datos.terminadas.map((p) => (
+                <li key={p.id}>
+                  <Link to={`/mi-cofradar/trivial/online/${p.id}`} className="cf-online-fila" data-ganada={p.ganaste ? "" : undefined}>
+                    <span className="cf-online-fila-texto">
+                      <span className="cf-online-fila-nota">{new Date(p.terminada).toLocaleDateString("es-ES", { day: "numeric", month: "long" })}</span>
+                      <span className="cf-online-fila-titulo">{resultadoDe(p, rival)}</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+        {datos.ultima ? <BloqueRevancha partidaId={datos.ultima} revancha={datos.revancha} rival={rival} alCambiar={recargar} /> : null}
+        <p className="cf-online-nota">Este marcador solo lo veis vosotros dos.</p>
+      </div>
+    );
+  }
+  return (
+    <PantallaSecundaria vuelta={ORIGEN_ONLINE} accion={franja(estado)} registro="editorial">
+      {cuerpo}
+    </PantallaSecundaria>
+  );
+}
+
+/** «Ganaste 6 – 4 · por estrellas», «Perdiste · te rendiste», «Sin ganador · por inactividad». */
+function resultadoDe(p: Historial["terminadas"][number], rival: string): string {
+  if (p.motivo === "inactividad" || p.ganaste === null) return "Sin ganador · por inactividad";
+  if (p.motivo === "estrellas") return p.ganaste ? `Ganaste ${p.estrellas.tuyas} – ${p.estrellas.rival} · por estrellas` : `Perdiste ${p.estrellas.tuyas} – ${p.estrellas.rival} · por estrellas`;
+  return p.ganaste ? `Ganaste · ${rival} se rindió` : "Perdiste · te rendiste";
 }
