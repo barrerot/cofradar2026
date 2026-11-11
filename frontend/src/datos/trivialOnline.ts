@@ -37,6 +37,8 @@ export type Bandeja = {
   busqueda: { desde: string; vence: string } | null;
   /** F-52: las que te piden (`tuya` false) y las que has pedido tú. */
   revanchas: { id: string; tuya: boolean; rival: string; vence: string }[];
+  /** F-57: los retos de cuadrilla, igual: los que te mandan y los que has mandado. */
+  retos?: { id: string; tuyo: boolean; rival: string; cuadrilla: string; vence: string }[];
 };
 
 /** La revancha pendiente entre dos: `tuya` si la pediste tú. */

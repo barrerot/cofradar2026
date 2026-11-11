@@ -1,0 +1,208 @@
+/* ==========================================================================
+   COFRADAR · CUADRILLAS (P-36, F-57; 12-ano-cofrade/8–15)
+   Reutiliza cf-online-* (filas, grupos, notas) del trivial online. Por orden
+   alfabético y sin podio: ninguna fila destaca sobre otra salvo «(tú)».
+   Namespace: cf-cuad-*.
+   ========================================================================== */
+
+.cf-cuad-lista,
+.cf-cuad-miembros,
+.cf-cuad-terminadas,
+.cf-cuad-curso,
+.cf-cuad-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-cuad-lista,
+.cf-cuad-miembros,
+.cf-cuad-terminadas,
+.cf-cuad-menu {
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  overflow: hidden;
+}
+
+.cf-cuad-lista > li + li,
+.cf-cuad-miembros > li + li,
+.cf-cuad-terminadas > li + li,
+.cf-cuad-menu > li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-cuad-lista .cf-online-fila {
+  border: 0;
+  border-radius: 0;
+}
+
+.cf-cuad-nombre {
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: 600;
+}
+
+.cf-cuad-sub,
+.cf-cuad-personas {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cuad-personas {
+  font-weight: var(--cf-weight-emphasis, 600);
+  color: var(--cf-text);
+}
+
+.cf-cuad-secundario {
+  color: var(--cf-text-secondary);
+}
+
+/* «Invitar» y el menú «…» */
+.cf-cuad-acciones {
+  display: flex;
+  gap: var(--cf-space-3);
+}
+
+.cf-cuad-acciones .cf-btn {
+  flex: 1;
+}
+
+.cf-cuad-mas {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.25rem;
+  min-height: 3.25rem;
+  border: var(--cf-border-width) solid var(--cf-border-interactive);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  cursor: pointer;
+}
+
+/* 12 · Miembros */
+.cf-cuad-miembro {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+  width: 100%;
+  min-height: 4rem;
+  padding: var(--cf-space-3) var(--cf-space-5);
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  text-align: left;
+}
+
+button.cf-cuad-miembro {
+  cursor: pointer;
+}
+
+button.cf-cuad-miembro:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-cuad-alias {
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis, 600);
+  overflow-wrap: anywhere;
+}
+
+.cf-cuad-marca {
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cuad-cirio {
+  display: flex;
+  flex: none;
+  gap: var(--cf-space-2);
+  align-items: center;
+  margin-left: auto;
+}
+
+.cf-cuad-cirio > span {
+  display: grid;
+}
+
+.cf-cuad-cirio-dias {
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cuad-cirio-nota {
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* Partidas */
+.cf-cuad-curso {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin-bottom: var(--cf-space-3);
+}
+
+.cf-cuad-en-curso {
+  gap: var(--cf-space-3);
+  border-color: var(--cf-text);
+}
+
+.cf-cuad-en-curso .cf-online-fila-titulo {
+  flex: 1;
+}
+
+.cf-cuad-terminadas > li {
+  display: grid;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-3) var(--cf-space-5);
+}
+
+.cf-cuad-partida {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-cuad-pie {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* 10 · El cupo */
+.cf-cuad-cupo {
+  display: flex;
+  gap: var(--cf-space-2);
+  align-items: center;
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+/* 15 · El menú de la cuadrilla y los avisos de salir */
+.cf-cuad-menu {
+  width: 100%;
+}
+
+.cf-cuad-menu button {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--cf-space-3) var(--cf-space-5);
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-cuad-menu button:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-cuad-aviso {
+  font-weight: var(--cf-weight-emphasis, 600);
+}

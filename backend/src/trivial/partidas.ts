@@ -62,6 +62,9 @@ function plano(alias: string): string {
     .replace(/_/g, "");
 }
 
+/** Si un texto lleva alguna palabra malsonante (los nombres de cuadrilla, F-57). */
+export const malsonante = (texto: string) => MALSONANTES.some((m) => plano(texto.replace(/\s+/g, "")).includes(m));
+
 export function problemaDeAlias(alias: string): string | null {
   if (!/^[A-Za-z0-9_ÁÉÍÓÚÜÑáéíóúüñ]{3,20}$/.test(alias)) return "De 3 a 20 letras, números o _";
   const p = plano(alias);
@@ -92,13 +95,13 @@ export async function guardarAlias(usuario: string, alias: string): Promise<stri
   return limpio;
 }
 
-async function exigirAlias(usuario: string): Promise<string> {
+export async function exigirAlias(usuario: string): Promise<string> {
   const alias = await aliasDe(usuario);
   if (!alias) throw new ErrorTrivial(409, "Antes tienes que elegir un alias", { sinAlias: true });
   return alias;
 }
 
-async function bancoActivo(bd: Cliente | typeof consulta = consulta): Promise<number> {
+export async function bancoActivo(bd: Cliente | typeof consulta = consulta): Promise<number> {
   const q = "select version from trivial_banco where activa";
   const { rows } = typeof bd === "function" ? await bd<{ version: number }>(q) : await bd.query<{ version: number }>(q);
   if (!rows[0]) throw new ErrorTrivial(503, "El trivial online aún no tiene preguntas publicadas");
@@ -166,7 +169,7 @@ async function guardarEstado(bd: Cliente, id: string, e: Estado, acciones?: Fila
 }
 
 /** Bloquea la partida y aplica los vencimientos pendientes. Devuelve la fila ya al día. */
-async function bloquear(bd: Cliente, id: string): Promise<FilaPartida | null> {
+export async function bloquear(bd: Cliente, id: string): Promise<FilaPartida | null> {
   const { rows } = await bd.query<FilaPartida>("select * from trivial_partida where id = $1 for update", [id]);
   const f = rows[0];
   if (!f) return null;
@@ -187,7 +190,7 @@ function puestoDe(f: FilaPartida, usuario: string): Puesto | null {
   return null;
 }
 
-async function crearPartida(bd: Cliente, a: string, b: string, banco: number, origen: "invitacion" | "cola" | "revancha"): Promise<string> {
+export async function crearPartida(bd: Cliente, a: string, b: string, banco: number, origen: "invitacion" | "cola" | "revancha" | "cuadrilla"): Promise<string> {
   // RF-03: quién es el puesto 0 y quién empieza, al azar en el servidor
   const [j0, j1] = randomInt(2) === 0 ? [a, b] : [b, a];
   const e = empezar(new Date(), randomInt(2) as Puesto);
@@ -203,7 +206,7 @@ async function crearPartida(bd: Cliente, a: string, b: string, banco: number, or
 // ── Lo que ve cada jugador ──
 
 /** Dentro de una transacción, con su misma conexión (`bd`): pedir otra mientras se tiene una puede atascar el pool. */
-async function aliasDeVarios(ids: (string | null)[], bd?: Cliente): Promise<Map<string, string>> {
+export async function aliasDeVarios(ids: (string | null)[], bd?: Cliente): Promise<Map<string, string>> {
   const validos = [...new Set(ids.filter((x): x is string => !!x))];
   if (!validos.length) return new Map();
   const sql = "select usuario_id, alias from trivial_jugador where usuario_id = any($1)";
@@ -267,9 +270,9 @@ function vista(
 const rivalDe = (f: { jugador_0: string | null; jugador_1: string | null }, yo: Puesto) => (yo === 0 ? f.jugador_1 : f.jugador_0);
 
 /** Las partidas entre dos cuentas, en cualquier puesto. */
-const DE_LA_PAREJA = "((jugador_0 = $1 and jugador_1 = $2) or (jugador_0 = $2 and jugador_1 = $1))";
+export const DE_LA_PAREJA = "((jugador_0 = $1 and jugador_1 = $2) or (jugador_0 = $2 and jugador_1 = $1))";
 
-async function marcadorDe(bd: Cliente, yo: string, rival: string) {
+export async function marcadorDe(bd: Cliente, yo: string, rival: string) {
   const { rows } = await bd.query<{ tuyas: number; suyas: number }>(
     `select count(*) filter (where (ganador = 0 and jugador_0 = $1) or (ganador = 1 and jugador_1 = $1))::int as tuyas,
             count(*) filter (where (ganador = 0 and jugador_0 = $2) or (ganador = 1 and jugador_1 = $2))::int as suyas
@@ -567,7 +570,7 @@ export async function bandeja(usuario: string) {
   );
   for (const { id } of vencidas.rows) await enTransaccion((bd) => bloquear(bd, id));
 
-  const [partidas, invitaciones, cola, alias, revanchas] = await Promise.all([
+  const [partidas, invitaciones, cola, alias, revanchas, retos] = await Promise.all([
     consulta<FilaPartida>(
       `(select * from trivial_partida where estado = 'activa' and (jugador_0 = $1 or jugador_1 = $1))
        union all
@@ -588,8 +591,14 @@ export async function bandeja(usuario: string) {
        where estado = 'pendiente' and vence > now() and (de_id = $1 or para_id = $1) order by creada desc`,
       [usuario],
     ),
+    // F-57: los retos de cuadrilla, como las revanchas
+    consulta<{ id: string; de_id: string; para_id: string; vence: Date; cuadrilla: string }>(
+      `select r.id, r.de_id, r.para_id, r.vence, c.nombre as cuadrilla from cuadrilla_reto r join cuadrilla c on c.id = r.cuadrilla_id
+       where r.estado = 'pendiente' and r.vence > now() and (r.de_id = $1 or r.para_id = $1) order by r.creada desc`,
+      [usuario],
+    ),
   ]);
-  const nombres = await aliasDeVarios([...partidas.rows.flatMap((f) => [f.jugador_0, f.jugador_1]), ...revanchas.rows.flatMap((r) => [r.de_id, r.para_id])]);
+  const nombres = await aliasDeVarios([...partidas.rows.flatMap((f) => [f.jugador_0, f.jugador_1]), ...revanchas.rows.flatMap((r) => [r.de_id, r.para_id]), ...retos.rows.flatMap((r) => [r.de_id, r.para_id])]);
   const resumen = partidas.rows.map((f) => {
     const yo = puestoDe(f, usuario)!;
     const v = vista(f, yo, nombres);
@@ -616,13 +625,18 @@ export async function bandeja(usuario: string) {
       const tuya = r.de_id === usuario;
       return { id: r.id, tuya, rival: nombres.get(tuya ? r.para_id : r.de_id) ?? ELIMINADO, vence: new Date(r.vence).toISOString() };
     }),
+    // F-57: «Costalero83 te reta · Los de la Campana» y los que has mandado tú
+    retos: retos.rows.map((r) => {
+      const tuyo = r.de_id === usuario;
+      return { id: r.id, tuyo, rival: nombres.get(tuyo ? r.para_id : r.de_id) ?? ELIMINADO, cuadrilla: r.cuadrilla, vence: new Date(r.vence).toISOString() };
+    }),
   };
 }
 
 // ── Revancha (F-52) ──
 
 /** Una a la vez por pareja: dos que la piden a la vez no crean dos. */
-const bloquearPareja = (bd: Cliente, a: string, b: string) =>
+export const bloquearPareja = (bd: Cliente, a: string, b: string) =>
   bd.query("select pg_advisory_xact_lock(hashtext($1))", [`revancha:${[a, b].sort().join(":")}`]);
 
 /**
@@ -754,7 +768,7 @@ export async function historial(usuario: string, partidaId: string) {
 /**
  * Antes de borrar una cuenta (decisión de Carlos, «A», 10/11/2026): sus partidas en marcha las gana el
  * rival, como si se hubiera rendido. Lo demás lo hace la base al borrar el usuario: alias, invitaciones,
- * búsquedas y revanchas se borran, su puesto en las partidas terminadas queda vacío («Jugador eliminado») y
+ * búsquedas, revanchas y retos se borran, su puesto en las partidas terminadas queda vacío («Jugador eliminado») y
  * su número de hermano se queda sin dueño, sin volver a darse.
  */
 export async function alBorrarCuenta(usuario: string): Promise<void> {

@@ -493,3 +493,57 @@ create table if not exists dia_respuesta (
 );
 create index if not exists dia_respuesta_fecha on dia_respuesta (fecha);
 alter table dia_respuesta enable row level security;
+
+-- ── Cuadrillas (F-57; aprobadas por Carlos el 10/11/2026) ──────────────────────────────────────────
+-- Un grupo privado de amigos, de 2 a 30. Quien la crea es el capataz; entra gente con un enlace (7 días,
+-- varios usos). Dentro se ven el alias, el número de hermano, el cirio y las partidas entre miembros, por
+-- orden alfabético y sin podio; nunca puntos ni dónde ha estado nadie. Si el capataz sale, lo es quien
+-- lleve más tiempo dentro; si sale el último, la cuadrilla desaparece (backend/src/cuadrillas/).
+create table if not exists cuadrilla (
+  id          uuid primary key default gen_random_uuid(),
+  nombre      text not null check (char_length(nombre) between 1 and 30),
+  capataz_id  uuid references auth.users (id) on delete set null,
+  creada      timestamptz not null default now()
+);
+alter table cuadrilla enable row level security;
+
+create table if not exists cuadrilla_miembro (
+  cuadrilla_id  uuid not null references cuadrilla (id) on delete cascade,
+  usuario_id    uuid not null references auth.users (id) on delete cascade,
+  desde         timestamptz not null default now(),
+  primary key (cuadrilla_id, usuario_id)
+);
+create index if not exists cuadrilla_miembro_usuario on cuadrilla_miembro (usuario_id);
+alter table cuadrilla_miembro enable row level security;
+
+-- El enlace de invitación. Lo puede sacar cualquier miembro; anularlo, solo el capataz.
+create table if not exists cuadrilla_enlace (
+  token         text primary key,
+  cuadrilla_id  uuid not null references cuadrilla (id) on delete cascade,
+  creado_por    uuid references auth.users (id) on delete set null,
+  creado        timestamptz not null default now(),
+  vence         timestamptz not null,
+  anulado       boolean not null default false
+);
+create index if not exists cuadrilla_enlace_cuadrilla on cuadrilla_enlace (cuadrilla_id);
+alter table cuadrilla_enlace enable row level security;
+
+-- Retar a un miembro: le llega a su bandeja como la revancha (72 horas, una pendiente por pareja). Si la
+-- acepta, empieza una partida normal (origen 'cuadrilla').
+create table if not exists cuadrilla_reto (
+  id            uuid primary key default gen_random_uuid(),
+  cuadrilla_id  uuid not null references cuadrilla (id) on delete cascade,
+  de_id         uuid not null references auth.users (id) on delete cascade,
+  para_id       uuid not null references auth.users (id) on delete cascade,
+  estado        text not null default 'pendiente' check (estado in ('pendiente', 'aceptado', 'rechazado', 'cancelado', 'caducado')),
+  creada        timestamptz not null default now(),
+  vence         timestamptz not null,
+  partida_id    uuid
+);
+create unique index if not exists cuadrilla_reto_uno on cuadrilla_reto (least(de_id, para_id), greatest(de_id, para_id)) where estado = 'pendiente';
+create index if not exists cuadrilla_reto_para on cuadrilla_reto (para_id, estado);
+create index if not exists cuadrilla_reto_de on cuadrilla_reto (de_id, estado);
+alter table cuadrilla_reto enable row level security;
+
+alter table trivial_partida drop constraint if exists trivial_partida_origen_check;
+alter table trivial_partida add constraint trivial_partida_origen_check check (origen in ('invitacion', 'cola', 'revancha', 'cuadrilla'));

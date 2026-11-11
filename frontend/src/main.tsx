@@ -36,6 +36,7 @@ import "./estilos/mi-cofradar.css";
 import "./estilos/trivial.css";
 import "./estilos/trivial-online.css";
 import "./estilos/dia.css";
+import "./estilos/cuadrillas.css";
 import "./estilos/mapa.css";
 import "./estilos/admin.css";
 

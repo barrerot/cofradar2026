@@ -1,4 +1,5 @@
 import { LineaCirio } from "./PreguntaDelDia";
+import { useCuadrillas, type ResumenCuadrilla } from "../datos/cuadrillas";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
@@ -37,6 +38,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
   const mias = useMisAportaciones();
   const hermano = useHermano();
   const con = !!usuario;
+  const { datos: cuadrillas } = useCuadrillas<{ cuadrillas: ResumenCuadrilla[] }>(con ? "" : null);
   const eliminada = (useLocation().state as { cuentaEliminada?: boolean } | null)?.cuentaEliminada;
 
   // Solo cuenta lo que ya ha llegado del servidor: nunca un 0 que no es
@@ -86,6 +88,11 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           >
             Mis aportaciones
           </Fila>
+          {con ? (
+            <Fila icono="cuadrilla" marca a="/mi-cofradar/cuadrillas" valor={cuadrillas ? String(cuadrillas.cuadrillas.length) : undefined}>
+              Cuadrillas
+            </Fila>
+          ) : null}
         </nav>
 
         {!con && disponible && usuario !== undefined ? (

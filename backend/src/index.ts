@@ -12,6 +12,7 @@ import { routerDatosBase } from "./rutas/datosBase.js";
 import { routerEstado } from "./rutas/estado.js";
 import { routerTrivial } from "./rutas/trivial.js";
 import { routerDia } from "./rutas/dia.js";
+import { routerCuadrillas } from "./rutas/cuadrillas.js";
 import { leerSesion } from "./sesion.js";
 
 /**
@@ -44,6 +45,7 @@ app.use("/api", routerAdmin);
 app.use("/api", routerDatosBase);
 app.use("/api", routerTrivial);
 app.use("/api", routerDia);
+app.use("/api", routerCuadrillas);
 
 /**
  * Los escudos (BUL-171), sacados de la web del Consejo; se quitan si el Consejo o la hermandad lo piden. Viven en el

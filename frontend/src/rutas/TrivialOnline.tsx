@@ -29,6 +29,7 @@ import { TableroTrivial, Estrellas } from "./TableroTrivial";
 import { FuenteDe } from "./Trivial";
 import { RetarConPregunta } from "./RetoTrivial";
 import { TarjetaDia } from "./PreguntaDelDia";
+import { apiCuadrillas } from "../datos/cuadrillas";
 
 /**
  * P-33 Trivial online por turnos (F-51; 11-trivial-online/).
@@ -116,7 +117,17 @@ function PideCuenta({ motivo, texto }: { motivo: string; texto: string }) {
 
 // ── 02 · Alias ──
 
-function ElegirAlias({ inicial, alGuardar, boton = "Guardar y seguir" }: { inicial?: string; alGuardar: (alias: string) => void; boton?: string }) {
+export function ElegirAlias({
+  inicial,
+  alGuardar,
+  boton = "Guardar y seguir",
+  texto = "Elige cómo te verá tu rival.",
+}: {
+  inicial?: string;
+  alGuardar: (alias: string) => void;
+  boton?: string;
+  texto?: string;
+}) {
   const [alias, setAlias] = useState(inicial ?? "");
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
@@ -140,7 +151,7 @@ function ElegirAlias({ inicial, alGuardar, boton = "Guardar y seguir" }: { inici
         void guardar();
       }}
     >
-      <p className="cf-online-intro">Elige cómo te verá tu rival.</p>
+      <p className="cf-online-intro">{texto}</p>
       <div className="cf-field" data-state={error ? "error" : undefined}>
         <label htmlFor="trivial-alias">Alias</label>
         <input
@@ -225,6 +236,9 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
     const revanchas = datos.revanchas ?? [];
     const pedidas = revanchas.filter((r) => r.tuya);
     const recibidas = revanchas.filter((r) => !r.tuya);
+    const retos = datos.retos ?? [];
+    const retosEnviados = retos.filter((r) => r.tuyo);
+    const retosRecibidos = retos.filter((r) => !r.tuyo);
     cuerpo = (
       <div className="cf-online">
         <div className="cf-online-botones">
@@ -271,7 +285,7 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
           </p>
         ) : null}
 
-        {datos.invitaciones.length || datos.busqueda || pedidas.length ? (
+        {datos.invitaciones.length || datos.busqueda || pedidas.length || retosEnviados.length ? (
           <ul className="cf-online-estados">
             {datos.invitaciones.map((i) => (
               <li key={i.token}>
@@ -315,6 +329,27 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
                 </button>
               </li>
             ))}
+            {retosEnviados.map((r) => (
+              <li key={r.id}>
+                <Icono nombre="cuadrilla" tamano={20} />
+                <span className="cf-online-estado-texto">
+                  Reto enviado a {r.rival} · vence en {quedan(r.vence)}
+                </span>
+                <button
+                  type="button"
+                  className="cf-online-cancelar"
+                  disabled={!enLinea || ocupado === r.id}
+                  onClick={() =>
+                    void hacer(r.id, async () => {
+                      await apiCuadrillas("DELETE", `/retos/${r.id}`);
+                      await recargar();
+                    })
+                  }
+                >
+                  Cancelar
+                </button>
+              </li>
+            ))}
             {datos.busqueda ? (
               <li>
                 <Icono nombre="buscar" tamano={20} />
@@ -339,9 +374,9 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
           </ul>
         ) : null}
 
-        {recibidas.length ? (
-          <section className="cf-online-grupo" aria-label="Te piden la revancha">
-            <h2>Te piden la revancha</h2>
+        {recibidas.length || retosRecibidos.length ? (
+          <section className="cf-online-grupo" aria-label="Te esperan">
+            <h2>Te esperan</h2>
             <ul>
               {recibidas.map((r) => (
                 <li key={r.id} className="cf-online-revancha">
@@ -372,6 +407,45 @@ export function TrivialVestibulo({ estado }: { estado: EstadoJornada }) {
                       onClick={() =>
                         void hacer(`no-${r.id}`, async () => {
                           await api("POST", `/revanchas/${r.id}/rechazar`);
+                          await recargar();
+                        })
+                      }
+                    >
+                      Ahora no
+                    </button>
+                  </div>
+                </li>
+              ))}
+              {/* F-57: el reto de un miembro de tu cuadrilla (12-ano-cofrade/14) */}
+              {retosRecibidos.map((r) => (
+                <li key={r.id} className="cf-online-revancha">
+                  <p className="cf-online-revancha-texto">
+                    <Icono nombre="cuadrilla" tamano={20} />
+                    <span>
+                      {r.rival} te reta · {r.cuadrilla} · vence en {quedan(r.vence)}
+                    </span>
+                  </p>
+                  <div className="cf-online-revancha-acciones">
+                    <Boton
+                      variante="primario"
+                      disabled={!enLinea}
+                      cargando={ocupado === `si-${r.id}`}
+                      onClick={() =>
+                        void hacer(`si-${r.id}`, async () => {
+                          const x = await apiCuadrillas<{ partida: string }>("POST", `/retos/${r.id}/aceptar`);
+                          navegar(`/mi-cofradar/trivial/online/${x.partida}`);
+                        })
+                      }
+                    >
+                      Aceptar
+                    </Boton>
+                    <button
+                      type="button"
+                      className="cf-online-cancelar"
+                      disabled={!enLinea || ocupado === `no-${r.id}`}
+                      onClick={() =>
+                        void hacer(`no-${r.id}`, async () => {
+                          await apiCuadrillas("POST", `/retos/${r.id}/rechazar`);
                           await recargar();
                         })
                       }

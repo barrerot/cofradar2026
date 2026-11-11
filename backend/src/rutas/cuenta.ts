@@ -6,6 +6,7 @@ import { hermandadesYEdicion } from "./cofradias.js";
 import { alBorrarCuenta, datosDe as datosTrivial } from "../trivial/partidas.js";
 import { hermanoDe } from "../hermano.js";
 import { datosDe as datosDia } from "../dia/dia.js";
+import { alBorrarCuenta as dejarCuadrillas, datosDe as datosCuadrillas } from "../cuadrillas/cuadrillas.js";
 
 /**
  * Lo de la cuenta de cada persona. Todas las rutas piden sesión (`X-Sesion`) y solo tocan lo suyo.
@@ -34,7 +35,8 @@ routerCuenta.get("/yo", exigirSesion, (_peticion, respuesta) => {
  * Eliminar la cuenta (P-24). Borra el usuario de Supabase Auth, y con él, por `on delete cascade`, sus
  * seguidas, vistas y aportaciones (supabase/esquema.sql; lo de las aportaciones, decidido por Carlos el
  * 21/10/2026, a revisar en la consulta legal de BUL-223). Es inmediato: no hay papelera ni plazo de gracia.
- * Antes, sus partidas del trivial online en marcha las gana el rival (alBorrarCuenta).
+ * Antes, sus partidas del trivial online en marcha las gana el rival (alBorrarCuenta) y sale de sus
+ * cuadrillas como si se fuera: si era el capataz, lo pasa a ser el que más tiempo lleve dentro.
  */
 routerCuenta.delete(
   "/yo",
@@ -43,6 +45,7 @@ routerCuenta.delete(
     const usuario: Usuario = respuesta.locals.usuario;
     try {
       await alBorrarCuenta(usuario.id);
+      await dejarCuadrillas(usuario.id);
       const { error } = await supabase().auth.admin.deleteUser(usuario.id);
       if (error) throw error;
       historias.olvidar(usuario.id);
@@ -102,7 +105,7 @@ routerCuenta.get(
   ruta(async (_peticion, respuesta, usuario) => {
     const { porId } = await hermandadesYEdicion();
     const db = supabase();
-    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano, preguntaDelDia] = await Promise.all([
+    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano, preguntaDelDia, cuadrillas] = await Promise.all([
       db.auth.admin.getUserById(usuario.id),
       db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
       db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
@@ -115,6 +118,7 @@ routerCuenta.get(
       datosTrivial(usuario.id),
       hermanoDe(usuario.id),
       datosDia(usuario.id),
+      datosCuadrillas(usuario.id),
     ]);
     for (const r of [seguidas, vistas, nombres, aportaciones]) if (r.error) throw r.error;
     if (cuenta.error) throw cuenta.error;
@@ -153,6 +157,8 @@ routerCuenta.get(
         trivial,
         // La pregunta del día de Cuaresma (F-55): qué día contestaste y si acertaste
         pregunta_del_dia: preguntaDelDia,
+        // Tus cuadrillas (F-57): en cuáles estás, desde cuándo y si eres el capataz
+        cuadrillas,
       });
   }),
 );
