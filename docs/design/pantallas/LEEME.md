@@ -317,3 +317,30 @@ Reglas (PRD, F-51 y P-33): partida por turnos entre dos cuentas, con 48 horas po
   - en Mi Cofradar, bajo el nivel;
   - en Cuenta, como fila propia bajo la cuenta de Google;
   - en el marcador de la partida, «nº 214» bajo cada alias.
+
+## 12-ano-cofrade
+
+**Vigentes** · lienzo «Cofradar · El año cofrade», aprobado el 11 de noviembre de 2026. Solo PNG, a 780 de ancho (390 a 2×), dibujadas enteras. Prompt: `prompts/26-cirio-y-cuadrillas-lienzo-nuevo.txt`. La pregunta es real (id 812 del banco `docs/datos/trivial/`); los alias, días, cirios, cuadrillas y partidas son de ejemplo. Es Cuaresma (jueves 4 de marzo de 2027, día 23): sin franja «Dar fe».
+
+Reglas (PRD, F-55 y F-57; P-34 y P-36): pregunta del día del 10/02 al 20/03/2027, la misma para todos, cambia a las 00:00 de Madrid. Contestar (aciertes o no) mantiene el cirio; dejar pasar un día lo apaga. Cuadrillas de 2 a 30, privadas, por orden alfabético y sin podio; nunca puntos, nivel ni dónde ha estado nadie.
+
+**El cirio** (dibujo propio, de línea): encendido, llama rellena en cobre apagado #B86B3C; hoy aún no, llama solo en contorno; apagado, solo el pabilo. Se distinguen por la forma, no por el color. 96 px en la pregunta resuelta y 20 px como icono.
+
+**Pregunta del día:**
+- `01-portada-pregunta-del-dia` y `01b-hecho`, `01c-apagado`, `01d-sin-cuenta`, `01e-antes`, `01f-despues` — 1 · LA TARJETA en la portada del trivial, encima de «Jugar solo». Fuera de Cuaresma (salvo del 1/02 al 9/02 y el final), no aparece. En `01f`, los días son los de cada persona.
+- `02-pregunta` — 2 · SIN RESPONDER, con «Día 23 de Cuaresma · jueves 4 de marzo».
+- `03-acierto-{claro,oscuro}` — 3 · RESUELTA: explicación y fuente, el bloque del cirio (días, «Has acertado 18 de 23» y una marca por día: llena si acertaste, contorno si no), «Compartir», «Volver al trivial» y «Retar a un amigo con esta pregunta».
+- `04-compartir`, `04b-compartir-fallo` — 4 · COMPARTIR: «Cofradar · Día 23 de Cuaresma ✅ 🕯️ 23 días» (❌ si falla), nunca la respuesta. Única pantalla con emojis.
+- `05-fallo` — 5 · FALLO: el cirio sigue igual; solo baja la cuenta de aciertos.
+- `06-apagado`, `06b-vuelve-a-encenderse` — 6 · CIRIO APAGADO, sin reproche, y vuelta a 1 día al contestar.
+- `07-mi-cofradar` — 7 · MI COFRADAR: la línea del cirio bajo el número de hermano y la fila «Cuadrillas» (UsersThree). La cabecera «Madrugá ▾» y la tarjeta de puntos son las aprobadas; en la app, fuera de Semana Santa, la cabecera es la del selector de siempre.
+
+**Cuadrillas:**
+- `08-tus-cuadrillas`, `08b-vacia` — 8 · TUS CUADRILLAS y «Crear una cuadrilla».
+- `09-crear`, `09b-sin-nombre` — 9 · CREAR: nombre de hasta 30 letras; error en tinta.
+- `10-invitar` — 10 · INVITAR: enlace de 7 días para varias personas, «6 de 30», «Anular el enlace». Invita cualquier miembro; anula solo el capataz.
+- `11-invitacion` y `11b-sin-cuenta`, `11c-sin-alias`, `11d-llena`, `11e-caducado`, `11f-ya-dentro` — 11 · INVITACIÓN RECIBIDA y sus estados.
+- `12-la-cuadrilla-{claro,oscuro}`, `12b-fuera-de-cuaresma` — 12 · LA CUADRILLA: miembros por orden alfabético con nº de hermano y cirio («capataz» en texto, sin corona), la partida en curso y las terminadas. Fuera de Cuaresma, sin cirio. En la app, el «6 – 4» no se parte de línea.
+- `13-miembro`, `13b-jugar`, `13c-reto-enviado`, `13d-capataz` — 13 · UN MIEMBRO: «Tú y X: 3 – 2 · Ver historial», y «Ir a la partida», «Jugar una partida» o «Reto enviado · vence en 72 h»; el capataz, además, «Quitar de la cuadrilla».
+- `14-bandeja` — 14 · EL RETO EN LA BANDEJA: el grupo de arriba pasa a «Te esperan», con revanchas y retos de cuadrilla. Las fechas de «Finalizadas» son las de la 16 del online.
+- `15-menu`, `15b-menu-capataz`, `15c-salir`, `15d-salir-capataz`, `15e-salir-ultimo`, `15f-quitar` — 15 · MENÚ, SALIR Y QUITAR. Si sale el capataz, pasa a serlo quien lleve más tiempo dentro (en la app, con su alias real); si sale el último, la cuadrilla desaparece.
