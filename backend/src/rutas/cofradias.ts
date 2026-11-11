@@ -205,6 +205,30 @@ export async function nombresDeHermandades(): Promise<Map<number, { nombre: stri
   );
 }
 
+/** La hora a la que la cruz de guía pasa por la Campana, donde empieza la carrera oficial */
+function horaEnCampana(puntos: PuntoItinerario[]): string | null {
+  return horario(puntos, "cruz_guia").find((h) => /campana/i.test(h.lugar.nombre))?.hora ?? null;
+}
+
+/**
+ * El álbum (F-56): las hermandades de la última edición, por jornada y en el orden en que pasan por la
+ * Campana (la carrera oficial); las de las vísperas, que no pasan, por su hora de salida.
+ */
+export async function hermandadesPorJornada(): Promise<
+  { hermandadId: number; cofradia: string; nombre: string; jornada: { id: number; nombre: string; orden: number } }[]
+> {
+  const lista = await salidas();
+  return lista
+    .map((s) => ({ s, salida: horaEnCampana(s.punto_itinerario) ?? salidaYEntrada(s.punto_itinerario).horaSalida ?? "" }))
+    .sort((a, b) => a.s.jornada.orden - b.s.jornada.orden || a.salida.localeCompare(b.salida))
+    .map(({ s }) => ({
+      hermandadId: s.hermandad.id,
+      cofradia: slug(s.hermandad.nombre),
+      nombre: s.hermandad.nombre,
+      jornada: { id: s.jornada.id, nombre: s.jornada.nombre, orden: s.jornada.orden },
+    }));
+}
+
 function anioPedido(peticion: Request): number | undefined {
   const a = Number(peticion.query.anio);
   return Number.isInteger(a) && a > 0 ? a : undefined;

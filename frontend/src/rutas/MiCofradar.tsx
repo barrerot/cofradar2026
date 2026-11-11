@@ -4,7 +4,9 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, Cabecera, Icono, Marco, type NombreTrazo } from "../marco";
-import { nivelDe, useMisAportaciones } from "../datos/puntos";
+import { useMisAportaciones } from "../datos/puntos";
+import { useAlbum } from "../datos/album";
+import { useCargo } from "../datos/cargo";
 import { mesDe, useHermano, type Hermano } from "../datos/hermano";
 import { miles } from "../datos/trivialOnline";
 import { useRelaciones } from "../datos/relaciones";
@@ -12,17 +14,19 @@ import { useSesion } from "../datos/sesion";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
 import { SelectorJornada } from "./SelectorJornada";
+import { TarjetaCargo } from "./Cargo";
 
 /**
  * P-19 Mi Cofradar · la capa personal (7-mi-cofradar/portada-*), registro
  * editorial.
  *
- *   Progreso     tus puntos (base y bonus de «Dar fe») y tu nivel, que es un
- *                cargo de hermandad «en Cofradar» (BUL-219), con lo que falta
- *                para el siguiente (portada-A). Sin cuenta o sin ninguna
- *                aportación, «Empiezas a sumar puntos cuando das fe»
- *                (portada-B): nunca una cifra inventada.
- *   Lo tuyo      Seguidas, Mi colección y Mis aportaciones. Con cuenta, con sus
+ *   Progreso     tus puntos y tu cargo de hermandad «en Cofradar» (BUL-219,
+ *                F-58), con lo que falta para el siguiente y lo que viene de la
+ *                calle y de la casa (12-ano-cofrade/16). Lleva a «Tu cargo».
+ *                Sin cuenta o sin ningún punto, «Empiezas a sumar puntos cuando
+ *                das fe» (portada-B): nunca una cifra inventada.
+ *   Lo tuyo      Seguidas, Mi colección, Álbum de estampas (F-56), Mis
+ *                aportaciones y Cuadrillas. Con cuenta, con sus
  *                cifras. Sin cuenta no hay nada guardado (decisión del
  *                20/10/2026: lo personal es de la cuenta y no se guarda «solo
  *                en este teléfono»), así que se invita a entrar con Google, como
@@ -36,6 +40,8 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
   const { usuario, disponible, entrar } = useSesion();
   const relaciones = useRelaciones();
   const mias = useMisAportaciones();
+  const { cargo } = useCargo();
+  const { album } = useAlbum();
   const hermano = useHermano();
   const con = !!usuario;
   const { datos: cuadrillas } = useCuadrillas<{ cuadrillas: ResumenCuadrilla[] }>(con ? "" : null);
@@ -59,8 +65,8 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           </div>
         ) : null}
 
-        {mias && mias.aportaciones.length ? (
-          <Progreso puntos={mias.puntos} hermano={hermano} />
+        {cargo && cargo.puntos > 0 ? (
+          <TarjetaCargo cargo={cargo} hermano={hermano} />
         ) : (
           <>
             {hermano ? <NumeroHermano h={hermano} /> : null}
@@ -79,6 +85,11 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           <Fila icono="vista" marca a="/mi-cofradar/coleccion" valor={cifra(relaciones.coleccion)}>
             Mi colección
           </Fila>
+          {con ? (
+            <Fila icono="album" marca a="/mi-cofradar/album" valor={album ? String(album.estampas) : undefined}>
+              Álbum de estampas
+            </Fila>
+          ) : null}
           <Fila
             icono={mias?.aportaciones.length ? "darFeVerificada" : "darFeNoVerificable"}
             marca={!!mias?.aportaciones.length}
@@ -128,44 +139,12 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
   );
 }
 
-/** «Tu progreso»: los puntos, el nivel y la barra hasta el siguiente. Granate: es lo tuyo. */
 /** F-54 (11-trivial-online/21a): «Hermano nº 214 de Cofradar · desde noviembre de 2026». */
 function NumeroHermano({ h }: { h: Hermano }) {
   return (
     <p className="cf-mi-hermano">
       Hermano nº <span className="cf-num">{miles(h.numero)}</span> de Cofradar · desde {mesDe(h.desde)}
     </p>
-  );
-}
-
-function Progreso({ puntos, hermano }: { puntos: number; hermano: Hermano | null }) {
-  const n = nivelDe(puntos);
-  const pc = n.siguiente ? Math.round((100 * (puntos - n.desde)) / (n.siguiente.desde - n.desde)) : 100;
-  return (
-    <section className="cf-mi-progreso cf-mi-nivel" aria-label="Tu progreso">
-      <p className="rotulo">Tu progreso</p>
-      <p className="puntos">
-        <span className="cf-num">{String(puntos).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span> puntos
-      </p>
-      <p className="nivel">
-        {n.nombre} <span className="en">en Cofradar</span>
-      </p>
-      {hermano ? <NumeroHermano h={hermano} /> : null}
-      <LineaCirio />
-      {n.siguiente ? (
-        <>
-          <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pc} aria-label={`Hacia ${n.siguiente.nombre}`}>
-            <span style={{ width: `${pc}%` }} />
-          </div>
-          <p className="hacia">
-            <span>Hacia {n.siguiente.nombre}</span>
-            <span className="cf-num">Faltan {n.siguiente.faltan}</span>
-          </p>
-        </>
-      ) : (
-        <p className="hacia">Has llegado al último nivel.</p>
-      )}
-    </section>
   );
 }
 

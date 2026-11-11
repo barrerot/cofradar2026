@@ -11,6 +11,8 @@ import { DarFe } from "./DarFe";
 import { FuenteDe } from "./Trivial";
 import { Opciones } from "./TrivialOnline";
 import { RetarConPregunta } from "./RetoTrivial";
+import { NuevaEnTuAlbum } from "./Album";
+import { LineaCasa } from "./SubesDeCargo";
 
 /**
  * P-34 La pregunta del día y el cirio encendido (F-55; 12-ano-cofrade/1–7).
@@ -258,7 +260,9 @@ export function PreguntaDelDia({ estado }: { estado: EstadoJornada }) {
           {r.explicacion ? <p>{r.explicacion}</p> : null}
           <FuenteDe fuente={aFuente(r.fuente)} cofradia={slug(p.hermandad)} />
         </div>
+        <NuevaEnTuAlbum nuevas={vista.album} />
         {c ? <BloqueCirio cirio={c} dia={vista.dia ?? 0} /> : null}
+        <LineaCasa linea={vista.casa} />
       </div>
       <div className="cf-online-botones">
         <Boton variante="primario" tamano="52" onClick={() => setCompartir(true)}>

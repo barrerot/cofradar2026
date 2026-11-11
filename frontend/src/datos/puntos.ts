@@ -3,40 +3,9 @@ import { alCambiarCola } from "./darFe";
 import { cabecerasSesion, useSesion } from "./sesion";
 
 /**
- * Tus puntos, tu nivel y tus aportaciones (P-19, P-22), de GET /api/yo/aportaciones.
- *
- * Los niveles son los cargos de una hermandad (BUL-219), siempre «en Cofradar»: nadie es Hermano
- * Mayor de verdad por dar fe. Doce, de Monaguillo (desde 0) a Hermano Mayor (5.500).
+ * Tus aportaciones y los puntos que te han dado (P-22), de GET /api/yo/aportaciones. El cargo, con la calle
+ * y la casa (F-58), va aparte: datos/cargo.ts.
  */
-export const NIVELES: readonly { nombre: string; desde: number }[] = [
-  { nombre: "Monaguillo", desde: 0 },
-  { nombre: "Nazareno de cirio", desde: 50 },
-  { nombre: "Nazareno de insignia", desde: 120 },
-  { nombre: "Acólito", desde: 250 },
-  { nombre: "Costalero", desde: 450 },
-  { nombre: "Contraguía", desde: 700 },
-  { nombre: "Diputado de tramo", desde: 1000 },
-  { nombre: "Fiscal de cruz", desde: 1500 },
-  { nombre: "Fiscal de paso", desde: 2200 },
-  { nombre: "Diputado mayor de gobierno", desde: 3000 },
-  { nombre: "Capataz", desde: 4000 },
-  { nombre: "Hermano Mayor", desde: 5500 },
-];
-
-export type Nivel = { numero: number; nombre: string; siguiente: { nombre: string; faltan: number; desde: number } | null; desde: number };
-
-export function nivelDe(puntos: number): Nivel {
-  let i = 0;
-  while (i + 1 < NIVELES.length && puntos >= NIVELES[i + 1]!.desde) i++;
-  const sig = NIVELES[i + 1];
-  return {
-    numero: i + 1,
-    nombre: NIVELES[i]!.nombre,
-    desde: NIVELES[i]!.desde,
-    siguiente: sig ? { nombre: sig.nombre, faltan: sig.desde - puntos, desde: sig.desde } : null,
-  };
-}
-
 export type MiAportacion = {
   id: string;
   clienteId: string;

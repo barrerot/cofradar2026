@@ -23,6 +23,8 @@ import { RedirigirInvitacion, TrivialAlias, TrivialHistorial, TrivialInvitacion,
 import { RedirigirReto, TrivialReto } from "./rutas/RetoTrivial";
 import { PreguntaDelDia, RedirigirDia } from "./rutas/PreguntaDelDia";
 import { CrearCuadrilla, InvitacionCuadrilla, InvitarCuadrilla, LaCuadrilla, RedirigirCuadrilla, TusCuadrillas } from "./rutas/Cuadrillas";
+import { Album } from "./rutas/Album";
+import { TuCargo } from "./rutas/Cargo";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 import { Panel } from "./rutas/admin/Panel";
@@ -74,6 +76,8 @@ export function App() {
       <Route path="/trivial/r/:id" element={<RedirigirReto />} />
       <Route path="/mi-cofradar/trivial/dia" element={<PreguntaDelDia estado={estado} />} />
       <Route path="/dia" element={<RedirigirDia />} />
+      <Route path="/mi-cofradar/album" element={<Album estado={estado} />} />
+      <Route path="/mi-cofradar/cargo" element={<TuCargo estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas" element={<TusCuadrillas estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas/nueva" element={<CrearCuadrilla estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas/i/:token" element={<InvitacionCuadrilla estado={estado} />} />

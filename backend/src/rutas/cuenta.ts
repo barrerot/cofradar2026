@@ -6,6 +6,8 @@ import { hermandadesYEdicion } from "./cofradias.js";
 import { alBorrarCuenta, datosDe as datosTrivial } from "../trivial/partidas.js";
 import { hermanoDe } from "../hermano.js";
 import { datosDe as datosDia } from "../dia/dia.js";
+import { datosDe as datosAlbum } from "../album/album.js";
+import { verCargo } from "../cargo/puntos.js";
 import { alBorrarCuenta as dejarCuadrillas, datosDe as datosCuadrillas } from "../cuadrillas/cuadrillas.js";
 
 /**
@@ -105,7 +107,7 @@ routerCuenta.get(
   ruta(async (_peticion, respuesta, usuario) => {
     const { porId } = await hermandadesYEdicion();
     const db = supabase();
-    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano, preguntaDelDia, cuadrillas] = await Promise.all([
+    const [cuenta, seguidas, vistas, nombres, aportaciones, trivial, hermano, preguntaDelDia, cuadrillas, aciertosSolo, cargo] = await Promise.all([
       db.auth.admin.getUserById(usuario.id),
       db.from("seguida").select("hermandad_id, creada").eq("usuario_id", usuario.id).order("creada"),
       db.from("vista").select("hermandad_id, anio, creada").eq("usuario_id", usuario.id).order("anio"),
@@ -119,6 +121,8 @@ routerCuenta.get(
       hermanoDe(usuario.id),
       datosDia(usuario.id),
       datosCuadrillas(usuario.id),
+      datosAlbum(usuario.id),
+      verCargo(usuario.id, new Date()),
     ]);
     for (const r of [seguidas, vistas, nombres, aportaciones]) if (r.error) throw r.error;
     if (cuenta.error) throw cuenta.error;
@@ -159,6 +163,10 @@ routerCuenta.get(
         pregunta_del_dia: preguntaDelDia,
         // Tus cuadrillas (F-57): en cuáles estás, desde cuándo y si eres el capataz
         cuadrillas,
+        // El trivial en solitario (F-56): qué preguntas acertaste con sesión, para «la conoces»
+        trivial_en_solitario: aciertosSolo,
+        // Tu cargo (F-58): los puntos de la calle (dar fe) y de la casa (trivial online y pregunta del día)
+        cargo: { cargo: cargo.nombre, puntos: cargo.puntos, calle: cargo.calle, casa: cargo.casa },
       });
   }),
 );

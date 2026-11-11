@@ -36,7 +36,7 @@ type Fila = {
 };
 
 /** El nombre corto de cada jornada en el selector, para que quepan. */
-const CORTO: Record<string, string> = {
+export const CORTO: Record<string, string> = {
   "Viernes de Dolores": "Dolores",
   "Sábado de Pasión": "Pasión",
   "Domingo de Ramos": "Domingo",

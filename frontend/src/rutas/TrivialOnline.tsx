@@ -30,6 +30,8 @@ import { FuenteDe } from "./Trivial";
 import { RetarConPregunta } from "./RetoTrivial";
 import { TarjetaDia } from "./PreguntaDelDia";
 import { apiCuadrillas } from "../datos/cuadrillas";
+import { NuevaEnTuAlbum } from "./Album";
+import { LineaCasa, SubesDeCargo } from "./SubesDeCargo";
 
 /**
  * P-33 Trivial online por turnos (F-51; 11-trivial-online/).
@@ -812,6 +814,7 @@ export function TrivialPartida({ estado }: { estado: EstadoJornada }) {
               {r.explicacion ? <p>{r.explicacion}</p> : null}
               <FuenteDe fuente={aFuente(r.fuente)} cofradia={slug(p.hermandad)} />
             </div>
+            <NuevaEnTuAlbum nuevas={r.album} />
             {typeof r.pregunta === "number" ? <RetarConPregunta id={r.pregunta} enunciado={p.enunciado} acierto={r.acierto} /> : null}
             {!r.acierto && partida.estado === "activa" ? <p className="cf-online-intro">Ahora le toca a {rival}.</p> : null}
           </div>
@@ -856,6 +859,8 @@ export function TrivialPartida({ estado }: { estado: EstadoJornada }) {
             </p>
           ) : null}
           <p className="cf-online-intro">{motivo}</p>
+          <LineaCasa linea={partida.casa} />
+          <SubesDeCargo aviso={gane && partida.motivo === "estrellas" ? partida.id : null} />
           <Marcador partida={partida} />
           {partida.pareja ? (
             <>

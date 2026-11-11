@@ -1,4 +1,6 @@
 import { consulta } from "../bd.js";
+import { conocerTras, type Nueva } from "../album/album.js";
+import { claveDia, lineaCasa, puntosDe, type LineaCasa } from "../cargo/puntos.js";
 import { calcularCirio, cuaresmaDe, diaDeMadrid, faseDe, type Cirio, type Dia, type Fase } from "./cirio.js";
 
 /**
@@ -41,6 +43,10 @@ export type VistaDia = {
   pregunta?: PreguntaDia;
   tuya?: { respuesta: string; resolucion: ResolucionDia };
   cirio?: Cirio;
+  /** Lo que dio a tu cargo contestarla (F-58): «+2 puntos para tu cargo» o el tope de la casa */
+  casa?: LineaCasa | null;
+  /** Solo al contestar: las estampas que acaban de llegar a «la conoces» (F-56) */
+  album?: Nueva[];
 };
 
 // El calendario cambia una vez al año: se recuerda un minuto
@@ -135,6 +141,7 @@ export async function verDia(usuario: string | null, ahora: Date, dePrueba: bool
       vista.pregunta.opciones = suya.opciones;
       vista.tuya = { respuesta: mia.respuesta, resolucion: resolucionDe(suya, mia.respuesta, deHoy.pregunta) };
     }
+    vista.casa = lineaCasa(await puntosDe(usuario), claveDia(hoy, dePrueba), hoy);
   }
   return vista;
 }
@@ -159,12 +166,15 @@ export async function responder(
   const p = Number.isInteger(banco) ? await preguntaDelBanco(deHoy.pregunta, banco) : null;
   if (!p) throw new ErrorDia(409, "La pregunta ha cambiado. Vuelve a abrirla.");
   if (!p.opciones.some((o) => o.id === opcion)) throw new ErrorDia(400, "Esa respuesta no es de esta pregunta.");
-  await consulta(
-    `insert into dia_respuesta (usuario_id, de_prueba, fecha, pregunta_id, banco_version, respuesta, acierto)
-     values ($1, $2, $3, $4, $5, $6, $7) on conflict (usuario_id, de_prueba, fecha) do nothing`,
-    [usuario, dePrueba, hoy, deHoy.pregunta, banco, opcion, opcion === p.correcta],
-  );
-  return verDia(usuario, ahora, dePrueba);
+  const apuntar = () =>
+    consulta(
+      `insert into dia_respuesta (usuario_id, de_prueba, fecha, pregunta_id, banco_version, respuesta, acierto)
+       values ($1, $2, $3, $4, $5, $6, $7) on conflict (usuario_id, de_prueba, fecha) do nothing`,
+      [usuario, dePrueba, hoy, deHoy.pregunta, banco, opcion, opcion === p.correcta],
+    );
+  // Un acierto puede completar «la conoces» de su hermandad; un fallo, no
+  const album = opcion === p.correcta ? await conocerTras(consulta, usuario, apuntar) : (await apuntar(), []);
+  return { ...(await verDia(usuario, ahora, dePrueba)), album };
 }
 
 /** El cirio de varios a la vez (las cuadrillas, F-57). Fuera de la Cuaresma, un mapa vacío. */

@@ -1,5 +1,8 @@
 import { createHash, randomBytes, randomInt } from "node:crypto";
 import { consulta, enTransaccion, type Cliente } from "../bd.js";
+import { conocerTras } from "../album/album.js";
+import { clavePartida, lineaCasa, puntosDe, type LineaCasa } from "../cargo/puntos.js";
+import { diaDeMadrid } from "../dia/cirio.js";
 import { numerosDe } from "../hermano.js";
 import {
   categoriaDe,
@@ -224,9 +227,9 @@ function vista(
   f: FilaPartida,
   yo: Puesto,
   alias: Map<string, string>,
-  extra: { enunciado?: { enunciado: string; hermandad: string }; numeros?: Map<string, number>; pareja?: Pareja | null } = {},
+  extra: { enunciado?: { enunciado: string; hermandad: string }; numeros?: Map<string, number>; pareja?: Pareja | null; casa?: LineaCasa | null } = {},
 ) {
-  const { enunciado, numeros, pareja } = extra;
+  const { enunciado, numeros, pareja, casa } = extra;
   const nombre = (u: string | null) => (u ? (alias.get(u) ?? ELIMINADO) : ELIMINADO);
   const numero = (u: string | null) => (u ? (numeros?.get(u) ?? null) : null);
   const mia = f.estado === "activa" && f.turno === yo;
@@ -264,6 +267,8 @@ function vista(
     creada: new Date(f.creada).toISOString(),
     terminada: f.terminada ? new Date(f.terminada).toISOString() : null,
     pareja: pareja ?? null,
+    // F-58: lo que dio a tu cargo ganarla («+5 puntos para tu cargo»), solo a quien ganó por estrellas
+    casa: casa ?? null,
   };
 }
 
@@ -309,7 +314,11 @@ async function vistaDe(bd: Cliente, f: FilaPartida, yo: Puesto) {
     );
     enunciado = rows[0];
   }
-  return vista(f, yo, alias, { enunciado, numeros, pareja });
+  let casa: LineaCasa | null = null;
+  if (f.estado === "finalizada" && f.motivo === "estrellas" && f.ganador === yo && f.terminada) {
+    casa = lineaCasa(await puntosDe(yoId, bd), clavePartida(f.id), diaDeMadrid(new Date(f.terminada)));
+  }
+  return vista(f, yo, alias, { enunciado, numeros, pareja, casa });
 }
 
 export async function verPartida(usuario: string, id: string) {
@@ -333,7 +342,16 @@ export type Accion = {
 };
 
 /** `pregunta` es su id en el banco: con él se reta a otro a la misma pregunta (F-53, /trivial/r/:id). */
-export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null; pregunta: number };
+export type Resolucion = {
+  acierto: boolean;
+  correcta: string;
+  explicacion: string;
+  fuente: string;
+  estrella: Categoria | null;
+  pregunta: number;
+  /** Las estampas que acaban de llegar a «la conoces» (F-56) */
+  album?: { cofradia: string; nombre: string }[];
+};
 
 async function elegirPregunta(bd: Cliente, f: FilaPartida, categoria: Categoria) {
   // RF-05: una que no haya salido en la partida; si la categoría se agota, la que salió hace más tiempo
@@ -417,11 +435,14 @@ export async function jugar(usuario: string, id: string, a: Accion) {
         const acierto = a.opcion === q.correcta;
         const r = responder(e, yo, acierto, ahora);
         e = r.estado;
-        await bd.query(
-          "update trivial_jugada set respuesta = $3, acierto = $4, resultado = $5, resuelta = now() where partida_id = $1 and n = $2",
-          [id, p!.jugada, a.opcion, acierto, acierto ? "acierto" : "fallo"],
-        );
-        resultado = { acierto, correcta: q.correcta, explicacion: q.explicacion, fuente: q.fuente, estrella: r.estrella, pregunta: p!.id } satisfies Resolucion;
+        const apuntar = () =>
+          bd.query(
+            "update trivial_jugada set respuesta = $3, acierto = $4, resultado = $5, resuelta = now() where partida_id = $1 and n = $2",
+            [id, p!.jugada, a.opcion, acierto, acierto ? "acierto" : "fallo"],
+          );
+        // F-56: un acierto puede completar «la conoces» de su hermandad
+        const album = acierto ? await conocerTras(bd, usuario, apuntar) : (await apuntar(), []);
+        resultado = { acierto, correcta: q.correcta, explicacion: q.explicacion, fuente: q.fuente, estrella: r.estrella, pregunta: p!.id, album } satisfies Resolucion;
       } else if (a.tipo === "rendirse") {
         e = rendirse(e, yo);
       } else {

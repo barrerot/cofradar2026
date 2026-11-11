@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { cabecerasSesion, useSesion } from "./sesion";
 import { desfaseReloj } from "./reloj";
 import type { Categoria } from "./trivialOnline";
+import type { NuevaEnAlbum } from "./album";
+import type { LineaCasa } from "./cargo";
 
 /**
  * La pregunta del día y el cirio de Cuaresma (F-55, P-34): lo que se pide a /api/dia. El servidor decide
@@ -40,6 +42,10 @@ export type VistaDia = {
   pregunta?: PreguntaDia;
   tuya?: { respuesta: string; resolucion: ResolucionDia };
   cirio?: Cirio;
+  /** Lo que dio a tu cargo contestarla (F-58) */
+  casa?: LineaCasa;
+  /** Solo justo al contestar: las estampas que ha completado en «la conoces» (F-56) */
+  album?: NuevaEnAlbum[];
 };
 
 async function cabeceras(): Promise<Record<string, string>> {

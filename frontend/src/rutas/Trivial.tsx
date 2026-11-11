@@ -15,6 +15,9 @@ import type { EstadoJornada } from "../fixture";
 import { coincide } from "./Cofradias";
 import { DarFe } from "./DarFe";
 import { RetarConPregunta } from "./RetoTrivial";
+import { apuntarAcierto, type NuevaEnAlbum } from "../datos/album";
+import { useSesion } from "../datos/sesion";
+import { NuevaEnTuAlbum } from "./Album";
 
 /**
  * P-32 Trivial cofrade (F-50; 10-trivial/trivial-03 a 08).
@@ -300,6 +303,13 @@ function JugarPregunta({
 }) {
   const respondida = elegida !== undefined;
   const seguir = useRef<HTMLButtonElement>(null);
+  const { usuario } = useSesion();
+  const [nuevas, setNuevas] = useState<NuevaEnAlbum[]>([]);
+  const responder = (r: string) => {
+    alResponder(r);
+    // Con sesión, el acierto cuenta para «la conoces» de su hermandad (F-56). Sin sesión, nada se guarda
+    if (usuario && r === p.correcta) void apuntarAcierto(usuario.id, { id: p.id, respuesta: r }).then(setNuevas);
+  };
   useEffect(() => {
     if (!respondida) return;
     // Que se vean la explicación y «Siguiente» sin tener que buscarlos
@@ -328,7 +338,7 @@ function JugarPregunta({
           const marca = !respondida ? undefined : r === p.correcta ? "correcta" : r === elegida ? "tuya" : "apagada";
           return (
             <li key={r}>
-              <button type="button" className="cf-trivial-respuesta" data-marca={marca} disabled={respondida} onClick={() => alResponder(r)}>
+              <button type="button" className="cf-trivial-respuesta" data-marca={marca} disabled={respondida} onClick={() => responder(r)}>
                 <span className="cf-trivial-letra" aria-hidden="true">
                   {"ABCD"[i]}
                 </span>
@@ -356,6 +366,7 @@ function JugarPregunta({
           <>
             <p className="cf-oculto-visual">{elegida === p.correcta ? "Has acertado." : `No. La respuesta buena es ${p.correcta}.`}</p>
             <Explicacion pregunta={p} />
+            <NuevaEnTuAlbum nuevas={nuevas} />
             <RetarConPregunta id={p.id} enunciado={p.texto} acierto={elegida === p.correcta} />
           </>
         ) : null}

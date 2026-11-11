@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "cargar:datos": "tsx scripts/cargar-supabase.ts",
     "exportar:datos": "tsx scripts/exportar-supabase.ts",
-    "test": "tsx --test src/motor/*.test.ts src/rutas/*.test.ts src/trivial/*.test.ts src/dia/*.test.ts",
+    "test": "tsx --test src/motor/*.test.ts src/rutas/*.test.ts src/trivial/*.test.ts src/dia/*.test.ts src/cargo/*.test.ts",
     "esquema": "tsx scripts/aplicar-esquema.ts",
     "trivial:importar": "tsx scripts/importar-trivial.ts",
     "cuaresma:importar": "tsx scripts/importar-cuaresma.ts",

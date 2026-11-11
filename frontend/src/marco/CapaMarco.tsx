@@ -10,7 +10,7 @@ import { createPortal } from "react-dom";
  * pintada dentro de ella quedaría atrapada en su caja. El marco ofrece el
  * sitio y no sabe qué se pinta en él.
  */
-export const CapaMarco = createContext<HTMLElement | null>(null);
+export const CapaMarco = createContext<HTMLElement | null | undefined>(undefined);
 
 export function EnCapaDelMarco({ children }: { children: ReactNode }) {
   const capa = useContext(CapaMarco);

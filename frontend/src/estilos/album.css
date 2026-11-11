@@ -1,0 +1,557 @@
+/* ==========================================================================
+   COFRADAR · ÁLBUM DE ESTAMPAS Y CARGO (P-35, F-56 y F-58; 12-ano-cofrade/16–24)
+   La estampa es solo tipografía: papel, marco y filete. Más grados, más tinta:
+   el filete pasa a tinta y engorda (1, 1,5 y 2 px). Se distingue también en
+   escala de grises: por el grosor y por las marcas, no por el color.
+   Namespace: cf-estampa-*, cf-album-*, cf-cargo-*.
+   ========================================================================== */
+
+/* ── La estampa ── */
+.cf-estampa {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: 2 / 3;
+  padding: 0.3rem;
+  border: 1px solid var(--cf-border);
+  border-radius: 2px;
+  background: var(--cf-surface);
+  color: var(--cf-text-muted);
+  text-align: center;
+}
+
+.cf-estampa-filete {
+  min-width: 0;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: var(--cf-space-3) 0.375rem var(--cf-space-2);
+  border: 1px solid var(--cf-border);
+}
+
+.cf-estampa[data-grados="1"] .cf-estampa-filete {
+  border: 1px solid var(--cf-text);
+}
+
+.cf-estampa[data-grados="2"] .cf-estampa-filete {
+  border: 1.5px solid var(--cf-text);
+}
+
+.cf-estampa[data-grados="3"] .cf-estampa-filete {
+  border: 2px solid var(--cf-text);
+}
+
+.cf-estampa:not([data-grados="0"]) {
+  color: var(--cf-text);
+}
+
+.cf-estampa-jornada {
+  font-size: var(--cf-text-xs);
+  line-height: var(--cf-leading-xs);
+  font-weight: var(--cf-weight-emphasis, 600);
+  color: var(--cf-text-secondary);
+}
+
+.cf-estampa[data-grados="0"] .cf-estampa-jornada {
+  color: var(--cf-text-muted);
+}
+
+.cf-estampa-raya {
+  width: 1.25rem;
+  height: 0;
+  margin: var(--cf-space-2) 0;
+  border-top: 1px solid currentColor;
+}
+
+.cf-estampa-nombre {
+  font-family: var(--cf-font-serif);
+  font-size: 1.125rem;
+  line-height: 1.2;
+  font-weight: 500;
+  /* «La Soledad de San Buenaventura»: que corte con guion y por sílabas, no a mitad de cualquier modo */
+  hyphens: auto;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.cf-estampa[data-largo][data-tamano="normal"] .cf-estampa-filete {
+  padding-inline: 0.125rem;
+}
+
+.cf-estampa[data-largo][data-tamano="normal"] .cf-estampa-nombre {
+  font-size: 0.875rem;
+}
+
+.cf-estampa-marcas {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  width: 100%;
+  margin-top: auto;
+  padding-top: var(--cf-space-2);
+}
+
+.cf-estampa-marca {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  max-width: 100%;
+  font-size: 0.6875rem;
+  line-height: 1.25;
+  font-weight: var(--cf-weight-emphasis, 600);
+  white-space: nowrap;
+}
+
+/* El ojo y el sello, en granate, como en Mi colección y Mis aportaciones */
+.cf-estampa-marca[data-grado="vista"] .cf-ph,
+.cf-estampa-marca[data-grado="fe"] .cf-ph,
+.cf-album-grados [data-grado="vista"][data-tiene="si"] .cf-ph,
+.cf-album-grados [data-grado="fe"][data-tiene="si"] .cf-ph,
+.cf-album-como-lista [data-grado="vista"] .cf-ph,
+.cf-album-como-lista [data-grado="fe"] .cf-ph {
+  color: var(--cf-brand);
+}
+
+.cf-estampa .cf-ph {
+  flex: none;
+}
+
+/* En grande (la hoja de una estampa) */
+.cf-estampa[data-tamano="grande"] {
+  width: 11.5rem;
+  height: auto;
+  padding: 0.45rem;
+}
+
+.cf-estampa[data-tamano="grande"] .cf-estampa-filete {
+  padding: var(--cf-space-4) var(--cf-space-3);
+}
+
+.cf-estampa[data-tamano="grande"] .cf-estampa-jornada {
+  font-size: var(--cf-text-sm);
+}
+
+.cf-estampa[data-tamano="grande"] .cf-estampa-nombre {
+  font-size: var(--cf-text-2xl);
+}
+
+.cf-estampa[data-tamano="grande"] .cf-estampa-marca {
+  font-size: var(--cf-text-base);
+  gap: var(--cf-space-2);
+}
+
+.cf-estampa[data-tamano="grande"] .cf-estampa-marcas {
+  gap: var(--cf-space-1);
+}
+
+/* En miniatura («Nueva en tu álbum»): solo el nombre */
+.cf-estampa[data-tamano="mini"] {
+  flex: none;
+  width: 3.25rem;
+  height: auto;
+  padding: 0.15rem;
+}
+
+.cf-estampa[data-tamano="mini"] .cf-estampa-filete {
+  justify-content: center;
+  padding: 0.25rem 0.15rem;
+}
+
+.cf-estampa[data-tamano="mini"] .cf-estampa-nombre {
+  font-size: 0.75rem;
+  line-height: 1.1;
+}
+
+/* ── El álbum ── */
+.cf-album {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-album-dias {
+  min-width: 0;
+  margin-inline: calc(-1 * var(--cf-space-4));
+}
+
+.cf-album-dias .cf-day .d {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-1);
+  font-size: var(--cf-text-base);
+}
+
+.cf-album-texto {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  color: var(--cf-text-secondary);
+}
+
+.cf-album-como {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cf-text);
+  font: inherit;
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis, 600);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.cf-album-jornada {
+  display: grid;
+  gap: var(--cf-space-3);
+  margin-top: var(--cf-space-4);
+  scroll-margin-top: var(--cf-space-16);
+}
+
+.cf-album-jornada h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-2xl);
+  font-weight: 500;
+}
+
+.cf-album-rejilla {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-album-boton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.cf-album-boton:hover .cf-estampa {
+  background: var(--cf-surface-hover);
+}
+
+/* La hoja de una estampa */
+.cf-album-grande {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--cf-space-4);
+}
+
+.cf-album-grados,
+.cf-album-como-lista {
+  margin: 0 0 var(--cf-space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.cf-album-grados {
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  text-align: left;
+}
+
+.cf-album-grados li {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: center;
+  min-height: 3.5rem;
+  padding: var(--cf-space-2) var(--cf-space-4);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-album-grados li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-album-grados li .cf-ph {
+  flex: none;
+}
+
+.cf-album-grados strong {
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-album-grados li[data-tiene="no"] {
+  color: var(--cf-text-muted);
+}
+
+.cf-album-grados li[data-tiene="no"] strong {
+  font-weight: var(--cf-weight-body);
+}
+
+.cf-album-como-lista {
+  display: grid;
+  gap: var(--cf-space-4);
+  text-align: left;
+}
+
+.cf-album-como-lista li {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: flex-start;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-album-como-lista .cf-ph {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* 20 · Nueva en tu álbum */
+.cf-album-nueva {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+}
+
+.cf-album-nueva p {
+  margin: 0 0 var(--cf-space-2);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-album-nueva a {
+  color: var(--cf-text);
+  font-size: var(--cf-text-lg);
+  font-weight: var(--cf-weight-emphasis, 600);
+  text-underline-offset: 0.2em;
+}
+
+/* ── El cargo ── */
+.cf-cargo-tarjeta {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cf-cargo-tarjeta:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-cargo-tarjeta .rotulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cf-cargo-tarjeta .rotulo .cf-ph {
+  color: var(--cf-text);
+}
+
+.cf-cargo-fuentes {
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+/* La regla de la calle: en tinta, con el icono informativo; sin rojo ni reproche */
+.cf-cargo-tope,
+.cf-cargo-regla {
+  display: flex;
+  gap: var(--cf-space-3);
+  align-items: flex-start;
+  margin: 0;
+  color: var(--cf-text);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base, 1.5);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cargo-tope .cf-ph,
+.cf-cargo-regla .cf-ph {
+  flex: none;
+  margin-top: 2px;
+}
+
+.cf-cargo {
+  display: grid;
+  gap: var(--cf-space-6);
+}
+
+.cf-cargo-arriba {
+  display: grid;
+  gap: var(--cf-space-2);
+}
+
+.cf-cargo-arriba p,
+.cf-cargo p {
+  margin: 0;
+}
+
+.cf-cargo-nombre {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-3xl);
+  line-height: 1.15;
+  font-weight: 500;
+}
+
+.cf-cargo-puntos {
+  font-size: var(--cf-text-xl);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cargo-frase {
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cargo-rotulo {
+  margin: 0 0 var(--cf-space-2);
+  font-size: var(--cf-text-base);
+  font-weight: var(--cf-weight-emphasis, 600);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cargo-escalera {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  overflow: hidden;
+}
+
+.cf-cargo-escalera li {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  gap: var(--cf-space-3);
+  align-items: center;
+  min-height: 3.25rem;
+  padding: var(--cf-space-2) var(--cf-space-4);
+  font-size: var(--cf-text-lg);
+}
+
+.cf-cargo-escalera li + li {
+  border-top: var(--cf-border-width) solid var(--cf-border);
+}
+
+.cf-cargo-escalera li[data-cual="siguiente"] {
+  color: var(--cf-text-secondary);
+}
+
+.cf-cargo-escalera li[data-cual="tuyo"] {
+  border: 2px solid var(--cf-text);
+  background: var(--cf-surface-sunken);
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cargo-escalera li[data-cual="tuyo"] + li {
+  border-top: 0;
+}
+
+.cf-cargo-marca {
+  display: grid;
+  place-items: center;
+}
+
+.cf-cargo-punto {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--cf-radius-full);
+  background: var(--cf-text);
+}
+
+.cf-cargo-escalon {
+  display: grid;
+}
+
+.cf-cargo-tuyo {
+  font-size: var(--cf-text-sm);
+  font-weight: var(--cf-weight-body);
+  color: var(--cf-text-secondary);
+}
+
+.cf-cargo-fuente {
+  display: flex;
+  gap: var(--cf-space-4);
+  align-items: center;
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background: var(--cf-surface);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+.cf-cargo-fuente + .cf-cargo-fuente {
+  margin-top: var(--cf-space-2);
+}
+
+.cf-cargo-fuente p {
+  flex: 1;
+}
+
+.cf-cargo-fuente strong {
+  font-weight: var(--cf-weight-emphasis, 600);
+}
+
+.cf-cargo-cifra {
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-3xl);
+  font-weight: 500;
+}
+
+.cf-cargo-regla {
+  padding: var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-border-strong);
+  border-radius: var(--cf-radius-md);
+  font-size: var(--cf-text-lg);
+}
+
+.cf-cargo-pie {
+  font-size: var(--cf-text-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* «Ahora eres Costalero en Cofradar», en Newsreader como en el diseño (23) */
+.cf-hoja-decision:has(.cf-cargo-subes) h2 {
+  font-family: var(--cf-font-serif);
+  font-weight: 500;
+}
+
+.cf-cargo-subes {
+  margin: 0 0 var(--cf-space-4);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  color: var(--cf-text-secondary);
+  text-align: left;
+}
+
+/* 24 · La línea pequeña de la casa */
+.cf-cargo-casa {
+  margin: 0;
+  font-size: var(--cf-text-base);
+  color: var(--cf-text-secondary);
+}
+
+/* En la rejilla, el icono de cada marca a 14 px: así caben sin tocar el filete */
+.cf-estampa[data-tamano="normal"] .cf-estampa-marca .cf-ph {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* La jornada marcada, rellena como el día elegido de la Agenda */
+.cf-album-dias .cf-day[aria-current="true"] {
+  background: var(--cf-text);
+  color: var(--cf-text-inverse);
+  border-color: var(--cf-text);
+}

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { SubesDeCargo } from "./SubesDeCargo";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Alteraciones, ChipEstado, MarcaRelacion, usePedirUbicacion } from "../componentes";
@@ -128,6 +129,8 @@ export function DarFeProvider({ children }: { children: ReactNode }) {
   const [paso, setPaso] = useState<Paso | null>(null);
   const [borrador, setBorrador] = useState<Borrador>({ desdeCofradia: false });
   const [hecho, setHecho] = useState<Hecho | null>(null);
+  // F-58: tras dar fe se mira si has subido de cargo (la hoja sigue aunque el panel «Hecho» se vaya solo)
+  const [subida, setSubida] = useState<Hecho | null>(null);
   const [enCola, setEnCola] = useState(() => pendientes().length);
 
   // La cola de «pendiente de enviar»: sale sola al volver la red, al entrar y cada minuto
@@ -200,9 +203,11 @@ export function DarFeProvider({ children }: { children: ReactNode }) {
           alTerminar={(h) => {
             setPaso(null);
             setHecho(h);
+            if (h.puntos !== null) setSubida(h);
           }}
         />
       ) : null}
+      <SubesDeCargo aviso={subida} />
       {hecho ? <PanelHecho hecho={hecho} alCerrar={() => setHecho(null)} /> : null}
       {bonus && !hecho && !paso ? <AvisoBonus {...bonus} alCerrar={() => setBonus(null)} /> : null}
     </Contexto.Provider>

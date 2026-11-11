@@ -547,3 +547,17 @@ alter table cuadrilla_reto enable row level security;
 
 alter table trivial_partida drop constraint if exists trivial_partida_origen_check;
 alter table trivial_partida add constraint trivial_partida_origen_check check (origen in ('invitacion', 'cola', 'revancha', 'cuadrilla'));
+
+-- ── El álbum de estampas (F-56; aprobado por Carlos el 10/11/2026) ─────────────────────────────────
+-- «La conoces»: 5 preguntas distintas de una hermandad acertadas con sesión, en el trivial en solitario,
+-- online o en la pregunta del día. Los aciertos online y del día ya están en trivial_jugada y dia_respuesta;
+-- aquí van solo los del trivial en solitario, que se juega en el teléfono y avisa al servidor de cada acierto
+-- cuando hay sesión (el servidor comprueba la respuesta). Una fila por persona y pregunta. Los otros dos
+-- grados salen de `vista` y de las aportaciones consolidadas. El álbum no da puntos.
+create table if not exists trivial_acierto (
+  usuario_id   uuid not null references auth.users (id) on delete cascade,
+  pregunta_id  integer not null,       -- el id del CSV del trivial (igual en todas las versiones del banco)
+  creado       timestamptz not null default now(),
+  primary key (usuario_id, pregunta_id)
+);
+alter table trivial_acierto enable row level security;

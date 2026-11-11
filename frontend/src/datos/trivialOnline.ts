@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cabecerasSesion } from "./sesion";
+import type { NuevaEnAlbum } from "./album";
+import type { LineaCasa } from "./cargo";
 
 /**
  * Trivial online por turnos (F-51, P-33): lo que se pide a /api/trivial. El servidor manda en todo (dado,
@@ -77,10 +79,21 @@ export type Partida = {
   terminada: string | null;
   /** Al acabar, si el rival sigue: el marcador de todas vuestras partidas y la revancha pendiente. */
   pareja: { marcador: { tuyas: number; suyas: number }; revancha: Revancha | null } | null;
+  /** Lo que dio a tu cargo ganarla por estrellas (F-58); null si no ganaste así */
+  casa?: LineaCasa;
 };
 
 /** `pregunta`: su id en el banco, para retar a otro con ella (F-53). */
-export type Resolucion = { acierto: boolean; correcta: string; explicacion: string; fuente: string; estrella: Categoria | null; pregunta: number };
+export type Resolucion = {
+  acierto: boolean;
+  correcta: string;
+  explicacion: string;
+  fuente: string;
+  estrella: Categoria | null;
+  pregunta: number;
+  /** Las estampas que este acierto ha completado en «la conoces» (F-56) */
+  album?: NuevaEnAlbum[];
+};
 
 /** Tú y un rival (F-52, 11-trivial-online/17). */
 export type Historial = {
