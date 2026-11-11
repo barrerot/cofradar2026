@@ -1,0 +1,9 @@
+Gracias, la página «Álbum y cargo» va bien. Tres correcciones pequeñas, sin tocar nada más:
+
+1. MI COLECCIÓN EN LA 16. La fila no lleva «2 de 7»: en la app construida, cada fila de «lo tuyo» enseña solo su número. Pon «Mi colección · 8», que son las que tienen «la has visto» en tus datos de ejemplo (5 del Domingo de Ramos y 3 de la Madrugá; las otras 3 estampas de las 14, de jornadas que no se dibujan, son solo «la conoces»). La portada aprobada no se redibuja: esto es solo para la 16.
+
+2. LA FRASE DE CONTRAGUÍA EN LA 22: «Los contraguías ayudan al capataz a gobernar el paso, sobre todo en las vueltas y en las calles estrechas.»
+
+3. SIN BARRA EN LA 22. Una barra llena que no sube parece un fallo. Quita la barra en esta variante y deja «1.180 puntos», «Contraguía en Cofradar» y la línea en tinta con el icono de información: «Para Diputado de tramo, al menos la mitad tiene que venir de la calle.»
+
+Lo demás se queda como lo has dibujado: la estampa tipográfica con el filete que engorda, BookOpen para la fila del álbum, el selector sin fechas y la 24b en Cuaresma.
