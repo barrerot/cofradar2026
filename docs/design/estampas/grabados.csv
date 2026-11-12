@@ -1,7 +1,15 @@
-cofradia,foto,x0,y0,x1,y1,gamma
-bendicion-y-esperanza,cristo-de-bendicion-y-esperanza.jpg,0.0,0.04,1.0,0.767,1.0
-la-hiniesta,virgen_de_la_hiniesta.jpeg,0.08,0.0,0.92,0.686,1.5
-las-cigarreras,jesus-atado-a-la-columna-cigarreras.webp,0.04,0.0,0.96,0.67,1.0
-el-gran-poder,Nuestro-PadreJesus-Entrada-del-gran-poder.jpg,0.50,0.0,1.0,0.9675,1.15
-la-macarena,Virgen_de_la_Macarena_2026.jpg,0.0,0.0,1.0,0.818,1.6
-el-cachorro,cristo-de-la-expiracion-el-cachorro.jpg,0.0,0.0,1.0,0.726,1.0
+cofradia,foto,x0,y0,x1,y1,gamma,realce,fuente,autor,licencia
+bendicion-y-esperanza,cristo-de-bendicion-y-esperanza.jpg,0.0,0.04,1.0,0.767,1.0,,,,
+la-hiniesta,virgen_de_la_hiniesta.jpeg,0.08,0.0,0.92,0.686,1.5,,,,
+las-cigarreras,jesus-atado-a-la-columna-cigarreras.webp,0.04,0.0,0.96,0.67,1.0,,,,
+el-gran-poder,Nuestro-PadreJesus-Entrada-del-gran-poder.jpg,0.50,0.0,1.0,0.9675,1.15,,,,
+la-macarena,Virgen_de_la_Macarena_2026.jpg,0.0,0.0,1.0,0.818,1.6,,,,
+el-cachorro,cristo-de-la-expiracion-el-cachorro.jpg,0.0,0.0,1.0,0.726,1.0,,,,
+pino-montano,pino-montano.jpg,0.17,0.08,0.67,0.42,1.0,,Jesús de Nazaret (Sevilla).jpg,Mflito,CC BY-SA 4.0
+la-mision,la-mision.jpg,0.2,0,0.815,1,1.0,,Santo Cristo de la Misión.jpg,Mflito,CC BY-SA 4.0
+bellavista,bellavista.jpg,0.19,0,0.805,1,1.0,,Jesús de la Salud y Remedios.jpg,Mflito,CC BY-SA 4.0
+cristo-de-la-corona,cristo-de-la-corona.jpg,0.18,0.36,0.82,0.883,1.0,,Cristo de la corona.jpg,J sevillista,CC BY-SA 4.0
+salud-y-clemencia-padre-pio,salud-y-clemencia-padre-pio.jpg,0,0.2,0.8,0.88,1.0,200,Cristo de la Hermandad de Palmete.jpg,Samu Bético,CC BY-SA 3.0
+torreblanca,torreblanca.jpg,0,0,1,0.73,1.0,,Cautivo ante Pilatos (Torreblanca).jpg,Mflito,CC BY-SA 3.0
+alcosa,alcosa.jpg,0.05,0.14,0.85,0.725,1.0,150,Cristo del Divino Perdón.JPG,Samu Bético,CC BY-SA 3.0
+san-jose-obrero,san-jose-obrero.jpg,0.1,0.08,0.9,0.66,1.0,200,Hermandad san jose obrero sevilla 001.jpg,Anual,CC BY-SA 3.0

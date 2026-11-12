@@ -10,7 +10,9 @@ Las fotos y los SVG NO van en el repositorio, que es público (como los escudos)
   SVG    ~/.cofradar/grabados/<cofradia>.svg, que el servidor sirve en /api/grabados/
 
 grabados.csv dice, por hermandad, la foto, el recorte (fracciones de la foto: x0, y0, x1, y1; la
-ventana es casi cuadrada, 156:170) y la gamma (>1 oscurece: las Vírgenes, de cara muy clara, piden 1,5).
+ventana es casi cuadrada, 156:170), la gamma (>1 oscurece: las Vírgenes, de cara muy clara, piden 1,5)
+y el realce (contraste local, en %; vacío o 0 si no hace falta; 150–250 para fotos oscuras o a contraluz).
+También la fuente: el archivo de Wikimedia Commons, su autor y su licencia (para atribuirla al publicar).
 
 Uso:  ~/.cofradar/venv/bin/python -I docs/design/estampas/grabado.py [cofradia ...]
       (sin nombres, todas las de grabados.csv; hace falta numpy y pillow)
@@ -38,12 +40,14 @@ FOTOS = Path.home() / ".cofradar" / "titulares"
 SALIDA = Path.home() / ".cofradar" / "grabados"
 
 
-def luz(ruta, recorte, gamma):
+def luz(ruta, recorte, gamma, realce=0):
     im = Image.open(ruta).convert("L")
     w, h = im.size
     x0, y0, x1, y1 = recorte
     im = im.crop((int(x0 * w), int(y0 * h), int(x1 * w), int(y1 * h)))
     im = im.resize((W * PX, H * PX), Image.LANCZOS)
+    if realce:  # contraste local: saca la cara de una foto oscura o a contraluz
+        im = im.filter(ImageFilter.UnsharpMask(radius=PX * 10, percent=int(realce), threshold=0))
     im = ImageOps.autocontrast(im, cutoff=2)
     im = im.filter(ImageFilter.GaussianBlur(PX * 0.35))
     return (np.asarray(im, dtype=np.float32) / 255.0) ** gamma
@@ -112,8 +116,8 @@ def trama(a, angulo, corte, grosor):
     )
 
 
-def grabado(foto, recorte, gamma):
-    a = luz(foto, recorte, gamma)
+def grabado(foto, recorte, gamma, realce=0):
+    a = luz(foto, recorte, gamma, realce)
     cuerpo = cera(a) + trama(a, 45, CORTE_TRAMA, PASO * 0.62) + trama(a, -45, CORTE_CRUZ, PASO * 0.45)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}">'
@@ -130,7 +134,7 @@ def main():
             if pedidas and fila["cofradia"] not in pedidas:
                 continue
             recorte = tuple(float(fila[k]) for k in ("x0", "y0", "x1", "y1"))
-            svg = grabado(FOTOS / fila["foto"], recorte, float(fila["gamma"]))
+            svg = grabado(FOTOS / fila["foto"], recorte, float(fila["gamma"]), float(fila.get("realce") or 0))
             destino = SALIDA / f"{fila['cofradia']}.svg"
             destino.write_text(svg)
             print(f"{destino.name}: {len(svg) / 1024:.0f} KB")
