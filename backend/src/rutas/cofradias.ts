@@ -215,7 +215,7 @@ function horaEnCampana(puntos: PuntoItinerario[]): string | null {
  * Campana (la carrera oficial); las de las vísperas, que no pasan, por su hora de salida.
  */
 export async function hermandadesPorJornada(): Promise<
-  { hermandadId: number; cofradia: string; nombre: string; jornada: { id: number; nombre: string; orden: number } }[]
+  { hermandadId: number; cofradia: string; nombre: string; escudo: string | null; jornada: { id: number; nombre: string; orden: number } }[]
 > {
   const lista = await salidas();
   return lista
@@ -225,6 +225,7 @@ export async function hermandadesPorJornada(): Promise<
       hermandadId: s.hermandad.id,
       cofradia: slug(s.hermandad.nombre),
       nombre: s.hermandad.nombre,
+      escudo: escudoUrl(s.hermandad.escudo),
       jornada: { id: s.jornada.id, nombre: s.jornada.nombre, orden: s.jornada.orden },
     }));
 }

@@ -1,3 +1,6 @@
+import { readdirSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import type { Cliente } from "../bd.js";
 import { consulta } from "../bd.js";
 import { hermandadesPorJornada, slug } from "../rutas/cofradias.js";
@@ -12,6 +15,18 @@ import { hermandadesPorJornada, slug } from "../rutas/cofradias.js";
  */
 
 export const PARA_CONOCER = 5;
+
+/** Los titulares a grabado (docs/design/estampas/grabado.py), fuera del repositorio: index.ts los sirve. */
+export const GRABADOS_DIR = process.env.GRABADOS_DIR ?? join(homedir(), ".cofradar", "grabados");
+
+/** Las hermandades que ya tienen su titular a grabado. Sin la carpeta, ninguna: la estampa lleva el escudo. */
+function conGrabado(): Set<string> {
+  try {
+    return new Set(readdirSync(GRABADOS_DIR).filter((f) => f.endsWith(".svg")).map((f) => f.slice(0, -4)));
+  } catch {
+    return new Set();
+  }
+}
 
 type Bd = Cliente | typeof consulta;
 const leer = <T extends Record<string, unknown>>(bd: Bd, sql: string, valores: unknown[]) =>
@@ -122,6 +137,10 @@ export async function apuntarSolitario(usuario: string, cuerpo: { aciertos?: unk
 export type Estampa = {
   cofradia: string;
   nombre: string;
+  /** Dónde pedir el escudo, o null */
+  escudo: string | null;
+  /** Dónde pedir el titular a grabado, o null si aún no lo tiene */
+  grabado: string | null;
   conoces: boolean;
   /** Los años en que la viste (Mi colección), de menor a mayor */
   vista: number[];
@@ -155,12 +174,15 @@ export async function verAlbum(usuario: string): Promise<Album> {
   };
   const vistasDe = anios(vistas.rows);
   const feDe = anios(fe.rows);
+  const grabados = conGrabado();
   const jornadas = new Map<number, Album["jornadas"][number]>();
   let estampas = 0;
   for (const h of lista) {
     const e: Estampa = {
       cofradia: h.cofradia,
       nombre: h.nombre,
+      escudo: h.escudo,
+      grabado: grabados.has(h.cofradia) ? `/api/grabados/${h.cofradia}.svg` : null,
       conoces: (conoce.get(h.hermandadId) ?? 0) >= PARA_CONOCER,
       vista: vistasDe.get(h.hermandadId) ?? [],
       fe: feDe.get(h.hermandadId) ?? [],

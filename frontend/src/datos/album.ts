@@ -6,7 +6,16 @@ import { cabecerasSesion, useSesion } from "./sesion";
  * suyas acertadas con sesión), la has visto (Mi colección) y has dado fe (una aportación tuya ayudó a
  * situarla). Lo que no tienes va en blanco: nunca «te falta» (R5).
  */
-export type Estampa = { cofradia: string; nombre: string; conoces: boolean; vista: number[]; fe: number[] };
+export type Estampa = {
+  cofradia: string;
+  nombre: string;
+  /** Dónde pedir el escudo y el titular a grabado; null si no hay */
+  escudo: string | null;
+  grabado: string | null;
+  conoces: boolean;
+  vista: number[];
+  fe: number[];
+};
 export type Album = { estampas: number; jornadas: { id: number; nombre: string; orden: number; estampas: Estampa[] }[] };
 export type NuevaEnAlbum = { cofradia: string; nombre: string };
 

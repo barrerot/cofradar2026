@@ -1,12 +1,24 @@
 /* ==========================================================================
    COFRADAR · ÁLBUM DE ESTAMPAS Y CARGO (P-35, F-56 y F-58; 12-ano-cofrade/16–24)
-   La estampa es solo tipografía: papel, marco y filete. Más grados, más tinta:
-   el filete pasa a tinta y engorda (1, 1,5 y 2 px). Se distingue también en
-   escala de grises: por el grosor y por las marcas, no por el color.
+   La estampa es un SVG (rutas/Estampa.tsx) que se escala entero; aquí solo su
+   tamaño. La miniatura de «Nueva en tu álbum» sigue siendo solo tipografía.
    Namespace: cf-estampa-*, cf-album-*, cf-cargo-*.
    ========================================================================== */
 
 /* ── La estampa ── */
+.cf-estampa-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+}
+
+/* En la hoja, a 300 px como en el diseño (o lo que quepa) */
+.cf-estampa-svg[data-tamano="grande"] {
+  width: min(18.75rem, 100%);
+}
+
+/* La miniatura de «Nueva en tu álbum» */
 .cf-estampa {
   display: block;
   box-sizing: border-box;
@@ -32,40 +44,6 @@
   border: 1px solid var(--cf-border);
 }
 
-.cf-estampa[data-grados="1"] .cf-estampa-filete {
-  border: 1px solid var(--cf-text);
-}
-
-.cf-estampa[data-grados="2"] .cf-estampa-filete {
-  border: 1.5px solid var(--cf-text);
-}
-
-.cf-estampa[data-grados="3"] .cf-estampa-filete {
-  border: 2px solid var(--cf-text);
-}
-
-.cf-estampa:not([data-grados="0"]) {
-  color: var(--cf-text);
-}
-
-.cf-estampa-jornada {
-  font-size: var(--cf-text-xs);
-  line-height: var(--cf-leading-xs);
-  font-weight: var(--cf-weight-emphasis, 600);
-  color: var(--cf-text-secondary);
-}
-
-.cf-estampa[data-grados="0"] .cf-estampa-jornada {
-  color: var(--cf-text-muted);
-}
-
-.cf-estampa-raya {
-  width: 1.25rem;
-  height: 0;
-  margin: var(--cf-space-2) 0;
-  border-top: 1px solid currentColor;
-}
-
 .cf-estampa-nombre {
   font-family: var(--cf-font-serif);
   font-size: 1.125rem;
@@ -77,37 +55,7 @@
   max-width: 100%;
 }
 
-.cf-estampa[data-largo][data-tamano="normal"] .cf-estampa-filete {
-  padding-inline: 0.125rem;
-}
-
-.cf-estampa[data-largo][data-tamano="normal"] .cf-estampa-nombre {
-  font-size: 0.875rem;
-}
-
-.cf-estampa-marcas {
-  display: grid;
-  gap: 2px;
-  justify-items: start;
-  width: 100%;
-  margin-top: auto;
-  padding-top: var(--cf-space-2);
-}
-
-.cf-estampa-marca {
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
-  max-width: 100%;
-  font-size: 0.6875rem;
-  line-height: 1.25;
-  font-weight: var(--cf-weight-emphasis, 600);
-  white-space: nowrap;
-}
-
 /* El ojo y el sello, en granate, como en Mi colección y Mis aportaciones */
-.cf-estampa-marca[data-grado="vista"] .cf-ph,
-.cf-estampa-marca[data-grado="fe"] .cf-ph,
 .cf-album-grados [data-grado="vista"][data-tiene="si"] .cf-ph,
 .cf-album-grados [data-grado="fe"][data-tiene="si"] .cf-ph,
 .cf-album-como-lista [data-grado="vista"] .cf-ph,
@@ -115,41 +63,10 @@
   color: var(--cf-brand);
 }
 
-.cf-estampa .cf-ph {
-  flex: none;
-}
-
-/* En grande (la hoja de una estampa) */
-.cf-estampa[data-tamano="grande"] {
-  width: 11.5rem;
-  height: auto;
-  padding: 0.45rem;
-}
-
-.cf-estampa[data-tamano="grande"] .cf-estampa-filete {
-  padding: var(--cf-space-4) var(--cf-space-3);
-}
-
-.cf-estampa[data-tamano="grande"] .cf-estampa-jornada {
-  font-size: var(--cf-text-sm);
-}
-
-.cf-estampa[data-tamano="grande"] .cf-estampa-nombre {
-  font-size: var(--cf-text-2xl);
-}
-
-.cf-estampa[data-tamano="grande"] .cf-estampa-marca {
-  font-size: var(--cf-text-base);
-  gap: var(--cf-space-2);
-}
-
-.cf-estampa[data-tamano="grande"] .cf-estampa-marcas {
-  gap: var(--cf-space-1);
-}
-
 /* En miniatura («Nueva en tu álbum»): solo el nombre */
 .cf-estampa[data-tamano="mini"] {
   flex: none;
+  color: var(--cf-text);
   width: 3.25rem;
   height: auto;
   padding: 0.15rem;
@@ -157,6 +74,7 @@
 
 .cf-estampa[data-tamano="mini"] .cf-estampa-filete {
   justify-content: center;
+  border-color: var(--cf-text);
   padding: 0.25rem 0.15rem;
 }
 
@@ -237,8 +155,13 @@
   cursor: pointer;
 }
 
-.cf-album-boton:hover .cf-estampa {
-  background: var(--cf-surface-hover);
+.cf-album-boton:hover .cf-estampa-svg {
+  filter: brightness(0.97);
+}
+
+.cf-album-boton:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
 }
 
 /* La hoja de una estampa */
@@ -541,12 +464,6 @@
   margin: 0;
   font-size: var(--cf-text-base);
   color: var(--cf-text-secondary);
-}
-
-/* En la rejilla, el icono de cada marca a 14 px: así caben sin tocar el filete */
-.cf-estampa[data-tamano="normal"] .cf-estampa-marca .cf-ph {
-  width: 0.875rem;
-  height: 0.875rem;
 }
 
 /* La jornada marcada, rellena como el día elegido de la Agenda */

@@ -14,6 +14,7 @@ import { routerTrivial } from "./rutas/trivial.js";
 import { routerDia } from "./rutas/dia.js";
 import { routerCuadrillas } from "./rutas/cuadrillas.js";
 import { routerAlbum } from "./rutas/album.js";
+import { GRABADOS_DIR } from "./album/album.js";
 import { leerSesion } from "./sesion.js";
 
 /**
@@ -56,6 +57,12 @@ app.use("/api", routerAlbum);
  */
 const escudos = process.env.ESCUDOS_DIR ?? join(homedir(), ".cofradar", "escudos");
 app.use("/api/escudos", express.static(escudos, { index: false, dotfiles: "ignore", maxAge: "1d", fallthrough: true }));
+
+/**
+ * El titular de cada estampa del álbum, a grabado desde una foto (docs/design/estampas/grabado.py). Como los
+ * escudos: en el servidor (GRABADOS_DIR, por defecto ~/.cofradar/grabados) y NUNCA en el repositorio.
+ */
+app.use("/api/grabados", express.static(GRABADOS_DIR, { index: false, dotfiles: "ignore", maxAge: "1d", fallthrough: true }));
 
 app.get("/api/salud", (_peticion, respuesta) => {
   respuesta.json({ ok: true });

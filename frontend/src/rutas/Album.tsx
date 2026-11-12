@@ -8,13 +8,13 @@ import { useSesion } from "../datos/sesion";
 import type { EstadoJornada } from "../fixture";
 import { CORTO } from "./Agenda";
 import { DarFe } from "./DarFe";
+import { Estampa } from "./Estampa";
 
 /**
  * P-35 Álbum de estampas (F-56; 12-ano-cofrade/16–20), registro editorial.
  *
- *   La estampa   solo tipografía: papel, marco y filete; la jornada en pequeño, una rayita y el nombre en
- *                Newsreader. Abajo, solo las marcas de los grados que tienes. En blanco: todo en gris y sin
- *                marcas. Más grados, más tinta: el filete engorda (1, 1,5 y 2 px). La de tres no brilla.
+ *   La estampa   la de Claude Design (12/11/2026), en Estampa.tsx: escudo, titular a grabado, colores de la
+ *                túnica y sello de dar fe, un grado por capa.
  *   El álbum     «Tienes 14 estampas», sin «de 72»; las jornadas en orden, de tres en fila. El selector
  *                lleva a cada jornada; es el de la Agenda sin fechas, porque el álbum es de por vida.
  *   La hoja      la estampa en grande y sus tres grados con lo que hay; lo vacío, en gris y sin texto.
@@ -31,31 +31,6 @@ const GRADOS = [
 
 function tiene(e: DatosEstampa, clave: (typeof GRADOS)[number]["clave"]) {
   return clave === "conoces" ? e.conoces : e[clave].length > 0;
-}
-
-export function Estampa({ e, jornada, tamano = "normal" }: { e: DatosEstampa; jornada: string; tamano?: "normal" | "grande" }) {
-  const n = grados(e);
-  // Una palabra larga («Buenaventura») no cabe a tamaño normal en una columna de tres
-  const largo = Math.max(...e.nombre.split(" ").map((p) => p.length)) >= 10;
-  return (
-    <span className="cf-estampa" data-grados={n} data-tamano={tamano} data-largo={largo ? "" : undefined}>
-      <span className="cf-estampa-filete">
-        <span className="cf-estampa-jornada">{jornada}</span>
-        <span className="cf-estampa-raya" aria-hidden="true" />
-        <span className="cf-estampa-nombre">{e.nombre}</span>
-        {n ? (
-          <span className="cf-estampa-marcas">
-            {GRADOS.filter((g) => tiene(e, g.clave)).map((g) => (
-              <span key={g.clave} className="cf-estampa-marca" data-grado={g.clave}>
-                <Icono nombre={g.icono} tamano={tamano === "grande" ? 20 : 16} />
-                {g.texto}
-              </span>
-            ))}
-          </span>
-        ) : null}
-      </span>
-    </span>
-  );
 }
 
 export function Album({ estado }: { estado: EstadoJornada }) {
