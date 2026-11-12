@@ -28,7 +28,7 @@ export class ErrorAlbum extends Error {
 
 // De qué hermandad es cada pregunta. El banco cambia pocas veces al año: se recuerda un minuto.
 let deQuien: { cuando: number; mapa: Promise<Map<number, number>> } | null = null;
-function hermandadDePregunta(): Promise<Map<number, number>> {
+export function hermandadDePregunta(): Promise<Map<number, number>> {
   if (deQuien && Date.now() - deQuien.cuando < 60_000) return deQuien.mapa;
   const mapa = (async () => {
     const [{ rows }, lista] = await Promise.all([

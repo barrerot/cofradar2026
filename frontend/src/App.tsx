@@ -25,6 +25,7 @@ import { PreguntaDelDia, RedirigirDia } from "./rutas/PreguntaDelDia";
 import { CrearCuadrilla, InvitacionCuadrilla, InvitarCuadrilla, LaCuadrilla, RedirigirCuadrilla, TusCuadrillas } from "./rutas/Cuadrillas";
 import { Album } from "./rutas/Album";
 import { TuCargo } from "./rutas/Cargo";
+import { SemanaSantaDe, TuSemanaSanta } from "./rutas/TuSemanaSanta";
 import { Coleccion } from "./rutas/Coleccion";
 import { AvisoLegal, Privacidad } from "./rutas/Privacidad";
 import { Panel } from "./rutas/admin/Panel";
@@ -78,6 +79,8 @@ export function App() {
       <Route path="/dia" element={<RedirigirDia />} />
       <Route path="/mi-cofradar/album" element={<Album estado={estado} />} />
       <Route path="/mi-cofradar/cargo" element={<TuCargo estado={estado} />} />
+      <Route path="/mi-cofradar/semana-santa" element={<TuSemanaSanta estado={estado} />} />
+      <Route path="/mi-cofradar/semana-santa/:anio" element={<SemanaSantaDe estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas" element={<TusCuadrillas estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas/nueva" element={<CrearCuadrilla estado={estado} />} />
       <Route path="/mi-cofradar/cuadrillas/i/:token" element={<InvitacionCuadrilla estado={estado} />} />

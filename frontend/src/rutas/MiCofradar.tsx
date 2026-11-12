@@ -13,6 +13,7 @@ import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
+import { FilaTuSemanaSanta } from "./TuSemanaSanta";
 import { SelectorJornada } from "./SelectorJornada";
 import { TarjetaCargo } from "./Cargo";
 
@@ -77,6 +78,8 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
             </p>
           </>
         )}
+
+        <FilaTuSemanaSanta />
 
         <nav className="cf-mi-grupo" aria-label="Lo tuyo">
           <Fila icono="seguida" marca a="/mi-cofradar/seguidas" valor={cifra(relaciones.seguidas)}>

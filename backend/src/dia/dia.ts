@@ -51,7 +51,7 @@ export type VistaDia = {
 
 // El calendario cambia una vez al año: se recuerda un minuto
 let calendario: { cuando: number; dias: (Dia & { pregunta: number })[] } | null = null;
-async function leerCalendario() {
+export async function leerCalendario() {
   if (calendario && Date.now() - calendario.cuando < 60_000) return calendario.dias;
   const { rows } = await consulta<{ fecha: string; dia: number; pregunta_id: number }>(
     "select to_char(fecha, 'YYYY-MM-DD') as fecha, dia, pregunta_id from dia_pregunta order by fecha",

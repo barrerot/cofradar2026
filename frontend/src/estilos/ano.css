@@ -1,0 +1,233 @@
+/* ==========================================================================
+   COFRADAR · TU SEMANA SANTA (F-59; 12-ano-cofrade/25–31)
+   La tarjeta del año es la estampa del álbum en grande: papel, marco fino y
+   filete de 2 px en tinta. Solo tipografía. Siempre en claro (data-theme
+   "light" en la propia tarjeta): en oscuro cambia solo lo de alrededor.
+   Tamaño fijo y vertical; las líneas van en el centro, así que con dos sigue
+   siendo una estampa entera. Namespace: cf-ano-*.
+   ========================================================================== */
+
+/* ── 25 · La fila de Mi Cofradar: sola, encima de «lo tuyo», borde granate suave ── */
+.cf-ano-fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-height: var(--cf-space-16);
+  padding: var(--cf-space-3) var(--cf-space-4);
+  border: var(--cf-border-width) solid var(--cf-brand-border);
+  border-radius: var(--cf-radius-lg, 12px);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+.cf-ano-fila:hover {
+  background: var(--cf-surface-hover);
+}
+
+.cf-ano-fila:focus-visible {
+  outline: var(--cf-focus-ring-width) solid var(--cf-focus-ring-color);
+  outline-offset: var(--cf-focus-ring-offset);
+}
+
+.cf-ano-fila-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--cf-radius-md, 8px);
+  background: var(--cf-brand-soft);
+  color: var(--cf-brand);
+}
+
+/* ── 26 · La pantalla ── */
+.cf-ano {
+  display: grid;
+  gap: var(--cf-space-4);
+  container-type: inline-size;
+}
+
+/* ── La tarjeta ── */
+.cf-ano-tarjeta {
+  box-sizing: border-box;
+  display: flex;
+  /* Vertical y siempre del mismo alto (2:3, como las estampas); si el texto no cabe, crece */
+  min-height: 150cqw;
+  margin: 0;
+  padding: var(--cf-space-2);
+  border: 1px solid var(--cf-cera-300);
+  border-radius: 4px;
+  background: var(--cf-cera-50);
+  color: var(--cf-text);
+}
+
+.cf-ano-filete {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--cf-space-6) var(--cf-space-6) var(--cf-space-4);
+  border: 2px solid var(--cf-text);
+}
+
+.cf-ano-cabeza {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cf-ano-marca {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.cf-ano-anio {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ano-rayita {
+  display: block;
+  width: 1.375rem;
+  height: 1px;
+  margin: var(--cf-space-4) auto;
+  background: var(--cf-text);
+}
+
+.cf-ano-alias {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-3xl);
+  line-height: var(--cf-leading-3xl);
+  font-weight: 600;
+}
+
+/* Cada trozo del alias, sin partir: el renglón solo cambia tras un guion bajo */
+.cf-ano-alias span {
+  display: inline-block;
+}
+
+.cf-ano-hermano {
+  margin: var(--cf-space-2) 0 var(--cf-space-6);
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+.cf-ano-lineas {
+  display: grid;
+  gap: var(--cf-space-4);
+  margin: auto 0;
+  padding: var(--cf-space-5) var(--cf-space-2) var(--cf-space-6);
+  border-top: 1px solid var(--cf-cera-400);
+  list-style: none;
+}
+
+.cf-ano-lineas li {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: var(--cf-space-4);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: 600;
+}
+
+.cf-ano-icono {
+  display: inline-flex;
+  justify-content: center;
+  padding-top: 1px;
+}
+
+.cf-ano-icono[data-marca] {
+  color: var(--cf-brand);
+}
+
+.cf-ano-pie {
+  text-align: center;
+}
+
+.cf-ano-pie .cf-ano-rayita {
+  margin-top: 0;
+  margin-bottom: var(--cf-space-2);
+}
+
+.cf-ano-pie p {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: 600;
+  color: var(--cf-text-secondary);
+}
+
+/* ── Compartir y guardar ── */
+.cf-ano-acciones {
+  display: grid;
+  gap: var(--cf-space-3);
+}
+
+.cf-ano-acciones p {
+  margin: 0;
+  color: var(--cf-text-secondary);
+}
+
+.cf-ano-nota {
+  margin: 0;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* 28 · La vista previa: miniatura y el texto que la acompaña */
+.cf-ano-previa {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--cf-space-4);
+  padding: var(--cf-space-3);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-md, 8px);
+  background: var(--cf-surface-sunken);
+}
+
+.cf-ano-previa img {
+  display: block;
+  width: 6.75rem;
+  height: auto;
+  border: 1px solid var(--cf-border);
+}
+
+.cf-ano-previa p {
+  margin: 0;
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+}
+
+/* ── 30 · Otros años ── */
+.cf-ano-rotulo {
+  margin: var(--cf-space-4) 0 var(--cf-space-2);
+  font-size: var(--cf-text-base);
+  line-height: var(--cf-leading-base);
+  font-weight: 600;
+  color: var(--cf-text-secondary);
+}
+
+.cf-ano-otro {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.cf-ano-otro-nombre {
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: 600;
+}

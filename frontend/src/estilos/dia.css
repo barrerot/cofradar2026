@@ -5,7 +5,8 @@
    la llama: cobre apagado. Namespace: cf-cirio-*, cf-dia-*.
    ========================================================================== */
 
-:root {
+:root,
+[data-theme="light"] {
   --cf-cirio-llama: #B86B3C;
 }
 

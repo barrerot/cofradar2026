@@ -42,12 +42,18 @@ async function eventosCasa(bd: Bd, usuario: string): Promise<EventoCasa[]> {
 
 export type Puntos = { cargo: Cargo; dio: Map<string, number>; porDia: Map<string, number> };
 
-export async function puntosDe(usuario: string, bd: Bd = consulta): Promise<Puntos> {
+/** `hasta`: un día de Madrid («AAAA-MM-DD»), para el cargo que tenía al acabar ese día (la tarjeta del año, F-59). */
+export async function puntosDe(usuario: string, bd: Bd = consulta, hasta?: string): Promise<Puntos> {
   const [calle, eventos] = await Promise.all([
-    leer<{ puntos: number }>(bd, "select coalesce(sum(puntos_base + bonus), 0)::int as puntos from aportacion where usuario_id = $1", [usuario]),
+    leer<{ puntos: number }>(
+      bd,
+      `select coalesce(sum(puntos_base + bonus), 0)::int as puntos from aportacion
+       where usuario_id = $1 and ($2::date is null or (observada at time zone 'Europe/Madrid')::date <= $2::date)`,
+      [usuario, hasta ?? null],
+    ),
     eventosCasa(bd, usuario),
   ]);
-  const casa = repartirCasa(eventos);
+  const casa = repartirCasa(hasta ? eventos.filter((e) => e.dia <= hasta) : eventos);
   return { cargo: cargoDe(calle.rows[0]!.puntos, casa.total), dio: casa.dio, porDia: casa.porDia };
 }
 
