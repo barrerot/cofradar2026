@@ -15,6 +15,7 @@ Claude Design hizo el sistema en el lienzo «Cofradar · Las estampas»: marco, 
 
 - **La estampa en la app** es `frontend/src/rutas/Estampa.tsx`: un SVG de 200 × 300 que vale igual a 110 px (álbum) que a 300 px (hoja). Un grado por capa: la conoces = el titular a grabado y el escudo al medallón; la has visto = los colores de la túnica en el marco; has dado fe = el sello granate.
 - **Los colores** de cada hermandad están en `frontend/src/datos/tunicas.ts`, sacados de `fichas.csv` con las reglas del lienzo (banda y filete, una tinta por color).
+- **Qué titular va en cada estampa** está en `titulares.csv`. Carlos lo eligió el 12/11/2026 sobre mi propuesta, y el único cambio fue La Trinidad, con la Esperanza.
 - **El titular a grabado** sale de `grabado.py` con lo que dice `grabados.csv`: la foto, el recorte y la gamma de cada hermandad. Las fotos están en `~/.cofradar/titulares/` y los SVG van a `~/.cofradar/grabados/`. Ninguno de los dos va al repositorio. El servidor los sirve en `/api/grabados/`. Una hermandad sin grabado lleva su escudo grande en la ventana.
 - **Para añadir una tanda:**
   1. Copia la foto a `~/.cofradar/titulares/`. Mejor grande, con la cara bien visible.
