@@ -1,0 +1,65 @@
+Abre un lienzo nuevo, «Cofradar · Las estampas». Es el sistema visual de las estampas del álbum: la pieza de Cofradar que más tiene que lucir. Lo que hay aprobado de la app (armazón, colores, tipografía, Mi Cofradar, el álbum y la tarjeta del año) no se toca: aquí solo se diseña la estampa y cómo vive dentro del álbum.
+
+QUÉ ES
+El álbum de Cofradar tiene una estampa por cada una de las 72 hermandades de la Semana Santa de Sevilla. Hoy cada estampa es solo papel, un marco y el nombre en letra: funciona, pero es pobre. Quiero una colección de verdad:
+- profesional, como una serie de estampas de recuerdo o de cromos de colección bien editados;
+- única y reconocible de Cofradar: alguien que vea una sola estampa en un estado de WhatsApp tiene que saber que es de Cofradar;
+- con unidad de conjunto: las 72 son de la misma serie (mismo marco, mismo papel, misma técnica de dibujo, misma tipografía), y lo que cambia entre ellas es lo que hace reconocible a cada hermandad.
+
+CADA ESTAMPA LLEVA
+1. EL ESCUDO de la hermandad. Te subo los seis escudos reales: colócalos tal cual, no los redibujes ni los cambies de color. Diseña el sitio del escudo para que cualquiera de los 72, de formas muy distintas, quede bien.
+2. UNA ILUSTRACIÓN DEL TITULAR: la imagen que da nombre a la estampa (abajo, por hermandad). Todas con la misma técnica para las 72. Propón tú la técnica; me gustaría algo entre el grabado y la litografía de estampa antigua, a línea, con pocas tintas. Te subiré una foto de referencia de cada titular: la ilustración tiene que reconocerse, con sus rasgos y su postura, sin copiar la foto.
+3. LOS COLORES DE SU TÚNICA de nazareno, como acento de la estampa (fondo, filete, orla, banda… tú decides). Son el rasgo que cualquier sevillano reconoce: el negro del Gran Poder, el blanco y azul de la Hiniesta. Usa solo los colores de los datos de abajo.
+4. EL NOMBRE de la hermandad, tal como sale en la app, y su JORNADA en pequeño.
+
+Lo que hay que respetar:
+- Vertical, proporción 2:3, como ahora.
+- Siempre en claro, sobre papel, aunque la app esté en oscuro (como la tarjeta del año).
+- Se tiene que leer y reconocer en pequeño: en el álbum van tres por fila en un móvil de 390 de ancho (unos 110 px de ancho cada una). En grande, unos 300 px de ancho.
+- Las 72 hay que poder hacerlas con el mismo sistema, en tandas. Piensa la estampa como una plantilla: marco, papel, rótulos y sitio del escudo fijos; ilustración y colores, de cada hermandad. Que se pueda exportar en vector (SVG) y pese poco.
+- Fuentes de la app: Newsreader para el nombre, Inter para lo pequeño. Papel y marco en la gama cera de la app (#FDF9F1, #F7F1E6, #DFD3BE, #C9B896) y tinta #1D1A16; el granate de la marca, #6E1C2F, solo si hace falta.
+- Sin brillos, purpurina, 3D, degradados de videojuego ni marcos de carta de juego. Es una estampa de hermandad, sobria y bien hecha, no un cromo de fútbol.
+
+LOS GRADOS
+Cada estampa se consigue en tres grados, independientes entre sí:
+- LA CONOCES: acertó 5 preguntas suyas en el trivial.
+- LA HAS VISTO: la tiene en Mi colección (con los años en que la vio).
+- HAS DADO FE: una aportación suya ayudó a situar el paso en la calle.
+Y hay una cuarta forma: EN BLANCO, cuando aún no tiene ningún grado.
+Propón cómo se ve cada grado en la propia estampa. Una idea, por si te sirve: en blanco, solo el marco, el escudo en un gris muy suave y el nombre; la conoces, entra la ilustración a línea; la has visto, entra el color de la túnica; has dado fe, un sello o un filete dorado. Si se te ocurre algo mejor, dímelo.
+Regla que no se negocia: la estampa en blanco tiene que parecer digna y bonita, nunca bloqueada ni pendiente. Sin candados, sin «?», sin «te falta», sin contadores ni barras de progreso.
+
+LAS SEIS DE PRUEBA (datos reales; cópialos tal cual)
+1. Bendición y Esperanza · Viernes de Dolores · Parroquia de Jesús Obrero
+   Titular: Nuestro Padre Jesús de la Bendición en el Santo Encuentro (J. Antonio Blanco Ramos, 2010).
+   Túnica: túnica y capa blancas; antifaz verde.
+2. La Hiniesta · Domingo de Ramos · Parroquia de San Julián
+   Titular: Nuestra Señora de la Hiniesta Dolorosa (Antonio Castillo Lastrucci, 1937).
+   Túnica: blanca de cola con antifaz de raso azul (Cristo); sotana y antifaz de raso azul (Virgen).
+3. Las Cigarreras · Jueves Santo · Capilla de la Fábrica de Tabacos
+   Titular: Nuestro Padre Jesús Atado a la Columna (Francisco Buiza, 1974).
+   Túnica: sotana y antifaz de raso morado; capa blanca; cíngulo morado y oro.
+4. El Gran Poder · Madrugá · Basílica de Nuestro Padre Jesús del Gran Poder
+   Titular: Nuestro Padre Jesús del Gran Poder (Juan de Mesa, 1620).
+   Túnica: de ruán negro, de cola; cinturón ancho de esparto.
+5. La Macarena · Madrugá · Basílica de Santa María de la Esperanza Macarena
+   Titular: María Santísima de la Esperanza Macarena (anónima, siglo XVII).
+   Túnica: antifaz de terciopelo morado (Cristo) y verde (Virgen). El color de la túnica y la capa no lo tengo confirmado: usa solo el morado y el verde.
+6. El Cachorro · Viernes Santo · Basílica del Stmo. Cristo de la Expiración
+   Titular: Santísimo Cristo de la Expiración, el Cachorro (Francisco Antonio Ruiz Gijón, 1682).
+   Túnica: túnica y antifaz negros; capa marfil; cíngulo y botonadura blancos.
+
+PÁGINAS
+A. EL SISTEMA. La anatomía de la estampa: papel, marco, filete, sitio del escudo, ilustración, rótulos y medidas. La técnica de la ilustración, con un detalle grande. Cómo se pasan los colores de la túnica a la estampa, con las seis paletas.
+B. LAS SEIS ESTAMPAS, cada una en sus cuatro formas (en blanco, la conoces, la has visto, has dado fe) y con los tres grados a la vez. En grande (300 px) y en pequeño (110 px), una al lado de la otra.
+C. EL ÁLBUM. La pantalla del álbum aprobada (móvil 390 × 844), abierta en la Madrugá, con el selector de jornadas tal como está y las estampas nuevas en la retícula de tres por fila. Ejemplo: El Gran Poder con los tres grados, La Macarena solo «la has visto» y el resto de la Madrugá en blanco (El Silencio, El Calvario, La Esperanza de Triana, Los Gitanos: sin ilustración, porque aún no las tenemos; usa su forma en blanco con el nombre y un hueco para el escudo).
+D. LA ESTAMPA EN GRANDE, en la hoja que se abre al tocarla: la estampa a 300 px y debajo los grados («Acertaste 5 preguntas suyas», «La viste en 2027», «Diste fe en la Madrugá de 2027»; son de ejemplo).
+E. ESTAMPA NUEVA. El momento en que se consigue un grado, por ejemplo al acertar la quinta pregunta en el trivial: cómo aparece la estampa sin confeti ni sonido de premio.
+F. EN OSCURO. C y D con la app en oscuro (la estampa sigue en claro).
+
+AL TERMINAR, dime:
+- qué técnica de ilustración has elegido y por qué;
+- cómo se reparten los colores de la túnica cuando hay tres o cuatro (o cuando cambian del Cristo a la Virgen);
+- cómo se ven los grados y por qué;
+- si con este sistema se pueden hacer las 72 en tandas sin que pierdan unidad, y qué te haría falta para cada tanda;
+- qué ilustraciones no te han salido reconocibles, si alguna, y qué referencia te ayudaría.
