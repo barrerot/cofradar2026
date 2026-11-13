@@ -1,0 +1,49 @@
+Abre un lienzo nuevo, «Cofradar · Repaso visual». Es un repaso de la identidad visual de la app: hoy funciona y se lee bien, pero es pobre de ver. Todo es texto sobre papel, las 72 hermandades solo se distinguen por el nombre, y no hay nada que diga «esto es Cofradar». Quiero que tenga mucha más calidad visual sin perder lo que ya funciona.
+
+LO QUE YA TENEMOS Y HAY QUE APROVECHAR
+En el lienzo «Cofradar · Las estampas» aprobaste el sistema de las estampas del álbum. Ya está construido para las 72 hermandades, y ese es el lenguaje que quiero llevar al resto de la app:
+- la ventana con arco de medio punto, sobre papel y con marco en cera;
+- el titular de cada hermandad en grabado a línea, a dos tintas (tinta y cera). Te subo varios ya hechos, en PNG. Colócalos tal cual: no los redibujes ni los recoloques;
+- el escudo en su medallón (te subo el de La Macarena);
+- los colores de la túnica, solo en la banda y el filete, con las tintas aprobadas: negro #1D1A16, blanco (papel entre dos hilos de tinta), marfil #E6DAC1, verde #2E6046, azul #3B6A97 y morado #4E2C5C;
+- el sello granate de «dar fe».
+También te subo una muestra de las estampas terminadas, para que veas el conjunto.
+
+Te subo además capturas de cómo está hoy la app, a 390 de ancho. Son la referencia de lo que hay: el contenido, el orden y los textos se quedan; lo que cambia es cómo se ve.
+
+LO QUE NO SE NEGOCIA
+- El sistema de diseño aprobado sigue mandando: tokens, Newsreader para títulos y nombres, Inter para el resto, colores de estado (verde en la calle, ámbar retraso, discontinuo «según horario»), el granate solo para «lo tuyo», claro y oscuro, contraste mínimo de 4,5:1 y zonas táctiles de 44 px.
+- En plena jornada, Inicio y el Mapa son herramientas para la calle: primero se leen la hora y el estado, de un vistazo y a pleno sol. Ahí la imagen solo acompaña y nunca quita sitio a la información.
+- Los colores de la túnica son un acento (filete, banda, borde de la miniatura). Nunca son fondo de pantalla, ni color de texto, ni sustituyen a los colores de estado.
+- Los grabados y los escudos se usan como imágenes, tal cual. Si una hermandad no tiene grabado en lo que te subo, usa su forma sin grabado: la ventana con el escudo dentro, o un hueco rotulado «grabado».
+- La estampa del álbum sigue siempre en claro. Las miniaturas de grabado van sobre papel también en oscuro, como pequeñas estampas.
+- Nada de gamificación nueva, ni contadores, ni «te falta». Sin brillos, degradados de videojuego ni 3D.
+
+FORMATO
+Móvil de 390 × 844. Si una pantalla es más larga, dibújala entera. Los datos son reales salvo lo personal de Mi Cofradar, que va rotulado «Ejemplo».
+
+LOS DATOS
+- La Macarena · Madrugá · titular de su estampa: María Santísima de la Esperanza Macarena · túnica: banda verde y filete morado. Nombre oficial: «Real, Ilustre y Fervorosa Hermandad y Cofradía de Nazarenos de Nuestra Señora del Santo Rosario, Nuestro Padre Jesús de la Sentencia y María Santísima de la Esperanza Macarena». Sede: Basílica de Santa María de la Esperanza Macarena. Sale la Madrugá, 26 de marzo de 2027, a las 00:00, y entra a las 13:30.
+- El Gran Poder · Madrugá · Nuestro Padre Jesús del Gran Poder · túnica: negro (banda negra y filete negro fino).
+- Domingo de Ramos, en este orden: La Paz (María Santísima de la Paz · blanco), La Cena (Señor de la Sagrada Cena · blanco), La Hiniesta (Nuestra Señora de la Hiniesta Dolorosa · banda azul y filete blanco), La Borriquita (Señor de la Sagrada Entrada en Jerusalén · blanco). Sus horas son las de la captura de la Agenda.
+- Mi Cofradar, con cuenta (Ejemplo): alias «Cirio_de_San_Lorenzo», hermano nº 214, cargo Diputado de tramo; 14 estampas en el álbum; sigues 6 cofradías; 9 vistas en Mi colección; 22 aportaciones.
+
+PÁGINAS
+A. EL LENGUAJE. Las piezas nuevas y cuándo se usa cada una:
+   - la miniatura de hermandad: el grabado dentro de la ventana con arco, con su filete de color, a 40, 56 y 72 px. También su versión sin grabado;
+   - la cabecera de ficha con estampa;
+   - cualquier otra pieza que propongas (separadores, cabeceras de jornada, rótulos…).
+   Incluye la regla: en qué pantallas va imagen y en cuáles no.
+B. FICHA DE COFRADÍA · La Macarena. Es la que más tiene que lucir: la cabecera con el grabado grande en su arco, el escudo en su medallón y la banda con los colores de la túnica; debajo, todo lo que hay hoy (nombre oficial, botones, la hermandad, horario, pasos). En claro y en oscuro.
+C. COFRADÍAS · el listado, abierto en el Domingo de Ramos: cada fila con su miniatura. Que parezca un programa de mano bien editado, no una lista de ajustes.
+D. AGENDA · Domingo de Ramos, con la miniatura en cada fila y la hora como protagonista.
+E. MI COFRADAR, con cuenta (Ejemplo). Hoy es una lista gris de opciones. Arriba, lo tuyo: tu cargo y tus últimas estampas del álbum en pequeño. Debajo, las secciones. En claro y en oscuro.
+F. INICIO FUERA DE TEMPORADA. La cuenta atrás (128 días para el Domingo de Ramos, Ejemplo) acompañada de una estampa o de un grabado, para que la portada tenga alma.
+G. INICIO EN PLENA JORNADA · Madrugá, 02:40. Cambio mínimo: la miniatura en las filas de «En la calle», solo si no resta legibilidad. Si crees que aquí no debe ir imagen, dímelo y deja la pantalla como está.
+H. TRIVIAL · la portada (Jugar solo / Jugar online), con más presencia.
+
+AL TERMINAR, dime:
+- qué piezas nuevas has creado y dónde va cada una;
+- qué has cambiado en cada pantalla y por qué;
+- qué choca con lo aprobado, si algo;
+- qué pantallas de la app que no están aquí deberían llevar también el lenguaje nuevo, y cómo.
