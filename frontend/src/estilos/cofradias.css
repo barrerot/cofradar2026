@@ -183,3 +183,43 @@
   height: 100%;
   object-fit: contain;
 }
+
+/* ── Repaso visual (13/11/2026): programa de mano ──────────────────────────
+   La cabecera de jornada (miniatura.css) se queda pegada arriba, opaca, y las
+   filas crecen a 80 px con la miniatura de 56 y el nombre en grande. */
+.cf-cofradias-grupo > .cf-cabecera-jornada {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--cf-bg);
+}
+
+.cf-cofradias .cf-lista .cf-card[data-miniatura] {
+  min-height: 5rem;
+  display: grid;
+  align-content: center;
+  border-top: 0;
+}
+
+.cf-cofradias .cf-card[data-miniatura] .cf-ident {
+  align-items: center;
+  gap: var(--cf-space-2);
+}
+
+/* Sin marca, el hueco no ocupa: la miniatura ya alinea los nombres */
+.cf-cofradias .cf-card[data-miniatura] .cf-slot:empty {
+  width: 0;
+}
+
+.cf-cofradias .cf-card[data-miniatura] .cf-name {
+  font-size: 1.375rem;
+  line-height: 1.75rem;
+}
+
+/* El filete entre filas empieza donde el nombre, como en el lienzo */
+.cf-cofradias .cf-lista .cf-lista-enlace + .cf-lista-enlace .cf-card[data-miniatura] {
+  background-image: linear-gradient(var(--cf-border), var(--cf-border));
+  background-size: calc(100% - 5.125rem) 1px;
+  background-position: right top;
+  background-repeat: no-repeat;
+}

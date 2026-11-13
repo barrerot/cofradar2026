@@ -1,23 +1,25 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { AvisoEntrada, DatoPendiente, Escudo, Esqueleto, SegunDato } from "../componentes";
+import { AvisoEntrada, CabeceraEstampa, DatoPendiente, Esqueleto, SegunDato } from "../componentes";
 import { Icono, PantallaSecundaria } from "../marco";
 import { diaProximo } from "../datos/fechas";
 import { useJornada } from "../datos/jornada";
 import { useRelaciones } from "../datos/relaciones";
 import { useSesion } from "../datos/sesion";
 import { cuentaPorCofradia, useBancoTrivial } from "../datos/trivial";
+import { TITULARES } from "../datos/titulares";
 import { useDato } from "../datos/useDato";
 import type { EstadoJornada } from "../fixture";
 import { DarFe } from "./DarFe";
-import { iniciales } from "./Cofradias";
 import { AlteracionesDe, ChipsEnVivo, CortejoEnVivo, HistorialDe, IncidenciasDe, useEnVivoDe } from "./CortejoEnVivo";
 
 /**
  * P-11 Ficha de cofradía (4-cofradias/ficha-2*), registro EDITORIAL (§3).
  *
- *   Cabecera    escudo (o, sin él, las iniciales), «La has visto» / «La sigues»,
- *               nombre popular y oficial, y qué día sale.
+ *   Cabecera    su estampa (repaso visual, 13/11/2026): la jornada, el titular a
+ *               grabado, el escudo en su medallón, el nombre y el titular, con los
+ *               colores de la túnica. Debajo, «La has visto» / «La sigues», el
+ *               nombre oficial y qué día sale.
  *   Acciones    «Recorrido y horarios» (P-12), «Seguir» y «La he visto». Las dos
  *               últimas son de la cuenta: sin sesión piden entrar con Google y,
  *               al volver, se hacen solas. «Ver en el mapa» llega con el mapa (4.4).
@@ -82,7 +84,6 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
   const relaciones = useRelaciones();
   const marca = relaciones.marca(f.id);
   const dia = useDiaDeSalida(f.salida?.jornada.id ?? null);
-  const sinArticulo = f.nombre.replace(/^(El|La|Los|Las) /, "");
   const vivo = useEnVivoDe(f.id, f.salida?.jornada.id);
 
   return (
@@ -97,14 +98,19 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
       />
 
       <header className="cf-ficha-cabecera">
-        <Escudo className="cf-ficha-escudo" url={f.escudo} iniciales={iniciales(sinArticulo)} />
+        <CabeceraEstampa
+          cofradia={f.id}
+          nombre={f.nombre}
+          titular={TITULARES[f.id]}
+          jornada={f.salida?.jornada.nombre}
+          escudo={f.escudo}
+        />
         {marca ? (
           <p className="cf-ficha-relacion">
             <Icono nombre={marca === "vista" ? "vista" : "seguida"} tamano={16} />
             {marca === "vista" ? "La has visto" : "La sigues"}
           </p>
         ) : null}
-        <h1 className="cf-ficha-nombre">{f.nombre}</h1>
         <p className="cf-ficha-oficial">{f.nombreOficial}</p>
         {f.salida ? (
           <p className="cf-ficha-dia">
@@ -127,7 +133,9 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
       <Acciones ficha={f} />
 
       <section className="cf-ficha-seccion" aria-labelledby="ficha-hermandad">
-        <h2 id="ficha-hermandad">La hermandad</h2>
+        <h2 id="ficha-hermandad" className="cf-rotulo">
+          La hermandad
+        </h2>
         <dl className="cf-ficha-datos">
           <Dato nombre="Sede">{f.sede.nombre}</Dato>
           <Dato nombre="Salida y entrada">
@@ -144,8 +152,8 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
               ? null
               : f.pasos.map((p) => (
                   <span key={p.orden} className="cf-ficha-paso">
-                    <strong>{f.pasos.length === 1 ? "Un solo paso" : p.nombre}</strong>
-                    {p.titulares ? <> · {p.titulares}</> : <> · <DatoPendiente /></>}
+                    <span className="cf-ficha-paso-ante">{f.pasos.length === 1 ? "Un solo paso" : p.nombre}</span>
+                    <span className="cf-ficha-paso-titulares">{p.titulares ?? <DatoPendiente />}</span>
                     {p.autor_imagen || p.musica ? (
                       <span className="cf-ficha-nota">
                         {[p.autor_imagen && (p.anio_imagen ? `${p.autor_imagen}, ${p.anio_imagen}` : p.autor_imagen), p.musica && `Música: ${p.musica}`]
@@ -178,7 +186,9 @@ function Contenido({ ficha: f }: { ficha: Ficha }) {
       </section>
 
       <section className="cf-ficha-seccion" aria-labelledby="ficha-historia">
-        <h2 id="ficha-historia">Su historia</h2>
+        <h2 id="ficha-historia" className="cf-rotulo">
+          Su historia
+        </h2>
         {f.historia ? <p className="cf-ficha-historia">{f.historia.replace(/([^.])$/, "$1.")}</p> : <DatoPendiente />}
       </section>
 

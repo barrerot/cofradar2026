@@ -40,3 +40,6 @@ export {
 export { usePedirUbicacion } from "./PedirUbicacion";
 export { Novedades, type Novedad, type ParteNovedad } from "./Novedades";
 export { TarjetaCofradia, type DatosCofradia, type Densidad } from "./TarjetaCofradia";
+export { Miniatura, type TamanoMiniatura } from "./Miniatura";
+export { CabeceraEstampa } from "./CabeceraEstampa";
+export { CabeceraJornada } from "./CabeceraJornada";

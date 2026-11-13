@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BandaContexto, Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
+import { BandaContexto, Bloque, MarcaRelacion, Miniatura, TarjetaCofradia, type DatosCofradia } from "../componentes";
 import { Icono, Logo, Marco } from "../marco";
 import { useActividad, type SalidaDeHoy } from "../datos/actividad";
 import { distancia, distanciaEnLlano, enLaCalle, proximoPunto, useEnVivo, type EnVivo } from "../datos/enVivo";
@@ -250,9 +250,12 @@ function VerJornada() {
   );
 }
 
+const LEMA = "Por dónde va de verdad cada cofradía";
+
 /**
- * Entre temporadas: la portada de la marca (22/10/2026). Qué es Cofradar, cuánto falta, las tres
- * ideas de la Introducción, consultar las cofradías o la agenda, y lo tuyo.
+ * Entre temporadas: la portada de la marca (22/10/2026). Qué es Cofradar, cuánto falta, con el titular
+ * de La Hiniesta a grabado en su ventana grande (repaso visual, 13/11/2026), las otras dos ideas de la
+ * Introducción (la primera es el lema), consultar las cofradías o la agenda, y lo tuyo.
  */
 function FueraDeTemporada() {
   const { jornadas } = useJornada();
@@ -266,10 +269,15 @@ function FueraDeTemporada() {
     <div className="cf-ahora" data-intensidad="fuera-temporada">
       <header className="cf-portada" data-register="editorial">
         <Logo variante="vertical" alto={80} titulo="Cofradar" />
-        <p className="cf-portada-lema">Por dónde va de verdad cada cofradía</p>
+        <p className="cf-portada-lema">{LEMA}</p>
         <p className="cf-portada-sub">Semana Santa de Sevilla{dia ? ` ${dia.getFullYear()}` : ""}</p>
       </header>
-      <div className="cf-ahora-tarjeta cf-portada-cuenta">
+      <div className="cf-ahora-tarjeta cf-portada-cuenta" data-estampa="">
+        <figure className="cf-portada-estampa">
+          <Miniatura cofradia="la-hiniesta" tamano={216} nombre="Nuestra Señora de la Hiniesta Dolorosa" />
+          <figcaption>La Hiniesta · Domingo de Ramos</figcaption>
+        </figure>
+        <span className="cf-portada-orla" aria-hidden="true" />
         {dia && dias !== null ? (
           <>
             <p className="cf-ahora-dias cf-num">{dias}</p>
@@ -290,7 +298,8 @@ function FueraDeTemporada() {
         </div>
       </div>
       <ul className="cf-portada-ideas">
-        {IDEAS.map((idea) => (
+        {/* La primera idea es el lema, que ya va arriba */}
+        {IDEAS.filter((idea) => idea.titulo !== LEMA).map((idea) => (
           <li key={idea.titulo}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               {idea.icono}

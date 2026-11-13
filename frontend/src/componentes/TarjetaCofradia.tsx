@@ -3,6 +3,7 @@ import { Boton } from "../marco";
 import { Alteraciones, type DatoAlteracion } from "./ChipAlteracion";
 import { ChipEstado, type Confianza, type Fase } from "./ChipEstado";
 import { Escudo } from "./Escudo";
+import { Miniatura, type TamanoMiniatura } from "./Miniatura";
 import {
   HuecoRelacion,
   MarcaRelacion,
@@ -63,6 +64,11 @@ export type DatosCofradia = {
   iniciales?: string;
   /** La imagen del escudo (BUL-171), si la hay. */
   escudo?: string | null;
+  /**
+   * La miniatura con el titular a grabado (repaso visual, 13/11/2026), en vez del escudo. Solo en las
+   * pantallas de consulta (Cofradías, Agenda, Seguidas…); nunca en Inicio en plena jornada.
+   */
+  miniatura?: TamanoMiniatura;
 };
 
 /**
@@ -105,6 +111,7 @@ export function TarjetaCofradia({
     proximidad,
     iniciales,
     escudo,
+    miniatura,
   } = cofradia;
 
   /* Compacta = nombre + estado + una linea de datos. Proximidad y accion solo
@@ -117,10 +124,14 @@ export function TarjetaCofradia({
     onDarFe !== undefined;
 
   return (
-    <article className="cf-card" data-densidad={densidad}>
+    <article className="cf-card" data-densidad={densidad} data-miniatura={miniatura}>
       <div className="cf-card__head">
         <div className="cf-ident">
-          {iniciales ? <Escudo className="cf-escudo" url={escudo} iniciales={iniciales} /> : null}
+          {miniatura ? (
+            <Miniatura cofradia={id} escudo={escudo} tamano={miniatura} />
+          ) : iniciales ? (
+            <Escudo className="cf-escudo" url={escudo} iniciales={iniciales} />
+          ) : null}
           {/* El hueco existe siempre, con marca o sin ella: es lo que alinea
               los nombres de toda la lista. */}
           <HuecoRelacion>

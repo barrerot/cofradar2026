@@ -76,8 +76,12 @@ export function TrivialPortada({ estado }: { estado: EstadoJornada }) {
   return (
     <PantallaSecundaria titulo="Trivial cofrade" vuelta={{ etiqueta: "Mi Cofradar", ruta: "/mi-cofradar" }} accion={franja(estado)} registro="editorial">
       <div className="cf-online">
+        <Retablo />
         <TarjetaDia />
         <Link to="/mi-cofradar/trivial/solo" className="cf-online-modo">
+          <span className="cf-online-pictograma" aria-hidden="true">
+            <span className="arco">10</span>
+          </span>
           <span className="cf-online-modo-texto">
             <span className="cf-online-modo-nombre">Jugar solo</span>
             <span className="cf-online-modo-nota">10 preguntas. Sin cuenta, sin conexión y sin puntos.</span>
@@ -85,6 +89,10 @@ export function TrivialPortada({ estado }: { estado: EstadoJornada }) {
           <Icono nombre="chevronDerecha" tamano={24} />
         </Link>
         <Link to="/mi-cofradar/trivial/online" className="cf-online-modo">
+          <span className="cf-online-pictograma" aria-hidden="true">
+            <span className="arco" />
+            <span className="arco" />
+          </span>
           <span className="cf-online-modo-texto">
             <span className="cf-online-modo-nombre">Jugar online</span>
             <span className="cf-online-modo-nota">Contra otra persona, por turnos.</span>
@@ -94,6 +102,32 @@ export function TrivialPortada({ estado }: { estado: EstadoJornada }) {
         </Link>
       </div>
     </PantallaSecundaria>
+  );
+}
+
+/**
+ * El retablo de la portada (repaso visual, 13/11/2026): tres titulares a grabado en sus arcos, el del centro
+ * más alto, sobre una orla en tinta. Fuera de la calle, para las esperas; durante la partida, sin imagen.
+ */
+const RETABLO = [
+  { cofradia: "el-gran-poder", titular: "Nuestro Padre Jesús del Gran Poder" },
+  { cofradia: "la-macarena", titular: "María Santísima de la Esperanza Macarena" },
+  { cofradia: "la-hiniesta", titular: "Nuestra Señora de la Hiniesta Dolorosa" },
+];
+
+function Retablo() {
+  return (
+    <figure className="cf-online-retablo">
+      <div className="arcos">
+        {RETABLO.map((r, i) => (
+          <span key={r.cofradia} className="arco" data-centro={i === 1 ? "" : undefined}>
+            <img src={`/api/grabados/${r.cofradia}.svg`} alt={`Grabado de ${r.titular}`} decoding="async" />
+          </span>
+        ))}
+      </div>
+      <span className="cf-orla" aria-hidden="true" />
+      <figcaption>Preguntas sobre las 72 hermandades para las esperas</figcaption>
+    </figure>
   );
 }
 

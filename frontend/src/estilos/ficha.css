@@ -22,6 +22,12 @@
   justify-items: start;
 }
 
+/* La estampa a lo ancho (repaso visual, 13/11/2026), y debajo lo de siempre */
+.cf-ficha-cabecera > .cf-cabecera-estampa {
+  justify-self: stretch;
+  margin-bottom: var(--cf-space-5, 1.25rem);
+}
+
 .cf-ficha-escudo {
   display: inline-flex;
   align-items: center;
@@ -276,4 +282,23 @@
 }
 .cf-ficha-historial > li:last-child {
   border-block-end: 0;
+}
+
+/* Cada paso: su nombre de antetítulo y los titulares en Newsreader (repaso visual) */
+.cf-ficha-paso-ante {
+  display: block;
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cf-text-secondary);
+}
+
+.cf-ficha-paso-titulares {
+  display: block;
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-lg);
+  line-height: var(--cf-leading-lg);
+  font-weight: 600;
 }

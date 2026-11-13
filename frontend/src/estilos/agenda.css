@@ -46,7 +46,7 @@
 
 .cf-agenda-fila {
   display: grid;
-  grid-template-columns: 4.5rem auto minmax(0, 1fr);
+  grid-template-columns: 4.5rem auto auto minmax(0, 1fr);
   align-items: start;
   gap: var(--cf-space-1);
   padding: var(--cf-space-4);
@@ -86,4 +86,13 @@
 .cf-agenda-paso {
   font-size: var(--cf-text-base);
   line-height: var(--cf-leading-base);
+}
+
+/* La miniatura de 40 (repaso visual), a la altura de la hora */
+.cf-agenda-fila .cf-miniatura {
+  margin: 0.125rem var(--cf-space-2) 0 var(--cf-space-1);
+}
+
+.cf-agenda-fila .cf-slot:empty {
+  width: 0;
 }

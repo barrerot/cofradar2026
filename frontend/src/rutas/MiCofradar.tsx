@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AvisoEntrada } from "../componentes";
 import { Boton, Cabecera, Icono, Marco, type NombreTrazo } from "../marco";
 import { useMisAportaciones } from "../datos/puntos";
-import { useAlbum } from "../datos/album";
+import { grados, useAlbum, type Album } from "../datos/album";
 import { useCargo } from "../datos/cargo";
 import { mesDe, useHermano, type Hermano } from "../datos/hermano";
 import { miles } from "../datos/trivialOnline";
@@ -16,6 +16,7 @@ import { DarFe } from "./DarFe";
 import { FilaTuSemanaSanta } from "./TuSemanaSanta";
 import { SelectorJornada } from "./SelectorJornada";
 import { TarjetaCargo } from "./Cargo";
+import { Estampa } from "./Estampa";
 
 /**
  * P-19 Mi Cofradar · la capa personal (7-mi-cofradar/portada-*), registro
@@ -32,6 +33,9 @@ import { TarjetaCargo } from "./Cargo";
  *                20/10/2026: lo personal es de la cuenta y no se guarda «solo
  *                en este teléfono»), así que se invita a entrar con Google, como
  *                botón secundario y no como barrera: Ajustes y Ayuda siguen ahí.
+ *   Carnet       con cuenta, lo de arriba va en un carnet con orla granate (repaso visual,
+ *                13/11/2026): tu progreso y tu número, y tres de tus estampas del álbum
+ *                en pequeño, con el enlace al álbum. Sin estampas, sin tira: nunca «te falta».
  *   Trivial      el juego de preguntas para las esperas (F-50, 10-trivial/
  *                trivial-01): sin cuenta y sin puntos, así que no es «lo tuyo»
  *                y su icono no va en granate.
@@ -66,18 +70,30 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           </div>
         ) : null}
 
-        {cargo && cargo.puntos > 0 ? (
-          <TarjetaCargo cargo={cargo} hermano={hermano} />
-        ) : (
-          <>
-            {hermano ? <NumeroHermano h={hermano} /> : null}
-            <LineaCirio />
-            <p className="cf-mi-progreso">
-              <Icono nombre="darFeNoVerificable" tamano={24} />
-              <span>Empiezas a sumar puntos cuando das fe.</span>
-            </p>
-          </>
-        )}
+        {(() => {
+          const progreso =
+            cargo && cargo.puntos > 0 ? (
+              <TarjetaCargo cargo={cargo} hermano={hermano} />
+            ) : (
+              <>
+                {hermano ? <NumeroHermano h={hermano} /> : null}
+                <LineaCirio />
+                <p className="cf-mi-progreso">
+                  <Icono nombre="darFeNoVerificable" tamano={24} />
+                  <span>Empiezas a sumar puntos cuando das fe.</span>
+                </p>
+              </>
+            );
+          return con ? (
+            <section className="cf-mi-carnet" aria-label="Tu carnet">
+              <span className="cf-orla" aria-hidden="true" />
+              {progreso}
+              {album ? <TusEstampas album={album} /> : null}
+            </section>
+          ) : (
+            progreso
+          );
+        })()}
 
         <FilaTuSemanaSanta />
 
@@ -88,7 +104,7 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
           <Fila icono="vista" marca a="/mi-cofradar/coleccion" valor={cifra(relaciones.coleccion)}>
             Mi colección
           </Fila>
-          {con ? (
+          {con && !(album && conEstampas(album).length > 0) ? (
             <Fila icono="album" marca a="/mi-cofradar/album" valor={album ? String(album.estampas) : undefined}>
               Álbum de estampas
             </Fila>
@@ -139,6 +155,33 @@ export function MiCofradar({ estado }: { estado: EstadoJornada }) {
         </nav>
       </div>
     </Marco>
+  );
+}
+
+/** Las estampas que tienes, las más completas primero (sin orden de llegada: el álbum no lo guarda). */
+const conEstampas = (album: Album) =>
+  album.jornadas
+    .flatMap((j) => j.estampas.map((e) => ({ e, jornada: j.nombre })))
+    .filter(({ e }) => grados(e) > 0)
+    .sort((a, b) => grados(b.e) - grados(a.e));
+
+/** Tres de tus estampas en pequeño y el enlace al álbum. Sin ninguna, nada: el álbum sigue en su fila. */
+function TusEstampas({ album }: { album: Album }) {
+  const tuyas = conEstampas(album).slice(0, 3);
+  if (tuyas.length === 0) return null;
+  return (
+    <div className="cf-mi-estampas">
+      <p className="rotulo">Tus estampas</p>
+      <div className="tira">
+        {tuyas.map(({ e, jornada }) => (
+          <Estampa key={e.cofradia} e={e} jornada={jornada} />
+        ))}
+      </div>
+      <Link className="abrir" to="/mi-cofradar/album">
+        Abrir el álbum · <span className="cf-num">{album.estampas}</span> {album.estampas === 1 ? "estampa" : "estampas"}
+        <Icono nombre="chevronDerecha" tamano={20} />
+      </Link>
+    </div>
   );
 }
 

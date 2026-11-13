@@ -41,6 +41,7 @@ import "./estilos/album.css";
 import "./estilos/ano.css";
 import "./estilos/mapa.css";
 import "./estilos/admin.css";
+import "./estilos/miniatura.css";
 
 iniciarTema();
 registrarServiceWorker();

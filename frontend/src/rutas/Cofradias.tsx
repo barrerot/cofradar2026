@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { AvisoEntrada, Esqueleto, SegunDato, TarjetaCofradia } from "../componentes";
+import { AvisoEntrada, CabeceraJornada, Esqueleto, SegunDato, TarjetaCofradia } from "../componentes";
 import { Boton, Cabecera, Icono, Marco } from "../marco";
 import { enLaCalle, useEnVivo } from "../datos/enVivo";
 import { useJornada, type Jornada } from "../datos/jornada";
@@ -21,7 +21,7 @@ import { SelectorJornada } from "./SelectorJornada";
  *   Datos       las 72 de GET /api/cofradias, agrupadas por jornada: primero
  *               la consultada en la cabecera («· hoy» si es la de hoy) y luego
  *               las demás en el orden de la semana. Dentro, por hora de salida.
- *   Filas       escudo (o, sin él, las iniciales), marca de relación y nombre. Las
+ *   Filas       miniatura con el titular a grabado (repaso visual, 13/11/2026), marca de relación y nombre. Las
  *               de la jornada de HOY llevan además el chip del motor (4.16):
  *               fase, confianza y alteraciones. Las demás, sin chip: «Prevista»
  *               setenta veces sería ruido (cofradias-1D).
@@ -152,7 +152,7 @@ function Directorio({
       {visibles.map((g) =>
         g.cofradias.length === 0 ? null : (
           <section key={g.id} className="cf-cofradias-grupo" aria-labelledby={`jornada-${g.id}`}>
-            <h2 id={`jornada-${g.id}`}>{g.id === hoy?.id ? `${g.nombre} · hoy` : g.nombre}</h2>
+            <CabeceraJornada id={`jornada-${g.id}`} nombre={g.id === hoy?.id ? `${g.nombre} · hoy` : g.nombre} dia={g.dia} />
             <div className="cf-lista">
               {g.cofradias.map((c) => {
                 const e = estadoDe.get(c.id);
@@ -164,6 +164,7 @@ function Directorio({
                       nombre: c.nombre,
                       iniciales: iniciales(c.orden),
                       escudo: c.escudo,
+                      miniatura: 56,
                       relacion: relaciones.marca(c.id),
                       ...(e
                         ? {
@@ -193,11 +194,11 @@ function Directorio({
  * cofradías llegan del servidor ya ordenadas por hora de salida.
  */
 function agrupar(lista: CofradiaApi[], jornadas: readonly Jornada[], consultada: Jornada | null) {
-  const porId = new Map<number, { id: number; nombre: string; orden: number; cofradias: CofradiaApi[] }>();
-  for (const j of jornadas) porId.set(j.id, { id: j.id, nombre: j.nombre, orden: j.orden, cofradias: [] });
+  const porId = new Map<number, { id: number; nombre: string; orden: number; dia: string | null; cofradias: CofradiaApi[] }>();
+  for (const j of jornadas) porId.set(j.id, { id: j.id, nombre: j.nombre, orden: j.orden, dia: j.dia ?? j.fecha, cofradias: [] });
   for (const c of lista) {
     // Si aún no han llegado las jornadas, el grupo se forma con lo que trae la cofradía
-    if (!porId.has(c.jornadaId)) porId.set(c.jornadaId, { id: c.jornadaId, nombre: c.jornada, orden: c.jornadaId, cofradias: [] });
+    if (!porId.has(c.jornadaId)) porId.set(c.jornadaId, { id: c.jornadaId, nombre: c.jornada, orden: c.jornadaId, dia: null, cofradias: [] });
     porId.get(c.jornadaId)!.cofradias.push(c);
   }
   return [...porId.values()].sort(

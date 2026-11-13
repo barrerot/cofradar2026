@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Esqueleto, HuecoRelacion, MarcaRelacion, SegunDato } from "../componentes";
+import { Esqueleto, HuecoRelacion, MarcaRelacion, Miniatura, SegunDato } from "../componentes";
 import { Cabecera, Icono, Marco } from "../marco";
 import { diaProximo } from "../datos/fechas";
 import { useJornada, type Jornada } from "../datos/jornada";
@@ -21,6 +21,9 @@ import { SelectorJornada } from "./SelectorJornada";
  * (useJornada): cambiar uno cambia el otro. El día de cada botón es el de la
  * próxima Semana Santa; el punto, el de hoy.
  *
+ * Cada fila lleva, detrás de la hora, la miniatura de 40 con el titular a grabado (repaso visual,
+ * 13/11/2026): la hora sigue mandando.
+ *
  * Sin motor (fase 4) la agenda es la de fuera de temporada (agenda-D): el
  * horario previsto, sin chip de estado. Las horas son las del último programa
  * publicado, y el rótulo lo dice.
@@ -33,6 +36,7 @@ type Fila = {
   horaSalida: string | null;
   horaEntrada: string | null;
   horaCampana: string | null;
+  escudo: string | null;
 };
 
 /** El nombre corto de cada jornada en el selector, para que quepan. */
@@ -136,6 +140,7 @@ function Lista({ filas, anio }: { filas: Fila[]; anio: string | null }) {
             <li key={f.id}>
               <Link className="cf-agenda-fila" to={`/cofradias/${f.id}`}>
                 <span className="cf-agenda-hora cf-num">{f.horaSalida ? hora(f.horaSalida) : "—"}</span>
+                <Miniatura cofradia={f.id} escudo={f.escudo} tamano={40} />
                 <HuecoRelacion>{marca ? <MarcaRelacion relacion={marca} /> : null}</HuecoRelacion>
                 <span className="cf-agenda-datos">
                   <span className="cf-agenda-nombre">{f.nombre}</span>

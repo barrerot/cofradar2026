@@ -1,0 +1,234 @@
+/* ==========================================================================
+   COFRADAR · LENGUAJE DE LAS ESTAMPAS EN LA APP
+   --------------------------------------------------------------------------
+   Repaso visual de Claude Design, aprobado el 13/11/2026 («Cofradar · Repaso
+   visual»): la miniatura de hermandad, la cabecera de jornada y el rótulo con
+   orla. Las piezas van siempre sobre papel, también en oscuro.
+   ========================================================================== */
+
+/* ── La miniatura (componentes/Miniatura.tsx) ─────────────────────────────── */
+.cf-miniatura {
+  flex: none;
+  display: block;
+}
+
+.cf-miniatura-capa {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  border-radius: 999px 999px 0 0;
+}
+
+.cf-miniatura-capa[data-borde] {
+  border-radius: 999px 999px 2px 2px;
+}
+
+.cf-miniatura-ventana {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 999px 999px 0 0;
+  background: #f7f1e6;
+}
+
+.cf-miniatura-ventana > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Sin grabado, el escudo en la ventana, entero */
+.cf-miniatura-ventana > img.cf-miniatura-escudo {
+  object-fit: contain;
+  object-position: center;
+  padding: 18% 12% 8%;
+  box-sizing: border-box;
+  mix-blend-mode: multiply;
+}
+
+/* ── La orla doble: dos filetes, el de arriba más grueso ─────────────────── */
+.cf-orla {
+  display: block;
+  height: 5px;
+  border-top: 2px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  box-sizing: border-box;
+}
+
+/* ── Cabecera de jornada: antetítulo, nombre en Newsreader y orla en tinta,
+      como un programa de mano ─────────────────────────────────────────────── */
+.cf-cabecera-jornada {
+  display: grid;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-6) var(--cf-space-4) var(--cf-space-2);
+  color: var(--cf-text);
+}
+
+.cf-cabecera-jornada .ante {
+  font-size: var(--cf-text-xs);
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cf-text-secondary);
+}
+
+.cf-cabecera-jornada h2 {
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: 1.75rem;
+  line-height: 2.125rem;
+  font-weight: 600;
+}
+
+.cf-cabecera-jornada .cf-orla {
+  margin-top: 0.375rem;
+}
+
+/* ── Rótulo de sección con orla en cera ──────────────────────────────────── */
+.cf-rotulo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin: 0;
+  font-family: var(--cf-font-serif);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.cf-rotulo::after {
+  content: "";
+  flex: 1;
+  height: 5px;
+  border-top: 2px solid var(--cf-cera, #c9b896);
+  border-bottom: 1px solid var(--cf-cera, #c9b896);
+  box-sizing: border-box;
+}
+
+:root {
+  --cf-cera: #c9b896;
+}
+[data-theme="dark"] {
+  --cf-cera: #55473a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cf-cera: #55473a;
+  }
+}
+
+/* ── La cabecera de ficha con estampa (componentes/CabeceraEstampa.tsx) ──── */
+.cf-cabecera-estampa {
+  box-sizing: border-box;
+  padding: 7px;
+  border: 1px solid #c9b896;
+  border-radius: 6px;
+  background: #fdf9f1;
+  color: #1d1a16;
+}
+
+.cf-cabecera-estampa-papel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.125rem 1rem;
+  background: #fdf9f1;
+  text-align: center;
+}
+
+.cf-cabecera-estampa-jornada {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.125rem;
+  text-transform: uppercase;
+}
+
+.cf-cabecera-estampa-arco {
+  position: relative;
+  display: block;
+  margin-top: 0.875rem;
+  width: min(14.25rem, 100%);
+}
+
+.cf-cabecera-estampa-ventana {
+  display: block;
+  aspect-ratio: 228 / 248;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1.5px solid #1d1a16;
+  border-radius: 999px 999px 0 0;
+  background: #f7f1e6;
+}
+
+.cf-cabecera-estampa-ventana > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.cf-cabecera-estampa-ventana > img.escudo {
+  object-fit: contain;
+  object-position: center;
+  padding: 30% 20% 12%;
+  box-sizing: border-box;
+  mix-blend-mode: multiply;
+}
+
+.cf-cabecera-estampa-medallon {
+  position: absolute;
+  left: 50%;
+  bottom: -2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  margin-left: -2.5rem;
+  box-sizing: border-box;
+  border: 1.5px solid #1d1a16;
+  border-radius: 50%;
+  background: #fdf9f1;
+  box-shadow: inset 0 0 0 2px #fdf9f1, inset 0 0 0 3px #c9b896;
+}
+
+.cf-cabecera-estampa-medallon > img {
+  display: block;
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.cf-cabecera-estampa-nombre {
+  margin: 1rem 0 0;
+  font-family: var(--cf-font-serif);
+  font-size: 2.375rem;
+  line-height: 2.75rem;
+  font-weight: 600;
+  color: #1d1a16;
+}
+
+.cf-cabecera-estampa-nombre[data-medallon] {
+  margin-top: 3.25rem;
+}
+
+.cf-cabecera-estampa-titular {
+  margin: 0.25rem 0 0;
+  font-family: var(--cf-font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.375rem;
+  color: #4a443c;
+}
+
+.cf-cabecera-estampa-logo {
+  display: block;
+  margin-top: 0.875rem;
+  color: #1d1a16;
+}
