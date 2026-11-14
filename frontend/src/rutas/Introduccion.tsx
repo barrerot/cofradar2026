@@ -73,7 +73,7 @@ export function Introduccion() {
   useEffect(() => {
     // La introducción empieza con la misma animación del logotipo: el arranque
     // se quita ya para que no se vea dos veces seguidas
-    quitarArranque();
+    quitarArranque(true);
     const fin = window.setTimeout(() => setAnimando(false), DURACION_MS);
     return () => window.clearTimeout(fin);
   }, []);

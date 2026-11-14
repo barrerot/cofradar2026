@@ -57,7 +57,7 @@ export function SincronizacionProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("offline", caida);
   }, []);
 
-  // La pantalla de arranque espera a la primera respuesta (buena o mala), no al final de su animación
+  // La pantalla de arranque espera a la primera respuesta (buena o mala) y a que acabe su animación
   const pendientes = useRef(0);
   useEffect(() => quitarArranqueSiNadaPendiente(() => pendientes.current), []);
 

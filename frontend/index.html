@@ -25,10 +25,9 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <!-- Antes de pintar nada: el tema guardado, para que no destelle el claro
-         a quien eligio el oscuro, y si toca la pantalla de arranque (P-01):
-         solo la primera vez o sin nada guardado; si hay datos guardados, la
-         app abre directamente el ultimo estado conocido. Repite a proposito lo
-         minimo de src/tema.ts, que lo vuelve a aplicar al cargar. -->
+         a quien eligio el oscuro, y la pantalla de arranque (P-01), que sale
+         siempre al abrir la web (decision de Carlos del 14/11/2026). Repite a
+         proposito lo minimo de src/tema.ts, que lo vuelve a aplicar al cargar. -->
     <script>
       (function () {
         var raiz = document.documentElement;
@@ -41,10 +40,8 @@
               (p.tema !== "claro" && matchMedia("(prefers-color-scheme: dark)").matches)));
           raiz.dataset.theme = oscuro ? "dark" : "light";
           if (p.contraste === "max") raiz.dataset.contrast = "max";
-          if (!localStorage.getItem("cofradar:ultima-sincronizacion")) raiz.dataset.arranque = "";
-        } catch (e) {
-          raiz.dataset.arranque = "";
-        }
+        } catch (e) {}
+        raiz.dataset.arranque = "";
       })();
     </script>
   </head>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BandaContexto, Bloque, MarcaRelacion, Miniatura, TarjetaCofradia, type DatosCofradia } from "../componentes";
+import { BandaContexto, Bloque, MarcaRelacion, TarjetaCofradia, type DatosCofradia } from "../componentes";
 import { Icono, Logo, Marco } from "../marco";
 import { useActividad, type SalidaDeHoy } from "../datos/actividad";
 import { distancia, distanciaEnLlano, enLaCalle, proximoPunto, useEnVivo, type EnVivo } from "../datos/enVivo";
@@ -253,8 +253,8 @@ function VerJornada() {
 const LEMA = "Por dónde va de verdad cada cofradía";
 
 /**
- * Entre temporadas: la portada de la marca (22/10/2026). Qué es Cofradar, cuánto falta, con el titular
- * de La Hiniesta a grabado en su ventana grande (repaso visual, 13/11/2026), las otras dos ideas de la
+ * Entre temporadas: la portada de la marca (22/10/2026). Qué es Cofradar, cuánto falta (con el marco
+ * doble del repaso visual; sin La Hiniesta, que Carlos quitó el 14/11/2026), las otras dos ideas de la
  * Introducción (la primera es el lema), consultar las cofradías o la agenda, y lo tuyo.
  */
 function FueraDeTemporada() {
@@ -273,11 +273,6 @@ function FueraDeTemporada() {
         <p className="cf-portada-sub">Semana Santa de Sevilla{dia ? ` ${dia.getFullYear()}` : ""}</p>
       </header>
       <div className="cf-ahora-tarjeta cf-portada-cuenta" data-estampa="">
-        <figure className="cf-portada-estampa">
-          <Miniatura cofradia="la-hiniesta" tamano={216} nombre="Nuestra Señora de la Hiniesta Dolorosa" />
-          <figcaption>La Hiniesta · Domingo de Ramos</figcaption>
-        </figure>
-        <span className="cf-portada-orla" aria-hidden="true" />
         {dia && dias !== null ? (
           <>
             <p className="cf-ahora-dias cf-num">{dias}</p>
