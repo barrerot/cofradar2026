@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { AvisoEntrada, Esqueleto, SegunDato } from "../componentes";
+import { AvisoEntrada, CabeceraJornada, Esqueleto, Miniatura, SegunDato } from "../componentes";
 import { BottomSheet, Boton, EnCapaDelMarco, Icono, PantallaSecundaria } from "../marco";
 import { useJornada } from "../datos/jornada";
 import { useRelaciones } from "../datos/relaciones";
@@ -21,9 +21,12 @@ import { DarFe } from "./DarFe";
  *               las de años anteriores (desde 1950); la de este año también se
  *               marca desde su ficha con «La he visto».
  *
+ * Repaso visual (13/11/2026): cabecera de jornada y miniatura de 72 en cada fila;
+ * vista o no, la miniatura es la misma: lo dice el ojo, nunca «te falta».
+ *
  * Es de la cuenta (decisión del 20/10/2026): sin sesión se invita a entrar.
  */
-type Cofradia = { id: string; nombre: string; jornadaId: number };
+type Cofradia = { id: string; nombre: string; jornadaId: number; escudo: string | null };
 
 export function Coleccion({ estado }: { estado: EstadoJornada }) {
   const { usuario, disponible, entrar } = useSesion();
@@ -99,16 +102,19 @@ function Contenido({ todas }: { todas: Cofradia[] }) {
         if (!deEsta.length) return null;
         return (
           <section key={j.id} className="cf-coleccion-grupo" aria-labelledby={`coleccion-${j.id}`}>
-            <h2 id={`coleccion-${j.id}`}>{j.nombre}</h2>
+            <CabeceraJornada id={`coleccion-${j.id}`} nombre={j.nombre} dia={j.dia ?? j.fecha} />
             <ul>
               {deEsta.map((c) => {
                 const anios = relaciones.aniosVista(c.id);
                 return (
                   <li key={c.id}>
                     <Link to={`/cofradias/${c.id}`} className="cf-coleccion-fila" data-vista={anios.length ? "" : undefined}>
+                      <Miniatura cofradia={c.id} escudo={c.escudo} tamano={72} />
+                      <span className="tx">
+                        <span className="nm">{c.nombre}</span>
+                        {anios.length ? <span className="cf-num anios">{anios.join(", ")}</span> : null}
+                      </span>
                       <Icono nombre={anios.length ? "vista" : "ojo"} tamano={24} />
-                      <span className="nm">{c.nombre}</span>
-                      {anios.length ? <span className="cf-num anios">{anios.join(", ")}</span> : null}
                       <span className="cf-oculto-visual">{anios.length ? "Vista" : "Sin ver"}</span>
                     </Link>
                   </li>

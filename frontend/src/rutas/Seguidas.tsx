@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { AvisoEntrada, ChipEstado, Esqueleto, MarcaRelacion, SegunDato } from "../componentes";
+import { AvisoEntrada, CabeceraJornada, ChipEstado, Esqueleto, MarcaRelacion, Miniatura, SegunDato } from "../componentes";
 import { Boton, Icono, PantallaSecundaria } from "../marco";
 import { useActividad } from "../datos/actividad";
 import { useJornada } from "../datos/jornada";
@@ -18,9 +18,12 @@ import { DarFe } from "./DarFe";
  * «Dejar de seguir». Hoy, la que según el horario está en la calle lleva su
  * chip «según horario»; el estado de verdad llega con el motor (4.16).
  *
+ * Repaso visual (13/11/2026): cada jornada con su cabecera de programa de mano
+ * y cada fila con la miniatura de 72, porque son pocas y tuyas.
+ *
  * Son de la cuenta (decisión del 20/10/2026): sin sesión se invita a entrar.
  */
-type Cofradia = { id: string; nombre: string; jornada: string; jornadaId: number };
+type Cofradia = { id: string; nombre: string; jornada: string; jornadaId: number; escudo: string | null };
 
 export function Seguidas({ estado }: { estado: EstadoJornada }) {
   const { usuario, disponible, entrar } = useSesion();
@@ -87,11 +90,12 @@ function Lista({ todas }: { todas: Cofradia[] }) {
         if (!deEsta.length) return null;
         return (
           <section key={j.id} className="cf-cofradias-grupo" aria-labelledby={`seguidas-${j.id}`}>
-            <h2 id={`seguidas-${j.id}`}>{j.id === hoy?.id ? `${j.nombre} · hoy` : j.nombre}</h2>
+            <CabeceraJornada id={`seguidas-${j.id}`} nombre={j.id === hoy?.id ? `${j.nombre} · hoy` : j.nombre} dia={j.dia ?? j.fecha} />
             <ul className="cf-seguidas-lista">
               {deEsta.map((c) => (
                 <li key={c.id} className="cf-seguidas-fila">
                   <Link to={`/cofradias/${c.id}`} className="cf-seguidas-nombre">
+                    <Miniatura cofradia={c.id} escudo={c.escudo} tamano={72} />
                     <MarcaRelacion relacion="seguida" />
                     <span>{c.nombre}</span>
                   </Link>

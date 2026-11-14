@@ -42,6 +42,7 @@ const ORDEN: readonly AlturaSheet[] = ["asomado", "medio", "expandido"];
 export function BottomSheet({
   abierto,
   titulo,
+  antes,
   children,
   modo = "convive",
   alturaInicial = "asomado",
@@ -50,6 +51,8 @@ export function BottomSheet({
 }: {
   abierto: boolean;
   titulo: string;
+  /** Lo que va delante del título, como la miniatura de la cofradía en la hoja del mapa. */
+  antes?: ReactNode;
   children: ReactNode;
   modo?: "convive" | "bloquea";
   alturaInicial?: AlturaSheet;
@@ -88,7 +91,7 @@ export function BottomSheet({
   if (anclaje === "panel") {
     return (
       <aside className="cf-panel" role="region" aria-label={titulo}>
-        <CabeceraSheet titulo={titulo} alCerrar={alCerrar} />
+        <CabeceraSheet titulo={titulo} antes={antes} alCerrar={alCerrar} />
         {children}
       </aside>
     );
@@ -158,7 +161,7 @@ export function BottomSheet({
               if (evento.key === "ArrowDown") mover(-1);
             }}
           />
-          <CabeceraSheet titulo={titulo} alCerrar={alCerrar} />
+          <CabeceraSheet titulo={titulo} antes={antes} alCerrar={alCerrar} />
           <div className="cf-marco-sheet-cuerpo">{children}</div>
         </div>
       </div>
@@ -166,10 +169,17 @@ export function BottomSheet({
   );
 }
 
-function CabeceraSheet({ titulo, alCerrar }: { titulo: string; alCerrar: () => void }) {
+function CabeceraSheet({ titulo, antes, alCerrar }: { titulo: string; antes?: ReactNode; alCerrar: () => void }) {
   return (
     <div className="cf-marco-sheet-cabecera">
-      <h2>{titulo}</h2>
+      {antes ? (
+        <div className="cf-marco-sheet-titulo">
+          {antes}
+          <h2>{titulo}</h2>
+        </div>
+      ) : (
+        <h2>{titulo}</h2>
+      )}
       <Boton variante="terciario" tamano="36" onClick={alCerrar}>
         <Icono nombre="cerrar" tamano={16} />
         <span>Cerrar</span>

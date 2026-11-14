@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as Mapa_ } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Alteraciones, BandaContexto, ChipEstado, SinCartografia, usePedirUbicacion } from "../componentes";
+import { Alteraciones, BandaContexto, ChipEstado, Miniatura, SinCartografia, usePedirUbicacion } from "../componentes";
 import { BottomSheet, Boton, Cabecera, Icono, Marco, TRAZOS } from "../marco";
 import { useJornada, type Jornada } from "../datos/jornada";
 import { cambioDe, distancia, distanciaEnLlano, dondeVa, hitosDe, horaDelElemento, nombreElemento, partirRecorrido, siguienteLugar } from "../datos/enVivo";
@@ -319,6 +319,7 @@ export function Mapa({ estado }: { estado: EstadoJornada }) {
                 : elegida.c.nombre
               : `${grupo?.length ?? 0} cofradías aquí`
           }
+          antes={elegida && !elementoElegido ? <Miniatura cofradia={elegida.c.id} tamano={40} /> : undefined}
           modo="convive"
           alturaInicial={elementoElegido || grupo ? "medio" : "asomado"}
           alCerrar={() => elegir(null)}

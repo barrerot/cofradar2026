@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
-import { Contorno, Esqueleto, SegunDato } from "../componentes";
+import { Contorno, Esqueleto, Miniatura, SegunDato } from "../componentes";
 import { cambioDe, dondeVa, enLaCalle, horaEstimada, retrasoDe, type EnVivo } from "../datos/enVivo";
 import type { Jornada } from "../datos/jornada";
 import { Icono, PantallaSecundaria } from "../marco";
@@ -23,13 +23,17 @@ import { DarFe } from "./DarFe";
  * La cruz y el último paso no siempre pasan por los mismos sitios: las dos
  * listas se cosen (datos/horario.ts) y cada lugar va en su fila, con «—»
  * donde no pasa.
+ *
+ * Arriba, una cabecera compacta con la miniatura de 56 (repaso visual,
+ * 13/11/2026): de quién es el recorrido, sin quitarle sitio a la tabla.
  */
 type Ficha = {
   id: string;
   nombre: string;
+  escudo: string | null;
   salida: {
     anio: number;
-    jornada: { id: number };
+    jornada: { id: number; nombre: string };
     cruzGuia: Punto[];
     ultimoPaso: Punto[];
     recorrido: { metros: number | null; provisional: boolean } | null;
@@ -51,7 +55,18 @@ export function Recorrido({ estado }: { estado: EstadoJornada }) {
       sangrado="lista"
     >
       <SegunDato dato={ficha} esqueleto={<Esqueleto forma="lista" />}>
-        {(f) => (f.salida ? <Tabla id={f.id} salida={f.salida} /> : <p className="cf-recorrido-vacio">Este año no tiene salida.</p>)}
+        {(f) => (
+          <>
+            <div className="cf-recorrido-cabecera">
+              <Miniatura cofradia={f.id} escudo={f.escudo} tamano={56} />
+              <div>
+                <p className="nm">{f.nombre}</p>
+                {f.salida ? <p className="jr">{f.salida.jornada.nombre}</p> : null}
+              </div>
+            </div>
+            {f.salida ? <Tabla id={f.id} salida={f.salida} /> : <p className="cf-recorrido-vacio">Este año no tiene salida.</p>}
+          </>
+        )}
       </SegunDato>
     </PantallaSecundaria>
   );

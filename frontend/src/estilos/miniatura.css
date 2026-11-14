@@ -232,3 +232,65 @@
   margin-top: 0.875rem;
   color: #1d1a16;
 }
+
+/* ── Las pantallas que faltaban (14/11/2026) ──────────────────────────────── */
+
+/* Seguidas: la miniatura de 72 delante de la marca y el nombre */
+.cf-seguidas-nombre > .cf-miniatura {
+  margin-right: var(--cf-space-2);
+}
+
+/* Mi colección: miniatura, nombre con sus años debajo y el ojo al final.
+   La cabecera de jornada va sin sangrado propio: la pantalla ya lo pone. */
+.cf-coleccion-grupo > .cf-cabecera-jornada {
+  padding-inline: 0;
+  padding-top: var(--cf-space-2);
+}
+
+.cf-coleccion-fila .tx {
+  display: grid;
+  min-width: 0;
+}
+
+.cf-coleccion-fila > .cf-ph:last-child {
+  justify-self: end;
+}
+
+/* Álbum: la cabecera de jornada, sin fechas (el álbum es de por vida) */
+.cf-album-jornada > .cf-cabecera-jornada {
+  padding-inline: 0;
+  padding-top: var(--cf-space-2);
+}
+
+/* Recorrido: cabecera compacta, miniatura de 56 y el nombre */
+.cf-recorrido-cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  padding: var(--cf-space-4) var(--cf-space-4) 0;
+}
+
+.cf-recorrido-cabecera p {
+  margin: 0;
+}
+
+.cf-recorrido-cabecera .nm {
+  font-family: var(--cf-font-serif);
+  font-size: var(--cf-text-xl);
+  line-height: var(--cf-leading-xl);
+  font-weight: 600;
+}
+
+.cf-recorrido-cabecera .jr {
+  font-size: var(--cf-text-sm);
+  line-height: var(--cf-leading-sm);
+  color: var(--cf-text-secondary);
+}
+
+/* La hoja de una cofradía en el Mapa: la miniatura de 40 junto al nombre, nunca en el plano */
+.cf-marco-sheet-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  min-width: 0;
+}

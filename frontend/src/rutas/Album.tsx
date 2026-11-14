@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AvisoEntrada, Esqueleto } from "../componentes";
+import { AvisoEntrada, CabeceraJornada, Esqueleto } from "../componentes";
 import { Boton, HojaDecision, Icono, PantallaSecundaria } from "../marco";
 import { grados, useAlbum, type Album as DatosAlbum, type Estampa as DatosEstampa, type NuevaEnAlbum } from "../datos/album";
 import { useJornada } from "../datos/jornada";
@@ -112,7 +112,7 @@ function Contenido({ album }: { album: DatosAlbum }) {
       </button>
       {album.jornadas.map((j) => (
         <section key={j.id} id={`album-jornada-${j.id}`} className="cf-album-jornada" aria-labelledby={`album-h-${j.id}`}>
-          <h2 id={`album-h-${j.id}`}>{j.nombre}</h2>
+          <CabeceraJornada id={`album-h-${j.id}`} nombre={j.nombre} />
           <ul className="cf-album-rejilla">
             {j.estampas.map((e) => (
               <li key={e.cofradia}>
